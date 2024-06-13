@@ -4,6 +4,7 @@ import React from 'react';
 // import { useDrop } from 'react-dnd';
 // import { useStore } from '../store/store';
 // import useCombinedRefs from './useCombinedRefs';
+import SelectionTool from '@/components/SelectionTool';
 
 const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -22,6 +23,7 @@ const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
           : 'none',
       }}
     >
+      {!isPresentMode && <SelectionTool />}
       {children}
     </div>
   );

@@ -32,6 +32,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   const overlappedComponents = useComponentStore(
     (state) => state.overlappedComponents,
   );
+  const selectedComponents = useComponentStore(
+    (state) => state.selectedComponents,
+  );
+  const selectComponent = useComponentStore((state) => state.selectComponent);
+  const deselectComponent = useComponentStore(
+    (state) => state.deselectComponent,
+  );
+  const components = useComponentStore((state) => state.components);
 
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
@@ -44,6 +52,43 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
   const handleDeleteCancel = () => {
     setIsDeleteModalOpen(false);
+  };
+
+  const handleDragStop = (e: any, d: any) => {
+    setIsDragging(false);
+    if (selectedComponents.includes(component.id)) {
+      const deltaX = d.x - component.x;
+      const deltaY = d.y - component.y;
+      selectedComponents.forEach((id) => {
+        const comp = components.find((c) => c.id === id);
+        if (comp) {
+          updateComponent(id, {
+            x: roundToNearest(comp.x + deltaX, 25),
+            y: roundToNearest(comp.y + deltaY, 25),
+          });
+        }
+      });
+    } else {
+      updateComponent(component.id, {
+        x: roundToNearest(d.x, 25),
+        y: roundToNearest(d.y, 25),
+      });
+    }
+    checkOverlap({ ...component, x: d.x, y: d.y });
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    // if (isDragging) return;
+    if (e.shiftKey) {
+      if (selectedComponents.includes(component.id)) {
+        deselectComponent(component.id);
+      } else {
+        selectComponent(component.id);
+      }
+    }
+    // else {
+    //   selectComponent(component.id);
+    // }
   };
 
   let content;
@@ -61,6 +106,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       content = <div>Unknown component type</div>;
   }
   const isOverlapped = overlappedComponents[component.id]?.length > 0;
+  const isSelected = selectedComponents.includes(component.id);
 
   return (
     <>
@@ -76,30 +122,41 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           setIsDragging(true);
         }}
         onDrag={(_e, d) => {
+          if (selectedComponents.includes(component.id)) {
+            const deltaX = d.x - component.x;
+            const deltaY = d.y - component.y;
+            selectedComponents.forEach((id) => {
+              const comp = components.find((c) => c.id === id);
+              if (comp) {
+                updateComponent(id, { x: comp.x + deltaX, y: comp.y + deltaY });
+              }
+            });
+          }
           checkOverlap({
             ...component,
             x: d.x,
             y: d.y,
           });
         }}
-        onDragStop={(_e, d) => {
-          setIsDragging(false);
+        onDragStop={handleDragStop}
+        //   (_e, d) => {
+        //   setIsDragging(false);
 
-          updateComponent(component.id, {
-            x: roundToNearest(d.x, 25),
-            y: roundToNearest(d.y, 25),
-          });
-          const overlappingComponent = checkOverlap({
-            ...component,
-            x: d.x,
-            y: d.y,
-          });
-          if (overlappingComponent) {
-            alert(
-              `Component "${component.id}" is overlapping with "${overlappingComponent.id}"`,
-            );
-          }
-        }}
+        //   updateComponent(component.id, {
+        //     x: roundToNearest(d.x, 25),
+        //     y: roundToNearest(d.y, 25),
+        //   });
+        //   const overlappingComponent = checkOverlap({
+        //     ...component,
+        //     x: d.x,
+        //     y: d.y,
+        //   });
+        //   if (overlappingComponent) {
+        //     alert(
+        //       `Component "${component.id}" is overlapping with "${overlappingComponent.id}"`,
+        //     );
+        //   }
+        // }}
         onResizeStop={(_e, _direction, ref, _delta, position) => {
           updateComponent(component.id, {
             width: parseInt(ref.style.width),
@@ -112,15 +169,16 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         disableDragging={isPresentMode} // Conditionally disable dragging
         enableResizing={!isPresentMode ? undefined : false} // Conditionally disable resizing
         resizeGrid={[25, 25]}
-        minHeight={175}
-        minWidth={300}
+        minHeight={100}
+        minWidth={100}
         // bounds="parent"
-
+        onClick={handleClick}
         className={`
           ${isPresentMode ? 'border-0 bg-opacity-0' : 'border bg-gray-50 '}
           absolute mb-2 cursor-move rounded  p-2 ${
-            isDragging ? 'z-50 shadow-lg' : ''
-          } ${isOverlapped ? 'border-red-500 bg-red-200' : 'bg-gray-50'}`}
+            isDragging || isSelected ? 'z-50 border-blue-500 shadow-lg ' : ''
+          } ${isOverlapped ? 'border-red-500 bg-red-200' : 'bg-gray-50'}
+          `}
       >
         <div className="flex h-full w-full flex-col items-center justify-end">
           {content}

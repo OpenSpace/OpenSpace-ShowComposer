@@ -78,11 +78,15 @@ export type Component =
 interface State {
   components: Array<Component>;
   overlappedComponents: { [key: string]: string[] }; // Map component ID to list of overlapping component IDs
+  selectedComponents: string[];
   addComponent: (component: Component) => void;
   updateComponent: (id: string, updates: Partial<Component>) => void;
   updateComponentPosition: (id: string, x: number, y: number) => void;
   removeComponent: (id: string) => void;
   removeAllComponents: () => void;
+  selectComponent: (id: string) => void;
+  deselectComponent: (id: string) => void;
+  clearSelection: () => void;
   checkOverlap: (component: Component) => Component | null;
 }
 
@@ -92,6 +96,7 @@ export const useStore = create<State>()(
       immer((set, get) => ({
         components: [],
         overlappedComponents: {},
+        selectedComponents: [],
         addComponent: (component) =>
           set(
             (state) => {
@@ -148,6 +153,22 @@ export const useStore = create<State>()(
             false,
             'component/removeAll',
           ),
+        selectComponent: (id) =>
+          set((state) => {
+            if (!state.selectedComponents.includes(id)) {
+              state.selectedComponents.push(id);
+            }
+          }),
+        deselectComponent: (id) =>
+          set((state) => {
+            state.selectedComponents = state.selectedComponents.filter(
+              (compId) => compId !== id,
+            );
+          }),
+        clearSelection: () =>
+          set((state) => {
+            state.selectedComponents = [];
+          }),
         checkOverlap: (component) => {
           const state = get();
           let maxOverlapComponent: Component | null = null;
@@ -178,18 +199,10 @@ export const useStore = create<State>()(
           }
           set((state) => {
             state.overlappedComponents[component.id] = overlappingComponents;
+            //hacky way of doing this for now
             overlappingComponents.forEach((overlapId) => {
               state.overlappedComponents[overlapId] = [component.id];
             });
-
-            // overlappingComponents.forEach((overlapId) => {
-            //   state.overlappedComponents[overlapId] = [component.id];
-            //   //   if (
-            //   //     !state.overlappedComponents[overlapId]?.includes(component.id)
-            //   //   ) {
-            //   //     state.overlappedComponents[overlapId].push(component.id);
-            //   //   }
-            // });
           });
           return maxOverlapComponent;
         },
@@ -203,7 +216,7 @@ export const useStore = create<State>()(
 //save out the store to a json file that is saved to drive
 export const saveStore = () => {
   const store = useStore.getState();
-  const storeString = JSON.stringify({ components: store });
+  const storeString = JSON.stringify(store);
   const blob = new Blob([storeString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -224,6 +237,7 @@ export const loadStore = async () => {
       reader.onload = async (e) => {
         if (e.target?.result) {
           const store = JSON.parse(e.target.result as string);
+          console.log(store);
           useStore.setState(store);
         }
       };

@@ -138,7 +138,7 @@ const App = () => {
                     {presetComponentTypes.map((type) => (
                       <button
                         key={type}
-                        className="mb-2 w-full rounded bg-green-500 p-2 text-white"
+                        className="mb-2 w-full rounded border-[1px] border-black bg-white p-2 text-black"
                         onClick={() => handleAddComponent(type)}
                       >
                         Add {toTitleCase(type as string)}

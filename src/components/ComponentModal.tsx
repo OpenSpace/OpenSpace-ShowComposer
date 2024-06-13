@@ -56,9 +56,9 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   }, [componentData, component]);
 
   const handleCancel = () => {
-    if (!component) {
-      removeComponent(componentId!);
-    }
+    // if (component) {
+    //   removeComponent(componentId!);
+    // }
     onClose();
   };
 
@@ -106,7 +106,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             className="rounded bg-blue-500 p-2 text-white"
             onClick={handleSubmit}
           >
-            {component ? 'Update' : 'Create'}
+            {component ? 'Sae' : 'Create'}
           </button>
         </div>
       </div>
