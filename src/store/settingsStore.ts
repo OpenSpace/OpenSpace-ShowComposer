@@ -1,27 +1,37 @@
 // Assuming your store file is something like store.js or store.ts
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 interface State {
   presentMode: boolean;
   togglePresentMode: () => void;
+  url: string; // New property for URL
+  port: string; // New property for Port
+  setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
 }
 
 export const useSettingsStore = create<State>()(
   devtools(
-    immer((set) => ({
-      // Existing store properties and actions
-      presentMode: true, // New property to control drag and resize
-      togglePresentMode: () =>
-        set(
-          (state) => ({ presentMode: !state.presentMode }),
-          false,
-          'settings/togglePresent',
-        ),
-    })),
+    persist(
+      immer((set) => ({
+        // Existing store properties and actions
+        presentMode: false, // New property to control drag and resize
+        togglePresentMode: () =>
+          set(
+            (state) => ({ presentMode: !state.presentMode }),
+            false,
+            'settings/togglePresent',
+          ),
+        url: '', // Initial URL state
+        port: '', // Initial Port state
+        setConnectionSettings: (url: string, port: string) =>
+          set(() => ({ url, port }), false, 'settings/setConnectionSettings'),
+      })),
+      { name: 'settings-storage' },
+    ),
     { name: 'settings-storage' },
   ),
 );
 
-export default useSettingsStore;
+// export default useSettingsStore;

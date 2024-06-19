@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { DndProvider } from 'react-dnd';
 // import { HTML5Backend } from 'react-dnd-html5-backend';
 import ComponentModal from './components/ComponentModal';
@@ -17,6 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { toTitleCase } from './utils/math';
 import PresentModeToggle from './components/PresentModeToggle';
 import SettingsMenu from './components/SettingsMenu';
+import ConnectionSettings from './components/ConnectionSettings';
+import SubscriptionPanel from './components/SubscriptionPanel';
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -35,6 +37,7 @@ const App = () => {
     (state) => state.removeAllComponents,
   );
   const removeComponent = useComponentStore((state) => state.removeComponent);
+  const addComponent = useComponentStore((state) => state.addComponent);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
 
   const presetComponentTypes: Array<ComponentType> = [
@@ -43,6 +46,8 @@ const App = () => {
     'title',
     'video',
     'image',
+    'timepanel',
+    'settime',
   ];
 
   const handleAddComponent = (type: ComponentType) => {
@@ -50,6 +55,20 @@ const App = () => {
     setCurrentComponentType(type);
     setCurrentComponentId(newId);
     setIsModalOpen(true);
+  };
+
+  const handleImmediateAddComponent = (type: ComponentType) => {
+    const newId = uuidv4();
+    addComponent({
+      id: newId,
+      type,
+      gui_description: '',
+      gui_name: '',
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 200,
+    });
   };
 
   const handleEditComponent = (id: string) => {
@@ -118,19 +137,24 @@ const App = () => {
             {!isPresentMode && (
               <div className="h-full w-full bg-gray-200 p-4">
                 <h2 className="text-xl font-bold">Youth Learner Interface</h2>
-                <div className="mt-4 flex gap-2">
-                  <button
-                    className="rounded bg-black p-2 text-white"
-                    onClick={saveStore}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="rounded bg-black p-2 text-white"
-                    onClick={loadStore}
-                  >
-                    Load Project
-                  </button>
+
+                <div className="mt-4 flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <button
+                      className="rounded bg-black p-2 text-white"
+                      onClick={saveStore}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="rounded bg-black p-2 text-white"
+                      onClick={loadStore}
+                    >
+                      Load Project
+                    </button>
+                  </div>
+                  <ConnectionSettings />
+                  <SubscriptionPanel />
                 </div>
                 <div className="flex h-full flex-col">
                   <h2 className="mt-4 text-xs font-bold">Preset Components</h2>
@@ -139,7 +163,11 @@ const App = () => {
                       <button
                         key={type}
                         className="mb-2 w-full rounded border-[1px] border-black bg-white p-2 text-black"
-                        onClick={() => handleAddComponent(type)}
+                        onClick={() =>
+                          type == 'timepanel'
+                            ? handleImmediateAddComponent(type)
+                            : handleAddComponent(type)
+                        }
                       >
                         Add {toTitleCase(type as string)}
                       </button>

@@ -6,19 +6,23 @@ interface DropdownMenuItem {
 }
 
 interface DropdownMenuProps {
+  className?: string;
   items: DropdownMenuItem[];
 }
 
-const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
+const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({
+  items,
+  className = '',
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
-      className="absolute bottom-2 right-2 z-20"
+      className={`relative z-20 ${className}`}
       onMouseLeave={() => setIsOpen(false)}
     >
       <button
-        className="flex items-center justify-center rounded border-[1px] border-gray-500 bg-gray-100 px-4 py-0 hover:bg-gray-200"
+        className="flex items-center justify-center rounded border-[1px] border-gray-500 bg-gray-100 bg-opacity-60 px-4 py-0 hover:bg-gray-200"
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg
@@ -47,11 +51,11 @@ const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
         </svg>
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-0 w-full rounded-md bg-white shadow-lg">
+        <div className="absolute right-0 mt-0 w-full overflow-hidden rounded-md bg-white shadow-lg">
           {items.map((item, index) => (
             <button
               key={index}
-              className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+              className="block  w-full  px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
               onClick={(e) => {
                 e.stopPropagation();
                 item.action();

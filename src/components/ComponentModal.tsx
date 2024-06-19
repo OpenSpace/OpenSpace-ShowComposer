@@ -5,9 +5,11 @@ import {
   useComponentStore,
   TitleComponent,
   Component,
+  SetTimeComponent,
 } from '@/store';
 import { toTitleCase } from '@/utils/math';
 import { TitleModal } from './types/static/Title';
+import { SetTimeModal } from './types/preset/SetTime';
 
 interface ComponentModalProps {
   isOpen: boolean;
@@ -68,6 +70,15 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <TitleModal
           component={component as TitleComponent}
+          isOpen={isOpen}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'settime':
+      content = (
+        <SetTimeModal
+          component={component as SetTimeComponent}
           isOpen={isOpen}
           handleComponentData={setComponentData}
         />

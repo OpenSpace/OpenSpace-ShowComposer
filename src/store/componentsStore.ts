@@ -7,6 +7,7 @@ import { roundToNearest } from '@/utils/math';
 export type ComponentType =
   | 'fade'
   | 'flyto'
+  | 'timepanel'
   | 'settime'
   | 'setfocus'
   | 'setanchor'
@@ -57,9 +58,12 @@ export interface ImageComponent extends ComponentBase {
 //   type: 'flyto';
 // }
 
-// interface SetTimeComponent extends Component {
-//   type: 'settime';
-// }
+export interface SetTimeComponent extends ComponentBase {
+  type: 'settime';
+  time: Date | string;
+  intDuration: number;
+  interpolate: boolean;
+}
 // interface SetFocusComponent extends Component {
 //   type: 'setfocus';
 // }
@@ -70,6 +74,7 @@ export interface ImageComponent extends ComponentBase {
 export type Component =
   | ComponentBase
   | FadeComponent
+  | SetTimeComponent
   | RichTextComponent
   | TitleComponent
   | VideoComponent
@@ -154,21 +159,33 @@ export const useStore = create<State>()(
             'component/removeAll',
           ),
         selectComponent: (id) =>
-          set((state) => {
-            if (!state.selectedComponents.includes(id)) {
-              state.selectedComponents.push(id);
-            }
-          }),
+          set(
+            (state) => {
+              if (!state.selectedComponents.includes(id)) {
+                state.selectedComponents.push(id);
+              }
+            },
+            false,
+            'component/select',
+          ),
         deselectComponent: (id) =>
-          set((state) => {
-            state.selectedComponents = state.selectedComponents.filter(
-              (compId) => compId !== id,
-            );
-          }),
+          set(
+            (state) => {
+              state.selectedComponents = state.selectedComponents.filter(
+                (compId) => compId !== id,
+              );
+            },
+            false,
+            'component/deselect',
+          ),
         clearSelection: () =>
-          set((state) => {
-            state.selectedComponents = [];
-          }),
+          set(
+            (state) => {
+              state.selectedComponents = [];
+            },
+            false,
+            'component/clearSelections',
+          ),
         checkOverlap: (component) => {
           const state = get();
           let maxOverlapComponent: Component | null = null;

@@ -47,7 +47,9 @@ const SettingsMenu = () => {
       {/* Menu Tray */}
       <div
         className={`fixed right-20 top-20 z-40 w-48 origin-top-right transform rounded-lg bg-white shadow-lg transition-all ${
-          isMenuOpen ? 'pointer-all opacity-100' : 'pointer-none opacity-0'
+          isMenuOpen
+            ? 'pointer-events-all opacity-100'
+            : 'pointer-events-none opacity-0'
         }`}
       >
         {/* Menu content */}
