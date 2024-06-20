@@ -188,7 +188,7 @@ const TimeDatePicker = () => {
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('time');
+    subscribeToTopic('time', 1000);
     return () => {
       unsubscribeFromTopic('time');
     };

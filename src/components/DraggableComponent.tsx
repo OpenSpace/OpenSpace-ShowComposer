@@ -7,13 +7,14 @@ import {
   Component,
   TitleComponent,
   useSettingsStore,
-  SetTimeComponent as SetTimeType
+  SetTimeComponent as SetTimeType,
 } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import { TitleGUIComponent } from './types/static/Title';
 import DropdownMenuComponent from './DropdownMenu';
 import TimeDatePicker from './types/static/TimeDatePicker';
 import { SetTimeComponent } from './types/preset/SetTime';
+import FlightControlPanel from './types/static/FlightControlPanel';
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
 interface DraggableComponentProps {
@@ -109,7 +110,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
       break;
     case 'settime':
-      content = <SetTimeComponent component={component as SetTimeType}/>;
+      content = <SetTimeComponent component={component as SetTimeType} />;
+      break;
+    // case 'video':
+    //   content = <VideoComponent component={component} />;
+    //   break;
+    case 'navpanel':
+      content = <FlightControlPanel />;
       break;
     // case 'video':
     //   content = <VideoComponent component={component} />;

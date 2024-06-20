@@ -24,6 +24,7 @@ interface OpenSpaceApiState {
   unsubscribeFromProperty: (topic: Topic) => void; // Define parameters as needed
   subscribeToTopic: (topic: string) => Topic | null; // Define parameters as needed
   unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
+  connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
 }
 
 export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
@@ -74,7 +75,9 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
+    console.log(propertyName);
     const subscription = apiInstance.subscribeToProperty(propertyName);
+    console.log(subscription);
     return subscription;
   },
   unsubscribeFromProperty: (subscription: Topic) => {
@@ -89,8 +92,19 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
+    console.log(topicName);
     const topic = apiInstance.startTopic(topicName, {
       event: 'start_subscription',
+    });
+    return topic;
+  },
+  connectToTopic: (topicName: string) => {
+    const { connectionState, apiInstance } = get();
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED)
+      return null;
+    console.log(topicName);
+    const topic = apiInstance.startTopic(topicName, {
+      type: 'connect',
     });
     return topic;
   },
@@ -98,9 +112,11 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     console.log(topic);
-    topic.talk({
-      event: 'stop_subscription',
-    });
+    topic.talk(
+      JSON.stringify({
+        event: 'stop_subscription',
+      }),
+    );
     topic.cancel();
   },
 }));

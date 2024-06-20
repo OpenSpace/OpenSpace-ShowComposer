@@ -5,6 +5,7 @@ import { devtools } from 'zustand/middleware';
 import { useOpenSpaceApiStore } from './apiStore';
 import { throttle } from '@/utils/throttle';
 import updateTime from '@/utils/time';
+import { restrictNumbersToDecimalPlaces } from '@/utils/math';
 
 type subscription = {
   count: number;
@@ -22,10 +23,11 @@ interface State {
   topicSubscriptions: Record<string, subscription>;
   properties: Record<string, any>;
   setProperty: (name: string, value: any) => void;
-  subscribeToProperty: (name: string) => void;
+  subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
-  subscribeToTopic: (topicName: string) => void;
+  subscribeToTopic: (topicName: string, throttleAmt?: number) => void;
   unsubscribeFromTopic: (topicName: string) => void;
+  connectToTopic: (topicName: string) => void;
 }
 
 export const usePropertyStore = create<State>()(
@@ -51,7 +53,7 @@ export const usePropertyStore = create<State>()(
           'property/set',
         ),
       // Function to manage subscription counts
-      subscribeToProperty: (name: string) =>
+      subscribeToProperty: (name: string, throttleAmt: number = 200) =>
         set(
           (state: any) => {
             if (!state.propertySubscriptions[name]) {
@@ -71,7 +73,10 @@ export const usePropertyStore = create<State>()(
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription.iterator()) {
-                  throttledHandleUpdates(name, data);
+                  throttledHandleUpdates(
+                    name,
+                    restrictNumbersToDecimalPlaces(data, 4),
+                  );
                 }
               })();
               console.log('Subscribed to Property: ', name);
@@ -98,13 +103,49 @@ export const usePropertyStore = create<State>()(
           false,
           'property/unsubscribe',
         ),
-      subscribeToTopic: (topicName: string) =>
+      subscribeToTopic: (topicName: string, throttleAmt: number = 200) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
               const subscribeToTopic =
                 useOpenSpaceApiStore.getState().subscribeToTopic;
               const topic = subscribeToTopic(topicName);
+              if (!topic) return;
+              state.topicSubscriptions[topicName] = {
+                count: 0,
+                subscription: topic,
+              };
+              const testSetProperty = (propName: string, value: any) => {
+                // console.log(propName, value);
+                usePropertyStore.getState().setProperty(propName, value);
+              };
+              const throttledHandleUpdates = throttle(
+                testSetProperty,
+                throttleAmt,
+              );
+              (async () => {
+                // @ts-ignore eslint-disable-next-line no-restricted-syntax
+                for await (const data of topic.iterator()) {
+                  throttledHandleUpdates(
+                    topicName,
+                    restrictNumbersToDecimalPlaces(data, 4),
+                  );
+                }
+              })();
+              console.log('Subscribed to topic: ', topicName);
+            }
+            state.topicSubscriptions[topicName].count += 1;
+          },
+          false,
+          'topic/subscribe',
+        ),
+      connectToTopic: (topicName: string) =>
+        set(
+          (state) => {
+            if (!state.topicSubscriptions[topicName]) {
+              const connectToTopic =
+                useOpenSpaceApiStore.getState().connectToTopic;
+              const topic = connectToTopic(topicName);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
@@ -126,7 +167,7 @@ export const usePropertyStore = create<State>()(
             state.topicSubscriptions[topicName].count += 1;
           },
           false,
-          'topic/subscribe',
+          'topic/connect',
         ),
       unsubscribeFromTopic: (topicName: string) =>
         set(

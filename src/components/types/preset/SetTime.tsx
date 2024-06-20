@@ -1,3 +1,4 @@
+import Information from '@/components/common/Information';
 import DateComponent from '@/components/timepicker/DateComponent';
 import {
   usePropertyStore,
@@ -7,6 +8,7 @@ import {
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { dateStringWithTimeZone } from '@/utils/time';
 import React, { useEffect, useState } from 'react';
+import { FiClock } from 'react-icons/fi'; // Example icon, choose as per need
 
 interface SetTimeComponentProps {
   component: SetTimeType;
@@ -41,20 +43,13 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
     };
   }, [connectionState]);
 
-  //   const goToTime = (time: Date, interpolate: boolean, intDuration: number) => {
-  //     if (interpolate) {
-  //       luaApi.time.interpolateTime(time, intDuration);
-  //     } else {
-  //       luaApi.time.set(time, intDuration);
-  //     }
-  //   };
-
   // Fadetime is in seconds
   async function jumpToTime(
     timeNow: Date,
     newTime: Date,
     interpolate: boolean,
     fadeTime: number,
+    fadeScene: boolean,
   ) {
     // console.log(timeNow);
     // console.log(newTime);
@@ -65,7 +60,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
     );
     console.log(timeDiffSeconds);
     const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
-    if (diffBiggerThanADay && interpolate) {
+    if (fadeScene && diffBiggerThanADay && interpolate) {
       const promise = new Promise((resolve) => {
         luaApi.setPropertyValueSingle(
           'RenderEngine.BlackoutFactor',
@@ -100,12 +95,20 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
           component.time as Date,
           component.interpolate,
           component.intDuration,
+          component.fadeScene,
         );
       }}
     >
-      <h1 className="text-2xl"> GO TO {content}</h1>
-      <h2>Interpolate: {component.interpolate ? 'Yes' : 'No'}</h2>
+      <div className="absolute left-0 top-8 m-4"></div>
+      <FiClock className="mr-2" />
+      <div className="flex flex-row gap-4">
+        <h1 className="text-2xl"> {component.gui_name}</h1>{' '}
+        <Information content={component.gui_description} />
+      </div>
+      <h1 className="text-2xl"> {content}</h1>
+      {/* <h2>Interpolate: {component.interpolate ? 'Yes' : 'No'}</h2>
       <h3>Duration: {component.intDuration}</h3>
+      <h2>Fade Scene: {component.fadeScene ? 'Yes' : 'No'}</h2> */}
     </div>
   );
 };
@@ -129,12 +132,32 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     component?.interpolate || false,
   );
   const [intDuration, setIntDuration] = useState(component?.intDuration || 0);
+  const [fadeScene, setFadeScene] = useState(component?.fadeScene || false); //
+  const [gui_name, setGuiName] = useState(component?.gui_name); //
+  const [gui_description, setGuiDescription] = useState(
+    component?.gui_description,
+  ); //
 
   //   console.log(component);
 
   useEffect(() => {
-    handleComponentData({ time: componentTime, interpolate, intDuration });
-  }, [componentTime, interpolate, intDuration, handleComponentData]);
+    handleComponentData({
+      time: componentTime,
+      interpolate,
+      intDuration,
+      fadeScene,
+      gui_name,
+      gui_description,
+    });
+  }, [
+    componentTime,
+    interpolate,
+    intDuration,
+    handleComponentData,
+    fadeScene,
+    gui_name,
+    gui_description,
+  ]);
 
   //   useEffect(() => {
   //     if (component) {
@@ -181,6 +204,26 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             Set Time to Now
           </button>
           <div className="flex flex-row items-center justify-between">
+            <div className="text-sm font-medium text-black">Gui Name</div>
+            <input
+              type="text"
+              className="w-half rounded border p-2"
+              value={gui_name}
+              onChange={(e) => setGuiName(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-between">
+            <div className="text-sm font-medium text-black">
+              Gui Description
+            </div>
+            <input
+              type="textbox"
+              className="w-half rounded border p-2"
+              value={gui_description}
+              onChange={(e) => setGuiDescription(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-between">
             <div className="text-sm font-medium text-black">
               Interpolation Duration:
             </div>
@@ -204,6 +247,24 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
               <span className="mx-3 text-sm font-medium text-black">
                 {interpolate ? 'on' : 'off'}
+              </span>
+            </div>
+          </label>
+          <label className="flex cursor-pointer flex-row items-center items-center justify-between">
+            <span className="text-sm font-medium text-black">
+              Fade Scene on Transition
+            </span>
+            <div className="flex flex-row items-center gap-2">
+              <input
+                type="checkbox"
+                // value={sPresentMode}
+                className="peer sr-only"
+                onChange={() => setFadeScene(!fadeScene)}
+                checked={fadeScene}
+              />
+              <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+              <span className="mx-3 text-sm font-medium text-black">
+                {fadeScene ? 'on' : 'off'}
               </span>
             </div>
           </label>

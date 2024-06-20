@@ -8,6 +8,7 @@ export type ComponentType =
   | 'fade'
   | 'flyto'
   | 'timepanel'
+  | 'navpanel'
   | 'settime'
   | 'setfocus'
   | 'setanchor'
@@ -63,6 +64,7 @@ export interface SetTimeComponent extends ComponentBase {
   time: Date | string;
   intDuration: number;
   interpolate: boolean;
+  fadeScene: boolean;
 }
 // interface SetFocusComponent extends Component {
 //   type: 'setfocus';

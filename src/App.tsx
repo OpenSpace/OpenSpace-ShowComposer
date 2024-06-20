@@ -48,6 +48,7 @@ const App = () => {
     'image',
     'timepanel',
     'settime',
+    'navpanel',
   ];
 
   const handleAddComponent = (type: ComponentType) => {
@@ -164,7 +165,7 @@ const App = () => {
                         key={type}
                         className="mb-2 w-full rounded border-[1px] border-black bg-white p-2 text-black"
                         onClick={() =>
-                          type == 'timepanel'
+                          type == 'timepanel' || type == 'navpanel'
                             ? handleImmediateAddComponent(type)
                             : handleAddComponent(type)
                         }
