@@ -40,15 +40,16 @@ const App = () => {
   const addComponent = useComponentStore((state) => state.addComponent);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
 
-  const presetComponentTypes: Array<ComponentType> = [
-    'fade',
-    'richtext',
-    'title',
-    'video',
-    'image',
-    'timepanel',
-    'settime',
-    'navpanel',
+  const presetComponentTypes: Array<[ComponentType, string]> = [
+    ['fade', 'Fade'],
+    ['flyto', 'Fly To'],
+    ['richtext', 'Rich Text'],
+    ['title', 'Title'],
+    ['video', 'Video'],
+    ['image', 'Image'],
+    ['timepanel', 'Time Panel'],
+    ['settime', 'Set Time'],
+    ['navpanel', 'Navigation Panel'],
   ];
 
   const handleAddComponent = (type: ComponentType) => {
@@ -67,8 +68,8 @@ const App = () => {
       gui_name: '',
       x: 0,
       y: 0,
-      width: 200,
-      height: 200,
+      width: 425,
+      height: type == 'timepanel' ? 250 : 600,
     });
   };
 
@@ -162,15 +163,15 @@ const App = () => {
                   <div className="mt-4">
                     {presetComponentTypes.map((type) => (
                       <button
-                        key={type}
+                        key={type[0]}
                         className="mb-2 w-full rounded border-[1px] border-black bg-white p-2 text-black"
                         onClick={() =>
-                          type == 'timepanel' || type == 'navpanel'
-                            ? handleImmediateAddComponent(type)
-                            : handleAddComponent(type)
+                          type[0] == 'timepanel' || type[0] == 'navpanel'
+                            ? handleImmediateAddComponent(type[0])
+                            : handleAddComponent(type[0])
                         }
                       >
-                        Add {toTitleCase(type as string)}
+                        Add {type[1]}
                       </button>
                     ))}
                   </div>

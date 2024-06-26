@@ -55,9 +55,16 @@ export interface ImageComponent extends ComponentBase {
   url: string;
 }
 
-// interface FlyToComponent extends Component {
-//   type: 'flyto';
-// }
+export interface FlyToComponent extends ComponentBase {
+  type: 'flyto';
+  target?: string;
+  geo?: boolean;
+  duration?: number;
+  lat?: number;
+  long?: number;
+  alt?: number;
+  triggerAction: () => void;
+}
 
 export interface SetTimeComponent extends ComponentBase {
   type: 'settime';
@@ -65,6 +72,7 @@ export interface SetTimeComponent extends ComponentBase {
   intDuration: number;
   interpolate: boolean;
   fadeScene: boolean;
+  triggerAction: () => void;
 }
 // interface SetFocusComponent extends Component {
 //   type: 'setfocus';
@@ -76,6 +84,7 @@ export interface SetTimeComponent extends ComponentBase {
 export type Component =
   | ComponentBase
   | FadeComponent
+  | FlyToComponent
   | SetTimeComponent
   | RichTextComponent
   | TitleComponent

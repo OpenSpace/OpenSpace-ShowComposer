@@ -1,12 +1,13 @@
 import Information from '@/components/common/Information';
+import Toggle from '@/components/common/Toggle';
 import DateComponent from '@/components/timepicker/DateComponent';
 import {
   usePropertyStore,
   useOpenSpaceApiStore,
   ConnectionState,
+  useComponentStore,
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
-import { dateStringWithTimeZone } from '@/utils/time';
 import React, { useEffect, useState } from 'react';
 import { FiClock } from 'react-icons/fi'; // Example icon, choose as per need
 
@@ -36,12 +37,34 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
     (state) => state.unsubscribeFromTopic,
   );
   useEffect(() => {
+    console.log('CONNETION STATE:', connectionState);
     if (connectionState != ConnectionState.CONNECTED) return;
+
     subscribeToTopic('time');
     return () => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
+
+  const updateComponent = useComponentStore((state) => state.updateComponent);
+
+  useEffect(() => {
+    if (!component.triggerAction && luaApi) {
+      console.log('Registering trigger action');
+      updateComponent(component.id, {
+        triggerAction: () => {
+          jumpToTime(
+            time,
+            component.time as Date,
+            component.interpolate,
+            component.intDuration,
+            component.fadeScene,
+          );
+        },
+      });
+      component;
+    }
+  }, [component, luaApi]);
 
   // Fadetime is in seconds
   async function jumpToTime(
@@ -55,9 +78,9 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
     // console.log(newTime);
 
     const timeDiffSeconds = Math.round(
-      //@ts-ignore
-      Math.abs(timeNow - new Date(newTime)) / 1000,
+      Math.abs(timeNow.getTime() - new Date(newTime).getTime()) / 1000,
     );
+
     console.log(timeDiffSeconds);
     const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
     if (fadeScene && diffBiggerThanADay && interpolate) {
@@ -90,13 +113,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
       className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center"
       onClick={() => {
         console.log('CLICK');
-        jumpToTime(
-          time,
-          component.time as Date,
-          component.interpolate,
-          component.intDuration,
-          component.fadeScene,
-        );
+        component.triggerAction?.();
       }}
     >
       <div className="absolute left-0 top-8 m-4"></div>
@@ -127,6 +144,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const time = usePropertyStore(
     (state) => state.properties['time']?.['timeCapped'],
   );
+
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(
     component?.interpolate || false,
@@ -167,11 +185,11 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   //     }
   //   }, [component, setText]);
 
-  //   useEffect(() => {
-  //     if (!isOpen) {
-  //       setText('');
-  //     }
-  //   }, [isOpen, setText]);
+  useEffect(() => {
+    if (!isOpen) {
+      // setText('');
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -180,7 +198,12 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
           {time && (
             <DateComponent
               date={componentTime}
-              onChange={(data: any) => {
+              onChange={(data: {
+                time: Date | string;
+                interpolate: boolean;
+                delta: number;
+                relative: boolean;
+              }) => {
                 console.log(data);
                 setCompontentTime(data.time);
               }}
@@ -194,10 +217,8 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               try {
                 const fixedTimeString = newTime.toJSON().replace('Z', '');
                 setCompontentTime(fixedTimeString);
-                // luaApi.time.setTime(fixedTimeString);
               } catch {
                 setCompontentTime(newTime);
-                // luaApi.time.setTime(time);
               }
             }}
           >
@@ -234,40 +255,16 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               onChange={(e) => setIntDuration(parseInt(e.target.value))}
             />
           </div>
-          <label className="flex cursor-pointer flex-row items-center items-center justify-between">
-            <span className="text-sm font-medium text-black">Interpolate</span>
-            <div className="flex flex-row items-center gap-2">
-              <input
-                type="checkbox"
-                // value={sPresentMode}
-                className="peer sr-only"
-                onChange={() => setInterpolate(!interpolate)}
-                checked={interpolate}
-              />
-              <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-              <span className="mx-3 text-sm font-medium text-black">
-                {interpolate ? 'on' : 'off'}
-              </span>
-            </div>
-          </label>
-          <label className="flex cursor-pointer flex-row items-center items-center justify-between">
-            <span className="text-sm font-medium text-black">
-              Fade Scene on Transition
-            </span>
-            <div className="flex flex-row items-center gap-2">
-              <input
-                type="checkbox"
-                // value={sPresentMode}
-                className="peer sr-only"
-                onChange={() => setFadeScene(!fadeScene)}
-                checked={fadeScene}
-              />
-              <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-              <span className="mx-3 text-sm font-medium text-black">
-                {fadeScene ? 'on' : 'off'}
-              </span>
-            </div>
-          </label>
+          <Toggle
+            label="Interpolate"
+            value={interpolate}
+            setValue={setInterpolate}
+          />
+          <Toggle
+            label="Fade Scene"
+            value={fadeScene}
+            setValue={setFadeScene}
+          />
         </div>
       </div>
     </>

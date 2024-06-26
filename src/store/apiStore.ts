@@ -10,6 +10,16 @@ import OpenSpaceApi, {
   Topic,
 } from 'openspace-api-js';
 
+import { usePropertyStore } from './propertyStore';
+
+import {
+  findFavorites,
+  flattenPropertyTree,
+  getRenderables,
+} from '@/utils/apiHelpers';
+
+export const rootOwnerKey = '__rootOwner';
+
 interface OpenSpaceApiState {
   apiInstance: null | OSApiClass; // Consider using a more specific type if possible
   luaApi: any; // Consider using a more specific type if possible
@@ -43,6 +53,17 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         console.log('OpenSpace connected');
         const luaApi = await apiInstance.library();
         set({ luaApi, connectionState: ConnectionState.CONNECTED });
+        const value = await apiInstance.getProperty(rootOwnerKey);
+
+        const { propertyOwners, properties } = flattenPropertyTree(value);
+        // console.log(propertyOwners);
+        const favorites = findFavorites(propertyOwners);
+        usePropertyStore.getState().setFavorites(favorites);
+        console.log(favorites);
+        // const renderables = getRenderables(properties, 'Fadable');
+        // console.log(renderables);
+        // const
+        // console.log(propertyOwners, properties);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({
@@ -53,7 +74,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     });
     apiInstance.onDisconnect(() => {
       set({
-        apiInstance: null,
+        // apiInstance: null,
         luaApi: null,
         connectionState: ConnectionState.UNCONNECTED,
       });
@@ -73,6 +94,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   },
   subscribeToProperty: (propertyName: string) => {
     const { connectionState, apiInstance } = get();
+    console.log('Connection State: ', connectionState);
+    console.log('API Instance: ', apiInstance);
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
     console.log(propertyName);
@@ -112,11 +135,9 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     console.log(topic);
-    topic.talk(
-      JSON.stringify({
-        event: 'stop_subscription',
-      }),
-    );
+    topic.talk({
+      event: 'stop_subscription',
+    });
     topic.cancel();
   },
 }));

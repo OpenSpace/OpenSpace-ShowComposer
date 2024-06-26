@@ -17,6 +17,22 @@ export const ZoomFrictionKey =
 export const RollFrictionKey =
   'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
+type InputState = {
+  values: {
+    orbitX?: number;
+    orbitY?: number;
+    panX?: number;
+    panY?: number;
+    zoomIn?: number;
+    localRollX?: number;
+  };
+};
+
+type InputStatePayload = {
+  type: 'inputState';
+  inputState: InputState;
+};
+
 const FlightControlPanel = () => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -34,16 +50,16 @@ const FlightControlPanel = () => {
   const rollFriction = usePropertyStore(
     (state) => state.properties[RollFrictionKey]?.Value || false,
   );
-  const camera = usePropertyStore(
-    (state) => state.properties['camera'] || false,
-  );
+  // const camera = usePropertyStore(
+  //   (state) => state.properties['camera'] || false,
+  // );
   const flightControlTopic = usePropertyStore(
     (state) => state.topicSubscriptions['flightcontroller']?.subscription,
   );
   const subscribeToProperty = usePropertyStore(
     (state) => state.subscribeToProperty,
   );
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
+  // const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
@@ -60,34 +76,22 @@ const FlightControlPanel = () => {
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
+    console.log('Subscribing to flightcontroller');
     connectToTopic('flightcontroller');
-    subscribeToProperty(RotationalFrictionKey);
-    subscribeToProperty(ZoomFrictionKey);
-    subscribeToProperty(RollFrictionKey);
-    subscribeToTopic('camera', 500);
-  }, [connectionState]);
-
-  useEffect(() => {
-    (async () => {
-      const post = await luaApi.globebrowsing.getGflightcoeoPositionForCamera();
-      console.log(post);
-    })();
-  }, [luaApi]);
-  useEffect(() => {
+    // subscribeToProperty(RotationalFrictionKey);
+    // subscribeToProperty(ZoomFrictionKey);
+    // subscribeToProperty(RollFrictionKey);
     return () => {
       unsubscribeFromTopic('flightcontroller');
-      unsubscribeFromProperty(RotationalFrictionKey);
-      unsubscribeFromProperty(ZoomFrictionKey);
-      unsubscribeFromProperty(RollFrictionKey);
-      unsubscribeFromTopic('camera');
+      // unsubscribeFromProperty(RotationalFrictionKey);
+      // unsubscribeFromProperty(ZoomFrictionKey);
+      // unsubscribeFromProperty(RollFrictionKey);
     };
-  }, []);
+    // subscribeToTopic('camera', 500);
+  }, [connectionState]);
 
-  useEffect(() => {
-    console.log('CAMERA:', camera);
-  }, [camera]);
-
-  function sendFlightControlInput(payload: any) {
+  function sendFlightControlInput(payload: InputStatePayload) {
+    // console.log('Sending flight control input');
     flightControlTopic && flightControlTopic.talk(payload);
   }
 
@@ -129,7 +133,9 @@ const FlightControlPanel = () => {
     </>
   );
 
-  function touchDown(event: any) {
+  //type for react
+
+  function touchDown(event: React.TouchEvent) {
     touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
   }
@@ -138,7 +144,7 @@ const FlightControlPanel = () => {
     mouseIsDown = true;
   }
 
-  function touchMove(event: any) {
+  function touchMove(event: React.TouchEvent) {
     const touchX = event.touches[0].clientX;
     const touchY = event.touches[0].clientY;
 
@@ -149,22 +155,18 @@ const FlightControlPanel = () => {
       deltaX /= scaleFactor;
       deltaY /= scaleFactor;
 
-      const inputState = { values: {} };
+      const inputState: InputState = {
+        values: {},
+      };
 
       if (event.touches.length === 1) {
-        //@ts-ignore
         inputState.values.orbitX = -deltaX;
-        //@ts-ignore
         inputState.values.orbitY = -deltaY;
       } else if (event.touches.length === 2) {
-        //@ts-ignore
         inputState.values.panX = -deltaX;
-        //@ts-ignore
         inputState.values.panY = -deltaY;
       } else if (event.touches.length === 3) {
-        //@ts-ignore
         inputState.values.zoomIn = -deltaY;
-        //@ts-ignore
         inputState.values.localRollX = -deltaX;
       }
 
@@ -212,29 +214,23 @@ const FlightControlPanel = () => {
     });
   }
 
-  function mouseMove(event: any) {
+  function mouseMove(event: React.MouseEvent) {
     if (!mouseIsDown) {
       return;
     }
 
     const deltaX = event.movementX / 20;
     const deltaY = -event.movementY / 20;
-    const inputState = { values: {} };
+    const inputState: InputState = { values: {} };
 
     if (event.shiftKey) {
-      //@ts-ignore
       inputState.values.panX = -deltaX;
-      //@ts-ignore
       inputState.values.panY = deltaY;
     } else if (event.ctrlKey) {
-      //@ts-ignore
       inputState.values.zoomIn = deltaY;
-      //@ts-ignore
       inputState.values.localRollX = -deltaX;
     } else {
-      //@ts-ignore
       inputState.values.orbitX = -deltaX;
-      //@ts-ignore
       inputState.values.orbitY = deltaY;
     }
 
@@ -255,14 +251,14 @@ const FlightControlPanel = () => {
   //   const rollButtonColor = rollFriction ? '#222' : '#888';
 
   return (
-    <div className="z-9 absolute left-0 top-[60px] flex flex-col">
+    <div className="z-9 absolute left-0 top-[60px] flex w-full flex-col items-center justify-center">
       <div>
         <div className="flex flex-row gap-2">
           <button
+            className="rounded px-2 py-1 text-white"
             onClick={toggleRotation}
             //   title="Rotation friction"
             style={{
-              width: 133,
               background: rotationFriction ? '#222' : '#888',
             }}
             //   disabled={false}
@@ -270,18 +266,18 @@ const FlightControlPanel = () => {
             <span style={{ marginLeft: 5 }}>Rotation</span>
           </button>
           <button
+            className="rounded px-2 py-1 text-white"
             onClick={toggleZoom}
             //   title="Zoom friction"
-            style={{ width: 133, background: zoomFriction ? '#222' : '#888' }}
+            style={{ background: zoomFriction ? '#222' : '#888' }}
             //   disabled={false}
           >
             <span style={{ marginLeft: 5 }}>Zoom</span>
           </button>
           <button
+            className="rounded px-2 py-1 text-white"
             onClick={toggleRoll}
-            title="Roll friction"
-            style={{ width: 133, background: rollFriction ? '#222' : '#888' }}
-            disabled={false}
+            style={{ background: rollFriction ? '#222' : '#888' }}
           >
             <span style={{ marginLeft: 5 }}>Roll</span>
           </button>
@@ -295,9 +291,9 @@ const FlightControlPanel = () => {
       <div
         //   className={styles.control_area}
         style={{
-          float: 'left',
-          height: '400px',
-          width: '400px',
+          // float: 'left',
+          height: '200px',
+          width: '200px',
           outline: '2px solid gray',
           outlineOffset: '-10px',
           paddingTop: '2px',
@@ -316,13 +312,7 @@ const FlightControlPanel = () => {
         onTouchMove={touchMove}
         id="controlArea"
       />
-      <div>
-        {Object.keys(camera).map((key) => (
-          <div key={key}>
-            <b>{key}</b>: {camera[key]}
-          </div>
-        ))}
-      </div>
+      {/* s */}
     </div>
   );
 };

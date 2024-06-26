@@ -22,7 +22,9 @@ interface State {
   propertySubscriptions: Record<string, subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
   topicSubscriptions: Record<string, subscription>;
   properties: Record<string, any>;
+  favorites: Array<any>;
   setProperty: (name: string, value: any) => void;
+  setFavorites: (favorites: Array<any>) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
   subscribeToTopic: (topicName: string, throttleAmt?: number) => void;
@@ -36,6 +38,7 @@ export const usePropertyStore = create<State>()(
       propertySubscriptions: {},
       topicSubscriptions: {}, // New topics state
       properties: {}, // New properties state
+      favorites: [],
       // Function to update a property's value
       setProperty: (name: string, value: any) =>
         set(
@@ -51,6 +54,14 @@ export const usePropertyStore = create<State>()(
           },
           false,
           'property/set',
+        ),
+      setFavorites: (favorites: Array<any>) =>
+        set(
+          (state: any) => {
+            state.favorites = favorites;
+          },
+          false,
+          'property/setFavorites',
         ),
       // Function to manage subscription counts
       subscribeToProperty: (name: string, throttleAmt: number = 200) =>
@@ -69,7 +80,10 @@ export const usePropertyStore = create<State>()(
                 console.log(propName, value);
                 usePropertyStore.getState().setProperty(propName, value);
               };
-              const throttledHandleUpdates = throttle(testSetProperty, 200);
+              const throttledHandleUpdates = throttle(
+                testSetProperty,
+                throttleAmt,
+              );
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription.iterator()) {

@@ -246,8 +246,20 @@ const TimeDatePicker = () => {
           /> */}
           <DateComponent date={time} onChange={changeDate} />
           <p>{timeLabel}</p>
-          <button onClick={realtime}>Realtime</button>
-          <button onClick={now}>Now</button>
+          <div className="flex flex-row items-center justify-between gap-2">
+            <button
+              className="rounded bg-blue-500 p-2 text-white"
+              onClick={realtime}
+            >
+              Realtime
+            </button>
+            <button
+              className="rounded bg-blue-500 p-2 text-white"
+              onClick={now}
+            >
+              Now
+            </button>
+          </div>
         </div>
       )}
 

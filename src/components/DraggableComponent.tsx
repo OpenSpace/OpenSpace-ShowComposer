@@ -15,6 +15,8 @@ import DropdownMenuComponent from './DropdownMenu';
 import TimeDatePicker from './types/static/TimeDatePicker';
 import { SetTimeComponent } from './types/preset/SetTime';
 import FlightControlPanel from './types/static/FlightControlPanel';
+import { FlyToGUIComponent } from './types/preset/FlyTo';
+import { FlyToComponent } from '@/store/componentsStore';
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
 interface DraggableComponentProps {
@@ -117,6 +119,9 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     //   break;
     case 'navpanel':
       content = <FlightControlPanel />;
+      break;
+    case 'flyto':
+      content = <FlyToGUIComponent component={component as FlyToComponent} />;
       break;
     // case 'video':
     //   content = <VideoComponent component={component} />;

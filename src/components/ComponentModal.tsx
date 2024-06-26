@@ -10,6 +10,9 @@ import {
 import { toTitleCase } from '@/utils/math';
 import { TitleModal } from './types/static/Title';
 import { SetTimeModal } from './types/preset/SetTime';
+import { FlyToComponent } from '@/store/componentsStore';
+import { FlyToModal } from './types/preset/FlyTo';
+import Button from './common/Button';
 
 interface ComponentModalProps {
   isOpen: boolean;
@@ -84,6 +87,15 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         />
       );
       break;
+    case 'flyto':
+      content = (
+        <FlyToModal
+          component={component as FlyToComponent}
+          isOpen={isOpen}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
     // case 'image':
     //   content = <ImageComponent component={component} />;
     //   break;
@@ -107,18 +119,19 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
         {content}
         <div className="flex justify-end">
-          <button
+          <Button
+            width="auto"
             className="mr-2 rounded bg-gray-500 p-2 text-white"
             onClick={handleCancel}
-          >
-            Cancel
-          </button>
-          <button
-            className="rounded bg-blue-500 p-2 text-white"
+            text="Cancel"
+          />
+
+          <Button
+            width="auto"
+            // className="rounded bg-blue-500 p-2 text-white"
             onClick={handleSubmit}
-          >
-            {component ? 'Sae' : 'Create'}
-          </button>
+            text={component ? 'Save' : 'Create'}
+          />
         </div>
       </div>
     </div>
