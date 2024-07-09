@@ -23,7 +23,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   return (
     <div className="relative">
       <button
-        className="w-full rounded-md border border-gray-300 bg-white p-2 text-left"
+        className="w-full rounded-md border border-gray-300 bg-white p-2 text-right"
         onClick={toggleDropdown}
       >
         {selected || 'Select an option'}
@@ -33,7 +33,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
           {options.map((item: string, index: number) => (
             <div
               key={index}
-              className="cursor-pointer p-2 hover:bg-gray-100"
+              className="cursor-pointer p-2 text-right hover:bg-gray-100"
               onClick={() => handleSelect(item)}
             >
               {item}

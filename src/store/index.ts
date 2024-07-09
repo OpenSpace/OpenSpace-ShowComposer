@@ -16,4 +16,10 @@ export type {
   VideoComponent,
   ImageComponent,
   Component,
+  BooleanComponent,
+  TriggerComponent,
+  NumberComponent,
+  SetFocusComponent,
+  FlyToComponent,
+  Toggle,
 } from './componentsStore';

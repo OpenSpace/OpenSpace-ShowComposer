@@ -78,14 +78,14 @@ const FlightControlPanel = () => {
     if (connectionState != ConnectionState.CONNECTED) return;
     console.log('Subscribing to flightcontroller');
     connectToTopic('flightcontroller');
-    // subscribeToProperty(RotationalFrictionKey);
-    // subscribeToProperty(ZoomFrictionKey);
-    // subscribeToProperty(RollFrictionKey);
+    subscribeToProperty(RotationalFrictionKey);
+    subscribeToProperty(ZoomFrictionKey);
+    subscribeToProperty(RollFrictionKey);
     return () => {
       unsubscribeFromTopic('flightcontroller');
-      // unsubscribeFromProperty(RotationalFrictionKey);
-      // unsubscribeFromProperty(ZoomFrictionKey);
-      // unsubscribeFromProperty(RollFrictionKey);
+      unsubscribeFromProperty(RotationalFrictionKey);
+      unsubscribeFromProperty(ZoomFrictionKey);
+      unsubscribeFromProperty(RollFrictionKey);
     };
     // subscribeToTopic('camera', 500);
   }, [connectionState]);
@@ -107,8 +107,6 @@ const FlightControlPanel = () => {
   function toggleRoll() {
     luaApi.setPropertyValue(RollFrictionKey, !rollFriction);
   }
-
-  //   function popover() {
 
   const infoBoxContent = (
     <>
@@ -132,8 +130,6 @@ const FlightControlPanel = () => {
       </ul>
     </>
   );
-
-  //type for react
 
   function touchDown(event: React.TouchEvent) {
     touchStartX = event.touches[0].clientX;
@@ -239,16 +235,6 @@ const FlightControlPanel = () => {
       inputState,
     });
   }
-
-  // return (
-
-  //   </Popover>
-  // );
-  //   }
-
-  //   const rotationButtonColor = rotationFriction ? '#222' : '#888';
-  //   const zoomButtonColor = zoomFriction ? '#222' : '#888';
-  //   const rollButtonColor = rollFriction ? '#222' : '#888';
 
   return (
     <div className="z-9 absolute left-0 top-[60px] flex w-full flex-col items-center justify-center">

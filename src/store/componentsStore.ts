@@ -11,12 +11,16 @@ export type ComponentType =
   | 'navpanel'
   | 'settime'
   | 'setfocus'
-  | 'setanchor'
   | 'richtext'
   | 'title'
   | 'video'
   | 'image'
-  | 'default';
+  | 'default'
+  | 'boolean'
+  | 'number'
+  | 'trigger';
+
+export type Toggle = 'on' | 'off' | 'toggle';
 
 interface ComponentBase {
   id: string;
@@ -25,15 +29,10 @@ interface ComponentBase {
   gui_description: string;
   x: number;
   y: number;
+  minWidth: number;
+  minHeight: number;
   width: number;
   height: number;
-}
-
-export interface FadeComponent extends ComponentBase {
-  type: 'fade';
-  property: string;
-  intDuration: number;
-  action: 'on' | 'off' | 'toggle';
 }
 
 export interface RichTextComponent extends ComponentBase {
@@ -66,6 +65,14 @@ export interface FlyToComponent extends ComponentBase {
   triggerAction: () => void;
 }
 
+export interface FadeComponent extends ComponentBase {
+  type: 'fade';
+  property: string;
+  intDuration: number;
+  action: Toggle;
+  triggerAction: () => void;
+}
+
 export interface SetTimeComponent extends ComponentBase {
   type: 'settime';
   time: Date | string;
@@ -74,22 +81,47 @@ export interface SetTimeComponent extends ComponentBase {
   fadeScene: boolean;
   triggerAction: () => void;
 }
-// interface SetFocusComponent extends Component {
-//   type: 'setfocus';
-// }
-// interface SetAcnhorComponent extends Component {
-//   type: 'setanchor';
-// }
+
+export interface SetFocusComponent extends ComponentBase {
+  type: 'setfocus';
+  property: string;
+  triggerAction: () => void;
+}
+
+export interface BooleanComponent extends ComponentBase {
+  type: 'boolean';
+  property: string;
+  action: Toggle;
+  triggerAction: () => void;
+}
+export interface NumberComponent extends ComponentBase {
+  type: 'number';
+  min: number;
+  max: number;
+  step: number;
+  property: string;
+  triggerAction: (value: number) => void;
+}
+export interface TriggerComponent extends ComponentBase {
+  type: 'trigger';
+  property: string;
+  // intDuration: number;
+  triggerAction: () => void;
+}
 
 export type Component =
   | ComponentBase
   | FadeComponent
+  | SetFocusComponent
   | FlyToComponent
   | SetTimeComponent
   | RichTextComponent
   | TitleComponent
   | VideoComponent
-  | ImageComponent;
+  | ImageComponent
+  | BooleanComponent
+  | TriggerComponent
+  | NumberComponent;
 
 interface State {
   components: Array<Component>;

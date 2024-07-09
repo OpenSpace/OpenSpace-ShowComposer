@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import Information from '@/components/common/Information';
 import Toggle from '@/components/common/Toggle';
 import DateComponent from '@/components/timepicker/DateComponent';
@@ -8,7 +9,8 @@ import {
   useComponentStore,
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
-import React, { useEffect, useState } from 'react';
+import { isDate, jumpToTime } from '@/utils/time';
+
 import { FiClock } from 'react-icons/fi'; // Example icon, choose as per need
 
 interface SetTimeComponentProps {
@@ -16,18 +18,10 @@ interface SetTimeComponentProps {
 }
 
 const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
-  function isDate(time: Date | string): boolean {
-    return time instanceof Date;
-  }
-
   const content: string = isDate(component?.time)
     ? (component?.time as Date).toUTCString()
     : (component?.time as string);
 
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const time = usePropertyStore(
-    (state) => state.properties['time']?.['timeCapped'],
-  );
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
@@ -36,6 +30,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );
+
   useEffect(() => {
     console.log('CONNETION STATE:', connectionState);
     if (connectionState != ConnectionState.CONNECTED) return;
@@ -49,12 +44,11 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   const updateComponent = useComponentStore((state) => state.updateComponent);
 
   useEffect(() => {
-    if (!component.triggerAction && luaApi) {
+    if (!component.triggerAction) {
       console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           jumpToTime(
-            time,
             component.time as Date,
             component.interpolate,
             component.intDuration,
@@ -64,55 +58,14 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
       });
       component;
     }
-  }, [component, luaApi]);
+  }, [component]);
 
   // Fadetime is in seconds
-  async function jumpToTime(
-    timeNow: Date,
-    newTime: Date,
-    interpolate: boolean,
-    fadeTime: number,
-    fadeScene: boolean,
-  ) {
-    // console.log(timeNow);
-    // console.log(newTime);
-
-    const timeDiffSeconds = Math.round(
-      Math.abs(timeNow.getTime() - new Date(newTime).getTime()) / 1000,
-    );
-
-    console.log(timeDiffSeconds);
-    const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
-    if (fadeScene && diffBiggerThanADay && interpolate) {
-      const promise = new Promise((resolve) => {
-        luaApi.setPropertyValueSingle(
-          'RenderEngine.BlackoutFactor',
-          0,
-          fadeTime,
-          'QuadraticEaseOut',
-        );
-        setTimeout(() => resolve('done!'), fadeTime * 1000);
-      });
-      await promise;
-      luaApi.time.setTime(newTime);
-      luaApi.setPropertyValueSingle(
-        'RenderEngine.BlackoutFactor',
-        1,
-        fadeTime,
-        'QuadraticEaseIn',
-      );
-    } else if (!interpolate) {
-      luaApi.time.setTime(newTime);
-    } else {
-      luaApi.time.interpolateTime(newTime, fadeTime);
-    }
-  }
 
   return (
     <div
       className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center"
       onClick={() => {
-        console.log('CLICK');
         component.triggerAction?.();
       }}
     >
@@ -139,7 +92,7 @@ interface SetTimeModalProps {
 const SetTimeModal: React.FC<SetTimeModalProps> = ({
   component,
   handleComponentData,
-  isOpen,
+  // isOpen,
 }) => {
   const time = usePropertyStore(
     (state) => state.properties['time']?.['timeCapped'],
@@ -155,8 +108,6 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const [gui_description, setGuiDescription] = useState(
     component?.gui_description,
   ); //
-
-  //   console.log(component);
 
   useEffect(() => {
     handleComponentData({
@@ -176,20 +127,6 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     gui_name,
     gui_description,
   ]);
-
-  //   useEffect(() => {
-  //     if (component) {
-  //       setText(component?.text);
-  //     } else {
-  //       setText('');
-  //     }
-  //   }, [component, setText]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      // setText('');
-    }
-  }, [isOpen]);
 
   return (
     <>

@@ -4,8 +4,9 @@ import { immer } from 'zustand/middleware/immer';
 import { devtools } from 'zustand/middleware';
 import { useOpenSpaceApiStore } from './apiStore';
 import { throttle } from '@/utils/throttle';
-import updateTime from '@/utils/time';
+import { updateTime } from '@/utils/time';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
+import { normalizeKeys } from '@/utils/apiHelpers';
 
 type subscription = {
   count: number;
@@ -24,6 +25,7 @@ interface State {
   properties: Record<string, any>;
   favorites: Array<any>;
   setProperty: (name: string, value: any) => void;
+  setProperties: (properties: Record<string, any>) => void;
   setFavorites: (favorites: Array<any>) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
@@ -55,6 +57,14 @@ export const usePropertyStore = create<State>()(
           false,
           'property/set',
         ),
+      setProperties: (properties: Record<string, any>) =>
+        set(
+          (state: any) => {
+            state.properties = { ...state.properties, ...properties };
+          },
+          false,
+          'property/setProperties',
+        ),
       setFavorites: (favorites: Array<any>) =>
         set(
           (state: any) => {
@@ -77,8 +87,9 @@ export const usePropertyStore = create<State>()(
                 subscription,
               };
               const testSetProperty = (propName: string, value: any) => {
-                console.log(propName, value);
-                usePropertyStore.getState().setProperty(propName, value);
+                usePropertyStore
+                  .getState()
+                  .setProperty(propName, normalizeKeys(value));
               };
               const throttledHandleUpdates = throttle(
                 testSetProperty,
@@ -131,7 +142,9 @@ export const usePropertyStore = create<State>()(
               };
               const testSetProperty = (propName: string, value: any) => {
                 // console.log(propName, value);
-                usePropertyStore.getState().setProperty(propName, value);
+                usePropertyStore
+                  .getState()
+                  .setProperty(propName, normalizeKeys(value));
               };
               const throttledHandleUpdates = throttle(
                 testSetProperty,
@@ -167,7 +180,9 @@ export const usePropertyStore = create<State>()(
               };
               const testSetProperty = (propName: string, value: any) => {
                 // console.log(propName, value);
-                usePropertyStore.getState().setProperty(propName, value);
+                usePropertyStore
+                  .getState()
+                  .setProperty(propName, normalizeKeys(value));
               };
               const throttledHandleUpdates = throttle(testSetProperty, 200);
               (async () => {

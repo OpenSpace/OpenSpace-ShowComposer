@@ -6,12 +6,22 @@ import {
   TitleComponent,
   Component,
   SetTimeComponent,
+  BooleanComponent,
+  FlyToComponent,
+  SetFocusComponent,
+  TriggerComponent,
+  FadeComponent,
+  NumberComponent,
 } from '@/store';
 import { toTitleCase } from '@/utils/math';
 import { TitleModal } from './types/static/Title';
 import { SetTimeModal } from './types/preset/SetTime';
-import { FlyToComponent } from '@/store/componentsStore';
 import { FlyToModal } from './types/preset/FlyTo';
+import { FadeModal } from './types/preset/Fade';
+import { FocusModal } from './types/preset/Focus';
+import { BoolModal } from './types/property/Boolean';
+import { TriggerModal } from './types/property/Trigger';
+import { NumberModal } from './types/property/Number';
 import Button from './common/Button';
 
 interface ComponentModalProps {
@@ -29,7 +39,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 }) => {
   const addComponent = useComponentStore((state) => state.addComponent);
   const updateComponent = useComponentStore((state) => state.updateComponent);
-  const removeComponent = useComponentStore((state) => state.removeComponent);
+  // const removeComponent = useComponentStore((state) => state.removeComponent);
   const component = useComponentStore((state) =>
     state.components.find((c) => c.id === componentId),
   );
@@ -49,6 +59,8 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
           type: type || 'default',
           x: 0,
           y: 0,
+          minWidth: 50,
+          minHeight: 50,
           width: 300,
           height: 175,
           gui_description: '',
@@ -96,6 +108,46 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         />
       );
       break;
+    case 'fade':
+      content = (
+        <FadeModal
+          component={component as FadeComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'setfocus':
+      content = (
+        <FocusModal
+          component={component as SetFocusComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'boolean':
+      content = (
+        <BoolModal
+          component={component as BooleanComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'number':
+      content = (
+        <NumberModal
+          component={component as NumberComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'trigger':
+      content = (
+        <TriggerModal
+          component={component as TriggerComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
     // case 'image':
     //   content = <ImageComponent component={component} />;
     //   break;
@@ -110,7 +162,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-1/3 rounded bg-white p-4 shadow-lg">
+      <div className="w-auto min-w-[600px] rounded bg-white p-4 shadow-lg">
         <h2 className="mb-4 text-xl">
           {component
             ? `Edit ${toTitleCase(component.type)} Component`

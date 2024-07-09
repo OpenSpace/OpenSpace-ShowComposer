@@ -25,15 +25,15 @@ const ConnectionSettings = () => {
     }
   }, []);
 
-  const handleUrlChange = (e: any) => {
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   };
 
-  const handlePortChange = (e: any) => {
+  const handlePortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPort(e.target.value);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setConnectionSettings(url, port);
   };
@@ -55,14 +55,17 @@ const ConnectionSettings = () => {
   return (
     <>
       <div className="flex flex-row items-center gap-4">
-        <h1 className="text-white">Connection Status:</h1>
+        <h2 className="mt-4 text-sm font-bold text-black">
+          Connection Status:
+        </h2>
         {renderConnectionState(64)}
       </div>
-      <form onSubmit={handleSubmit} className="text-black">
+      <form onSubmit={handleSubmit} className="gap-2 p-2 text-black">
         <div>
           <label htmlFor="url">URL:</label>
           <input
             type="text"
+            className="m-2 p-2"
             id="url"
             value={url}
             onChange={handleUrlChange}
@@ -73,13 +76,19 @@ const ConnectionSettings = () => {
           <label htmlFor="port">Port:</label>
           <input
             type="text"
+            className="m-2 p-2"
             id="port"
             value={port}
             onChange={handlePortChange}
             placeholder="Enter OpenSpace Port"
           />
         </div>
-        <button type="submit">Apply Settings</button>
+        <button
+          className="w-auto rounded border-[1px] border-black bg-white p-2 text-black"
+          type="submit"
+        >
+          Apply Settings
+        </button>
       </form>
     </>
   );

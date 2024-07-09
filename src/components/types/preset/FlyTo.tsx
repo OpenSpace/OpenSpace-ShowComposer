@@ -9,7 +9,7 @@ import {
   useComponentStore,
 } from '@/store';
 import { FlyToComponent } from '@/store/componentsStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 // import { }
 // react-icon for flight
 import { FiAirplay } from 'react-icons/fi';
@@ -40,6 +40,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({ component }) => {
       });
     }
   }, [
+    component.geo,
     component.alt,
     component.target,
     component.long,
@@ -69,7 +70,7 @@ interface FlyToModalProps {
 const FlyToModal: React.FC<FlyToModalProps> = ({
   component,
   handleComponentData,
-  isOpen,
+  //   isOpen,
 }) => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -77,8 +78,31 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const camera = usePropertyStore(
     (state) => state.properties['camera'] || false,
   );
-
+  type Option = {
+    name: string;
+    shouldGeo: boolean;
+  };
+  const [options, setOptions] = useState<Option[]>();
   const favorites = usePropertyStore((state) => state.favorites);
+  const properties = usePropertyStore((state) => state.properties);
+  useEffect(() => {
+    console.log(favorites);
+    console.log(properties);
+    setOptions(
+      favorites.map((favorite) => {
+        //   console.log(favorite);
+        //   console.log(`${favorite.uri}.Renderable`);
+        //   console.log(properties[`${favorite.uri}.Renderable`]);
+        //   console.log(favorite.tags.includes('earth_satellite'));
+        return {
+          name: favorite.name,
+          shouldGeo: !favorite.tags.includes('earth_satellite'),
+        };
+      }),
+    );
+  }, [favorites]);
+
+  //in array of ooptiosn, find current option and check if it should be geo
 
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore(
@@ -93,19 +117,27 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     };
   }, [connectionState]);
 
-  const [geo, setGeo] = useState(component?.geo || false);
+  const [geo, setGeo] = useState<boolean>(component?.geo || false);
+  const [long, setLong] = useState<number>(component?.long || 0);
+  const [lat, setLat] = useState<number>(component?.lat || 0);
+  const [alt, setAlt] = useState<number>(component?.alt || 0);
+  const [duration, setDuration] = useState<number>(component?.duration || 0);
+  const [target, setTarget] = useState<string>(component?.target || '');
+  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [gui_description, setGuiDescription] = useState<string>(
+    component?.gui_description || '',
+  );
 
-  const [long, setLong] = useState(component?.long || 0);
-  const [lat, setLat] = useState(component?.lat) || 0;
-  const [alt, setAlt] = useState(component?.alt || 0);
-  const [duration, setDuration] = useState(component?.duration || 0);
-  const [target, setTarget] = useState(component?.target || '');
-  //   const [fadeScene, setFadeScene] = useState(component?.fadeScene || false); //
-  const [gui_name, setGuiName] = useState(component?.gui_name); //
-  const [gui_description, setGuiDescription] = useState(
-    component?.gui_description,
-  ); //
-
+  const hasGeoOption: boolean = useMemo(() => {
+    const shouldGeo =
+      options &&
+      target &&
+      options.find((option) => option.name === target)?.shouldGeo;
+    if (!shouldGeo) {
+      setGeo(false);
+    }
+    return shouldGeo || false;
+  }, [target, options]);
   const unitMultiplier = (unit: string) => {
     switch (unit) {
       case 'km':
@@ -127,11 +159,10 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     setLat(camera?.latitude || 0);
     setLong(camera?.longitude || 0);
     setAlt(
-      Math.round(camera?.altitude * unitMultiplier(camera.altitudeUnit)) || 0,
+      Math.round(camera?.altitude * unitMultiplier(camera.altitudeunit)) || 0,
     );
     setGeo(true);
   };
-  //   console.log(component);
 
   useEffect(() => {
     handleComponentData({
@@ -184,11 +215,13 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           <div className="flex flex-row items-center justify-between">
             <div className="text-sm font-medium text-black">Target</div>
             <div className="w-[50%]">
-              <SelectableDropdown
-                options={favorites.map((v) => v.name)}
-                selected={target}
-                setSelected={setTarget}
-              />
+              {options && (
+                <SelectableDropdown
+                  options={options.map((v) => v.name)}
+                  selected={target}
+                  setSelected={setTarget}
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-row items-center justify-between">
@@ -200,10 +233,12 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               onChange={(e) => setDuration(parseFloat(e.target.value))}
             />
           </div>
-
-          <Toggle label="Geo" value={geo} setValue={setGeo} />
-          {geo && (
+          {/* we need to set geo to false and hide it if target is ISS */}
+          {/* {target && ( */}
+          {hasGeoOption && (
             <>
+              <Toggle label="Geo" value={geo} setValue={setGeo} />
+
               <div className="flex flex-row items-center justify-between">
                 <div className="text-sm font-medium text-black">Altitude</div>
                 <input

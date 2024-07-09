@@ -13,12 +13,26 @@ import OpenSpaceApi, {
 import { usePropertyStore } from './propertyStore';
 
 import {
+  PropertyOwner,
+  Property,
   findFavorites,
   flattenPropertyTree,
+  getActionSceneNodes,
   getRenderables,
 } from '@/utils/apiHelpers';
 
 export const rootOwnerKey = '__rootOwner';
+export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
+export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
+export const RetargetAnchorKey =
+  'NavigationHandler.OrbitalNavigator.RetargetAnchor';
+export const RetargetAimKey = 'NavigationHandler.OrbitalNavigator.RetargetAim';
+export const RotationalFrictionKey =
+  'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction';
+export const ZoomFrictionKey =
+  'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
+export const RollFrictionKey =
+  'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
 interface OpenSpaceApiState {
   apiInstance: null | OSApiClass; // Consider using a more specific type if possible
@@ -46,7 +60,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   setError: (error) => set(() => ({ error })),
   setConnectionState: (connectionState) => set(() => ({ connectionState })),
   connect: async (host: string, port: number) => {
-    const apiInstance = OpenSpaceApi(host, port);
+    const apiInstance = OpenSpaceApi(host, port, null);
     set({ apiInstance, connectionState: ConnectionState.CONNECTING });
     apiInstance.onConnect(async () => {
       try {
@@ -55,15 +69,48 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         set({ luaApi, connectionState: ConnectionState.CONNECTED });
         const value = await apiInstance.getProperty(rootOwnerKey);
 
-        const { propertyOwners, properties } = flattenPropertyTree(value);
+        const {
+          propertyOwners,
+          properties,
+        }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
+          flattenPropertyTree(value as PropertyOwner);
         // console.log(propertyOwners);
+        // console.log(
+        //   properties.find((p) => p.uri === 'Scene.Earth.Renderable.Opacity'),
+        // );
         const favorites = findFavorites(propertyOwners);
         usePropertyStore.getState().setFavorites(favorites);
-        console.log(favorites);
-        // const renderables = getRenderables(properties, 'Fadable');
+        // // console.log(favorites);
+        const fadeables: Record<string, any> = getRenderables(
+          properties as Property[],
+          'Fadable',
+        );
+
+        const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
+        // console.log(boolProps);
+        usePropertyStore.getState().setProperties(boolProps);
+        const triggerProps = getActionSceneNodes(
+          properties as Property[],
+          'Trigger',
+        );
+        // console.log(triggerProps);
+        usePropertyStore.getState().setProperties(triggerProps);
+        const numberProps = getActionSceneNodes(
+          properties as Property[],
+          'Number',
+        );
+        console.log(numberProps);
+        usePropertyStore.getState().setProperties(numberProps);
+
+        // const renderables: Record<string, any> = getRenderables(
+        //   properties,
+        //   'Renderable',
+        // );
         // console.log(renderables);
-        // const
-        // console.log(propertyOwners, properties);
+        // renderables.forEach((property) => {
+        //   usePropertyStore.getState().setProperty(property.uri, property);
+        // });
+        usePropertyStore.getState().setProperties(fadeables);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({
@@ -94,13 +141,13 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   },
   subscribeToProperty: (propertyName: string) => {
     const { connectionState, apiInstance } = get();
-    console.log('Connection State: ', connectionState);
-    console.log('API Instance: ', apiInstance);
+    // console.log('Connection State: ', connectionState);
+    // console.log('API Instance: ', apiInstance);
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
-    console.log(propertyName);
+    // console.log(propertyName);
     const subscription = apiInstance.subscribeToProperty(propertyName);
-    console.log(subscription);
+    // console.log(subscription);
     return subscription;
   },
   unsubscribeFromProperty: (subscription: Topic) => {
@@ -125,7 +172,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
-    console.log(topicName);
+    // console.log(topicName);
     const topic = apiInstance.startTopic(topicName, {
       type: 'connect',
     });

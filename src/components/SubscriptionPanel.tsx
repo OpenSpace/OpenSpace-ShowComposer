@@ -1,4 +1,4 @@
-import { usePropertyStore, useOpenSpaceApiStore } from '@/store'; // Adjust the import path accordingly
+import { usePropertyStore } from '@/store'; // Adjust the import path accordingly
 const SubscriptionPanel = () => {
   const topics = usePropertyStore((state) => state.topicSubscriptions);
   const subscriptions = usePropertyStore(
@@ -14,7 +14,7 @@ const SubscriptionPanel = () => {
 
   return (
     <div
-      className="text-black"
+      className="gap-0 text-black"
       style={{
         border: '1px solid #ccc',
         padding: '10px',

@@ -1,23 +1,24 @@
+import { SetFocusComponent } from '@/store/componentsStore';
 import {
-  FadeComponent,
-  usePropertyStore,
-  useOpenSpaceApiStore,
   ConnectionState,
+  useOpenSpaceApiStore,
+  usePropertyStore,
   useComponentStore,
 } from '@/store';
 import { useEffect, useState } from 'react';
-import { triggerFade } from '@/utils/triggerHelpers';
-import { Toggle } from '@/store/componentsStore';
-import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Autocomplete from '@/components/common/AutoComplete';
+import { getStringBetween } from '@/utils/apiHelpers';
 import Information from '@/components/common/Information';
-// import { Button } from '@/components/ui/button';
-
-interface FadeGUIProps {
-  component: FadeComponent;
+import {
+  NavigationAnchorKey,
+  NavigationAimKey,
+  RetargetAnchorKey,
+} from '@/store/apiStore';
+interface FocusGUIProps {
+  component: SetFocusComponent;
 }
 
-const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
+const FocusComponent: React.FC<FocusGUIProps> = ({ component }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -29,16 +30,24 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-  const property = usePropertyStore(
-    (state) => state.properties[component.property],
+  // const property = usePropertyStore(
+  //   (state) => state.properties[component.property],
+  // );
+  const CurrentAnchor = usePropertyStore(
+    (state) => state.properties[NavigationAnchorKey],
   );
+  useEffect(() => {
+    console.log(CurrentAnchor);
+  }, [CurrentAnchor]);
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
-    subscribeToProperty(component.property, 50);
+    subscribeToProperty(NavigationAnchorKey, 1000);
+    // subscribeToProperty(`Scene.${component.property}`, 1000);
     return () => {
-      unsubscribeFromProperty(component.property);
+      // unsubscribeFromProperty(`Scene.${component.property}`);
+      unsubscribeFromProperty(NavigationAnchorKey);
     };
   }, [
     component.property,
@@ -53,22 +62,17 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
       console.log(component);
       updateComponent(component.id, {
         triggerAction: () => {
-          triggerFade(
+          console.log('Triggering action', component.property);
+          luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
+          luaApi.setPropertyValueSingle(
+            NavigationAnchorKey,
             component.property,
-            component.intDuration,
-            component.action,
           );
+          luaApi.setPropertyValueSingle(NavigationAimKey, '');
         },
       });
     }
-  }, [
-    component.id,
-    component.action,
-    component.intDuration,
-    component.action,
-    component.property,
-    luaApi,
-  ]);
+  }, [component.id, component.property, luaApi]);
 
   return (
     <div
@@ -76,16 +80,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
       onClick={() => component.triggerAction?.()}
     >
       <div className="flex flex-row gap-4">
-        <span
-          style={{
-            color: `rgba(0,0,0,${property?.value})`,
-            borderColor: 'black',
-            fontSize: 64,
-          }}
-        >
-          •
-        </span>
-        <span>{`Fade: ${Math.floor(property?.value * 100)}%`}</span>
+        <span>{`Current Anchor: ${CurrentAnchor?.value}`}</span>
       </div>
       <div className="flex flex-row gap-4">
         <h1 className="text-2xl"> {component.gui_name}</h1>
@@ -95,13 +90,19 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
   );
 };
 
-interface FadeModalProps {
-  component: FadeComponent | null;
-  handleComponentData: (data: Partial<FadeComponent>) => void;
+interface FocusModalProps {
+  component: SetFocusComponent | null;
+  handleComponentData: (data: Partial<SetFocusComponent>) => void;
   //   isOpen: boolean;
 }
 
-const FadeModal: React.FC<FadeModalProps> = ({
+/**
+ * FocusModal component.
+ * @param {FocusModalProps} component - The component props.
+ * @param {Function} handleComponentData - The function to handle component data.
+ */
+
+const FocusModal: React.FC<FocusModalProps> = ({
   component,
   handleComponentData,
   //   isOpen,
@@ -112,52 +113,60 @@ const FadeModal: React.FC<FadeModalProps> = ({
 
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
-  const [intDuration, setIntDuration] = useState<number>(
-    component?.intDuration || 0,
-  );
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
-  const [action, setAction] = useState<string>(component?.action || 'on');
+
+  const subscribeToProperty = usePropertyStore(
+    (state) => state.subscribeToProperty,
+  );
+  const unsubscribeFromProperty = usePropertyStore(
+    (state) => state.unsubscribeFromProperty,
+  );
+  const CurrentAnchor = usePropertyStore(
+    (state) => state.properties[NavigationAnchorKey],
+  );
+
+  useEffect(() => {
+    if (connectionState !== ConnectionState.CONNECTED) return;
+    subscribeToProperty(NavigationAnchorKey, 1000);
+    return () => {
+      unsubscribeFromProperty(NavigationAnchorKey);
+    };
+  }, [connectionState, subscribeToProperty, unsubscribeFromProperty]);
+
+  useEffect(() => {
+    setGuiDescription(CurrentAnchor.description.description);
+  }, [CurrentAnchor.description.description]);
 
   useEffect(() => {
     handleComponentData({
       property,
-      intDuration,
-      action: action as Toggle,
       gui_name,
       gui_description,
     });
-  }, [
-    property,
-    intDuration,
-    action,
-    gui_name,
-    gui_description,
-    handleComponentData,
-  ]);
+  }, [property, gui_name, gui_description, handleComponentData]);
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => a.includes('Opacity'))
+    .filter((a) => a.includes('.Renderable'))
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
+
       if (periodCountA !== periodCountB) {
         return periodCountA - periodCountB;
       }
+
       return a.localeCompare(b);
     })
     .reduce((acc: Record<string, string>, key) => {
-      const newValue = key
-        .replace(/Scene.|.Renderable|.Opacity/g, '')
-        .replace(/\./g, ' > ')
-        .trim();
-      acc[newValue] = key;
+      const newValue = getStringBetween(key, 'Scene.', '.Renderable');
+      acc[newValue] = newValue;
       return acc;
     }, {});
 
@@ -167,13 +176,14 @@ const FadeModal: React.FC<FadeModalProps> = ({
         <div className="mb-1 flex flex-col gap-2">
           <div className="flex flex-row items-center justify-between gap-8">
             <div className="text-sm font-medium text-black">Property</div>
+
             <Autocomplete
               options={sortedKeys}
               onChange={(v) => setProperty(sortedKeys[v])}
               initialValue={
-                Object.keys(sortedKeys).find(
-                  (key) => sortedKeys[key] === property,
-                ) as string
+                (Object.keys(sortedKeys).find(
+                  (key) => key === property,
+                ) as string) || ''
               }
             />
           </div>
@@ -183,9 +193,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
               type="text"
               className="w-[50%] rounded border p-2"
               value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
+              onChange={(e) => setGuiName(e.target.value)}
             />
           </div>
           <div className="flex flex-row items-center justify-between">
@@ -196,30 +204,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
               type="textbox"
               className="w-[50%] rounded border p-2"
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiDescription(e.target.value)
-              }
-            />
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">Action Type</div>
-            <div className="w-[50%]">
-              <SelectableDropdown
-                options={['toggle', 'on', 'off']}
-                selected={action}
-                setSelected={setAction}
-              />
-            </div>
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">
-              Interpolation Duration
-            </div>
-            <input
-              type="number"
-              className="w-[50%] rounded border p-2"
-              value={intDuration}
-              onChange={(e) => setIntDuration(parseFloat(e.target.value))}
+              onChange={(e) => setGuiDescription(e.target.value)}
             />
           </div>
         </div>
@@ -228,4 +213,4 @@ const FadeModal: React.FC<FadeModalProps> = ({
   );
 };
 
-export { FadeModal, FadeGUIComponent };
+export { FocusModal, FocusComponent };

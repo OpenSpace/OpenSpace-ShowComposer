@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // import { DndProvider } from 'react-dnd';
 // import { HTML5Backend } from 'react-dnd-html5-backend';
 import ComponentModal from './components/ComponentModal';
@@ -14,14 +14,15 @@ import {
   useSettingsStore,
 } from './store';
 import { v4 as uuidv4 } from 'uuid';
-import { toTitleCase } from './utils/math';
 import PresentModeToggle from './components/PresentModeToggle';
 import SettingsMenu from './components/SettingsMenu';
 import ConnectionSettings from './components/ConnectionSettings';
 import SubscriptionPanel from './components/SubscriptionPanel';
+import BottomDrawer from './components/common/BottomDrawer';
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isBottombarOpen, setIsBottombarOpen] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
@@ -41,6 +42,10 @@ const App = () => {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
 
   const presetComponentTypes: Array<[ComponentType, string]> = [
+    ['number', 'Number'],
+    ['boolean', 'Boolean'],
+    ['trigger', 'Trigger'],
+    ['setfocus', 'Set Focus'],
     ['fade', 'Fade'],
     ['flyto', 'Fly To'],
     ['richtext', 'Rich Text'],
@@ -68,6 +73,8 @@ const App = () => {
       gui_name: '',
       x: 0,
       y: 0,
+      minHeight: 150,
+      minWidth: 150,
       width: 425,
       height: type == 'timepanel' ? 250 : 600,
     });
@@ -130,7 +137,7 @@ const App = () => {
           )}
 
           <div
-            className={`fixed left-0 top-0 z-30 h-full w-1/4 transform overflow-auto bg-gray-800 text-white transition-all duration-300 ease-in-out ${
+            className={`fixed left-0 top-0 z-30 h-full w-1/4 max-w-[400px] transform overflow-auto bg-gray-800 text-white transition-all duration-300 ease-in-out ${
               isSidebarOpen && !isPresentMode
                 ? 'translate-x-0'
                 : '-translate-x-full'
@@ -138,7 +145,9 @@ const App = () => {
           >
             {!isPresentMode && (
               <div className="h-full w-full bg-gray-200 p-4">
-                <h2 className="text-xl font-bold">Youth Learner Interface</h2>
+                <h2 className="text-xl font-bold text-black">
+                  Youth Learner Interface
+                </h2>
 
                 <div className="mt-4 flex flex-col gap-2">
                   <div className="flex gap-2">
@@ -156,28 +165,45 @@ const App = () => {
                     </button>
                   </div>
                   <ConnectionSettings />
-                  <SubscriptionPanel />
                 </div>
                 <div className="flex h-full flex-col">
-                  <h2 className="mt-4 text-xs font-bold">Preset Components</h2>
-                  <div className="mt-4">
+                  <h2 className="mt-4 text-xs font-bold text-black">
+                    Preset Components
+                  </h2>
+                  <div className="mt-4 flex flex-row flex-wrap justify-between gap-2">
                     {presetComponentTypes.map((type) => (
                       <button
                         key={type[0]}
-                        className="mb-2 w-full rounded border-[1px] border-black bg-white p-2 text-black"
+                        className="flex min-w-[165px] flex-row items-center rounded border-[1px] border-black bg-white p-2 text-black"
                         onClick={() =>
                           type[0] == 'timepanel' || type[0] == 'navpanel'
                             ? handleImmediateAddComponent(type[0])
                             : handleAddComponent(type[0])
                         }
                       >
-                        Add {type[1]}
+                        {/* svg for PLUS sign */}
+
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mr-2 inline-block h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={4}
+                            d="M12 4v16m8-8H4"
+                          />
+                        </svg>
+                        {type[1]}
                       </button>
                     ))}
                   </div>
                   <div className="fixed bottom-0">
                     <button
-                      className="mb-2 w-full rounded bg-red-500 p-2 text-white"
+                      className="mb-2 w-auto rounded bg-red-500 p-2 text-white"
                       onClick={handleDeleteAllClick}
                     >
                       Delete All Components
@@ -188,8 +214,8 @@ const App = () => {
             )}
           </div>
           <div
-            className={`flex flex-1 ${
-              isSidebarOpen && !isPresentMode ? 'ml-[25vw]' : 'ml-0'
+            className={`right flex flex-1 ${
+              isSidebarOpen && !isPresentMode ? 'ml-[25vw] ' : 'ml-0'
             } transition-all duration-300 `}
           >
             <div
@@ -216,6 +242,35 @@ const App = () => {
                 </DroppableWorkspace>
               </div>
             </div>
+            {!isPresentMode && (
+              <button
+                className="fixed bottom-8 left-8 z-40 rounded-full bg-gray-800 p-4 text-white"
+                onClick={() => setIsBottombarOpen(!isBottombarOpen)}
+              >
+                {/*  svg bottom/up arrow */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+              </button>
+            )}
+
+            <BottomDrawer
+              isOpen={isBottombarOpen}
+              onClose={() => setIsBottombarOpen(false)}
+            >
+              <SubscriptionPanel />
+            </BottomDrawer>
           </div>
           <ComponentModal
             isOpen={isModalOpen}

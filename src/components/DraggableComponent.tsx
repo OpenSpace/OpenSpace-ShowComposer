@@ -2,12 +2,19 @@
 import React, { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { Rnd } from 'react-rnd';
+import { DraggableEvent, DraggableData } from 'react-draggable';
 import {
   useComponentStore,
   Component,
   TitleComponent,
   useSettingsStore,
   SetTimeComponent as SetTimeType,
+  FadeComponent,
+  FlyToComponent,
+  SetFocusComponent,
+  BooleanComponent,
+  TriggerComponent,
+  NumberComponent,
 } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import { TitleGUIComponent } from './types/static/Title';
@@ -16,7 +23,12 @@ import TimeDatePicker from './types/static/TimeDatePicker';
 import { SetTimeComponent } from './types/preset/SetTime';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import { FlyToGUIComponent } from './types/preset/FlyTo';
-import { FlyToComponent } from '@/store/componentsStore';
+import { FadeGUIComponent } from './types/preset/Fade';
+import { FocusComponent } from './types/preset/Focus';
+import { BoolGUIComponent } from './types/property/Boolean';
+import { TriggerGUIComponent } from './types/property/Trigger';
+import { NumberGUIComponent } from './types/property/Number';
+
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
 interface DraggableComponentProps {
@@ -63,7 +75,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleDragStop = (e: any, d: any) => {
+  const handleDragStop = (e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
     if (selectedComponents.includes(component.id)) {
       const deltaX = d.x - component.x;
@@ -105,29 +117,49 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     case 'title':
       content = <TitleGUIComponent component={component as TitleComponent} />;
       break;
+    // case 'video':
+    //   content = <VideoComponent component={component} />;
+    //   break;
+    // case 'image':
+    //   content = <ImageComponent component={component}/>
+    //   break;
+    // case 'richtext':
+    //   content = <div>Rich text component</div>;
+    //   break;
     case 'timepanel':
       content = <TimeDatePicker />;
       // content = <SimulationIncrement />;
       // content = <div>Unknown component type</div>;
-
       break;
     case 'settime':
       content = <SetTimeComponent component={component as SetTimeType} />;
       break;
-    // case 'video':
-    //   content = <VideoComponent component={component} />;
-    //   break;
     case 'navpanel':
       content = <FlightControlPanel />;
       break;
     case 'flyto':
       content = <FlyToGUIComponent component={component as FlyToComponent} />;
       break;
-    // case 'video':
-    //   content = <VideoComponent component={component} />;
-    //   break;
+    case 'fade':
+      content = <FadeGUIComponent component={component as FadeComponent} />;
+      break;
+    case 'setfocus':
+      content = <FocusComponent component={component as SetFocusComponent} />;
+      break;
+    case 'boolean':
+      content = <BoolGUIComponent component={component as BooleanComponent} />;
+      break;
+    case 'number':
+      content = <NumberGUIComponent component={component as NumberComponent} />;
+      break;
+    case 'trigger':
+      content = (
+        <TriggerGUIComponent component={component as TriggerComponent} />
+      );
+      break;
     default:
       content = <div>Unknown component type</div>;
+      break;
   }
   const isOverlapped = overlappedComponents[component.id]?.length > 0;
   const isSelected = selectedComponents.includes(component.id);
@@ -146,7 +178,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         onDragStart={() => {
           setIsDragging(true);
         }}
-        onDrag={(_e, d) => {
+        onDrag={(_e: DraggableEvent, d: DraggableData) => {
           if (selectedComponents.includes(component.id)) {
             const deltaX = d.x - component.x;
             const deltaY = d.y - component.y;
@@ -163,7 +195,9 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           //   y: d.y,
           // });
         }}
-        onDragStop={handleDragStop}
+        onDragStop={(e: DraggableEvent, d: DraggableData) =>
+          handleDragStop(e, d)
+        }
         onResizeStop={(_e, _direction, ref, _delta, position) => {
           updateComponent(component.id, {
             width: parseInt(ref.style.width),
@@ -176,8 +210,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         disableDragging={isPresentMode} // Conditionally disable dragging
         enableResizing={!isPresentMode ? undefined : false} // Conditionally disable resizing
         resizeGrid={[25, 25]}
-        minHeight={100}
-        minWidth={100}
+        minHeight={component.minHeight || 100}
+        minWidth={component.minWidth || 100}
         // bounds="parent"
         onClick={handleClick}
         className={`

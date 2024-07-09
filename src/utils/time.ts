@@ -1,5 +1,5 @@
 import { throttle } from './throttle';
-
+import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
 export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   // Ensure we don't have white spaces
@@ -46,18 +46,14 @@ interface TimeState {
   hasNextDeltaTimeStep?: boolean;
   hasPrevDeltaTimeStep?: boolean;
 }
-
+function isDate(date: any): date is Date {
+  return date instanceof Date;
+}
 const updateTime = (newTimeState: TimeState) => {
   //   const { newTime } = newTimeState;
   const { time: newTime } = newTimeState;
 
   const newState = { ...newTimeState };
-  //   console.log(newTime);
-  //   console.log(newState);
-  //check if newTime is string or Date
-  function isDate(date: any): date is Date {
-    return date instanceof Date;
-  }
 
   if (newTime !== undefined) {
     if (isDate(newTime)) {
@@ -86,33 +82,53 @@ const updateTime = (newTimeState: TimeState) => {
       updateCappedTime();
     }
   }
-  //   console.log(newState.time);
-  //   console.log(newState.timeCapped);
-  //   if (deltaTime !== undefined) {
-  //     newState.deltaTime = deltaTime;
-  //   }
-  //   if (targetDeltaTime !== undefined) {
-  //     newState.targetDeltaTime = targetDeltaTime;
-  //   }
-  //   if (isPaused !== undefined) {
-  //     newState.isPaused = isPaused;
-  //   }
-  //   if (hasNextStep !== undefined) {
-  //     newState.hasNextDeltaTimeStep = hasNextStep;
-  //   }
-  //   if (hasPrevStep !== undefined) {
-  //     newState.hasPrevDeltaTimeStep = hasPrevStep;
-  //   }
-  //   if (nextStep !== undefined) {
-  //     newState.nextDeltaTimeStep = nextStep;
-  //   }
-  //   if (prevStep !== undefined) {
-  //     newState.prevDeltaTimeStep = prevStep;
-  //   }
-  //   if (deltaTimeSteps !== undefined) {
-  //     newState.deltaTimeSteps = deltaTimeSteps;
-  //   }
-  //   console.log(newState);
   return newState;
 };
-export default updateTime;
+
+async function jumpToTime(
+  newTime: Date,
+  interpolate: boolean,
+  fadeTime: number,
+  fadeScene: boolean,
+) {
+  let timeNow = usePropertyStore.getState().properties['time']?.['timeCapped'];
+  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+
+  if (!isDate(timeNow)) {
+    timeNow = new Date(timeNow);
+  }
+  if (!isDate(newTime)) {
+    newTime = new Date(newTime);
+  }
+  const timeDiffSeconds = Math.round(
+    Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000,
+  );
+
+  console.log(timeDiffSeconds);
+  const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
+  if (fadeScene && diffBiggerThanADay && interpolate) {
+    const promise = new Promise((resolve) => {
+      luaApi.setPropertyValueSingle(
+        'RenderEngine.BlackoutFactor',
+        0,
+        fadeTime,
+        'QuadraticEaseOut',
+      );
+      setTimeout(() => resolve('done!'), fadeTime * 1000);
+    });
+    await promise;
+    luaApi.time.setTime(newTime);
+    luaApi.setPropertyValueSingle(
+      'RenderEngine.BlackoutFactor',
+      1,
+      fadeTime,
+      'QuadraticEaseIn',
+    );
+  } else if (!interpolate) {
+    luaApi.time.setTime(newTime);
+  } else {
+    luaApi.time.interpolateTime(newTime, fadeTime);
+  }
+}
+
+export { updateTime, jumpToTime, isDate };
