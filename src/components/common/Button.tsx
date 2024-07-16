@@ -32,7 +32,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
     auto: 'w-auto',
   };
 
-  const baseClasses = `rounded text-white flex flex-row items-center justify-center px-4 py-2 font-bold${widthClasses[width]} ${styleOptions.default} ${className}`;
+  const baseClasses = `rounded text-white flex flex-row items-center justify-center px-4 py-2 font-bold ${widthClasses[width]} ${styleOptions.default} ${className}`;
 
   return (
     <button className={baseClasses} onClick={onClick}>

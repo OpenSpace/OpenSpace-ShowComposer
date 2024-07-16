@@ -60,7 +60,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   setError: (error) => set(() => ({ error })),
   setConnectionState: (connectionState) => set(() => ({ connectionState })),
   connect: async (host: string, port: number) => {
-    const apiInstance = OpenSpaceApi(host, port, null);
+    const apiInstance = OpenSpaceApi(host, port);
     set({ apiInstance, connectionState: ConnectionState.CONNECTING });
     apiInstance.onConnect(async () => {
       try {

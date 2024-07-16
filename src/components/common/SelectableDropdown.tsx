@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 
+type Option = {
+  value: string;
+  label: string;
+};
+
+//function to check if type is string or Option
+function isOption(item: string | Option): item is Option {
+  return (item as Option).value !== undefined;
+}
+
 interface SelectableDropdownProps {
-  options: string[];
+  options: string[] | Option[];
   selected: string;
   setSelected: (value: string) => void;
 }
@@ -30,13 +40,13 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
       </button>
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full rounded-md border border-gray-300 bg-white">
-          {options.map((item: string, index: number) => (
+          {options.map((item: string | Option, index: number) => (
             <div
               key={index}
               className="cursor-pointer p-2 text-right hover:bg-gray-100"
-              onClick={() => handleSelect(item)}
+              onClick={() => handleSelect(isOption(item) ? item.value : item)}
             >
-              {item}
+              {isOption(item) ? item.label : item}
             </div>
           ))}
         </div>

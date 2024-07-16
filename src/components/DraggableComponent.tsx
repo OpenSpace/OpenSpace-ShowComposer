@@ -1,5 +1,5 @@
 // DraggableComponent.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { Rnd } from 'react-rnd';
 import { DraggableEvent, DraggableData } from 'react-draggable';
@@ -15,6 +15,9 @@ import {
   BooleanComponent,
   TriggerComponent,
   NumberComponent,
+  VideoComponent,
+  RichTextComponent,
+  MultiComponent,
 } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import { TitleGUIComponent } from './types/static/Title';
@@ -28,6 +31,9 @@ import { FocusComponent } from './types/preset/Focus';
 import { BoolGUIComponent } from './types/property/Boolean';
 import { TriggerGUIComponent } from './types/property/Trigger';
 import { NumberGUIComponent } from './types/property/Number';
+import { VideoGUIComponent } from './types/static/Video';
+import { RichTextGUIComponent } from './types/static/RichText';
+import { MultiGUIComponent } from './types/preset/Multi';
 
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
@@ -50,6 +56,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
   const updateComponent = useComponentStore((state) => state.updateComponent);
   const checkOverlap = useComponentStore((state) => state.checkOverlap);
+  const getComponentById = useComponentStore((state) => state.getComponentById);
+
   const overlappedComponents = useComponentStore(
     (state) => state.overlappedComponents,
   );
@@ -60,7 +68,6 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   const deselectComponent = useComponentStore(
     (state) => state.deselectComponent,
   );
-  const components = useComponentStore((state) => state.components);
 
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
@@ -75,13 +82,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleDragStop = (e: DraggableEvent, d: DraggableData) => {
+  const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
     if (selectedComponents.includes(component.id)) {
       const deltaX = d.x - component.x;
       const deltaY = d.y - component.y;
       selectedComponents.forEach((id) => {
-        const comp = components.find((c) => c.id === id);
+        const comp = getComponentById(id);
         if (comp) {
           updateComponent(id, {
             x: roundToNearest(comp.x + deltaX, 25),
@@ -113,19 +120,21 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   };
 
   let content;
-  switch (component.type) {
+  switch (component?.type) {
     case 'title':
       content = <TitleGUIComponent component={component as TitleComponent} />;
       break;
-    // case 'video':
-    //   content = <VideoComponent component={component} />;
-    //   break;
+    case 'video':
+      content = <VideoGUIComponent component={component as VideoComponent} />;
+      break;
     // case 'image':
     //   content = <ImageComponent component={component}/>
     //   break;
-    // case 'richtext':
-    //   content = <div>Rich text component</div>;
-    //   break;
+    case 'richtext':
+      content = (
+        <RichTextGUIComponent component={component as RichTextComponent} />
+      );
+      break;
     case 'timepanel':
       content = <TimeDatePicker />;
       // content = <SimulationIncrement />;
@@ -157,33 +166,38 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         <TriggerGUIComponent component={component as TriggerComponent} />
       );
       break;
+    case 'multi':
+      content = <MultiGUIComponent component={component as MultiComponent} />;
+      break;
     default:
       content = <div>Unknown component type</div>;
       break;
   }
-  const isOverlapped = overlappedComponents[component.id]?.length > 0;
-  const isSelected = selectedComponents.includes(component.id);
+  const isOverlapped = overlappedComponents[component?.id]?.length > 0;
+  const isSelected = selectedComponents.includes(component?.id);
+  const isMultiLoading = component?.isMulti?.includes('pending');
+  const isHidden = component?.isMulti?.includes('true');
 
   return (
     <>
       <Rnd
         dragHandleClassName={isSelected ? '' : 'drag-handle'}
         default={{
-          x: component.x,
-          y: component.y,
-          width: component.width,
-          height: component.height,
+          x: component?.x,
+          y: component?.y,
+          width: component?.width,
+          height: component?.height,
         }}
-        position={{ x: component.x, y: component.y }}
+        position={{ x: component?.x, y: component?.y }}
         onDragStart={() => {
           setIsDragging(true);
         }}
         onDrag={(_e: DraggableEvent, d: DraggableData) => {
-          if (selectedComponents.includes(component.id)) {
-            const deltaX = d.x - component.x;
-            const deltaY = d.y - component.y;
+          if (selectedComponents.includes(component?.id)) {
+            const deltaX = d.x - component?.x;
+            const deltaY = d.y - component?.y;
             selectedComponents.forEach((id) => {
-              const comp = components.find((c) => c.id === id);
+              const comp = getComponentById(id);
               if (comp) {
                 updateComponent(id, { x: comp.x + deltaX, y: comp.y + deltaY });
               }
@@ -210,25 +224,30 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         disableDragging={isPresentMode} // Conditionally disable dragging
         enableResizing={!isPresentMode ? undefined : false} // Conditionally disable resizing
         resizeGrid={[25, 25]}
-        minHeight={component.minHeight || 100}
-        minWidth={component.minWidth || 100}
+        minHeight={component?.minHeight || 100}
+        minWidth={component?.minWidth || 100}
         // bounds="parent"
         onClick={handleClick}
+        style={{
+          zIndex: isSelected ? 50 : 1,
+        }}
         className={`
+          ${isHidden ? '!hidden' : ''}
           ${
             isPresentMode
               ? 'border-0 bg-opacity-0'
-              : 'border bg-gray-300 bg-opacity-70'
+              : 'border-2 border-dashed bg-gray-300 bg-opacity-25'
           }
           absolute cursor-move rounded${
             isDragging || isSelected ? 'z-50 border-blue-500 shadow-lg ' : ''
           } ${
             isOverlapped ? 'border-red-500 bg-red-200' : ''
           } transition-colors duration-300
+          ${isMultiLoading ? 'opacity-25' : 'opacity-100'}
           `}
       >
         {!isPresentMode && (
-          <div className="drag-handle group absolute z-[99] flex h-[30px] w-full cursor-move items-center justify-end bg-gray-400 px-4 ">
+          <div className="drag-handle group absolute z-[99] flex h-[30px] w-full cursor-move items-center justify-end bg-gray-400 bg-opacity-50 px-4 ">
             <div className="absolute flex w-full flex-col items-center gap-1">
               <div className="flex gap-2">
                 {[...Array(3)].map((_, index) => (
@@ -279,7 +298,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           {!isPresentMode && (
             <div className="absolute bottom-0 left-0 w-full p-2 text-xs">
               <p>
-                ID: <span className="text-xs font-bold">{component.id}</span>
+                ID: <span className="text-xs font-bold">{component?.id}</span>
               </p>
             </div>
           )}
@@ -293,7 +312,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           isOpen={isDeleteModalOpen}
           onClose={handleDeleteCancel}
           onConfirm={handleDeleteConfirm}
-          message={`Are you sure you want to delete the component "${component.gui_name}"?`}
+          message={`Are you sure you want to delete the component "${component?.gui_name}"?`}
         />
       </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   ConnectionState,
   usePropertyStore,
@@ -8,19 +8,19 @@ import {
 import DateComponent from '@/components/timepicker/DateComponent';
 
 const TimeDatePicker = () => {
-  const [pendingTime, setPendingTime] = useState(new Date());
+  // const [pendingTime, setPendingTime] = useState(new Date());
 
   // const [date, setDate] = useState(new Date());
 
   // const [dateString, setDateString] = useState(new Date());
 
-  const [simulationSpeed, setSimulationSpeed] = useState(1);
-  const [displayUnit, setDisplayUnit] = useState('seconds'); // Step 1: Add state for display unit
+  // const [simulationSpeed, setSimulationSpeed] = useState(1);
+  // const [displayUnit, setDisplayUnit] = useState('seconds'); // Step 1: Add state for display unit
 
-  const handleDateChange = (newDate: Date) => {
-    setDate(newDate);
-    // Update simulation time based on newDate
-  };
+  // const handleDateChange = (newDate: Date) => {
+  //   setDate(newDate);
+  //   // Update simulation time based on newDate
+  // };
 
   const Steps = {
     seconds: 'Seconds',

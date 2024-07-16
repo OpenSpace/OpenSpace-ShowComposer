@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { PropsWithChildren, ButtonHTMLAttributes } from 'react';
 import { IconContext } from 'react-icons';
 import { IconType } from 'react-icons/lib';
 
+// can we add generic button props
+// can we add generic button props
 // Define a type for the IconButton props
-interface IconButtonProps {
+type IconButtonProps = PropsWithChildren<
+  ButtonHTMLAttributes<HTMLButtonElement>
+> & {
   icon: IconType; // Using IconType for the icon prop
   size?: '4' | '5' | '6' | '7' | '8'; // Restrict size to specific string literals
   onClick?: () => void; // Optional click handler
-}
+  classNames?: string; // Optional class names
+};
 
 // IconButton component
+
 const IconButton: React.FC<IconButtonProps> = ({
   icon: Icon,
   size = '6',
   onClick,
+  classNames,
+  ...props
 }) => {
   // Size mapping to Tailwind's width and height classes
   const sizeClass =
@@ -28,7 +36,10 @@ const IconButton: React.FC<IconButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center rounded-full hover:bg-gray-100 ${sizeClass}`}
+      className={`flex items-center justify-center rounded-full hover:bg-gray-100 ${sizeClass}  ${
+        classNames || ''
+      }`}
+      {...props}
     >
       <IconContext.Provider value={{ className: `${sizeClass}` }}>
         <Icon />

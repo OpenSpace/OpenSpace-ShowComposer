@@ -1,5 +1,5 @@
 // ComponentModal.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ComponentType,
   useComponentStore,
@@ -12,9 +12,12 @@ import {
   TriggerComponent,
   FadeComponent,
   NumberComponent,
+  VideoComponent,
+  RichTextComponent,
 } from '@/store';
 import { toTitleCase } from '@/utils/math';
 import { TitleModal } from './types/static/Title';
+import { RichTextModal } from './types/static/RichText';
 import { SetTimeModal } from './types/preset/SetTime';
 import { FlyToModal } from './types/preset/FlyTo';
 import { FadeModal } from './types/preset/Fade';
@@ -22,60 +25,145 @@ import { FocusModal } from './types/preset/Focus';
 import { BoolModal } from './types/property/Boolean';
 import { TriggerModal } from './types/property/Trigger';
 import { NumberModal } from './types/property/Number';
+import { VideoModal } from './types/static/Video';
+import { MultiModal } from './types/preset/Multi';
+
 import Button from './common/Button';
+import { MultiComponent } from '@/store/componentsStore';
 
 interface ComponentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  componentId?: string | null;
+  componentId?: Component['id'] | null;
   type: ComponentType | '';
+  isMulti?: boolean;
+  initialData?: Partial<Component>;
 }
-
+enum AsyncStatus {
+  False = 'false',
+  True = 'true',
+  Pending = 'pending',
+}
 const ComponentModal: React.FC<ComponentModalProps> = ({
   isOpen,
   onClose,
   componentId,
   type,
+  isMulti = false,
+  initialData = {},
 }) => {
   const addComponent = useComponentStore((state) => state.addComponent);
+  const getComponentById = useComponentStore((state) => state.getComponentById);
   const updateComponent = useComponentStore((state) => state.updateComponent);
-  // const removeComponent = useComponentStore((state) => state.removeComponent);
-  const component = useComponentStore((state) =>
-    state.components.find((c) => c.id === componentId),
+  const asyncPreSubmitOperation = useComponentStore(
+    (state) => state.asyncPreSubmitOperation,
   );
+  const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
+    AsyncStatus.False,
+  );
+  const currentPage = useComponentStore((state) => state.currentPage);
 
-  const [componentData, setComponentData] = useState<Partial<Component>>({});
+  // const removeComponent = useComponentStore((state) => state.removeComponent);
+  const components = useComponentStore((state) => state.components);
+  const component = componentId ? components[componentId] : null;
 
-  const handleSubmit = useCallback(() => {
+  const [componentData, setComponentData] = useState<Partial<Component>>({
+    ...initialData,
+  });
+
+  useEffect(() => {
+    if (asyncOperationStatus == AsyncStatus.Pending && componentData) {
+      // handleSubmit();
+      setAsyncOperationStatus(AsyncStatus.True);
+    }
+  }, [asyncOperationStatus, componentData]);
+
+  const handleSubmit = useCallback(async () => {
     if (componentId) {
-      if (component) {
-        console.log('componentData', componentData);
-        updateComponent(componentId, {
-          ...componentData,
-        });
+      if (useComponentStore.getState().asyncPreSubmitOperation) {
+        await useComponentStore
+          .getState()
+          .executeAndResetAsyncPreSubmitOperation();
+        setAsyncOperationStatus(AsyncStatus.Pending);
       } else {
-        addComponent({
-          id: componentId,
-          type: type || 'default',
-          x: 0,
-          y: 0,
-          minWidth: 50,
-          minHeight: 50,
-          width: 300,
-          height: 175,
-          gui_description: '',
-          gui_name: '',
-          ...componentData,
-        });
+        if (component) {
+          if (component.type == 'multi') {
+            let merged = (component as MultiComponent).components.concat(
+              (componentData as MultiComponent).components,
+            );
+            merged = Array.from(new Set(merged));
+            merged.forEach((c) => {
+              console.log(
+                'SAVING THIS CHILDERN: ',
+                getComponentById(c.component),
+              );
+              if (getComponentById(c.component)?.isMulti == 'pendingSave') {
+                console.log(c.component, 'IS PENDING SAVE');
+                updateComponent(c.component, { isMulti: 'true' });
+              } else if (
+                getComponentById(c.component)?.isMulti == 'pendingDelete'
+              ) {
+                console.log(c.component, 'IS PENDING DELETE');
+                updateComponent(c.component, { isMulti: 'false' });
+              }
+            });
+          }
+          updateComponent(componentId, {
+            ...componentData,
+          });
+        } else {
+          addComponent({
+            id: componentId,
+            type: type || 'default',
+            isMulti: initialData.isMulti || 'false',
+            x: 0,
+            y: 0,
+            minWidth: 50,
+            minHeight: 50,
+            width: 300,
+            height: 175,
+            gui_description: '',
+            gui_name: '',
+            ...componentData,
+          });
+          if (type == 'multi') {
+            (componentData as MultiComponent).components?.forEach((c) => {
+              if (getComponentById(c.component)?.isMulti == 'pendingSave') {
+                updateComponent(c.component, { isMulti: 'true' });
+              } else if (
+                getComponentById(c.component)?.isMulti == 'pendingDelete'
+              ) {
+                updateComponent(c.component, { isMulti: 'false' });
+              }
+            });
+          }
+        }
+        onClose();
       }
     }
-    onClose();
-  }, [componentData, component]);
+  }, [componentData, component, asyncPreSubmitOperation]);
+
+  useEffect(() => {
+    if (asyncOperationStatus == AsyncStatus.True) {
+      handleSubmit();
+      setAsyncOperationStatus(AsyncStatus.False);
+    }
+  }, [asyncOperationStatus, handleSubmit]);
 
   const handleCancel = () => {
-    // if (component) {
-    //   removeComponent(componentId!);
-    // }
+    if ((component ? component.type : type) == 'multi') {
+      let merged = (component as MultiComponent).components.concat(
+        (componentData as MultiComponent).components,
+      );
+      merged = Array.from(new Set(merged));
+      merged.forEach((c) => {
+        if (getComponentById(c.component)?.isMulti == 'pendingSave') {
+          updateComponent(c.component, { isMulti: 'false' });
+        } else if (getComponentById(c.component)?.isMulti == 'pendingDelete') {
+          updateComponent(c.component, { isMulti: 'true' });
+        }
+      });
+    }
     onClose();
   };
 
@@ -151,9 +239,31 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
     // case 'image':
     //   content = <ImageComponent component={component} />;
     //   break;
-    // case 'video':
-    //   content = <VideoComponent component={component} />;
-    //   break;
+    case 'video':
+      content = (
+        <VideoModal
+          component={component as VideoComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'richtext':
+      content = (
+        <RichTextModal
+          component={component as RichTextComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'multi':
+      content = (
+        <MultiModal
+          component={component as MultiComponent}
+          handleComponentData={setComponentData}
+          isOpen={isOpen}
+        />
+      );
+      break;
     default:
       content = <div>Unknown component type</div>;
   }

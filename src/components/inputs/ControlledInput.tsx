@@ -4,8 +4,9 @@ import { MdCancel } from 'react-icons/md';
 // Define the component's props type
 type ControlledInputProps = {
   label?: string;
+  type?: string;
   placeholder: string; // placeholder is required
-  onChange?: (value: string) => void;
+  onChange?: (value: string | number) => void;
   value?: string | number;
   step?: number;
   loadingState?: boolean;
@@ -25,6 +26,7 @@ const ControlledInput: React.FC<ControlledInputProps> = ({
   clearable,
   onEnter,
   className,
+  type,
 }) => {
   // Handle change event
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +50,7 @@ const ControlledInput: React.FC<ControlledInputProps> = ({
       {label && <label className="mb-2">{label}</label>}
       <div className="relative">
         <input
-          type="text"
+          type={type || 'text'}
           placeholder={placeholder}
           value={value}
           onChange={handleChange}

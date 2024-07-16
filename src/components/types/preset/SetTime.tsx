@@ -12,6 +12,7 @@ import { SetTimeComponent as SetTimeType } from '@/store';
 import { isDate, jumpToTime } from '@/utils/time';
 
 import { FiClock } from 'react-icons/fi'; // Example icon, choose as per need
+import ImageUpload from '@/components/common/ImageUpload';
 
 interface SetTimeComponentProps {
   component: SetTimeType;
@@ -65,6 +66,12 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   return (
     <div
       className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
       onClick={() => {
         component.triggerAction?.();
       }}
@@ -108,6 +115,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const [gui_description, setGuiDescription] = useState(
     component?.gui_description,
   ); //
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
+  );
 
   useEffect(() => {
     handleComponentData({
@@ -117,6 +127,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       fadeScene,
       gui_name,
       gui_description,
+      backgroundImage,
     });
   }, [
     componentTime,
@@ -126,6 +137,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     fadeScene,
     gui_name,
     gui_description,
+    backgroundImage,
   ]);
 
   return (
@@ -203,6 +215,10 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             setValue={setFadeScene}
           />
         </div>
+        <ImageUpload
+          value={backgroundImage}
+          onChange={(v) => setBackgroundImage(v)}
+        />
       </div>
     </>
   );

@@ -1,8 +1,11 @@
+import { useComponentStore } from '@/store';
 import { useState } from 'react';
 
 const SettingsMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const addPage = useComponentStore((state) => state.addPage);
+  const currentPage = useComponentStore((state) => state.currentPage);
+  const deletePage = useComponentStore((state) => state.deletePage);
   return (
     <div className="relative">
       <button
@@ -54,9 +57,17 @@ const SettingsMenu = () => {
       >
         {/* Menu content */}
         <ul className="py-1">
-          <li className="px-4 py-2 hover:bg-gray-100">Menu Item 1</li>
-          <li className="px-4 py-2 hover:bg-gray-100">Menu Item 2</li>
-          <li className="px-4 py-2 hover:bg-gray-100">Menu Item 3</li>
+          <li onClick={addPage} className="px-4 py-2 hover:bg-gray-100">
+            Create New Page
+          </li>
+          <li
+            onClick={() => deletePage(currentPage)}
+            className="px-4 py-2 hover:bg-gray-100"
+          >
+            Delete Page
+          </li>
+          {/* <li className="px-4 py-2 hover:bg-gray-100">Menu Item 2</li>
+          <li className="px-4 py-2 hover:bg-gray-100">Menu Item 3</li> */}
         </ul>
       </div>
     </div>

@@ -11,6 +11,7 @@ import Autocomplete from '@/components/common/AutoComplete';
 import Information from '@/components/common/Information';
 import { triggerNumber } from '@/utils/triggerHelpers';
 import Slider from '@/components/inputs/Slider';
+import ImageUpload from '@/components/common/ImageUpload';
 
 interface NumberGUIProps {
   component: NumberComponent;
@@ -107,6 +108,9 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
+  );
   const [min, setMin] = useState<number>(component?.min || 0.1);
   const [max, setMax] = useState<number>(component?.max || 100);
   const [step, setStep] = useState<number>(component?.min || 0.1);
@@ -145,6 +149,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       step,
       gui_name,
       gui_description,
+      backgroundImage,
     });
   }, [
     property,
@@ -153,6 +158,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
     step,
     gui_name,
     gui_description,
+    backgroundImage,
     handleComponentData,
   ]);
 
@@ -247,6 +253,10 @@ const NumberModal: React.FC<NumberModalProps> = ({
             }
           />
         </div>
+        <ImageUpload
+          value={backgroundImage}
+          onChange={(v) => setBackgroundImage(v)}
+        />
       </div>
     </div>
   );

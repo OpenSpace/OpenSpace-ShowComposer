@@ -14,11 +14,16 @@ import {
   NavigationAimKey,
   RetargetAnchorKey,
 } from '@/store/apiStore';
+import ImageUpload from '@/components/common/ImageUpload';
 interface FocusGUIProps {
   component: SetFocusComponent;
+  shouldRender?: boolean;
 }
 
-const FocusComponent: React.FC<FocusGUIProps> = ({ component }) => {
+const FocusComponent: React.FC<FocusGUIProps> = ({
+  component,
+  shouldRender = true,
+}) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -74,20 +79,28 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component }) => {
     }
   }, [component.id, component.property, luaApi]);
 
-  return (
+  return shouldRender ? (
     <div
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="flex flex-row gap-4">
-        <span>{`Current Anchor: ${CurrentAnchor?.value}`}</span>
-      </div>
-      <div className="flex flex-row gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>
-        <Information content={component.gui_description} />
+      <div className="bg-black bg-opacity-25 p-4 text-white">
+        <div className="flex flex-row gap-4">
+          <span>{`Current Anchor: ${CurrentAnchor?.value}`}</span>
+        </div>
+        <div className="flex flex-row gap-4">
+          <h1 className="text-2xl"> {component.gui_name}</h1>
+          <Information content={component.gui_description} />
+        </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 interface FocusModalProps {
@@ -117,6 +130,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
+  );
 
   const subscribeToProperty = usePropertyStore(
     (state) => state.subscribeToProperty,
@@ -124,9 +140,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-  const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey],
-  );
+  // const CurrentAnchor = usePropertyStore(
+  //   (state) => state.properties[NavigationAnchorKey],
+  // );
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -136,17 +152,26 @@ const FocusModal: React.FC<FocusModalProps> = ({
     };
   }, [connectionState, subscribeToProperty, unsubscribeFromProperty]);
 
-  useEffect(() => {
-    setGuiDescription(CurrentAnchor.description.description);
-  }, [CurrentAnchor.description.description]);
+  // useEffect(() => {
+  //   if (CurrentAnchor === undefined) return;
+  //   setGuiDescription(CurrentAnchor?.description?.description);
+  // }, [CurrentAnchor.description.description]);
 
   useEffect(() => {
+    console.log(backgroundImage);
     handleComponentData({
       property,
+      backgroundImage,
       gui_name,
       gui_description,
     });
-  }, [property, gui_name, gui_description, handleComponentData]);
+  }, [
+    property,
+    backgroundImage,
+    gui_name,
+    gui_description,
+    handleComponentData,
+  ]);
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -176,7 +201,6 @@ const FocusModal: React.FC<FocusModalProps> = ({
         <div className="mb-1 flex flex-col gap-2">
           <div className="flex flex-row items-center justify-between gap-8">
             <div className="text-sm font-medium text-black">Property</div>
-
             <Autocomplete
               options={sortedKeys}
               onChange={(v) => setProperty(sortedKeys[v])}
@@ -187,6 +211,10 @@ const FocusModal: React.FC<FocusModalProps> = ({
               }
             />
           </div>
+          <ImageUpload
+            value={backgroundImage}
+            onChange={(v) => setBackgroundImage(v)}
+          />
           <div className="flex flex-row items-center justify-between">
             <div className="text-sm font-medium text-black">Gui Name</div>
             <input

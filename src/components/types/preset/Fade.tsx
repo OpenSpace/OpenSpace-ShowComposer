@@ -11,13 +11,18 @@ import { Toggle } from '@/store/componentsStore';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Autocomplete from '@/components/common/AutoComplete';
 import Information from '@/components/common/Information';
+import ImageUpload from '@/components/common/ImageUpload';
 // import { Button } from '@/components/ui/button';
 
 interface FadeGUIProps {
   component: FadeComponent;
+  shouldRender?: boolean;
 }
 
-const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
+const FadeGUIComponent: React.FC<FadeGUIProps> = ({
+  component,
+  shouldRender = true,
+}) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -70,9 +75,15 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
     luaApi,
   ]);
 
-  return (
+  return shouldRender ? (
     <div
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
       onClick={() => component.triggerAction?.()}
     >
       <div className="flex flex-row gap-4">
@@ -92,7 +103,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component }) => {
         <Information content={component.gui_description} />
       </div>
     </div>
-  );
+  ) : null;
 };
 
 interface FadeModalProps {
@@ -120,12 +131,16 @@ const FadeModal: React.FC<FadeModalProps> = ({
     component?.gui_description || '',
   );
   const [action, setAction] = useState<string>(component?.action || 'on');
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
+  );
 
   useEffect(() => {
     handleComponentData({
       property,
       intDuration,
       action: action as Toggle,
+      backgroundImage,
       gui_name,
       gui_description,
     });
@@ -133,6 +148,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
     property,
     intDuration,
     action,
+    backgroundImage,
     gui_name,
     gui_description,
     handleComponentData,
@@ -188,6 +204,10 @@ const FadeModal: React.FC<FadeModalProps> = ({
               }
             />
           </div>
+          <ImageUpload
+            value={backgroundImage}
+            onChange={(v) => setBackgroundImage(v)}
+          />
           <div className="flex flex-row items-center justify-between">
             <div className="text-sm font-medium text-black">
               Gui Description

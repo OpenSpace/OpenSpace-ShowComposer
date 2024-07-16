@@ -22,4 +22,5 @@ export type {
   SetFocusComponent,
   FlyToComponent,
   Toggle,
+  MultiComponent,
 } from './componentsStore';

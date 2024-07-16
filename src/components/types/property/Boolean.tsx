@@ -11,12 +11,17 @@ import Autocomplete from '@/components/common/AutoComplete';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import { triggerBool } from '@/utils/triggerHelpers';
+import ImageUpload from '@/components/common/ImageUpload';
 
 interface BoolGUIProps {
   component: BooleanComponent;
+  shouldRender?: boolean;
 }
 
-const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component }) => {
+const BoolGUIComponent: React.FC<BoolGUIProps> = ({
+  component,
+  shouldRender = true,
+}) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -64,9 +69,15 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component }) => {
     luaApi,
   ]);
 
-  return (
+  return shouldRender ? (
     <div
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
       onClick={() => component.triggerAction?.()}
     >
       <div className="flex flex-row gap-4">
@@ -86,7 +97,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component }) => {
         <Information content={component.gui_description} />
       </div>
     </div>
-  );
+  ) : null;
 };
 
 interface BoolModalProps {
@@ -110,15 +121,25 @@ const BoolModal: React.FC<BoolModalProps> = ({
     component?.gui_description || '',
   );
   const [action, setAction] = useState<string>(component?.action || 'on');
-
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
+  );
   useEffect(() => {
     handleComponentData({
       property,
       action: action as Toggle,
       gui_name,
       gui_description,
+      backgroundImage,
     });
-  }, [property, action, gui_name, gui_description, handleComponentData]);
+  }, [
+    property,
+    action,
+    gui_name,
+    gui_description,
+    handleComponentData,
+    backgroundImage,
+  ]);
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -193,6 +214,10 @@ const BoolModal: React.FC<BoolModalProps> = ({
             }
           />
         </div>
+        <ImageUpload
+          value={backgroundImage}
+          onChange={(v) => setBackgroundImage(v)}
+        />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { cn } from '@/lib/utils';
 // Define the component's props type
 type NumericInputProps = {
   min: number;
@@ -20,8 +20,8 @@ const NumericInput: React.FC<NumericInputProps> = ({
   placeholder = '',
   showOutsideRangeHint = false,
   onValueChanged,
-  className = '',
-  label = '',
+  className,
+  label,
 }) => {
   // const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -63,13 +63,14 @@ const NumericInput: React.FC<NumericInputProps> = ({
 
   return (
     <>
+      {label && <div>{label}</div>}
       <input
         type="text"
         value={inputValue}
         onChange={handleInputChange}
         onMouseDown={handleMouseDown}
         // onBlur={() => setIsEditing(false)}
-        className="w-full rounded-md border p-2"
+        className={cn('w-full rounded-md border p-2', className)}
         placeholder={placeholder}
       />
       {showOutsideRangeHint &&

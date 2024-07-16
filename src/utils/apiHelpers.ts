@@ -2,18 +2,35 @@
 // @ts-ignore
 
 import { get } from 'http';
-import { isNull } from 'util';
+// import { isNull } from 'util';
 
 // @ts-nocheck
 export const InterestingTag = 'GUI.Interesting';
 
-interface Property {
+// interface PropertyRenderable {
+//   uri: string;
+//   description: {
+//     Type?: string; // Optional based on your comment in the code
+//     MetaData: {
+//       IsReadOnly: boolean;
+//     };
+//   };
+//   type?: string;
+// }
+export interface Property {
   Description: {
     Identifier: string;
     Type?: ActionType;
   };
   Value: any;
   type?: ActionType;
+  uri: string;
+  description?: {
+    Type?: string; // Optional based on your comment in the code
+    MetaData: {
+      IsReadOnly: boolean;
+    };
+  };
 }
 
 export interface PropertyOwner {
@@ -137,15 +154,6 @@ const RegexLibrary = {
   },
 };
 
-interface Property {
-  uri: string;
-  description: {
-    Type?: string; // Optional based on your comment in the code
-    MetaData: {
-      IsReadOnly: boolean;
-    };
-  };
-}
 type PropertyType = keyof typeof RegexLibrary;
 
 export const getRenderables: (
@@ -162,9 +170,9 @@ export const getRenderables: (
       (p: Property) =>
         regex.exec(p.uri) &&
         // p.description.Type === 'FloatProperty' &&
-        !p.description.MetaData.IsReadOnly,
+        !p.description?.MetaData.IsReadOnly,
     )
-    .sort((a, b) => a.uri.localeCompare(b.uri))
+    .sort((a, b) => a.uri?.localeCompare(b.uri))
     //reduce this array into an object with the key being the value of the regex match and the value is the property
     .reduce((acc: Record<string, Property>, p: Property) => {
       // let key = regex.exec(p.uri)[1];

@@ -1,16 +1,18 @@
 // SelectionTool.tsx
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useComponentStore } from '@/store';
+import { MultiState } from '@/store/componentsStore';
 
 const SelectionTool: React.FC = () => {
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const components = useComponentStore((state) => state.components);
+  const currentPage = useComponentStore((state) => state.currentPage);
   const selectComponent = useComponentStore((state) => state.selectComponent);
   const clearSelection = useComponentStore((state) => state.clearSelection);
-
+  const getComponentById = useComponentStore((state) => state.getComponentById);
+  const getPageById = useComponentStore((state) => state.getPageById);
   const handleMouseDown = (e: React.MouseEvent) => {
     clearSelection();
     setIsSelecting(true);
@@ -41,20 +43,24 @@ const SelectionTool: React.FC = () => {
 
   const handleMouseUp = () => {
     setIsSelecting(false);
-    components.forEach((component) => {
-      const compRect = {
-        x: component.x,
-        y: component.y,
-        width: component.width,
-        height: component.height,
-      };
-      if (
-        rect.x < compRect.x + compRect.width &&
-        rect.x + rect.width > compRect.x &&
-        rect.y < compRect.y + compRect.height &&
-        rect.y + rect.height > compRect.y
-      ) {
-        selectComponent(component.id);
+    getPageById(currentPage).components.forEach((c) => {
+      // console.log(c);
+      // dont select multi state components
+      if (!(getComponentById(c).isMulti == 'true')) {
+        const compRect = {
+          x: getComponentById(c)?.x,
+          y: getComponentById(c)?.y,
+          width: getComponentById(c)?.width,
+          height: getComponentById(c)?.height,
+        };
+        if (
+          rect.x < compRect.x + compRect.width &&
+          rect.x + rect.width > compRect.x &&
+          rect.y < compRect.y + compRect.height &&
+          rect.y + rect.height > compRect.y
+        ) {
+          selectComponent(c);
+        }
       }
     });
   };

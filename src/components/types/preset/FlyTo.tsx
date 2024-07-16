@@ -13,15 +13,23 @@ import { useEffect, useState, useMemo } from 'react';
 // import { }
 // react-icon for flight
 import { FiAirplay } from 'react-icons/fi';
+import ImageUpload from '@/components/common/ImageUpload';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
+  shouldRender?: boolean;
 }
 
-const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({ component }) => {
+const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
+  component,
+  shouldRender = true,
+}) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useComponentStore((state) => state.updateComponent);
 
+  useEffect(() => {
+    console.log(component);
+  }, [component]);
   useEffect(() => {
     if (luaApi) {
       console.log('Registering trigger action');
@@ -33,9 +41,12 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({ component }) => {
                 component.lat,
                 component.long,
                 component.alt,
-                component.duration,
+                component.intDuration,
               )
-            : luaApi.pathnavigation.flyTo(component.target, component.duration);
+            : luaApi.pathnavigation.flyTo(
+                component.target,
+                component.intDuration,
+              );
         },
       });
     }
@@ -44,13 +55,19 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({ component }) => {
     component.alt,
     component.target,
     component.long,
-    component.duration,
+    component.intDuration,
     luaApi,
   ]);
 
-  return (
+  return shouldRender ? (
     <div
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
       onClick={() => component.triggerAction?.()}
     >
       <div className="flex flex-row gap-4">
@@ -58,7 +75,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({ component }) => {
         <Information content={component.gui_description} />
       </div>
     </div>
-  );
+  ) : null;
 };
 
 interface FlyToModalProps {
@@ -121,11 +138,16 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [long, setLong] = useState<number>(component?.long || 0);
   const [lat, setLat] = useState<number>(component?.lat || 0);
   const [alt, setAlt] = useState<number>(component?.alt || 0);
-  const [duration, setDuration] = useState<number>(component?.duration || 0);
+  const [intDuration, setIntDuration] = useState<number>(
+    component?.intDuration || 0,
+  );
   const [target, setTarget] = useState<string>(component?.target || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
+  );
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
   );
 
   const hasGeoOption: boolean = useMemo(() => {
@@ -138,6 +160,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     }
     return shouldGeo || false;
   }, [target, options]);
+
   const unitMultiplier = (unit: string) => {
     switch (unit) {
       case 'km':
@@ -171,13 +194,14 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       long,
       alt,
       target,
-      duration,
+      intDuration,
       gui_name,
       gui_description,
+      backgroundImage,
     });
   }, [
     geo,
-    duration,
+    intDuration,
     lat,
     long,
     alt,
@@ -185,6 +209,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     handleComponentData,
     gui_name,
     gui_description,
+    backgroundImage,
   ]);
 
   return (
@@ -229,8 +254,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             <input
               type="number"
               className="w-[50%] rounded border p-2"
-              value={duration}
-              onChange={(e) => setDuration(parseFloat(e.target.value))}
+              value={intDuration}
+              onChange={(e) => setIntDuration(parseFloat(e.target.value))}
             />
           </div>
           {/* we need to set geo to false and hide it if target is ISS */}
@@ -276,6 +301,10 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               />
             </>
           )}
+          <ImageUpload
+            value={backgroundImage}
+            onChange={(v) => setBackgroundImage(v)}
+          />
         </div>
       </div>
     </>
