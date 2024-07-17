@@ -263,42 +263,51 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           {hasGeoOption && (
             <>
               <Toggle label="Geo" value={geo} setValue={setGeo} />
+              {geo == true && (
+                <>
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="text-sm font-medium text-black">
+                      Altitude
+                    </div>
+                    <input
+                      type="number"
+                      className="w-[50%] rounded border p-2"
+                      value={alt}
+                      onChange={(e) => setAlt(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="text-sm font-medium text-black">
+                      Latitude
+                    </div>
+                    <input
+                      type="number"
+                      className="w-[50%] rounded border p-2"
+                      value={lat}
+                      onChange={(e) => setLat(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="text-sm font-medium text-black">
+                      Longitude
+                    </div>
+                    <input
+                      type="number"
+                      className="w-[50%] rounded border p-2"
+                      value={long}
+                      onChange={(e) => setLong(parseFloat(e.target.value))}
+                    />
+                  </div>
 
-              <div className="flex flex-row items-center justify-between">
-                <div className="text-sm font-medium text-black">Altitude</div>
-                <input
-                  type="number"
-                  className="w-[50%] rounded border p-2"
-                  value={alt}
-                  onChange={(e) => setAlt(parseFloat(e.target.value))}
-                />
-              </div>
-              <div className="flex flex-row items-center justify-between">
-                <div className="text-sm font-medium text-black">Latitude</div>
-                <input
-                  type="number"
-                  className="w-[50%] rounded border p-2"
-                  value={lat}
-                  onChange={(e) => setLat(parseFloat(e.target.value))}
-                />
-              </div>
-              <div className="flex flex-row items-center justify-between">
-                <div className="text-sm font-medium text-black">Longitude</div>
-                <input
-                  type="number"
-                  className="w-[50%] rounded border p-2"
-                  value={long}
-                  onChange={(e) => setLong(parseFloat(e.target.value))}
-                />
-              </div>
-
-              <Button
-                width="auto"
-                //   className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                onClick={setFromOpenspace}
-                text={'Set from OpenSpace'}
-                icon={<FiAirplay />}
-              />
+                  <Button
+                    width="auto"
+                    //   className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    onClick={setFromOpenspace}
+                    text={'Set from OpenSpace'}
+                    icon={<FiAirplay />}
+                  />
+                </>
+              )}
             </>
           )}
           <ImageUpload

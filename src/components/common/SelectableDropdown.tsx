@@ -1,4 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type Option = {
   value: string;
@@ -21,37 +28,31 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   selected,
   setSelected,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => setIsOpen(!isOpen);
-
   const handleSelect = (item: string) => {
     setSelected(item);
-    setIsOpen(false);
   };
 
   return (
-    <div className="relative">
-      <button
-        className="w-full rounded-md border border-gray-300 bg-white p-2 text-right"
-        onClick={toggleDropdown}
-      >
-        {selected || 'Select an option'}
-      </button>
-      {isOpen && (
-        <div className="absolute z-10 mt-1 w-full rounded-md border border-gray-300 bg-white">
-          {options.map((item: string | Option, index: number) => (
-            <div
-              key={index}
-              className="cursor-pointer p-2 text-right hover:bg-gray-100"
-              onClick={() => handleSelect(isOption(item) ? item.value : item)}
-            >
-              {isOption(item) ? item.label : item}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <Select
+      value={selected.length > 0 ? selected : undefined}
+      onValueChange={handleSelect}
+    >
+      <SelectTrigger className="w-auto">
+        <SelectValue placeholder="Theme" />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((item: string | Option, index: number) => (
+          //bug
+          <SelectItem
+            key={index}
+            value={isOption(item) ? item.label : item.length ? item : 'default'}
+            onClick={() => handleSelect(isOption(item) ? item.value : item)}
+          >
+            {isOption(item) ? item.label : item}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };
 

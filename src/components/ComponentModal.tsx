@@ -27,8 +27,17 @@ import { TriggerModal } from './types/property/Trigger';
 import { NumberModal } from './types/property/Number';
 import { VideoModal } from './types/static/Video';
 import { MultiModal } from './types/preset/Multi';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+} from '@/components/ui/card';
 
-import Button from './common/Button';
+// import Button from './common/Button';
 import { MultiComponent } from '@/store/componentsStore';
 
 interface ComponentModalProps {
@@ -272,30 +281,39 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-auto min-w-[600px] rounded bg-white p-4 shadow-lg">
-        <h2 className="mb-4 text-xl">
-          {component
-            ? `Edit ${toTitleCase(component.type)} Component`
-            : `Create ${toTitleCase(type)} Component`}
-        </h2>
-
-        {content}
-        <div className="flex justify-end">
-          <Button
-            width="auto"
-            className="mr-2 rounded bg-gray-500 p-2 text-white"
-            onClick={handleCancel}
-            text="Cancel"
-          />
-
-          <Button
-            width="auto"
-            // className="rounded bg-blue-500 p-2 text-white"
-            onClick={handleSubmit}
-            text={component ? 'Save' : 'Create'}
-          />
-        </div>
-      </div>
+      <Card className="w-[510px] bg-white">
+        <CardHeader>
+          <CardTitle>
+            {component
+              ? `Edit ${toTitleCase(component.type)} Component`
+              : `Create ${toTitleCase(type)} Component`}
+          </CardTitle>
+          <CardDescription>
+            Deploy your new project in one-click.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>{content}</CardContent>
+        <CardFooter>
+          <div className="flex w-full flex-row justify-end gap-2">
+            <Button
+              // width="auto"
+              variant={'outline'}
+              // className="mr-2 rounded bg-gray-500 p-2 text-white"
+              onClick={handleCancel}
+              // text="Cance l"
+            >
+              Cancel
+            </Button>
+            <Button
+              // width="auto"
+              // className="rounded bg-blue-500 p-2 text-white"
+              onClick={handleSubmit}
+            >
+              {component ? 'Save' : 'Create'}
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

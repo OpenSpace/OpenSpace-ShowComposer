@@ -312,7 +312,9 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           isOpen={isDeleteModalOpen}
           onClose={handleDeleteCancel}
           onConfirm={handleDeleteConfirm}
-          message={`Are you sure you want to delete the component "${component?.gui_name}"?`}
+          message={`Are you sure you want to delete the component${
+            component?.gui_name ? ' ' + component?.gui_name : ''
+          }?`}
         />
       </div>
     </>

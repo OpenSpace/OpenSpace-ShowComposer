@@ -1,42 +1,81 @@
 // DeleteConfirmationModal.tsx
-import React from 'react';
+import React, { ReactElement, useState, cloneElement } from 'react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+// import { Button } from '@/components/ui/button';
 
 interface DeleteConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   onConfirm: () => void;
   message: string;
+  triggerButton?: ReactElement;
+  isOpen?: boolean;
+  setOpen?: (isOpen: boolean) => void;
+  onClose?: () => void;
 }
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
-  isOpen,
-  onClose,
   onConfirm,
   message,
+  triggerButton,
+  isOpen: externalIsOpen,
+  setOpen: externalSetOpen,
+  onClose,
 }) => {
-  if (!isOpen) return null;
+  const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
 
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setOpen = externalSetOpen || internalSetOpen;
+  const enhancedTriggerButton = triggerButton
+    ? cloneElement(triggerButton, {
+        onClick: (...args: any[]) => {
+          setOpen(true); // Open the dialog
+          // If the triggerButton had its own onClick handler, call it
+          if (triggerButton.props.onClick) {
+            triggerButton.props.onClick(...args);
+          }
+        },
+      })
+    : null;
+  // if (!isOpen) return null;
+  //
   return (
-    <div className="fixed inset-0 z-[99] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-1/3 min-w-[300px] rounded bg-white p-4 shadow-lg">
-        <h2 className="mb-4 text-xl">Confirm Deletion</h2>
-        <p>{message}</p>
-        <div className="mt-4 flex justify-end">
-          <button
-            className="mr-2 rounded bg-gray-500 p-2 text-white"
-            onClick={onClose}
+    <AlertDialog open={isOpen} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>{enhancedTriggerButton}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>{message}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            onClick={() => {
+              setOpen(false);
+              onClose && onClose();
+            }}
           >
             Cancel
-          </button>
-          <button
-            className="rounded bg-red-500 p-2 text-white"
-            onClick={onConfirm}
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              onConfirm();
+              setOpen(false);
+            }}
           >
             Delete
-          </button>
-        </div>
-      </div>
-    </div>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
