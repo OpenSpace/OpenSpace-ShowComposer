@@ -1,6 +1,5 @@
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import Button from '@/components/common/Button';
-import Toggle from '@/components/common/Toggle';
+
 import Information from '@/components/common/Information';
 import {
   ConnectionState,
@@ -12,8 +11,14 @@ import { FlyToComponent } from '@/store/componentsStore';
 import { useEffect, useState, useMemo } from 'react';
 // import { }
 // react-icon for flight
-import { FiAirplay } from 'react-icons/fi';
 import ImageUpload from '@/components/common/ImageUpload';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { NavigationAnchorKey } from '@/store/apiStore';
+import { set } from 'lodash';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -27,9 +32,6 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useComponentStore((state) => state.updateComponent);
 
-  useEffect(() => {
-    console.log(component);
-  }, [component]);
   useEffect(() => {
     if (luaApi) {
       console.log('Registering trigger action');
@@ -95,6 +97,9 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const camera = usePropertyStore(
     (state) => state.properties['camera'] || false,
   );
+  const CurrentAnchor = usePropertyStore(
+    (state) => state.properties[NavigationAnchorKey],
+  );
   type Option = {
     name: string;
     shouldGeo: boolean;
@@ -125,14 +130,28 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );
-
+  const subscribeToProperty = usePropertyStore(
+    (state) => state.subscribeToProperty,
+  );
+  const unsubscribeFromProperty = usePropertyStore(
+    (state) => state.unsubscribeFromProperty,
+  );
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     subscribeToTopic('camera', 500);
+    subscribeToProperty(NavigationAnchorKey, 1000);
+
     return () => {
       unsubscribeFromTopic('camera');
+      unsubscribeFromProperty(NavigationAnchorKey);
     };
   }, [connectionState]);
+
+  useEffect(() => {
+    if (component) {
+      setGeo(component?.geo || false);
+    }
+  }, [component]);
 
   const [geo, setGeo] = useState<boolean>(component?.geo || false);
   const [long, setLong] = useState<number>(component?.long || 0);
@@ -149,6 +168,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [lastTarget, setLastTarget] = useState<string>(component?.target || '');
 
   const hasGeoOption: boolean = useMemo(() => {
     const shouldGeo =
@@ -179,13 +199,27 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   };
 
   const setFromOpenspace = () => {
-    setLat(camera?.latitude || 0);
-    setLong(camera?.longitude || 0);
-    setAlt(
-      Math.round(camera?.altitude * unitMultiplier(camera.altitudeunit)) || 0,
-    );
-    setGeo(true);
+    const shouldGeo = options?.find(
+      (option) => option.name === CurrentAnchor.value,
+    )?.shouldGeo;
+
+    setTarget(CurrentAnchor.value);
+    if (shouldGeo) {
+      setLat(camera?.latitude || 0);
+      setLong(camera?.longitude || 0);
+      setAlt(
+        Math.round(camera?.altitude * unitMultiplier(camera.altitudeunit)) || 0,
+      );
+      setGeo(true);
+    }
   };
+
+  useEffect(() => {
+    if (target !== lastTarget) {
+      setGuiName(`Fly To ${target}`);
+      setLastTarget(target);
+    }
+  }, [target]);
 
   useEffect(() => {
     handleComponentData({
@@ -214,106 +248,110 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
 
   return (
     <>
-      <div className="mb-4">
-        <div className="mb-1 flex flex-col gap-2">
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">Gui Name</div>
-            <input
-              type="text"
-              className="w-[50%] rounded border p-2"
-              value={gui_name}
-              onChange={(e) => setGuiName(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">
-              Gui Description
-            </div>
-            <input
-              type="textbox"
-              className="w-[50%] rounded border p-2"
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.target.value)}
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <Label>Target</Label>
+            <SelectableDropdown
+              options={options?.map((v) => v.name) || []}
+              selected={target}
+              setSelected={setTarget}
             />
           </div>
 
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">Target</div>
-            <div className="w-[50%]">
-              {options && (
-                <SelectableDropdown
-                  options={options.map((v) => v.name)}
-                  selected={target}
-                  setSelected={setTarget}
-                />
-              )}
-            </div>
-          </div>
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-sm font-medium text-black">Duration</div>
-            <input
+          <div className="grid gap-2">
+            <Label htmlFor="duration">Fade Duration</Label>
+            <Input
+              id="duration"
+              placeholder="Duration to Fade"
               type="number"
-              className="w-[50%] rounded border p-2"
+              // className=""
               value={intDuration}
               onChange={(e) => setIntDuration(parseFloat(e.target.value))}
             />
           </div>
-          {/* we need to set geo to false and hide it if target is ISS */}
-          {/* {target && ( */}
-          {hasGeoOption && (
-            <>
-              <Toggle label="Geo" value={geo} setValue={setGeo} />
-              {geo == true && (
-                <>
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="text-sm font-medium text-black">
-                      Altitude
-                    </div>
-                    <input
-                      type="number"
-                      className="w-[50%] rounded border p-2"
-                      value={alt}
-                      onChange={(e) => setAlt(parseFloat(e.target.value))}
-                    />
-                  </div>
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="text-sm font-medium text-black">
-                      Latitude
-                    </div>
-                    <input
-                      type="number"
-                      className="w-[50%] rounded border p-2"
-                      value={lat}
-                      onChange={(e) => setLat(parseFloat(e.target.value))}
-                    />
-                  </div>
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="text-sm font-medium text-black">
-                      Longitude
-                    </div>
-                    <input
-                      type="number"
-                      className="w-[50%] rounded border p-2"
-                      value={long}
-                      onChange={(e) => setLong(parseFloat(e.target.value))}
-                    />
-                  </div>
-
-                  <Button
-                    width="auto"
-                    //   className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    onClick={setFromOpenspace}
-                    text={'Set from OpenSpace'}
-                    icon={<FiAirplay />}
+        </div>
+        <div className="my-4 grid grid-cols-2 gap-4">
+          <Button onClick={setFromOpenspace}>Set from OpenSpace</Button>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="geo"
+              checked={geo}
+              disabled={!hasGeoOption}
+              onCheckedChange={setGeo}
+            />
+            <Label id="geo">Fly To Specific Geo coordinates</Label>
+          </div>
+        </div>
+        {hasGeoOption && (
+          <>
+            {geo == true && (
+              <div className="grid grid-cols-3 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="alt">Alt</Label>
+                  <Input
+                    id="alt"
+                    placeholder="Altitude"
+                    type="number"
+                    value={alt}
+                    onChange={(e) => setAlt(parseFloat(e.target.value))}
                   />
-                </>
-              )}
-            </>
-          )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="lat">Latitude</Label>
+                  <Input
+                    id="lat"
+                    placeholder="Latitude"
+                    type="number"
+                    value={lat}
+                    onChange={(e) => setLat(parseFloat(e.target.value))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="long">Longitude</Label>
+                  <Input
+                    id="long"
+                    placeholder="Longitude"
+                    type="number"
+                    value={long}
+                    onChange={(e) => setLong(parseFloat(e.target.value))}
+                  />
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="gioname">Component Name</Label>
+            <Input
+              id="guiname"
+              placeholder="Name of Component"
+              type="text"
+              value={gui_name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setGuiName(e.target.value)
+              }
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
           <ImageUpload
             value={backgroundImage}
             onChange={(v) => setBackgroundImage(v)}
           />
+          <div className="grid gap-2">
+            <Label htmlFor="description"> Gui Description</Label>
+            <Textarea
+              className="w-full"
+              id="description"
+              value={gui_description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setGuiDescription(e.target.value)
+              }
+              placeholder="Type your message here."
+            />
+          </div>
         </div>
       </div>
     </>

@@ -1,27 +1,41 @@
-import { useEffect, useState } from 'react';
+import React, { ReactElement, useState, useEffect, cloneElement } from 'react';
+
 import { useSettingsStore, useOpenSpaceApiStore } from '@/store'; // Adjust the import path accordingly
 import { ConnectionState } from '@/store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaTimesCircle,
-  FaQuestionCircle,
-} from 'react-icons/fa';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { CheckCircle, XCircle, HelpCircle, Radio } from 'lucide-react';
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-const ConnectionSettings = () => {
+interface ConnectionSettingsProps {
+  triggerButton?: ReactElement;
+}
+
+const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
+  triggerButton,
+}) => {
   const initialState = useSettingsStore((state) => ({
     url: state.url,
     port: state.port,
   }));
-
+  const enhancedTriggerButton = triggerButton
+    ? cloneElement(triggerButton, {
+        onClick: (...args: any[]) => {
+          setOpen(true); // Open the dialog
+          // If the triggerButton had its own onClick handler, call it
+          if (triggerButton.props.onClick) {
+            triggerButton.props.onClick(...args);
+          }
+        },
+      })
+    : null;
   const [url, setUrl] = useState(initialState.url);
   const [port, setPort] = useState(initialState.port);
   const setConnectionSettings = useSettingsStore(
@@ -62,105 +76,107 @@ const ConnectionSettings = () => {
     setOpen(false);
   };
 
-  // // function to redner connection state with a red, yellow or green dot, size is settable
-  // function renderConnectionState(size: number) {
-  //   switch (connectionState) {
-  //     case ConnectionState.CONNECTED:
-  //       return <span style={{ color: 'green', fontSize: size }}>•</span>;
-  //     case ConnectionState.CONNECTING:
-  //       return <span style={{ color: 'yellow', fontSize: size }}>•</span>;
-  //     case ConnectionState.UNCONNECTED:
-  //       return <span style={{ color: 'red', fontSize: size }}>•</span>;
-  //     default:
-  //       return <span>•</span>;
-  //   }
-  // }
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent className="bg-white">
+          OpenSpace Connection Settings{' '}
+        </TooltipContent>
+      </Tooltip>
 
-  // useing react-icons can we have three connectiosn statues represneted by icons
+      <PopoverContent className="w-80">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">Openspace Connection</h4>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Set the IP address and port of the OpenSpace instance you want to
+              connect to.
+            </p>
+          </div>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="IP">IP Address</Label>
+              <Input
+                id="IP"
+                // defaultValue=""
+                className="col-span-2 h-8"
+                type="text"
+                // className="m-2 p-2"
+                // id="url"
+                value={url}
+                onChange={handleUrlChange}
+                placeholder="Enter OpenSpace URL"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="port">Port</Label>
+              <Input
+                id="port"
+                className="col-span-2 h-8"
+                type="text"
+                value={port}
+                onChange={handlePortChange}
+                placeholder="Enter OpenSpace Port"
+              />
+            </div>
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit}> Apply Settings</Button>
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
+const ConnectionStatus = () => {
+  const connectionState = useOpenSpaceApiStore(
+    (state) => state.connectionState,
+  );
   function renderConnectionState(size: number) {
     switch (connectionState) {
       case ConnectionState.CONNECTED:
         return (
-          <FaCheckCircle
-            size={size}
-            style={{ outline: '1px solid white', borderRadius: '50%' }}
-            color="green"
-          />
+          <div className="flex items-center gap-1">
+            <CheckCircle size={size} stroke="green" strokeWidth={2} />
+            <Label className="text-xs">connected</Label>
+          </div>
         );
       case ConnectionState.CONNECTING:
-        return <FaExclamationCircle size={size} color="yellow" />;
+        return (
+          <div className="flex items-center gap-1">
+            <Radio
+              size={size}
+              className="animate-pulse"
+              stroke="orange"
+              strokeWidth={2}
+            />
+            <Label className="animate-pulse text-xs">connecting</Label>
+          </div>
+        );
       case ConnectionState.UNCONNECTED:
-        return <FaTimesCircle size={size} color="red" />;
+        return (
+          <div className="flex items-center gap-1">
+            <XCircle size={size} stroke="red" strokeWidth={2} />{' '}
+            {/* <Label className="text-xs">disconnected</Label> */}
+          </div>
+        );
       default:
-        return <FaQuestionCircle size={size} color="black" />;
+        return <HelpCircle size={size} color="black" />;
     }
   }
-
   return (
-    <>
-      <div className="flex flex-row items-center gap-4 ">
-        <Label>Connection Status:</Label>
-        {renderConnectionState(16)}
-      </div>
-      <Popover open={open} onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
-            size={'sm'}
-            variant={'outline'}
-            className="w-fit"
-            onClick={() => setOpen(true)}
-          >
-            Open OpenSpace Settings
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <h4 className="font-medium leading-none">Openspace Connection</h4>
-              <p className="text-muted-foreground text-sm">
-                Set the IP address and port of the OpenSpace instance you want
-                to connect to.
-              </p>
-            </div>
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="IP">IP Address</Label>
-                <Input
-                  id="IP"
-                  defaultValue=""
-                  className="col-span-2 h-8"
-                  type="text"
-                  // className="m-2 p-2"
-                  // id="url"
-                  value={url}
-                  onChange={handleUrlChange}
-                  placeholder="Enter OpenSpace URL"
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="port">Port</Label>
-                <Input
-                  id="port"
-                  className="col-span-2 h-8"
-                  type="text"
-                  value={port}
-                  onChange={handlePortChange}
-                  placeholder="Enter OpenSpace Port"
-                />
-              </div>
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit}> Apply Settings</Button>
-              </div>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </>
+    <div className="flex flex-row items-center gap-3">
+      <Label>OpenSpace Status:</Label>
+      {renderConnectionState(20)}
+    </div>
   );
 };
 
-export default ConnectionSettings;
+export { ConnectionSettings, ConnectionStatus };

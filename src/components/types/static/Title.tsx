@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { TitleComponent } from '@/store';
 import { throttle } from 'lodash';
 import React, { useEffect, useState, useRef } from 'react';
@@ -158,18 +160,15 @@ const TitleModal: React.FC<TitleModalProps> = ({
   }, [isOpen, setText]);
 
   return (
-    <>
-      <div className="mb-4">
-        <div className="mb-1 block">
-          <label className="mb-1 block">Title</label>
-          <input
-            className="w-full rounded border p-2"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-        </div>
-      </div>
-    </>
+    <div className="grid grid-cols-1 gap-4">
+      <Label>Title</Label>
+      <Input
+        // className="w-full rounded border p-2"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      {/* </div> */}
+    </div>
   );
 };
 

@@ -6,6 +6,7 @@ import {
 } from '@/store';
 
 import DateComponent from '@/components/timepicker/DateComponent';
+import { Button } from '@/components/ui/button';
 
 const TimeDatePicker = () => {
   // const [pendingTime, setPendingTime] = useState(new Date());
@@ -188,7 +189,7 @@ const TimeDatePicker = () => {
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('time', 1000);
+    subscribeToTopic('time', 500);
     return () => {
       unsubscribeFromTopic('time');
     };
@@ -238,27 +239,19 @@ const TimeDatePicker = () => {
   return (
     <div>
       {time && (
-        <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-4">
           {/* <input
             type="datetime-local"
             value={time.toISOString().slice(0, 16)}
             onChange={(e) => handleDateChange(new Date(e.target.value))}
           /> */}
           <DateComponent date={time} onChange={changeDate} />
-          <p>{timeLabel}</p>
+          <div className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+            {timeLabel}
+          </div>
           <div className="flex flex-row items-center justify-between gap-2">
-            <button
-              className="rounded bg-blue-500 p-2 text-white"
-              onClick={realtime}
-            >
-              Realtime
-            </button>
-            <button
-              className="rounded bg-blue-500 p-2 text-white"
-              onClick={now}
-            >
-              Now
-            </button>
+            <Button onClick={realtime}>Realtime</Button>
+            <Button onClick={now}>Now</Button>
           </div>
         </div>
       )}

@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 // import { Button } from '@/components/ui/button';
 
 interface DeleteConfirmationModalProps {
@@ -50,7 +51,14 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   //
   return (
     <AlertDialog open={isOpen} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{enhancedTriggerButton}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
+        <Tooltip>
+          <TooltipTrigger asChild>{enhancedTriggerButton}</TooltipTrigger>
+          <TooltipContent className="bg-white">
+            Delete all components
+          </TooltipContent>
+        </Tooltip>
+      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

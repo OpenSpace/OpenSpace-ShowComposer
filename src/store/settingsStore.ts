@@ -26,7 +26,14 @@ export const useSettingsStore = create<State>()(
         url: '', // Initial URL state
         port: '', // Initial Port state
         setConnectionSettings: (url: string, port: string) =>
-          set(() => ({ url, port }), false, 'settings/setConnectionSettings'),
+          set(
+            () => {
+              //need to trigger openspace reconnect here
+              return { url, port };
+            },
+            false,
+            'settings/setConnectionSettings',
+          ),
       })),
       { name: 'settings-storage' },
     ),

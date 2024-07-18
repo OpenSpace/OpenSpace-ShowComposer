@@ -58,11 +58,13 @@ const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
           backgroundPosition: '-12.5px -12.5px',
           backgroundSize: '25px 25px',
           backgroundImage: !isPresentMode
-            ? 'radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px)'
+            ? 'radial-gradient(circle,#404040 1px, #f1f5f9 1px)'
             : undefined,
+
           // transform: `scale(${zoomLevel}) translate(${panPosition.x}px, ${panPosition.y}px)`,
           transformOrigin: 'top left',
           transition: 'transform 0.2s',
+          // backgroundColor: 'white',
         }}
         // onWheel={handleWheel}
         // onMouseDown={handleMouseDown}

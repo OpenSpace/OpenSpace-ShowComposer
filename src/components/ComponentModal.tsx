@@ -117,6 +117,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
               }
             });
           }
+          console.log('UPDATING COMPONENT: ', componentId, componentData);
           updateComponent(componentId, {
             ...componentData,
           });
@@ -289,7 +290,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
               : `Create ${toTitleCase(type)} Component`}
           </CardTitle>
           <CardDescription>
-            Deploy your new project in one-click.
+            Configure you component and add it to the workspace.
           </CardDescription>
         </CardHeader>
         <CardContent>{content}</CardContent>

@@ -34,6 +34,7 @@ import { NumberGUIComponent } from './types/property/Number';
 import { VideoGUIComponent } from './types/static/Video';
 import { RichTextGUIComponent } from './types/static/RichText';
 import { MultiGUIComponent } from './types/preset/Multi';
+import { head } from 'lodash';
 
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
@@ -82,6 +83,10 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
+  // useEffect(() => {
+  //   cons {width, heai}
+  // }, [component]);
+
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
     if (selectedComponents.includes(component.id)) {
@@ -102,7 +107,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         y: roundToNearest(d.y, 25),
       });
     }
-    checkOverlap({ ...component, x: d.x, y: d.y });
+    // checkOverlap({ ...component, x: d.x, y: d.y });
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -189,6 +194,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           height: component?.height,
         }}
         position={{ x: component?.x, y: component?.y }}
+        size={{ width: component?.width, height: component?.height }}
         onDragStart={() => {
           setIsDragging(true);
         }}
@@ -219,7 +225,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
             x: position.x,
             y: position.y,
           });
-          checkOverlap({ ...component, x: position.x, y: position.y });
+          // checkOverlap({ ...component, x: position.x, y: position.y });
         }}
         disableDragging={isPresentMode} // Conditionally disable dragging
         enableResizing={!isPresentMode ? undefined : false} // Conditionally disable resizing
@@ -295,13 +301,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         <div className="relative top-0 z-0 flex h-full flex-col items-center justify-center p-4">
           {content}
 
-          {!isPresentMode && (
+          {/* {!isPresentMode && (
             <div className="absolute bottom-0 left-0 w-full p-2 text-xs">
               <p>
                 ID: <span className="text-xs font-bold">{component?.id}</span>
               </p>
             </div>
-          )}
+          )} */}
         </div>
       </Rnd>
       <div

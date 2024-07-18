@@ -1,6 +1,7 @@
 import RichTextEditor from '@/components/inputs/RichTextEditor';
 import { RichTextComponent } from '@/store';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 interface RichTextGUIProps {
   component: RichTextComponent;
@@ -8,9 +9,11 @@ interface RichTextGUIProps {
 
 const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
   return (
-    <div className="yarn absolute right-0 top-0 flex h-full w-full items-center justify-center ">
-      <div dangerouslySetInnerHTML={{ __html: component.text }} />
-      {/* <RichTextEditor content={} saveContent /> */}
+    <div className=" absolute right-0 top-0 flex h-full w-full items-center justify-center ">
+      <div
+        className="prose-sm h-full w-full p-4 prose-headings:my-0 prose-p:my-0"
+        dangerouslySetInnerHTML={{ __html: component.text }}
+      />
     </div>
   );
 };
@@ -26,10 +29,36 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
   //   isOpen,
 }) => {
   const [text, setText] = useState(component?.text || '');
+  const [height, setHeight] = useState(component?.height || 100);
+  const [width, setWidth] = useState(component?.width || 100);
+
+  const measureAndUpdateSize = (text: string) => {
+    const measureDiv = document.createElement('div');
+    measureDiv.style.position = 'absolute';
+    measureDiv.style.visibility = 'hidden';
+    measureDiv.style.width = 'auto';
+    measureDiv.style.height = 'auto';
+    measureDiv.className = 'prose-sm p-6 prose-headings:my-0 prose-p:my-0';
+    document.body.appendChild(measureDiv);
+
+    measureDiv.innerHTML = text;
+
+    const { width, height } = measureDiv.getBoundingClientRect();
+    setWidth(Math.max(width, 100));
+    setHeight(Math.max(height, 100));
+    document.body.removeChild(measureDiv);
+  };
+
+  const debouncedMeasureAndUpdateSize = debounce(measureAndUpdateSize, 500);
 
   useEffect(() => {
-    handleComponentData({ text });
-  }, [text, handleComponentData]);
+    debouncedMeasureAndUpdateSize(text);
+    return () => debouncedMeasureAndUpdateSize.cancel();
+  }, [text]);
+
+  useEffect(() => {
+    handleComponentData({ text, width, height });
+  }, [text, width, height, handleComponentData]);
 
   return (
     <>

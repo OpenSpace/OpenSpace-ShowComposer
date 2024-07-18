@@ -1,7 +1,7 @@
 import React from 'react';
-import IconButton from '../inputs/IconButton';
-// import { FiCamera } from 'react-icons/fi';
-import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
+import { ChevronUp } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+import { ChevronDown } from 'lucide-react';
 
 type DateData = {
   time: Date;
@@ -79,11 +79,9 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
             style={{ margin: '0 10px' }}
             className="flex flex-col items-center justify-center gap-1 "
           >
-            <IconButton
-              icon={MdOutlineExpandLess}
-              size="6"
-              onClick={() => adjustDatePart(part, 1)}
-            />
+            <Toggle onClick={() => adjustDatePart(part, 1)} pressed={false}>
+              <ChevronUp className="h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]" />
+            </Toggle>
             <input
               type="text"
               className="flex w-[50px] text-center"
@@ -102,11 +100,9 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
               }
               readOnly
             />
-            <IconButton
-              icon={MdOutlineExpandMore}
-              size="6"
-              onClick={() => adjustDatePart(part, -1)}
-            />
+            <Toggle onClick={() => adjustDatePart(part, -1)} pressed={false}>
+              <ChevronDown className="h-6 w-6 cursor-pointer transition-all hover:scale-110" />
+            </Toggle>
           </div>
         ),
       )}

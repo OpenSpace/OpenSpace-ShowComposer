@@ -20,11 +20,13 @@ function isOption(item: string | Option): item is Option {
 interface SelectableDropdownProps {
   options: string[] | Option[];
   selected: string;
+  placeholder?: string;
   setSelected: (value: string) => void;
 }
 
 const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   options,
+  placeholder = 'Select an option',
   selected,
   setSelected,
 }) => {
@@ -38,7 +40,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
       onValueChange={handleSelect}
     >
       <SelectTrigger className="w-auto">
-        <SelectValue placeholder="Theme" />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         {options.map((item: string | Option, index: number) => (

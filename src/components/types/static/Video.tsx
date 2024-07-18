@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { VideoComponent } from '@/store';
 import React, { useEffect, useState } from 'react';
 
@@ -68,17 +70,21 @@ const VideoModal: React.FC<VideoModalProps> = ({
 
   return (
     <>
-      <div className="mb-2 flex flex-col gap-2">
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Video Url</div>
-          <input
+      <div>
+        <div className="grid grid-cols-1 gap-4">
+          {/* <div className="flex flex-row items-center justify-between"> */}
+          <Label>Video</Label>
+          <Input
+            placeholder="Video URL (Vimeo, Youtube, or direct video link)"
             type="text"
-            className="w-[50%] rounded border p-2"
             value={url}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setUrl(e.target.value)
             }
           />
+        </div>
+        <div className="mb-4 mt-2 text-sm text-slate-500 dark:text-slate-400">
+          Video URL can be Vimeo, Youtube, or direct video link.
         </div>
         {url && getVideoContent(url)}
       </div>
