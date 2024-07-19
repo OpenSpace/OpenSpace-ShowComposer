@@ -15,7 +15,6 @@ import {
   VideoComponent,
   RichTextComponent,
 } from '@/store';
-import { toTitleCase } from '@/utils/math';
 import { TitleModal } from './types/static/Title';
 import { RichTextModal } from './types/static/RichText';
 import { SetTimeModal } from './types/preset/SetTime';
@@ -38,11 +37,11 @@ import {
 } from '@/components/ui/card';
 
 // import Button from './common/Button';
-import { MultiComponent } from '@/store/componentsStore';
-
+import { MultiComponent, allComponentLabels } from '@/store/componentsStore';
 interface ComponentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCancel?: () => void;
   componentId?: Component['id'] | null;
   type: ComponentType | '';
   isMulti?: boolean;
@@ -56,13 +55,14 @@ enum AsyncStatus {
 const ComponentModal: React.FC<ComponentModalProps> = ({
   isOpen,
   onClose,
+  onCancel,
   componentId,
   type,
-  isMulti = false,
+  // isMulti = false,
   initialData = {},
 }) => {
   const addComponent = useComponentStore((state) => state.addComponent);
-  const getComponentById = useComponentStore((state) => state.getComponentById);
+  // const getComponentById = useComponentStore((state) => state.getComponentById);
   const updateComponent = useComponentStore((state) => state.updateComponent);
   const asyncPreSubmitOperation = useComponentStore(
     (state) => state.asyncPreSubmitOperation,
@@ -70,9 +70,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
     AsyncStatus.False,
   );
-  const currentPage = useComponentStore((state) => state.currentPage);
 
-  // const removeComponent = useComponentStore((state) => state.removeComponent);
   const components = useComponentStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
 
@@ -97,25 +95,17 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       } else {
         if (component) {
           if (component.type == 'multi') {
-            let merged = (component as MultiComponent).components.concat(
-              (componentData as MultiComponent).components,
-            );
-            merged = Array.from(new Set(merged));
-            merged.forEach((c) => {
-              console.log(
-                'SAVING THIS CHILDERN: ',
-                getComponentById(c.component),
-              );
-              if (getComponentById(c.component)?.isMulti == 'pendingSave') {
-                console.log(c.component, 'IS PENDING SAVE');
-                updateComponent(c.component, { isMulti: 'true' });
-              } else if (
-                getComponentById(c.component)?.isMulti == 'pendingDelete'
-              ) {
-                console.log(c.component, 'IS PENDING DELETE');
-                updateComponent(c.component, { isMulti: 'false' });
-              }
-            });
+            Object.entries(components)
+              .filter(
+                ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
+              )
+              .forEach(([id, c]) => {
+                if (c.isMulti === 'pendingSave') {
+                  updateComponent(id, { isMulti: 'true' });
+                } else if (c.isMulti === 'pendingDelete') {
+                  updateComponent(id, { isMulti: 'false' });
+                }
+              });
           }
           console.log('UPDATING COMPONENT: ', componentId, componentData);
           updateComponent(componentId, {
@@ -137,15 +127,17 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             ...componentData,
           });
           if (type == 'multi') {
-            (componentData as MultiComponent).components?.forEach((c) => {
-              if (getComponentById(c.component)?.isMulti == 'pendingSave') {
-                updateComponent(c.component, { isMulti: 'true' });
-              } else if (
-                getComponentById(c.component)?.isMulti == 'pendingDelete'
-              ) {
-                updateComponent(c.component, { isMulti: 'false' });
-              }
-            });
+            Object.entries(components)
+              .filter(
+                ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
+              )
+              .forEach(([id, c]) => {
+                if (c.isMulti === 'pendingSave') {
+                  updateComponent(id, { isMulti: 'true' });
+                } else if (c.isMulti === 'pendingDelete') {
+                  updateComponent(id, { isMulti: 'false' });
+                }
+              });
           }
         }
         onClose();
@@ -162,18 +154,17 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
   const handleCancel = () => {
     if ((component ? component.type : type) == 'multi') {
-      let merged = (component as MultiComponent).components.concat(
-        (componentData as MultiComponent).components,
-      );
-      merged = Array.from(new Set(merged));
-      merged.forEach((c) => {
-        if (getComponentById(c.component)?.isMulti == 'pendingSave') {
-          updateComponent(c.component, { isMulti: 'false' });
-        } else if (getComponentById(c.component)?.isMulti == 'pendingDelete') {
-          updateComponent(c.component, { isMulti: 'true' });
-        }
-      });
+      Object.entries(components)
+        .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
+        .forEach(([id, c]) => {
+          if (c.isMulti === 'pendingSave') {
+            updateComponent(id, { isMulti: 'false' });
+          } else if (c.isMulti === 'pendingDelete') {
+            updateComponent(id, { isMulti: 'true' });
+          }
+        });
     }
+    onCancel && onCancel();
     onClose();
   };
 
@@ -270,7 +261,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         <MultiModal
           component={component as MultiComponent}
           handleComponentData={setComponentData}
-          isOpen={isOpen}
         />
       );
       break;
@@ -286,8 +276,14 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         <CardHeader>
           <CardTitle>
             {component
-              ? `Edit ${toTitleCase(component.type)} Component`
-              : `Create ${toTitleCase(type)} Component`}
+              ? `Edit ${
+                  allComponentLabels.find((c) => c.value == component.type)
+                    ?.label || 'Component'
+                } Component`
+              : `Create ${
+                  allComponentLabels.find((c) => c.value == type)?.label ||
+                  'Component'
+                } Component`}
           </CardTitle>
           <CardDescription>
             Configure you component and add it to the workspace.
@@ -296,20 +292,10 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         <CardContent>{content}</CardContent>
         <CardFooter>
           <div className="flex w-full flex-row justify-end gap-2">
-            <Button
-              // width="auto"
-              variant={'outline'}
-              // className="mr-2 rounded bg-gray-500 p-2 text-white"
-              onClick={handleCancel}
-              // text="Cance l"
-            >
+            <Button variant={'outline'} onClick={handleCancel}>
               Cancel
             </Button>
-            <Button
-              // width="auto"
-              // className="rounded bg-blue-500 p-2 text-white"
-              onClick={handleSubmit}
-            >
+            <Button onClick={handleSubmit}>
               {component ? 'Save' : 'Create'}
             </Button>
           </div>

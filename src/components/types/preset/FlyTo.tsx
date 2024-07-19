@@ -18,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { NavigationAnchorKey } from '@/store/apiStore';
-import { set } from 'lodash';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -112,10 +111,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     console.log(properties);
     setOptions(
       favorites.map((favorite) => {
-        //   console.log(favorite);
-        //   console.log(`${favorite.uri}.Renderable`);
-        //   console.log(properties[`${favorite.uri}.Renderable`]);
-        //   console.log(favorite.tags.includes('earth_satellite'));
         return {
           name: favorite.name,
           shouldGeo: !favorite.tags.includes('earth_satellite'),
@@ -272,7 +267,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           </div>
         </div>
         <div className="my-4 grid grid-cols-2 gap-4">
-          <Button onClick={setFromOpenspace}>Set from OpenSpace</Button>
+          <Button onClick={setFromOpenspace}>Set Target from OpenSpace</Button>
           <div className="flex items-center space-x-2">
             <Switch
               id="geo"

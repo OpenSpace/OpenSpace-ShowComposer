@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -19,8 +19,9 @@ function isOption(item: string | Option): item is Option {
 
 interface SelectableDropdownProps {
   options: string[] | Option[];
-  selected: string;
+  selected: string | undefined;
   placeholder?: string;
+  shouldClear?: boolean;
   setSelected: (value: string) => void;
 }
 
@@ -28,27 +29,35 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   options,
   placeholder = 'Select an option',
   selected,
+  shouldClear = false,
   setSelected,
 }) => {
   const handleSelect = (item: string) => {
     setSelected(item);
   };
+  const [key, setKey] = useState<number>(+new Date());
 
   return (
     <Select
-      value={selected.length > 0 ? selected : undefined}
-      onValueChange={handleSelect}
+      key={key}
+      value={
+        selected && selected?.length > 0 ? selected : undefined || undefined
+      }
+      onValueChange={(value: string) => {
+        handleSelect(value);
+        if (shouldClear) setKey(+new Date());
+      }}
+      disabled={options.length === 0}
     >
       <SelectTrigger className="w-auto">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         {options.map((item: string | Option, index: number) => (
-          //bug
           <SelectItem
             key={index}
-            value={isOption(item) ? item.label : item.length ? item : 'default'}
-            onClick={() => handleSelect(isOption(item) ? item.value : item)}
+            value={isOption(item) ? item.value : item.length ? item : 'default'}
+            onSelect={() => handleSelect(isOption(item) ? item.value : item)}
           >
             {isOption(item) ? item.label : item}
           </SelectItem>

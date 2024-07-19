@@ -13,7 +13,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   );
   const [image, setImage] = useState<string | null>(value);
   const [file, setFile] = useState<File | null>(null); // State to hold the file object
-  const [galleryVisible, setGalleryVisible] = useState(false);
+  const [_galleryVisible, setGalleryVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     setGalleryVisible(false); // Optionally close the gallery
   };
 
-  const toggleGallery = () => setGalleryVisible(!galleryVisible);
+  // const toggleGallery = () => setGalleryVisible(!galleryVisible);
   const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
     setImage(e.target.value); // Directly set the image to the entered URL

@@ -1,15 +1,25 @@
 // DroppableWorkspace.tsx
-import { useSettingsStore } from '@/store';
-import React, { useState, useCallback } from 'react';
-// import { useDrop } from 'react-dnd';
-// import { useStore } from '../store/store';
-// import useCombinedRefs from './useCombinedRefs';
+import { useComponentStore, useSettingsStore } from '@/store';
+import React from 'react';
 import SelectionTool from '@/components/SelectionTool';
+import { Badge } from './ui/badge';
+import { Ellipsis } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Button } from './ui/button';
+import PresentModeToggle from './PresentModeToggle';
 
 const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
+  const addPage = useComponentStore((state) => state.addPage);
+  const deletePage = useComponentStore((state) => state.deletePage);
+  const currentPage = useComponentStore((state) => state.currentPage);
   // const [zoomLevel, setZoomLevel] = useState(1); // 1 means 100%
   // const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
   // const [showTooltip, setShowTooltip] = useState(false);
@@ -52,7 +62,7 @@ const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
   return (
     <>
       <div
-        className="relative h-full w-full"
+        className="relative h-full w-full rounded-lg border "
         style={{
           overflow: 'hidden',
           backgroundPosition: '-12.5px -12.5px',
@@ -60,15 +70,45 @@ const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
           backgroundImage: !isPresentMode
             ? 'radial-gradient(circle,#404040 1px, #f1f5f9 1px)'
             : undefined,
-
-          // transform: `scale(${zoomLevel}) translate(${panPosition.x}px, ${panPosition.y}px)`,
           transformOrigin: 'top left',
           transition: 'transform 0.2s',
-          // backgroundColor: 'white',
         }}
-        // onWheel={handleWheel}
-        // onMouseDown={handleMouseDown}
       >
+        <div
+          className={`absolute right-3 top-3 flex flex-row gap-2 transition-opacity  ${
+            isPresentMode ? 'opacity-20 hover:opacity-100' : 'opacity-100'
+          }`}
+        >
+          <PresentModeToggle />
+          {!isPresentMode && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="z-[999999]">
+                <Button
+                  // className="absolute "
+                  size="icon"
+                  variant="outline"
+                >
+                  <Ellipsis className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => addPage()}>
+                  Add Page
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => deletePage(currentPage)}>
+                  Delete Page
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+        <Badge
+          variant="outline"
+          className=" absolute left-3 top-3 gap-2 bg-white/70"
+        >
+          {isPresentMode ? 'Show Mode' : 'Edit Mode'}
+        </Badge>
+
         {!isPresentMode && <SelectionTool />}
         {children}
       </div>

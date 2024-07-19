@@ -1,7 +1,6 @@
 // SelectionTool.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useComponentStore } from '@/store';
-import { MultiState } from '@/store/componentsStore';
 
 const SelectionTool: React.FC = () => {
   const [isSelecting, setIsSelecting] = useState(false);

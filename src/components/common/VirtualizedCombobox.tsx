@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 type Option = {
   value: string;
   label: string;

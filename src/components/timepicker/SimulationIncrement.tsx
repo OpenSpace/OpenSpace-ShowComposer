@@ -60,7 +60,7 @@ const SimulationIncrement: React.FC = () => {
       <ControlledInput
         placeholder="Enter date/time"
         value={value}
-        onChange={(newValue: string) => setValue(parseFloat(newValue))}
+        // onChange={(newValue: string) => setValue(parseFloat(newValue))}
         clearable={false}
       />
       <NumericInput

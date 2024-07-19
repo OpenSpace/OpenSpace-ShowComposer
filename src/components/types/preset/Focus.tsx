@@ -6,16 +6,13 @@ import {
   useComponentStore,
 } from '@/store';
 import { useEffect, useState } from 'react';
-import Autocomplete from '@/components/common/AutoComplete';
 import { getStringBetween } from '@/utils/apiHelpers';
 import Information from '@/components/common/Information';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
-import { capitalize } from 'lodash';
 import {
   NavigationAnchorKey,
   NavigationAimKey,

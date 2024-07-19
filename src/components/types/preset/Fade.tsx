@@ -186,13 +186,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
       }
       return a.localeCompare(b);
     })
-    // .map((key) => {
-    //   const newValue = key
-    //     .replace(/Scene.|.Renderable|.Opacity/g, '')
-    //     .replace(/\./g, ' > ')
-    //     .trim();
-    //   return [value:newValue, key];
-    // }
     .reduce((acc: Record<string, string>, key) => {
       const newValue = key
         .replace(/Scene.|.Renderable|.Opacity/g, '')
@@ -204,7 +197,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
-        {/* <div className="mb-1 flex flex-col gap-2"> */}
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
             <div className="text-sm font-medium text-black">Property</div>
@@ -218,27 +210,16 @@ const FadeModal: React.FC<FadeModalProps> = ({
               }
               searchPlaceholder="Search the Scene..."
             />
-            {/* <Autocomplete
-              options={sortedKeys}
-              onChange={(v) => setProperty(sortedKeys[v])}
-              initialValue={
-                Object.keys(sortedKeys).find(
-                  (key) => sortedKeys[key] === property,
-                ) as string
-              }
-            /> */}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label>Action Type</Label>
-            {/* <div className="w-[50%] p-2"> */}
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
               setSelected={setAction}
             />
-            {/* </div> */}
           </div>
 
           <div className="grid gap-2">
@@ -260,7 +241,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
               id="guiname"
               placeholder="Name of Component"
               type="text"
-              // className=" rounded border p-2"
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
@@ -274,7 +254,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
             onChange={(v) => setBackgroundImage(v)}
           />
           <div className="grid gap-2">
-            {/* <div className="text-sm font-medium text-black"> */}
             <Label htmlFor="description"> Gui Description</Label>
             <Textarea
               className="w-full"
@@ -285,14 +264,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
               }
               placeholder="Type your message here."
             />
-            {/* <input
-              type="textbox"
-              className="w-[50%] rounded border p-2"
-              value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiDescription(e.target.value)
-              }
-            /> */}
           </div>
         </div>
       </div>

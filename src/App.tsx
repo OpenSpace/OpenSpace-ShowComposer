@@ -1,23 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-// import { DndProvider } from 'react-dnd';
-// import { HTML5Backend } from 'react-dnd-html5-backend';
 import ComponentModal from './components/ComponentModal';
 import DraggableComponent from './components/DraggableComponent';
 import DroppableWorkspace from './components/DroppableWorkspace';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-  // ImperativePanelHandle,
 } from '@/components/ui/resizable';
 import {
   Tooltip,
   TooltipContent,
-  // TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
@@ -35,8 +29,6 @@ import {
 } from './store';
 
 import { v4 as uuidv4 } from 'uuid';
-// import PresentModeToggle from './components/PresentModeToggle';
-// import SettingsMenu from './components/SettingsMenu';
 import {
   ConnectionSettings,
   ConnectionStatus,
@@ -49,11 +41,9 @@ import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 const App = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isBottombarOpen, setIsBottombarOpen] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+  const [isBottombarOpen, setIsBottombarOpen] = useState(false);
+  const [_isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState<string | null>(
     null,
   );
@@ -125,8 +115,8 @@ const App = () => {
       y: 0,
       minHeight: 150,
       minWidth: 150,
-      width: 425,
-      height: type == 'timepanel' ? 250 : 600,
+      width: 275,
+      height: type == 'timepanel' ? 250 : 330,
     });
   };
 
@@ -146,10 +136,6 @@ const App = () => {
     removeComponent(id);
   };
 
-  const handleDeleteAllClick = () => {
-    setIsDeleteAllModalOpen(true);
-  };
-
   const handleDeleteAllConfirm = () => {
     removeAllComponents();
     setIsDeleteAllModalOpen(false);
@@ -162,7 +148,7 @@ const App = () => {
 
   const panelRef = useRef<ImperativePanelHandle>(null);
 
-  const [sizes, setSizes] = useState<number[]>([20, 80]); // Initial sizes for two panels
+  const [sizes, setSizes] = useState<number[]>([25, 75]); // Initial sizes for two panels
 
   const handleResize = (panelIndex: number, newSize: number) => {
     setSizes((prevSizes) => {
@@ -172,10 +158,10 @@ const App = () => {
     });
   };
 
-  const triggerResize = () => {
-    // Example to trigger resizing: Setting panel 1 to 30% and panel 2 to 70%
-    setSizes([5, 95]);
-  };
+  // const triggerResize = () => {
+  //   // Example to trigger resizing: Setting panel 1 to 30% and panel 2 to 70%
+  //   setSizes([5, 95]);
+  // };
 
   const [collapsing, setCollapsing] = useState(false);
   const collapsePanel = (perc: number) => {
@@ -188,12 +174,20 @@ const App = () => {
       }, 300);
     }
   };
+
+  useEffect(() => {
+    if (isPresentMode) {
+      collapsePanel(0);
+    } else {
+      collapsePanel(25);
+    }
+  }, [isPresentMode]);
   return (
     <>
       <TooltipProvider delayDuration={250}>
         <ResizablePanelGroup
           direction="horizontal"
-          className=" flex h-screen w-screen  overflow-hidden  rounded-[0.5rem] border bg-[#f8fafc]"
+          className=" flex h-screen w-screen  overflow-hidden   bg-slate-100/40"
           onLayout={(newSizes: number[]) => setSizes(newSizes)}
         >
           <ResizablePanel
@@ -208,199 +202,202 @@ const App = () => {
             // className="border"
             className={`${
               collapsing ? 'transition-all duration-300' : ''
-            } border`}
+            } h-screen `}
           >
-            <div className="flex h-screen flex-col">
-              <div className=" flex-0 p-4">
-                <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                  Youth Learner Interface
-                </h2>
-              </div>
-              <Separator />
-              {/* <PresentModeToggle />
+            <div className="h-full w-full  p-4 pr-2 ">
+              <div className="flex h-full flex-col overflow-hidden rounded-lg border ">
+                <div className=" flex-0 p-4">
+                  <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                    Youth Learner Interface
+                  </h2>
+                </div>
+                <Separator />
+                {/* <PresentModeToggle />
               <SettingsMenu /> */}
-              {/* {!isPresentMode && ( */}
-              {/* <div className="h-full w-full p-4"> */}
-              <div className="flex  flex-col gap-4 px-4 py-1">
-                <div className="flex flex-wrap gap-2">
-                  <ToggleGroup type="single">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <ToggleGroupItem onClick={saveStore} value="a">
-                          <Save size={20} />
-                        </ToggleGroupItem>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white">
-                        Save to your computer
-                      </TooltipContent>
-                    </Tooltip>
-                    <Separator orientation="vertical" />
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <ToggleGroupItem onClick={loadStore} value="b">
-                          <Folder size={20} />
-                        </ToggleGroupItem>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white">
-                        Load from your computer
-                      </TooltipContent>
-                    </Tooltip>
-                    <Separator orientation="vertical" />
+                {/* {!isPresentMode && ( */}
+                {/* <div className="h-full w-full p-4"> */}
+                <div className="flex  flex-col gap-4 px-4 py-1">
+                  <div className="flex flex-wrap gap-2">
+                    <ToggleGroup type="single">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <ToggleGroupItem onClick={saveStore} value="a">
+                            <Save size={20} />
+                          </ToggleGroupItem>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-white">
+                          Save to your computer
+                        </TooltipContent>
+                      </Tooltip>
+                      <Separator orientation="vertical" />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <ToggleGroupItem onClick={loadStore} value="b">
+                            <Folder size={20} />
+                          </ToggleGroupItem>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-white">
+                          Load from your computer
+                        </TooltipContent>
+                      </Tooltip>
+                      <Separator orientation="vertical" />
 
-                    <DeleteConfirmationModal
-                      onConfirm={handleDeleteAllConfirm}
-                      message="This action cannot be undone. This will permanently delete the
+                      <DeleteConfirmationModal
+                        onConfirm={handleDeleteAllConfirm}
+                        message="This action cannot be undone. This will permanently delete the
               components from the project."
-                      triggerButton={
-                        <ToggleGroupItem value="c">
-                          <Trash2 size={20} />
-                        </ToggleGroupItem>
-                      }
-                    />
+                        triggerButton={
+                          <ToggleGroupItem value="c">
+                            <Trash2 size={20} />
+                          </ToggleGroupItem>
+                        }
+                      />
 
-                    <Separator orientation="vertical" />
-                    <ConnectionSettings
-                      triggerButton={
-                        <ToggleGroupItem value="d">
-                          <Settings size={20} />
-                        </ToggleGroupItem>
-                      }
-                    />
-                  </ToggleGroup>
-                  <Separator />
-                  <div className="py-2">
-                    <ConnectionStatus />
+                      <Separator orientation="vertical" />
+                      <ConnectionSettings
+                        triggerButton={
+                          <ToggleGroupItem value="d">
+                            <Settings size={20} />
+                          </ToggleGroupItem>
+                        }
+                      />
+                    </ToggleGroup>
+                    <Separator />
+                    <div className="py-2">
+                      <ConnectionStatus />
+                    </div>
+                    {/* */}
                   </div>
-                  {/* */}
+                  {/* <ImageUpload /> */}
                 </div>
-                {/* <ImageUpload /> */}
-              </div>
-              <Separator />
-              <ScrollArea className="flex-0 ">
-                <div className="grid gap-4 p-4">
-                  <h2 className="text-xs font-bold ">Static Components</h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
-                    {staticComponentTypes.map((type) => (
-                      <Button
-                        variant={'outline'}
-                        key={type[0]}
-                        size={'sm'}
-                        className="flex flex-row items-center justify-between "
-                        onClick={() =>
-                          type[0] == 'timepanel' || type[0] == 'navpanel'
-                            ? handleImmediateAddComponent(type[0])
-                            : handleAddComponent(type[0])
-                        }
-                      >
-                        {/* svg for PLUS sign */}
-
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 inline-block h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                <Separator />
+                <ScrollArea className="flex-0 ">
+                  <div className="grid gap-4 p-4">
+                    <h2 className="text-xs font-bold ">Static Components</h2>
+                    <div className="col-2 grid gap-4 sm:grid-cols-2">
+                      {staticComponentTypes.map((type) => (
+                        <Button
+                          variant={'outline'}
+                          key={type[0]}
+                          size={'sm'}
+                          className="flex flex-row items-center justify-between "
+                          onClick={() =>
+                            type[0] == 'timepanel' || type[0] == 'navpanel'
+                              ? handleImmediateAddComponent(type[0])
+                              : handleAddComponent(type[0])
+                          }
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={4}
-                            d="M12 4v16m8-8H4"
-                          />
-                        </svg>
-                        {type[1]}
-                      </Button>
-                    ))}
-                  </div>
-                  <h2 className="mt-4 text-xs font-bold text-black">
-                    Preset Components
-                  </h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
-                    {presetComponentTypes.map((type) => (
-                      <Button
-                        key={type[0]}
-                        size={'sm'}
-                        variant={'secondary'}
-                        className="flex flex-row items-center justify-between "
-                        onClick={() =>
-                          type[0] == 'timepanel' || type[0] == 'navpanel'
-                            ? handleImmediateAddComponent(type[0])
-                            : handleAddComponent(type[0])
-                        }
-                      >
-                        {/* svg for PLUS sign */}
+                          {/* svg for PLUS sign */}
 
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 inline-block h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 inline-block h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={4}
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                          {type[1]}
+                        </Button>
+                      ))}
+                    </div>
+                    <h2 className="mt-4 text-xs font-bold text-black">
+                      Preset Components
+                    </h2>
+                    <div className="col-2 grid gap-4 sm:grid-cols-2">
+                      {presetComponentTypes.map((type) => (
+                        <Button
+                          key={type[0]}
+                          size={'sm'}
+                          variant={'secondary'}
+                          className="flex flex-row items-center justify-between "
+                          onClick={() =>
+                            type[0] == 'timepanel' || type[0] == 'navpanel'
+                              ? handleImmediateAddComponent(type[0])
+                              : handleAddComponent(type[0])
+                          }
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={4}
-                            d="M12 4v16m8-8H4"
-                          />
-                        </svg>
-                        {type[1]}
-                      </Button>
-                    ))}
-                  </div>
-                  <h2 className="mt-4 text-xs font-bold text-black">
-                    Property Components
-                  </h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
-                    {propertyComponentTypes.map((type) => (
-                      <Button
-                        key={type[0]}
-                        size={'sm'}
-                        variant={'default'}
-                        className="flex flex-row items-center justify-between "
-                        onClick={() =>
-                          type[0] == 'timepanel' || type[0] == 'navpanel'
-                            ? handleImmediateAddComponent(type[0])
-                            : handleAddComponent(type[0])
-                        }
-                      >
-                        {/* svg for PLUS sign */}
+                          {/* svg for PLUS sign */}
 
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 inline-block h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 inline-block h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={4}
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                          {type[1]}
+                        </Button>
+                      ))}
+                    </div>
+                    <h2 className="mt-4 text-xs font-bold text-black">
+                      Property Components
+                    </h2>
+                    <div className="col-2 grid gap-4 sm:grid-cols-2">
+                      {propertyComponentTypes.map((type) => (
+                        <Button
+                          key={type[0]}
+                          size={'sm'}
+                          variant={'default'}
+                          className="flex flex-row items-center justify-between "
+                          onClick={() =>
+                            type[0] == 'timepanel' || type[0] == 'navpanel'
+                              ? handleImmediateAddComponent(type[0])
+                              : handleAddComponent(type[0])
+                          }
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={4}
-                            d="M12 4v16m8-8H4"
-                          />
-                        </svg>
-                        {type[1]}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </ScrollArea>
-              <Separator />
+                          {/* svg for PLUS sign */}
 
-              {/* <div className="grid w-full gap-4 p-4">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 inline-block h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={4}
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                          {type[1]}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollArea>
+                <Separator />
+
+                {/* <div className="grid w-full gap-4 p-4">
              
             </div> */}
+              </div>
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
+
           <ResizablePanel
             // defaultSize={85}
             defaultSize={sizes[1]}
             onResize={(size) => handleResize(1, size)}
           >
             <div
-              className={`right relative flex h-full flex-1 flex-col bg-gray-100 transition-all duration-300 `}
+              className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
             >
               {/* {!isPresentMode && (
                 <h2 className="scroll-m-20 p-4 text-xl font-semibold tracking-tight">
@@ -408,7 +405,7 @@ const App = () => {
                 </h2>
               )} */}
               {/* <div className={`flex-1`}> */}
-              <div className=" m-0 h-full w-full rounded border bg-white ">
+              <div className=" m-0 h-full w-full bg-slate-100/40 p-4 pl-2 ">
                 <DroppableWorkspace>
                   {getPageById(currentPage).components.map((component) => {
                     const c = components[component];

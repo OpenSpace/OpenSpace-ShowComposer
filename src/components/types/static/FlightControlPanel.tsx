@@ -1,4 +1,6 @@
 import Information from '@/components/common/Information';
+import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
 import {
   ConnectionState,
   useOpenSpaceApiStore,
@@ -240,18 +242,17 @@ const FlightControlPanel = () => {
     <div className="z-9 absolute left-0 top-[60px] flex w-full flex-col items-center justify-center">
       <div>
         <div className="flex flex-row gap-2">
-          <button
-            className="rounded px-2 py-1 text-white"
-            onClick={toggleRotation}
-            //   title="Rotation friction"
-            style={{
-              background: rotationFriction ? '#222' : '#888',
+          <Toggle
+            variant={'outline'}
+            pressed={rotationFriction}
+            onPressedChange={(_pressed) => {
+              toggleRotation();
             }}
-            //   disabled={false}
           >
-            <span style={{ marginLeft: 5 }}>Rotation</span>
-          </button>
-          <button
+            Rotation
+          </Toggle>
+          <Button
+            size={'sm'}
             className="rounded px-2 py-1 text-white"
             onClick={toggleZoom}
             //   title="Zoom friction"
@@ -259,14 +260,15 @@ const FlightControlPanel = () => {
             //   disabled={false}
           >
             <span style={{ marginLeft: 5 }}>Zoom</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            size={'sm'}
             className="rounded px-2 py-1 text-white"
             onClick={toggleRoll}
             style={{ background: rollFriction ? '#222' : '#888' }}
           >
             <span style={{ marginLeft: 5 }}>Roll</span>
-          </button>
+          </Button>
           <Information content="Controls to disable friction for different camera movements" />
         </div>
       </div>

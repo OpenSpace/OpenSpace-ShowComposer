@@ -34,7 +34,7 @@ import { NumberGUIComponent } from './types/property/Number';
 import { VideoGUIComponent } from './types/static/Video';
 import { RichTextGUIComponent } from './types/static/RichText';
 import { MultiGUIComponent } from './types/preset/Multi';
-import { head } from 'lodash';
+import { Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
@@ -56,7 +56,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
 
   const updateComponent = useComponentStore((state) => state.updateComponent);
-  const checkOverlap = useComponentStore((state) => state.checkOverlap);
+  // const checkOverlap = useComponentStore((state) => state.checkOverlap);
   const getComponentById = useComponentStore((state) => state.getComponentById);
 
   const overlappedComponents = useComponentStore(
@@ -83,9 +83,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  // useEffect(() => {
-  //   cons {width, heai}
-  // }, [component]);
+  useEffect(() => {
+    if (component) {
+      const { id, isMulti, gui_name } = component;
+      console.log('isMulti', isMulti);
+      console.log('gui_name', gui_name);
+      console.log('id', id);
+    }
+  }, [component]);
 
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
@@ -242,72 +247,52 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           ${
             isPresentMode
               ? 'border-0 bg-opacity-0'
-              : 'border-2 border-dashed bg-gray-300 bg-opacity-25'
+              : 'border-0 bg-gray-300 bg-opacity-25'
           }
-          absolute cursor-move rounded${
+          absolute cursor-move rounded-lg ${
             isDragging || isSelected ? 'z-50 border-blue-500 shadow-lg ' : ''
-          } ${
-            isOverlapped ? 'border-red-500 bg-red-200' : ''
-          } transition-colors duration-300
+          } ${isOverlapped ? 'border-red-500 bg-red-200' : ''} 
+          rounded-lg 
+          transition-colors duration-300
           ${isMultiLoading ? 'opacity-25' : 'opacity-100'}
           `}
       >
         {!isPresentMode && (
-          <div className="drag-handle group absolute z-[99] flex h-[30px] w-full cursor-move items-center justify-end bg-gray-400 bg-opacity-50 px-4 ">
-            <div className="absolute flex w-full flex-col items-center gap-1">
-              <div className="flex gap-2">
-                {[...Array(3)].map((_, index) => (
-                  <span
-                    className={`bg-gray-500 transition-colors duration-300 group-hover:bg-white ${
-                      isSelected ? 'bg-white' : ''
-                    } `}
-                    key={index}
-                    style={{
-                      height: '4px',
-                      width: '4px',
-                      borderRadius: '50%',
-
-                      // background: '#333',
-                    }}
-                  ></span>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                {[...Array(3)].map((_, index) => (
-                  <span
-                    key={index}
-                    className={`bg-gray-500 transition-colors duration-300 group-hover:bg-white ${
-                      isSelected ? 'bg-white' : ''
-                    } `}
-                    style={{
-                      height: '4px',
-                      width: '4px',
-                      borderRadius: '50%',
-                      // background: '#333',
-                    }}
-                  ></span>
-                ))}
-              </div>
+          <div className="drag-handle transition-color group absolute z-[99] flex h-[30px] w-full cursor-move items-center justify-end rounded-t-lg bg-slate-500/10  hover:bg-slate-300/40 ">
+            <div className="absolute flex w-full flex-col items-center justify-center gap-1">
+              {/* <div className="flex gap-2"> */}
+              <GripHorizontal
+                className={`stroke-slate-500 transition-colors duration-300 hover:stroke-white  ${
+                  isSelected ? 'stroke-white' : ''
+                }`}
+              />
+              {/* </div> */}
             </div>
-            <DropdownMenuComponent
-              className="grow-0"
-              items={[
-                { name: 'Edit', action: onEdit },
-                { name: 'Delete', action: handleDeleteClick },
-              ]}
-            />
+            <div className="absolute right-1.5 top-1.5">
+              <DropdownMenuComponent
+                // className="w-0"
+                items={[
+                  <div
+                    className="flex w-full  flex-row items-center justify-between gap-2"
+                    onClick={onEdit}
+                  >
+                    <span>Edit</span>
+                    <Edit2 className="h-4 w-4" />
+                  </div>,
+                  <div
+                    className="flex w-full flex-row items-center justify-between gap-2"
+                    onClick={handleDeleteClick}
+                  >
+                    <span>Delete</span>
+                    <Trash2 className="h-4 w-4" />
+                  </div>,
+                ]}
+              />
+            </div>
           </div>
         )}
-        <div className="relative top-0 z-0 flex h-full flex-col items-center justify-center p-4">
+        <div className="relative top-0 z-0 flex h-full flex-col items-center justify-center rounded-lg p-4">
           {content}
-
-          {/* {!isPresentMode && (
-            <div className="absolute bottom-0 left-0 w-full p-2 text-xs">
-              <p>
-                ID: <span className="text-xs font-bold">{component?.id}</span>
-              </p>
-            </div>
-          )} */}
         </div>
       </Rnd>
       <div

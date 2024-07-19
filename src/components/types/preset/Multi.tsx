@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ComponentModal from '@/components/ComponentModal';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import ControlledInput from '@/components/inputs/ControlledInput';
 import { Button } from '@/components/ui/button';
 import { useComponentStore } from '@/store';
 import {
@@ -30,26 +29,31 @@ import { FadeGUIComponent } from './Fade';
 import { FocusComponent } from './Focus';
 import { BoolGUIComponent } from '../property/Boolean';
 import { TriggerGUIComponent } from '../property/Trigger';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Edit2, XIcon, Link, Unlink } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
 
 // // Define the type for list items
 // set up chained v paralell data handling
 interface MultiType {
   component: MultiOption['id'];
   delay: number;
-  //   buffer?: number;
-  //   chain: boolean;
+  buffer: number;
+  chained: boolean;
+  totalOffset: number;
   id: string;
 }
 interface MultiModalProps {
   component: MultiComponent | null;
   handleComponentData: (data: Partial<MultiComponent>) => void;
-  isOpen: boolean;
 }
 // MultiModal Component
 const MultiModal: React.FC<MultiModalProps> = ({
   component,
   handleComponentData,
-  isOpen,
 }) => {
   const [items, setItems] = useState<MultiType[]>(
     component
@@ -73,25 +77,64 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const [currentComponentType, setCurrentComponentType] = useState<
     ComponentType | ''
   >('');
-
+  const [cancelCallback, setCancelCallback] = useState<() => void>(
+    () => () => {},
+  );
+  const [initalData, setInitialData] = useState<Partial<MultiOption>>({
+    isMulti: 'pendingSave',
+  });
+  const [itemOrder, setItemOrder] = useState<string[]>(items.map((v) => v.id));
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
+    setInitialData({ isMulti: 'pendingSave' });
     setCurrentComponentType(type);
     setCurrentComponentId(newId);
     addItem(newId);
     setIsModalOpen(true);
+    setCancelCallback(() => () => {
+      setItems(items.filter((item) => item.id !== newId));
+      //   updateComponent(newId, {
+      //     isMulti: 'pendingDelete',
+      //   });
+    });
   };
+
   // make copy of multiotions and remove items as tehy are added to items
+
+  function recalculateOffsets(tempItems: MultiType[]) {
+    let totalDelay = 0;
+    for (let i = 0; i < tempItems.length; i++) {
+      if (i == 0) {
+        tempItems[i].chained = false;
+      }
+      tempItems[i].delay = tempItems[i].chained ? totalDelay : 0;
+      tempItems[i].totalOffset =
+        tempItems[i].buffer + (tempItems[i].chained ? tempItems[i].delay : 0);
+      const component = getComponentById(tempItems[i].component);
+      totalDelay =
+        tempItems[i].buffer + (component ? component?.intDuration || 0 : 0);
+    }
+  }
+  console.log(items);
+
   useEffect(() => {
     setAvailableOptions(
       multiOptions.filter(
         (component) => !items.some((item) => item.id === component),
       ),
     );
+    if (itemOrder != items.map((v) => v.id)) {
+      recalculateOffsets(items);
+    }
+    setItemOrder(items.map((v) => v.id));
+
     handleComponentData({
       components: items.map((v) => ({
         component: v.component,
         delay: v.delay,
+        buffer: v.buffer,
+        totalOffset: v.totalOffset,
+        chained: false,
       })),
     });
   }, [items]);
@@ -104,19 +147,15 @@ const MultiModal: React.FC<MultiModalProps> = ({
     setItems(newList);
   };
 
-  function getPreviousDuration() {
-    //get last item of items
-    const lastItem = items[items.length - 1];
-    if (lastItem) {
-      return 1000 * (getComponentById(lastItem.component)?.intDuration || 0);
-    }
-  }
   // Add a new item to the list (simplified for demonstration)
   const addItem = (component: MultiOption['id']) => {
     const newItem: MultiType = {
       id: component,
       component: component, // Placeholder component
-      delay: getPreviousDuration() || 1000, // Default delay of 1 second
+      delay: 0, // Default delay of 1 second
+      buffer: 0,
+      totalOffset: 0,
+      chained: items.length > 0 ? true : false,
     };
     setItems([...items, newItem]);
     updateComponent(component, { isMulti: 'pendingSave' });
@@ -133,32 +172,57 @@ const MultiModal: React.FC<MultiModalProps> = ({
   };
 
   return (
-    <div>
-      {/* <button onClick={addItem}>Add Component</button> */}
-      <SelectableDropdown
-        options={availableOptions.map((component) => ({
-          value: component,
-          label: getComponentById(component)?.gui_name,
-        }))}
-        selected={''}
-        setSelected={(id: string) => addItem(id)}
-      />
-      <SelectableDropdown
-        options={MultiOptions}
-        selected={''}
-        setSelected={(type: string) =>
-          handleAddComponent(type as ComponentType)
-        }
-      />
+    <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          {/* <Label>Add Existing Component</Label> */}
+          <SelectableDropdown
+            placeholder="Add Existing Component"
+            shouldClear={true}
+            options={availableOptions.map((component) => ({
+              value: component,
+              label: getComponentById(component)?.gui_name,
+            }))}
+            selected={undefined}
+            setSelected={(id: string) => {
+              addItem(id);
+            }}
+          />
+        </div>
+        <div className="grid gap-2">
+          {/* <Label>Add New Component</Label> */}
+
+          <SelectableDropdown
+            placeholder="Add New Component"
+            options={MultiOptions}
+            selected={undefined}
+            shouldClear={true}
+            setSelected={(type: string) =>
+              handleAddComponent(type as ComponentType)
+            }
+          />
+        </div>
+      </div>
       {/* {availableOptions.map((component, index) => (
         <button key={index} onClick={() => addItem(component)}>
           Add {getComponentById(component).type}
         </button>
       ))} */}
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        <b>Delay:</b> This delay is applied differently based on the item's
+        chaining status: For chained items, the delay is added after the
+        completion of the previous item's duration. For unchained items, the
+        delay is from the start the beginning of the workflow or the start time
+        of the previous item.
+      </p>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              //   className="flex flex-row"
+            >
               {items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
                   {(provided) => (
@@ -166,41 +230,144 @@ const MultiModal: React.FC<MultiModalProps> = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
+                      className="mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2"
                     >
-                      {item.id} {getComponentById(item.id)?.gui_name}
-                      {/* {item.component} */}
-                      {/* Display and allow editing of delay here */}
-                      <Button onClick={() => removeItem(item.id)}>
-                        Remove
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          // Open the modal with the component's data
-                          // set currentComponentId and currentComponentType
-                          // to the current component's id and type
-                          // respectively
-                          setCurrentComponentId(item.id);
-                          setCurrentComponentType(
-                            getComponentById(item.id)?.type,
-                          );
-                          setIsModalOpen(true);
-                        }}
-                      >
-                        Edit Component
-                      </Button>
-                      <ControlledInput
-                        className="w-auto !flex-row justify-between gap-2"
-                        label="Delay"
-                        type="number"
-                        value={item.delay}
-                        onChange={(value: number | string) => {
-                          const newItems = Array.from(items);
-                          newItems[index].delay =
-                            parseInt(value as string) || (value as number);
-                          setItems(newItems);
-                        }}
-                        placeholder={''}
-                      />
+                      <div className="w-[40%] overflow-hidden whitespace-nowrap">
+                        {getComponentById(item.id)?.gui_name}
+                      </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Toggle
+                            disabled={index == 0}
+                            pressed={item.chained}
+                            onPressedChange={(pressed) => {
+                              const newItems = Array.from(items);
+                              newItems[index].chained = pressed;
+                              recalculateOffsets(newItems);
+                              setItems(newItems);
+                            }}
+                            className="p-1"
+                          >
+                            {item.chained ? (
+                              <Link size={20} />
+                            ) : (
+                              <Unlink size={20} />
+                            )}
+                          </Toggle>
+                          {/* <ToggleGroup
+                            type="single"
+                            // onChange={}
+                            value={item.chained ? 'chained' : 'unchained'}
+                            onValueChange={(value) => {
+                              const newItems = Array.from(items);
+                              newItems[index].chained = value === 'chained';
+                              recalculateOffsets(newItems);
+                              setItems(newItems);
+                            }}
+                          >
+                            <ToggleGroupItem
+                              disabled={index == 0}
+                              value="chained"
+                            >
+                              <Link size={20} />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="unchained">
+                              <Unlink size={20} />
+                              {/* <ArrowsUpFromLine
+                                size={20}
+                                className="rotate-90"
+                              /> 
+                            </ToggleGroupItem> 
+                        </ToggleGroup> */}
+                        </TooltipTrigger>
+                        <TooltipContent className="w-[200px] bg-white">
+                          <b>Chained Items:</b> These items start their
+                          operation after the previous item has completed its
+                          duration.
+                          <br />
+                          <b>Unchained Items:</b> These run concurrently with
+                          the previous item, not waiting for the previous
+                          operations to complete.
+                        </TooltipContent>
+                      </Tooltip>
+                      <div className="flex items-center gap-1">
+                        <Label> Delay</Label>
+                        <Input
+                          type="number"
+                          className="w-20"
+                          name="delay"
+                          min="0"
+                          max="20"
+                          step="0.2"
+                          value={item.buffer}
+                          onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                            const value = e.currentTarget.value;
+                            const newItems = Array.from(items);
+                            newItems[index].buffer = parseFloat(value);
+                            console.log(value);
+                            setItems(newItems);
+                          }}
+                        />
+                      </div>
+                      <div className="flex-0 grid grid-cols-2 gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Toggle
+                              pressed={undefined}
+                              onPressedChange={(_pressed: boolean) => {
+                                setInitialData({});
+                                setCurrentComponentId(item.id);
+                                setCurrentComponentType(
+                                  getComponentById(item.id)?.type,
+                                );
+                                setCancelCallback(() => () => {
+                                  setItems(items);
+                                });
+
+                                setIsModalOpen(true);
+                              }}
+                              className="p-1"
+                            >
+                              <Edit2
+                                size={20} // Adjust size as needed
+                                onClick={() => {
+                                  // Your edit action here
+                                  setInitialData({});
+                                  setCurrentComponentId(item.id);
+                                  setCurrentComponentType(
+                                    getComponentById(item.id)?.type,
+                                  );
+                                  setCancelCallback(() => () => {
+                                    setItems(items);
+                                  });
+
+                                  setIsModalOpen(true);
+                                }}
+                                style={{ cursor: 'pointer' }} // Makes the icon behave like a button
+                              />
+                            </Toggle>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-white">
+                            Edit Component
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Toggle
+                              pressed={undefined}
+                              onClick={() => removeItem(item.id)}
+                              className="p-1"
+                            >
+                              <XIcon
+                                size={20} // Adjust size as needed
+                              />
+                            </Toggle>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-white">
+                            Remove from Component
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
                   )}
                 </Draggable>
@@ -213,10 +380,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
       <ComponentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onCancel={cancelCallback}
         componentId={currentComponentId}
-        initialData={{
-          isMulti: 'pendingSave',
-        }}
+        initialData={initalData}
         type={currentComponentType}
       />
     </div>
@@ -307,15 +473,14 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     );
   }, [component.components]);
 
+  console.log(component.components);
   const totalDelay = useMemo(() => {
     return (
       component.components
-        .map((v) => v.delay)
-        .reduce((acc, item) => acc + item / 1000, 0) + finalDelay
+        .map((v) => v.totalOffset)
+        .reduce((acc, item) => acc + item, 0) + finalDelay
     );
   }, [component.components, finalDelay]);
-
-  console.log(finalDelay, totalDelay);
 
   const [currentItem, setCurrentItem] = useState('');
   const [trigger, setTrigger] = useState(false);
@@ -346,7 +511,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           }
 
           //
-        }, item.delay),
+        }, item.delay * 1000),
       );
     }
   }, [component.components, finalDelay]);

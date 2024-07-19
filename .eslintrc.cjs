@@ -37,6 +37,7 @@ module.exports = {
   rules: {
     'react/prop-types': 0,
     'prefer-const': 0,
+    '@typescript-eslint/no-unused-vars': 0,
   },
   ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs', 'eslint.config.js'],
   globals: {

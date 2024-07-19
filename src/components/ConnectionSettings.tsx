@@ -164,7 +164,7 @@ const ConnectionStatus = () => {
         return (
           <div className="flex items-center gap-1">
             <XCircle size={size} stroke="red" strokeWidth={2} />{' '}
-            {/* <Label className="text-xs">disconnected</Label> */}
+            <Label className="text-xs">disconnected</Label>
           </div>
         );
       default:

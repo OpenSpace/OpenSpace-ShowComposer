@@ -135,13 +135,39 @@ export type MultiOption =
   | FlyToComponent
   | SetTimeComponent;
 
+export const staticComponents = [
+  { value: 'richtext', label: 'Rich Text' },
+  { value: 'title', label: 'Title' },
+  { value: 'video', label: 'Video' },
+  { value: 'image', label: 'Image' },
+];
+export const presetComponents = [
+  { value: 'fade', label: 'Fade' },
+  { value: 'setfocus', label: 'Set Focus' },
+  { value: 'flyto', label: 'Fly To' },
+  { value: 'settime', label: 'Set Time' },
+  { value: 'multi', label: 'Multi' },
+];
+
+export const propertyComponents = [
+  { value: 'boolean', label: 'Boolean' },
+  { value: 'number', label: 'Number' },
+  { value: 'trigger', label: 'Trigger' },
+];
+
+export const allComponentLabels = [
+  ...presetComponents,
+  ...staticComponents,
+  ...propertyComponents,
+];
+
 export const multiOptions = [
-  'trigger',
-  'boolean',
-  'fade',
-  'setfocus',
-  'flyto',
-  'settime',
+  { value: 'trigger', label: 'Trigger' },
+  { value: 'boolean', label: 'Boolean' },
+  { value: 'fade', label: 'Fade' },
+  { value: 'setfocus', label: 'Set Focus' },
+  { value: 'flyto', label: 'Fly To' },
+  { value: 'settime', label: 'Set Time' },
 ];
 
 //create typeguard to determing if opbject is of type MultiOption
@@ -158,9 +184,13 @@ export const isMultiOption = (option: any): option is MultiOption => {
 
 export interface MultiComponent extends ComponentBase {
   type: 'multi';
+  intDuration: number;
   components: {
     component: MultiOption['id'];
     delay: number;
+    buffer: number;
+    chained: boolean;
+    totalOffset: number;
   }[];
 }
 
@@ -212,9 +242,6 @@ interface State {
   setAsyncPreSubmitOperation: (operation: (() => any) | null) => void;
   executeAndResetAsyncPreSubmitOperation: () => void;
 }
-
-const newId = uuidv4();
-// const arrayOfOneEmptyArray: string[][] = [[]];
 
 export const useStore = create<State>()(
   devtools(
@@ -283,20 +310,20 @@ export const useStore = create<State>()(
         addComponent: (component: Component) =>
           set(
             (state) => {
-              if (state.pages.length === 0) {
-                const newId = uuidv4();
-                const newPage = { id: newId, components: [] };
-                state.pages.push(newPage);
-                state.currentPageIndex = 0;
-                state.currentPage = newPage.id;
-              }
               state.components[component.id] = {
                 ...component,
               };
-              console.log(state.getPageById(state.currentPage));
-              state.pages
-                .find((page) => page.id === state.currentPage)
-                ?.components.push(component.id);
+              if (state.pages.length === 0) {
+                const newId = uuidv4();
+                const newPage = { id: newId, components: [component.id] };
+                state.pages.push(newPage);
+                state.currentPageIndex = 0;
+                state.currentPage = newPage.id;
+              } else {
+                state.pages
+                  .find((page) => page.id === state.currentPage)
+                  ?.components.push(component.id);
+              }
             },
             false,
             'component/add',
@@ -364,6 +391,7 @@ export const useStore = create<State>()(
               state.overlappedComponents = {};
               state.selectedComponents = [];
               state.pages = [{ id: newId, components: [] }];
+              state.currentPage = newId;
             },
             false,
             'component/removeAll',
