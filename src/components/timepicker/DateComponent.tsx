@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronUp } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { ChevronDown } from 'lucide-react';
+import { Input } from '../ui/input';
 
 type DateData = {
   time: Date;
@@ -76,15 +77,19 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
         (part, index) => (
           <div
             key={index}
-            style={{ margin: '0 10px' }}
+            style={{ margin: '0px' }}
             className="flex flex-col items-center justify-center gap-1 "
           >
-            <Toggle onClick={() => adjustDatePart(part, 1)} pressed={false}>
+            <Toggle
+              className="h-4"
+              onClick={() => adjustDatePart(part, 1)}
+              pressed={false}
+            >
               <ChevronUp className="h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]" />
             </Toggle>
-            <input
+            <Input
               type="text"
-              className="flex w-[50px] text-center"
+              className="flex h-[20px] w-[40px]  p-0 text-center text-xs"
               value={
                 part === 'month'
                   ? monthAbbreviations[dateObj.getUTCMonth()]
@@ -100,7 +105,11 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
               }
               readOnly
             />
-            <Toggle onClick={() => adjustDatePart(part, -1)} pressed={false}>
+            <Toggle
+              className="h-4"
+              onClick={() => adjustDatePart(part, -1)}
+              pressed={false}
+            >
               <ChevronDown className="h-6 w-6 cursor-pointer transition-all hover:scale-110" />
             </Toggle>
           </div>

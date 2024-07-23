@@ -1,23 +1,43 @@
 import React, { useState, useEffect } from 'react';
+import { Image as LucideImage } from 'lucide-react'; // Ensure you have the correct import path
+import { cn } from '@/lib/utils';
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
-  fallbackSrc: string;
 }
 
-const Image: React.FC<ImageProps> = ({ src, fallbackSrc, alt, ...props }) => {
-  const [imgSrc, setImgSrc] = useState<string>(src);
+const Image: React.FC<ImageProps> = ({ src, alt, ...props }) => {
+  const [imageError, setImageError] = useState(false);
+
   useEffect(() => {
-    // Set imgSrc to the new src whenever the src prop changes
-    setImgSrc(src);
+    setImageError(false);
   }, [src]);
   const onError = () => {
-    if (imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc);
-    }
+    setImageError(true);
   };
 
-  return <img src={imgSrc} alt={alt} onError={onError} {...props} />;
+  return (
+    <>
+      {!imageError ? (
+        <img
+          className={props.className}
+          src={src}
+          alt={alt}
+          onError={onError}
+          {...props}
+        />
+      ) : (
+        <div
+          className={cn(
+            'flex aspect-square w-full items-center justify-center rounded-md border border-dashed',
+            props.className,
+          )}
+        >
+          <LucideImage className="text-muted-foreground h-8 h-8" />
+        </div>
+      )}
+    </>
+  );
 };
 
 export default Image;

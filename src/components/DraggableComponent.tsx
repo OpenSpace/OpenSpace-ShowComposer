@@ -18,6 +18,7 @@ import {
   VideoComponent,
   RichTextComponent,
   MultiComponent,
+  ImageComponent,
 } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import { TitleGUIComponent } from './types/static/Title';
@@ -35,6 +36,7 @@ import { VideoGUIComponent } from './types/static/Video';
 import { RichTextGUIComponent } from './types/static/RichText';
 import { MultiGUIComponent } from './types/preset/Multi';
 import { Edit2, GripHorizontal, Trash2 } from 'lucide-react';
+import { ImageGUIComponent } from './types/static/Image';
 
 // import SimulationIncrement from './timepicker/SimulationIncrement';
 
@@ -83,14 +85,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  useEffect(() => {
-    if (component) {
-      const { id, isMulti, gui_name } = component;
-      console.log('isMulti', isMulti);
-      console.log('gui_name', gui_name);
-      console.log('id', id);
-    }
-  }, [component]);
+  // useEffect(() => {
+  //   if (component) {
+  //     const { id, isMulti, gui_name } = component;
+  //     console.log('isMulti', isMulti);
+  //     console.log('gui_name', gui_name);
+  //     console.log('id', id);
+  //   }
+  // }, [component]);
 
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
@@ -137,9 +139,9 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     case 'video':
       content = <VideoGUIComponent component={component as VideoComponent} />;
       break;
-    // case 'image':
-    //   content = <ImageComponent component={component}/>
-    //   break;
+    case 'image':
+      content = <ImageGUIComponent component={component as ImageComponent} />;
+      break;
     case 'richtext':
       content = (
         <RichTextGUIComponent component={component as RichTextComponent} />
@@ -258,11 +260,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           `}
       >
         {!isPresentMode && (
-          <div className="drag-handle transition-color group absolute z-[99] flex h-[30px] w-full cursor-move items-center justify-end rounded-t-lg bg-slate-500/10  hover:bg-slate-300/40 ">
+          <div className="drag-handle transition-color group group absolute z-[99] flex h-[30px] w-full  cursor-move items-center justify-end rounded-t-lg bg-slate-500/0  duration-300 hover:bg-slate-900/40 ">
             <div className="absolute flex w-full flex-col items-center justify-center gap-1">
               {/* <div className="flex gap-2"> */}
               <GripHorizontal
-                className={`stroke-slate-500 transition-colors duration-300 hover:stroke-white  ${
+                className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white   ${
                   isSelected ? 'stroke-white' : ''
                 }`}
               />
@@ -273,11 +275,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
                 // className="w-0"
                 items={[
                   <div
-                    className="flex w-full  flex-row items-center justify-between gap-2"
+                    className="flex w-full  flex-row items-center justify-between gap-2 "
                     onClick={onEdit}
                   >
                     <span>Edit</span>
-                    <Edit2 className="h-4 w-4" />
+                    <Edit2 className="h-4 w-4 " />
                   </div>,
                   <div
                     className="flex w-full flex-row items-center justify-between gap-2"

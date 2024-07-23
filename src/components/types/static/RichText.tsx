@@ -10,10 +10,12 @@ interface RichTextGUIProps {
 const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
   return (
     <div className=" absolute right-0 top-0 flex h-full w-full items-center justify-center ">
-      <div
-        className="prose-sm h-full w-full p-4 prose-headings:my-0 prose-p:my-0"
-        dangerouslySetInnerHTML={{ __html: component.text }}
-      />
+      <div className="ql-snow">
+        <div
+          className=" ql-editor prose-sm h-full w-full p-4 prose-headings:my-0 prose-p:my-0"
+          dangerouslySetInnerHTML={{ __html: component.text }}
+        />
+      </div>
     </div>
   );
 };
@@ -38,7 +40,8 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
     measureDiv.style.visibility = 'hidden';
     measureDiv.style.width = 'auto';
     measureDiv.style.height = 'auto';
-    measureDiv.className = 'prose-sm p-6 prose-headings:my-0 prose-p:my-0';
+    measureDiv.className =
+      'prose-sm p-6 prose-headings:my-0 prose-p:my-0 !max-w-[600px] m-auto';
     document.body.appendChild(measureDiv);
 
     measureDiv.innerHTML = text;

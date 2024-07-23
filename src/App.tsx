@@ -18,7 +18,26 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Save, Folder, Trash2, Settings } from 'lucide-react';
+import {
+  Save,
+  Folder,
+  Trash2,
+  Settings,
+  Group,
+  Telescope,
+  SunMoon,
+  Plane,
+  History,
+  LetterText,
+  AlignJustify,
+  Video,
+  Image,
+  Clock,
+  Compass,
+  ToggleRight,
+  CirclePlay,
+  Hash,
+} from 'lucide-react';
 
 import {
   ComponentType,
@@ -73,27 +92,50 @@ const App = () => {
     }
   }, []);
 
-  const presetComponentTypes: Array<[ComponentType, string]> = [
-    ['multi', 'Multi'],
-    ['setfocus', 'Set Focus'],
-    ['fade', 'Fade'],
-    ['flyto', 'Fly To'],
-    ['settime', 'Set Time'],
+  type ComponentTypeData = {
+    type: ComponentType;
+    name: string;
+    icon: JSX.Element;
+  };
+
+  const presetComponentTypes: Array<ComponentTypeData> = [
+    { type: 'multi', name: 'Multi', icon: <Group /> },
+    { type: 'setfocus', name: 'Set Focus', icon: <Telescope /> },
+    { type: 'fade', name: 'Fade', icon: <SunMoon /> },
+    { type: 'flyto', name: 'Fly To', icon: <Plane /> },
+    { type: 'settime', name: 'Set Time', icon: <History /> },
   ];
 
-  const staticComponentTypes: Array<[ComponentType, string]> = [
-    ['richtext', 'Rich Text'],
-    ['title', 'Title'],
-    ['video', 'Video'],
-    ['image', 'Image'],
-    ['timepanel', 'Time Panel'],
-    ['navpanel', 'Nav Panel'],
+  const propertyComponentTypes: Array<ComponentTypeData> = [
+    { type: 'number', name: 'Number', icon: <Hash /> },
+    { type: 'boolean', name: 'Boolean', icon: <ToggleRight /> },
+    {
+      type: 'trigger',
+      name: 'Trigger',
+      icon: <CirclePlay className="h-5 w-5" />,
+    },
   ];
 
-  const propertyComponentTypes: Array<[ComponentType, string]> = [
-    ['number', 'Number'],
-    ['boolean', 'Boolean'],
-    ['trigger', 'Trigger'],
+  const staticComponentTypes: Array<ComponentTypeData> = [
+    { type: 'richtext', name: 'Rich Text', icon: <AlignJustify /> },
+    { type: 'title', name: 'Title', icon: <LetterText /> },
+    { type: 'video', name: 'Video', icon: <Video /> },
+    { type: 'image', name: 'Image', icon: <Image /> },
+    {
+      type: 'timepanel',
+      name: 'Time Panel',
+      icon: <Clock className="h-5 w-5" />,
+    },
+    {
+      type: 'navpanel',
+      name: 'Nav Panel',
+      icon: <Compass className="h-5 w-5" />,
+    },
+  ];
+  const allComponentTypes = [
+    ...presetComponentTypes,
+    ...propertyComponentTypes,
+    ...staticComponentTypes,
   ];
 
   const handleAddComponent = (type: ComponentType) => {
@@ -115,8 +157,8 @@ const App = () => {
       y: 0,
       minHeight: 150,
       minWidth: 150,
-      width: 275,
-      height: type == 'timepanel' ? 250 : 330,
+      width: type == 'timepanel' ? 300 : 275,
+      height: type == 'timepanel' ? 425 : 330,
     });
   };
 
@@ -183,290 +225,243 @@ const App = () => {
     }
   }, [isPresentMode]);
   return (
-    <>
-      <TooltipProvider delayDuration={250}>
-        <ResizablePanelGroup
-          direction="horizontal"
-          className=" flex h-screen w-screen  overflow-hidden   bg-slate-100/40"
-          onLayout={(newSizes: number[]) => setSizes(newSizes)}
+    <TooltipProvider delayDuration={250}>
+      <ResizablePanelGroup
+        direction="horizontal"
+        className=" flex h-screen w-screen  overflow-hidden   bg-slate-100/40"
+        onLayout={(newSizes: number[]) => setSizes(newSizes)}
+      >
+        <ResizablePanel
+          collapsible
+          ref={panelRef}
+          // defaultSize={20}
+          defaultSize={sizes[0]}
+          onResize={(size) => handleResize(0, size)}
+          collapsedSize={5}
+          maxSize={25}
+          // minSize={isPresentMode ? 0 : 5}
+          // className="border"
+          className={`${
+            collapsing ? 'transition-all duration-300' : ''
+          } h-screen max-w-[320px] `}
         >
-          <ResizablePanel
-            collapsible
-            ref={panelRef}
-            // defaultSize={20}
-            defaultSize={sizes[0]}
-            onResize={(size) => handleResize(0, size)}
-            collapsedSize={5}
-            maxSize={25}
-            // minSize={isPresentMode ? 0 : 5}
-            // className="border"
-            className={`${
-              collapsing ? 'transition-all duration-300' : ''
-            } h-screen `}
-          >
-            <div className="h-full w-full  p-4 pr-2 ">
-              <div className="flex h-full flex-col overflow-hidden rounded-lg border ">
-                <div className=" flex-0 p-4">
-                  <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                    Youth Learner Interface
-                  </h2>
-                </div>
-                <Separator />
-                {/* <PresentModeToggle />
-              <SettingsMenu /> */}
-                {/* {!isPresentMode && ( */}
-                {/* <div className="h-full w-full p-4"> */}
-                <div className="flex  flex-col gap-4 px-4 py-1">
-                  <div className="flex flex-wrap gap-2">
-                    <ToggleGroup type="single">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <ToggleGroupItem onClick={saveStore} value="a">
-                            <Save size={20} />
-                          </ToggleGroupItem>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-white">
-                          Save to your computer
-                        </TooltipContent>
-                      </Tooltip>
-                      <Separator orientation="vertical" />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <ToggleGroupItem onClick={loadStore} value="b">
-                            <Folder size={20} />
-                          </ToggleGroupItem>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-white">
-                          Load from your computer
-                        </TooltipContent>
-                      </Tooltip>
-                      <Separator orientation="vertical" />
+          <div className="h-full w-full  p-4 pr-2 ">
+            <div className="flex h-full flex-col overflow-hidden rounded-lg border ">
+              <div className=" flex-0 p-4">
+                <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                  Youth Learner Interface
+                </h2>
+              </div>
+              <Separator />
+              <div className="flex  flex-col gap-4 px-4 py-1">
+                <div className="flex flex-wrap gap-2">
+                  <ToggleGroup type="single">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ToggleGroupItem onClick={saveStore} value="a">
+                          <Save size={20} />
+                        </ToggleGroupItem>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white">
+                        Save to your computer
+                      </TooltipContent>
+                    </Tooltip>
+                    <Separator orientation="vertical" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ToggleGroupItem onClick={loadStore} value="b">
+                          <Folder size={20} />
+                        </ToggleGroupItem>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white">
+                        Load from your computer
+                      </TooltipContent>
+                    </Tooltip>
+                    <Separator orientation="vertical" />
 
-                      <DeleteConfirmationModal
-                        onConfirm={handleDeleteAllConfirm}
-                        message="This action cannot be undone. This will permanently delete the
+                    <DeleteConfirmationModal
+                      onConfirm={handleDeleteAllConfirm}
+                      message="This action cannot be undone. This will permanently delete the
               components from the project."
-                        triggerButton={
-                          <ToggleGroupItem value="c">
-                            <Trash2 size={20} />
-                          </ToggleGroupItem>
-                        }
-                      />
+                      triggerButton={
+                        <ToggleGroupItem value="c">
+                          <Trash2 size={20} />
+                        </ToggleGroupItem>
+                      }
+                    />
 
-                      <Separator orientation="vertical" />
-                      <ConnectionSettings
-                        triggerButton={
-                          <ToggleGroupItem value="d">
-                            <Settings size={20} />
-                          </ToggleGroupItem>
-                        }
-                      />
-                    </ToggleGroup>
-                    <Separator />
-                    <div className="py-2">
-                      <ConnectionStatus />
-                    </div>
-                    {/* */}
+                    <Separator orientation="vertical" />
+                    <ConnectionSettings
+                      triggerButton={
+                        <ToggleGroupItem value="d">
+                          <Settings size={20} />
+                        </ToggleGroupItem>
+                      }
+                    />
+                  </ToggleGroup>
+                  <Separator />
+                  <div className="py-2">
+                    <ConnectionStatus />
                   </div>
-                  {/* <ImageUpload /> */}
+                  {/* */}
                 </div>
-                <Separator />
-                <ScrollArea className="flex-0 ">
-                  <div className="grid gap-4 p-4">
-                    <h2 className="text-xs font-bold ">Static Components</h2>
-                    <div className="col-2 grid gap-4 sm:grid-cols-2">
-                      {staticComponentTypes.map((type) => (
-                        <Button
-                          variant={'outline'}
-                          key={type[0]}
-                          size={'sm'}
-                          className="flex flex-row items-center justify-between "
-                          onClick={() =>
-                            type[0] == 'timepanel' || type[0] == 'navpanel'
-                              ? handleImmediateAddComponent(type[0])
-                              : handleAddComponent(type[0])
-                          }
-                        >
-                          {/* svg for PLUS sign */}
-
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-2 inline-block h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={4}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                          {type[1]}
-                        </Button>
-                      ))}
-                    </div>
-                    <h2 className="mt-4 text-xs font-bold text-black">
-                      Preset Components
-                    </h2>
-                    <div className="col-2 grid gap-4 sm:grid-cols-2">
-                      {presetComponentTypes.map((type) => (
-                        <Button
-                          key={type[0]}
-                          size={'sm'}
-                          variant={'secondary'}
-                          className="flex flex-row items-center justify-between "
-                          onClick={() =>
-                            type[0] == 'timepanel' || type[0] == 'navpanel'
-                              ? handleImmediateAddComponent(type[0])
-                              : handleAddComponent(type[0])
-                          }
-                        >
-                          {/* svg for PLUS sign */}
-
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-2 inline-block h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={4}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                          {type[1]}
-                        </Button>
-                      ))}
-                    </div>
-                    <h2 className="mt-4 text-xs font-bold text-black">
-                      Property Components
-                    </h2>
-                    <div className="col-2 grid gap-4 sm:grid-cols-2">
-                      {propertyComponentTypes.map((type) => (
-                        <Button
-                          key={type[0]}
-                          size={'sm'}
-                          variant={'default'}
-                          className="flex flex-row items-center justify-between "
-                          onClick={() =>
-                            type[0] == 'timepanel' || type[0] == 'navpanel'
-                              ? handleImmediateAddComponent(type[0])
-                              : handleAddComponent(type[0])
-                          }
-                        >
-                          {/* svg for PLUS sign */}
-
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-2 inline-block h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={4}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                          {type[1]}
-                        </Button>
-                      ))}
-                    </div>
+                {/* <ImageUpload /> */}
+              </div>
+              <Separator />
+              <ScrollArea className="flex-0 ">
+                <div className="grid gap-4 p-4">
+                  <h2 className="text-xs font-bold ">Static Components</h2>
+                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                    {staticComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        variant={'outline'}
+                        className="flex flex-row items-center justify-between "
+                        onClick={() =>
+                          v.type == 'timepanel' || v.type == 'navpanel'
+                            ? handleImmediateAddComponent(v.type)
+                            : handleAddComponent(v.type)
+                        }
+                      >
+                        {v.icon}
+                        {v.name}
+                      </Button>
+                    ))}
                   </div>
-                </ScrollArea>
-                <Separator />
+                  <h2 className="mt-4 text-xs font-bold text-black">
+                    Preset Components
+                  </h2>
+                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                    {presetComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        variant={'secondary'}
+                        className="flex flex-row items-center justify-between "
+                        onClick={() =>
+                          v.type == 'timepanel' || v.type == 'navpanel'
+                            ? handleImmediateAddComponent(v.type)
+                            : handleAddComponent(v.type)
+                        }
+                      >
+                        {v.icon}
+                        {v.name}
+                      </Button>
+                    ))}
+                  </div>
+                  <h2 className="mt-4 text-xs font-bold text-black">
+                    Property Components
+                  </h2>
+                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                    {propertyComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        variant={'default'}
+                        className="flex flex-row items-center justify-between "
+                        onClick={() =>
+                          v.type == 'timepanel' || v.type == 'navpanel'
+                            ? handleImmediateAddComponent(v.type)
+                            : handleAddComponent(v.type)
+                        }
+                      >
+                        {v.icon}
+                        {v.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </ScrollArea>
+              <Separator />
 
-                {/* <div className="grid w-full gap-4 p-4">
+              {/* <div className="grid w-full gap-4 p-4">
              
             </div> */}
-              </div>
             </div>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
 
-          <ResizablePanel
-            // defaultSize={85}
-            defaultSize={sizes[1]}
-            onResize={(size) => handleResize(1, size)}
+        <ResizablePanel
+          // defaultSize={85}
+          defaultSize={sizes[1]}
+          onResize={(size) => handleResize(1, size)}
+        >
+          <div
+            className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
           >
-            <div
-              className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
-            >
-              {/* {!isPresentMode && (
+            {/* {!isPresentMode && (
                 <h2 className="scroll-m-20 p-4 text-xl font-semibold tracking-tight">
                   Workspace
                 </h2>
               )} */}
-              {/* <div className={`flex-1`}> */}
-              <div className=" m-0 h-full w-full bg-slate-100/40 p-4 pl-2 ">
-                <DroppableWorkspace>
-                  {getPageById(currentPage).components.map((component) => {
-                    const c = components[component];
-                    return (
-                      <DraggableComponent
-                        key={component}
-                        component={c}
-                        onEdit={() => handleEditComponent(component)}
-                        onDelete={() => handleDeleteComponent(component)}
-                      />
-                    );
-                  })}
-                </DroppableWorkspace>
-              </div>
-              <Pagination
-                currentIndex={currentPageIndex}
-                length={pagesLength}
-                setIndex={goToPage}
-              />
-              {/* </div> */}
-
-              {!isPresentMode && (
-                <button
-                  className="fixed bottom-8 left-8 z-40 rounded-full bg-gray-800 p-4 text-white"
-                  onClick={() => setIsBottombarOpen(!isBottombarOpen)}
-                >
-                  {/*  svg bottom/up arrow */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 15l7-7 7 7"
+            {/* <div className={`flex-1`}> */}
+            <div className=" m-0 h-full w-full bg-slate-100/40 p-4 pl-2 ">
+              <DroppableWorkspace>
+                {getPageById(currentPage).components.map((component) => {
+                  const c = components[component];
+                  return (
+                    <DraggableComponent
+                      key={component}
+                      component={c}
+                      onEdit={() => handleEditComponent(component)}
+                      onDelete={() => handleDeleteComponent(component)}
                     />
-                  </svg>
-                </button>
-              )}
-
-              <BottomDrawer
-                isOpen={isBottombarOpen}
-                onClose={() => setIsBottombarOpen(false)}
-              >
-                <SubscriptionPanel />
-              </BottomDrawer>
+                  );
+                })}
+              </DroppableWorkspace>
             </div>
-            <ComponentModal
-              isOpen={isModalOpen}
-              onClose={handleModalClose}
-              componentId={currentComponentId}
-              type={currentComponentType}
+            <Pagination
+              currentIndex={currentPageIndex}
+              length={pagesLength}
+              setIndex={goToPage}
             />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </TooltipProvider>
-    </>
+            {/* </div> */}
+
+            {!isPresentMode && (
+              <button
+                className="fixed bottom-8 left-8 z-40 rounded-full bg-gray-800 p-4 text-white"
+                onClick={() => setIsBottombarOpen(!isBottombarOpen)}
+              >
+                {/*  svg bottom/up arrow */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+              </button>
+            )}
+
+            <BottomDrawer
+              isOpen={isBottombarOpen}
+              onClose={() => setIsBottombarOpen(false)}
+            >
+              <SubscriptionPanel />
+            </BottomDrawer>
+          </div>
+          <ComponentModal
+            isOpen={isModalOpen}
+            onClose={handleModalClose}
+            componentId={currentComponentId}
+            type={currentComponentType}
+            icon={
+              allComponentTypes.find((v) => v.type == currentComponentType)
+                ?.icon
+            }
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </TooltipProvider>
   );
 };
 

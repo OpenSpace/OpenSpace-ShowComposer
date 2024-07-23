@@ -141,10 +141,10 @@ export const usePropertyStore = create<State>()(
                 subscription: topic,
               };
               const testSetProperty = (propName: string, value: any) => {
-                // console.log(propName, value);
-                usePropertyStore
-                  .getState()
-                  .setProperty(propName, normalizeKeys(value));
+                // if (propName.includes('time')) console.log(propName, value);
+                usePropertyStore.getState().setProperty(propName, value);
+
+                // .setProperty(propName, normalizeKeys(value));
               };
               const throttledHandleUpdates = throttle(
                 testSetProperty,
@@ -153,7 +153,7 @@ export const usePropertyStore = create<State>()(
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {
-                  throttledHandleUpdates(
+                  testSetProperty(
                     topicName,
                     restrictNumbersToDecimalPlaces(data, 4),
                   );

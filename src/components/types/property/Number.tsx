@@ -6,12 +6,14 @@ import {
   NumberComponent,
   ConnectionState,
 } from '@/store';
-import Autocomplete from '@/components/common/AutoComplete';
-// import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import { triggerNumber } from '@/utils/triggerHelpers';
 import Slider from '@/components/inputs/Slider';
 import ImageUpload from '@/components/common/ImageUpload';
+import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface NumberGUIProps {
   component: NumberComponent;
@@ -33,6 +35,44 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     (state) => state.properties[component.property],
   );
 
+  const [tempValue, setTempValue] = useState(property?.value);
+  const [triggeredByArrowKey, setTriggeredByArrowKey] = useState(false);
+
+  useEffect(() => {
+    setTempValue(property?.value);
+  }, [property?.value]);
+
+  const handleBlur = () => {
+    component.triggerAction?.(parseFloat(tempValue));
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (triggeredByArrowKey) {
+      component.triggerAction?.(parseFloat(e.target.value));
+      setTriggeredByArrowKey(false); // Reset the flag
+    } else {
+      setTempValue(e.target.value);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      component.triggerAction?.(parseFloat(tempValue));
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      setTriggeredByArrowKey(true); // Set the flag when arrow keys are pressed
+    }
+  };
+
+  const handleMouseDown = (_e: React.MouseEvent) => {
+    // e.stopPropagation();
+    setTriggeredByArrowKey(true);
+    // component.triggerAction?.(parseFloat(e.target.value));
+  };
+  const handleMouseUp = (_e: React.MouseEvent) => {
+    // e.stopPropagation();
+    // setTriggeredByArrowKey(true);
+    component.triggerAction?.(parseFloat(tempValue));
+  };
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
@@ -68,14 +108,31 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         <h1 className="text-2xl"> {component.gui_name}</h1>
         <div className="flex flex-row items-center justify-between">
           <div className="text-sm font-medium text-black">Set Value</div>
-          <Slider
-            value={property?.value}
-            min={component.min}
-            max={component.max}
-            step={component.step}
-            onChange={(v) => component.triggerAction?.(v)}
-          />
+          <div className=" flex flex-col gap-4">
+            <Input
+              type="number"
+              className="w-24 p-2"
+              value={tempValue}
+              min={component.min}
+              max={component.max}
+              step={component.step}
+              onChange={handleChange}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+            />
+            <Slider
+              value={property?.value}
+              min={component.min}
+              max={component.max}
+              step={component.step}
+              exponent={component.exponent}
+              onChange={(v) => component.triggerAction?.(v)}
+            />
+          </div>
         </div>
+
         <Information content={component.gui_description} />
       </div>
     </div>
@@ -114,6 +171,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [min, setMin] = useState<number>(component?.min || 0.1);
   const [max, setMax] = useState<number>(component?.max || 100);
   const [step, setStep] = useState<number>(component?.min || 0.1);
+  const [exponent, setExponent] = useState<number>(component?.exponent || 1);
 
   useEffect(() => {
     if (property) {
@@ -121,11 +179,13 @@ const NumberModal: React.FC<NumberModalProps> = ({
     }
   }, [property]);
   useEffect(() => {
+    // console.log(properties);
     console.log(propertyData);
     if (!propertyData) return;
     setMax(parseFloat(propertyData.description.AdditionalData.MaximumValue));
     setMin(parseFloat(propertyData.description.AdditionalData.MinimumValue));
     setStep(propertyData.description.AdditionalData.SteppingValue);
+    setExponent(propertyData.description.AdditionalData.Exponent);
     const name = propertyData.uri
       //only exacly '.Layers' should be removed
       .replace(/Scene.|.Renderable|\.Layers/g, '')
@@ -147,6 +207,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       min,
       max,
       step,
+      exponent,
       gui_name,
       gui_description,
       backgroundImage,
@@ -156,6 +217,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
     min,
     max,
     step,
+    exponent,
     gui_name,
     gui_description,
     backgroundImage,
@@ -189,74 +251,98 @@ const NumberModal: React.FC<NumberModalProps> = ({
     }, {});
 
   return (
-    <div className="mb-4">
-      <div className="mb-1 flex flex-col gap-2">
-        <div className="flex flex-row items-center justify-between gap-8">
+    <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-2">
           <div className="text-sm font-medium text-black">Property</div>
-          <Autocomplete
-            options={sortedKeys}
-            onChange={(v) => setProperty(sortedKeys[v])}
-            initialValue={
+          <VirtualizedCombobox
+            options={Object.keys(sortedKeys)}
+            selectOption={(v: string) => setProperty(sortedKeys[v])}
+            selectedOption={
               Object.keys(sortedKeys).find(
                 (key) => sortedKeys[key] === property,
-              ) as string
+              ) || ''
             }
+            searchPlaceholder="Search the Scene..."
           />
         </div>
-
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Range Min</div>
-          <input
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="min">Range Min</Label>
+          <Input
+            id="min"
+            placeholder="Slider Min"
             type="number"
-            className="w-[50%] rounded border p-2"
             value={min}
             onChange={(e) => setMin(parseFloat(e.target.value))}
           />
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Range Max</div>
-          <input
+        <div className="grid gap-2">
+          <Label htmlFor="max">Range Max</Label>
+          <Input
+            id="max"
+            placeholder="Slider Max"
             type="number"
-            className="w-[50%] rounded border p-2"
             value={max}
             onChange={(e) => setMax(parseFloat(e.target.value))}
           />
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Range Step</div>
-          <input
+        <div className="grid gap-2">
+          <Label htmlFor="step">Step</Label>
+          <Input
+            id="step"
+            placeholder="Slider Step"
             type="number"
-            className="w-[50%] rounded border p-2"
             value={step}
             onChange={(e) => setStep(parseFloat(e.target.value))}
           />
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Gui Name</div>
-          <input
-            type="slider"
-            className="w-[50%] rounded border p-2"
+        <div className="grid gap-2">
+          <Label htmlFor="exp">Exponent</Label>
+          <Input
+            id="exp"
+            placeholder="Exponent"
+            type="number"
+            value={exponent}
+            onChange={(e) => setExponent(parseFloat(e.target.value))}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="gioname">Component Name</Label>
+          <Input
+            id="guiname"
+            placeholder="Name of Component"
+            type="text"
             value={gui_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setGuiName(e.target.value)
             }
           />
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Gui Description</div>
-          <input
-            type="textbox"
-            className="w-[50%] rounded border p-2"
-            value={gui_description}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setGuiDescription(e.target.value)
-            }
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="description"> Background Image</Label>
+          <ImageUpload
+            value={backgroundImage}
+            onChange={(v) => setBackgroundImage(v)}
           />
         </div>
-        <ImageUpload
-          value={backgroundImage}
-          onChange={(v) => setBackgroundImage(v)}
-        />
+        <div className="grid gap-2">
+          <Label htmlFor="description"> Gui Description</Label>
+          <Textarea
+            className="w-full"
+            id="description"
+            value={gui_description}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setGuiDescription(e.target.value)
+            }
+            placeholder="Type your message here."
+          />
+        </div>
       </div>
     </div>
   );

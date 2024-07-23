@@ -26,6 +26,8 @@ import { TriggerModal } from './types/property/Trigger';
 import { NumberModal } from './types/property/Number';
 import { VideoModal } from './types/static/Video';
 import { MultiModal } from './types/preset/Multi';
+import { ImageModal } from './types/static/Image';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -37,7 +39,11 @@ import {
 } from '@/components/ui/card';
 
 // import Button from './common/Button';
-import { MultiComponent, allComponentLabels } from '@/store/componentsStore';
+import {
+  ImageComponent,
+  MultiComponent,
+  allComponentLabels,
+} from '@/store/componentsStore';
 interface ComponentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,6 +52,7 @@ interface ComponentModalProps {
   type: ComponentType | '';
   isMulti?: boolean;
   initialData?: Partial<Component>;
+  icon?: JSX.Element;
 }
 enum AsyncStatus {
   False = 'false',
@@ -60,6 +67,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   type,
   // isMulti = false,
   initialData = {},
+  icon,
 }) => {
   const addComponent = useComponentStore((state) => state.addComponent);
   // const getComponentById = useComponentStore((state) => state.getComponentById);
@@ -237,9 +245,14 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         />
       );
       break;
-    // case 'image':
-    //   content = <ImageComponent component={component} />;
-    //   break;
+    case 'image':
+      content = (
+        <ImageModal
+          component={component as ImageComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
     case 'video':
       content = (
         <VideoModal
@@ -275,15 +288,18 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       <Card className="w-[510px] bg-white">
         <CardHeader>
           <CardTitle>
-            {component
-              ? `Edit ${
-                  allComponentLabels.find((c) => c.value == component.type)
-                    ?.label || 'Component'
-                } Component`
-              : `Create ${
-                  allComponentLabels.find((c) => c.value == type)?.label ||
-                  'Component'
-                } Component`}
+            <div className="flex flex-row gap-2">
+              {icon}
+              {component
+                ? `Edit ${
+                    allComponentLabels.find((c) => c.value == component.type)
+                      ?.label || 'Component'
+                  } Component`
+                : `Create ${
+                    allComponentLabels.find((c) => c.value == type)?.label ||
+                    'Component'
+                  } Component`}
+            </div>
           </CardTitle>
           <CardDescription>
             Configure you component and add it to the workspace.

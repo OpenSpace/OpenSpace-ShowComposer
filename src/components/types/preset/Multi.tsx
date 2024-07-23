@@ -35,6 +35,8 @@ import { Edit2, XIcon, Link, Unlink } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
+import ImageUpload from '@/components/common/ImageUpload';
+import ButtonLabel from '@/components/common/ButtonLabel';
 
 // // Define the type for list items
 // set up chained v paralell data handling
@@ -59,6 +61,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
     component
       ? component.components.map((v) => ({ ...v, id: v.component }))
       : [],
+  );
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    component?.backgroundImage || '',
   );
   const [availableOptions, setAvailableOptions] = useState<Component['id'][]>(
     [],
@@ -115,7 +120,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
         tempItems[i].buffer + (component ? component?.intDuration || 0 : 0);
     }
   }
-  console.log(items);
+  // console.log(items);
 
   useEffect(() => {
     setAvailableOptions(
@@ -134,10 +139,11 @@ const MultiModal: React.FC<MultiModalProps> = ({
         delay: v.delay,
         buffer: v.buffer,
         totalOffset: v.totalOffset,
-        chained: false,
+        chained: v.chained,
       })),
+      backgroundImage: backgroundImage,
     });
-  }, [items]);
+  }, [items, backgroundImage]);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -164,7 +170,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const removeItem = (id: string) => {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
-    console.log('removeItem', id);
+    // console.log('removeItem', id);
     // console.log(multiOptions.find((v) => v == id)?.isMulti);
     updateComponent(id, {
       isMulti: 'pendingDelete',
@@ -242,6 +248,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
                             pressed={item.chained}
                             onPressedChange={(pressed) => {
                               const newItems = Array.from(items);
+                              console.log(pressed);
                               newItems[index].chained = pressed;
                               recalculateOffsets(newItems);
                               setItems(newItems);
@@ -377,6 +384,13 @@ const MultiModal: React.FC<MultiModalProps> = ({
           )}
         </Droppable>
       </DragDropContext>
+      <div className="grid gap-2">
+        <Label htmlFor="description"> Background Image</Label>
+        <ImageUpload
+          value={backgroundImage}
+          onChange={(v) => setBackgroundImage(v)}
+        />
+      </div>
       <ComponentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -473,7 +487,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     );
   }, [component.components]);
 
-  console.log(component.components);
+  // console.log(component.components);
   const totalDelay = useMemo(() => {
     return (
       component.components
@@ -517,14 +531,27 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   }, [component.components, finalDelay]);
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col items-center justify-center gap-2">
-        <Button onClick={triggerComponents}>Trigger Components</Button>
-        CurrentItem: {currentItem}
-      </div>
+    <div
+      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
+      onClick={triggerComponents}
+    >
+      <ButtonLabel>
+        <>
+          <p>Trigger Components</p>
+          <p>CurrentItem: {currentItem}</p>
+        </>
+      </ButtonLabel>
+
       <div className="h-4 border-2 border-black">
         {trigger && <ProgressBar progress={totalDelay} />}
       </div>
+      {/* add none rendered versions of components to dom to register their actions and subscriptions */}
       {component?.components.map((v, _i) => {
         return renderByType(getComponentById(v.component) as MultiOption);
       })}

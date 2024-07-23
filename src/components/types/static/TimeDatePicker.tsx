@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ConnectionState,
   usePropertyStore,
@@ -7,92 +7,80 @@ import {
 
 import DateComponent from '@/components/timepicker/DateComponent';
 import { Button } from '@/components/ui/button';
+import SelectableDropdown from '@/components/common/SelectableDropdown';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { FastForward, Pause, Rewind, Play } from 'lucide-react';
+import { throttle } from 'lodash';
+
+const updateDelayMs = 1000;
+
+const updateDeltaTimeNow = (
+  openspace: any,
+  value: number,
+  interpolationTime = undefined,
+) => {
+  // Calling interpolateDeltaTime with one or two arguments actually make a difference,
+  // even if the second argument is undefined. This is because undefined is translated to
+  // nil in the mapping to the underlying lua api.
+  // Hence, we check for undefined below:
+  // if (interpolationTime === undefined) {
+  //   openspace.time.interpolateDeltaTime(value);
+  // } else {
+  //   openspace.time.interpolateDeltaTime(value, interpolationTime);
+  // }
+  openspace.time.interpolateDeltaTime(value);
+};
+const updateDeltaTime = throttle(updateDeltaTimeNow, updateDelayMs);
+
+const Steps = {
+  seconds: 'Seconds',
+  minutes: 'Minutes',
+  hours: 'Hours',
+  days: 'Days',
+  months: 'Months',
+  years: 'Years',
+};
+const StepSizes = {
+  [Steps.seconds]: 1,
+  [Steps.minutes]: 60,
+  [Steps.hours]: 3600,
+  [Steps.days]: 86400,
+  [Steps.months]: 2678400,
+  [Steps.years]: 31536000,
+};
+const StepPrecisions = {
+  [Steps.seconds]: 0,
+  [Steps.minutes]: -3,
+  [Steps.hours]: -4,
+  [Steps.days]: -5,
+  [Steps.months]: -7,
+  [Steps.years]: -10,
+};
+const Limits = {
+  [Steps.seconds]: { min: 0, max: 300, step: 1 },
+  [Steps.minutes]: { min: 0, max: 300, step: 0.001 },
+  [Steps.hours]: { min: 0, max: 300, step: 0.0001 },
+  [Steps.days]: { min: 0, max: 10, step: 0.000001 },
+  [Steps.months]: { min: 0, max: 10, step: 0.00000001 },
+  [Steps.years]: { min: 0, max: 1, step: 0.0000000001 },
+};
+Object.freeze(Steps);
+Object.freeze(StepSizes);
+Object.freeze(StepPrecisions);
+Object.freeze(Limits);
 
 const TimeDatePicker = () => {
-  // const [pendingTime, setPendingTime] = useState(new Date());
-
-  // const [date, setDate] = useState(new Date());
-
-  // const [dateString, setDateString] = useState(new Date());
-
-  // const [simulationSpeed, setSimulationSpeed] = useState(1);
-  // const [displayUnit, setDisplayUnit] = useState('seconds'); // Step 1: Add state for display unit
-
-  // const handleDateChange = (newDate: Date) => {
-  //   setDate(newDate);
-  //   // Update simulation time based on newDate
-  // };
-
-  const Steps = {
-    seconds: 'Seconds',
-    minutes: 'Minutes',
-    hours: 'Hours',
-    days: 'Days',
-    months: 'Months',
-    years: 'Years',
-  };
-  const StepSizes = {
-    [Steps.seconds]: 1,
-    [Steps.minutes]: 60,
-    [Steps.hours]: 3600,
-    [Steps.days]: 86400,
-    [Steps.months]: 2678400,
-    [Steps.years]: 31536000,
-  };
-  const StepPrecisions = {
-    [Steps.seconds]: 0,
-    [Steps.minutes]: -3,
-    [Steps.hours]: -4,
-    [Steps.days]: -5,
-    [Steps.months]: -7,
-    [Steps.years]: -10,
-  };
-  const Limits = {
-    [Steps.seconds]: { min: 0, max: 300, step: 1 },
-    [Steps.minutes]: { min: 0, max: 300, step: 0.001 },
-    [Steps.hours]: { min: 0, max: 300, step: 0.0001 },
-    [Steps.days]: { min: 0, max: 10, step: 0.000001 },
-    [Steps.months]: { min: 0, max: 10, step: 0.00000001 },
-    [Steps.years]: { min: 0, max: 1, step: 0.0000000001 },
-  };
-  Object.freeze(Steps);
-  Object.freeze(StepSizes);
-  Object.freeze(StepPrecisions);
-  Object.freeze(Limits);
-
-  // const handleSimulationSpeedChange = (value: number) => {
-  //   let adjustedSpeed = value;
-  //   // Step 3: Adjust speed based on selected unit
-  //   switch (displayUnit) {
-  //     case 'minutes':
-  //       adjustedSpeed *= 60;
-  //       break;
-  //     case 'hours':
-  //       adjustedSpeed *= 3600;
-  //       break;
-  //     case 'days':
-  //       adjustedSpeed *= 86400;
-  //       break;
-  //     case 'years':
-  //       adjustedSpeed *= 31536000;
-  //       break;
-  //     // No need to adjust for seconds as it's the base unit
-  //   }
-  //   setSimulationSpeed(adjustedSpeed);
-  //   // Update simulation speed in your application
-  // };
-
-  // const {
-  //   connectionState,
-  //   subscribeToTopic,
-  //   unsubscribeFromTopic,
-  //   subscribeToProperty,
-  //   unsubscribeFromProperty,
-  // } = useOpenSpaceApi();
+  const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
   const time = usePropertyStore(
     (state) => state.properties['time']?.['timeCapped'],
   );
+
+  // const timeAll = usePropertyStore((state) => state.properties['time']);
+  // useEffect(() => {
+  //   if (timeAll) console.log(timeAll?.nextStep);
+  // }, [timeAll]);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
@@ -103,6 +91,45 @@ const TimeDatePicker = () => {
   );
 
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+
+  const targetDeltaTime = usePropertyStore(
+    (state) => state.properties.time?.targetDeltaTime,
+  );
+  const isPaused = usePropertyStore((state) => state.properties.time?.isPaused);
+
+  const [paused, setPaused] = useState<boolean>(isPaused);
+
+  const hasNextDeltaTimeStep = usePropertyStore(
+    (state) => state.properties.time?.hasNextStep,
+  );
+  const hasPrevDeltaTimeStep = usePropertyStore(
+    (state) => state.properties.time?.hasPrevStep,
+  );
+  const nextDeltaTimeStep = usePropertyStore(
+    (state) => state.properties.time?.nextStep,
+  );
+  const prevDeltaTimeStep = usePropertyStore(
+    (state) => state.properties.time?.prevStep,
+  );
+
+  function setNextDeltaTimeStep() {
+    updateDeltaTime.cancel();
+    luaApi.time.interpolateNextDeltaTimeStep();
+  }
+
+  function setPrevDeltaTimeStep() {
+    updateDeltaTime.cancel();
+    luaApi.time.interpolatePreviousDeltaTimeStep();
+  }
+
+  function togglePause() {
+    setPaused((paused: boolean) => !paused);
+    luaApi.time.togglePause();
+  }
+
+  useEffect(() => {
+    setPaused(isPaused);
+  }, [isPaused]);
 
   function setDate(newTime: Date) {
     // Spice, that is handling the time parsing in OpenSpace does not support
@@ -139,21 +166,6 @@ const TimeDatePicker = () => {
     luaApi.time.interpolateTimeRelative(delta);
   }
 
-  // function setToPendingTime() {
-  //   setDate(pendingTime);
-  //   setUseLock(false);
-  // }
-
-  // function interpolateToPendingTime() {
-  //   interpolateDate(pendingTime);
-  //   setUseLock(false);
-  // }
-
-  // function resetPendingTime() {
-  //   setPendingTime(new Date(time));
-  //   setUseLock(false);
-  // }
-
   function changeDate(
     event: {
       time: Date;
@@ -189,27 +201,11 @@ const TimeDatePicker = () => {
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('time', 500);
+    subscribeToTopic('time', 1000);
     return () => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
-
-  // useEffect(() => {
-  //   console.log('Scale:', scale);
-  // }, [scale]);
-  // const [firstTime, setFirstTime] = useState(true);
-  // useEffect(() => {
-  //   if (firstTime) {
-  //     console.log('TIME:', time);
-  //     setFirstTime(false);
-  //   }
-  //   if (time) {
-  //     console.log('TIME:', time);
-
-  //     setDateString(new Date(time));
-  //   }
-  // }, [time]);
 
   const timeLabel = useMemo(() => {
     if (time) {
@@ -221,71 +217,157 @@ const TimeDatePicker = () => {
     }
     return time;
   }, [time]);
-  // useEffect(() => {
-  //   let intervalId: NodeJS.Timeout;
 
-  //   if (simulationSpeed !== 0) {
-  //     intervalId = setInterval(() => {
-  //       setDate((currentDate) => {
-  //         const secondsToAdd = simulationSpeed * 5; // Adjust this factor as needed
-  //         return new Date(currentDate.getTime() + secondsToAdd * 1000);
-  //       });
-  //     }, 1000); // Update every second
-  //   }
+  const round10 = (value: number, exp: number) => {
+    const valueStr = value.toString();
+    const [integer, decimal] = valueStr.split('.');
+    if (decimal) {
+      const decimalRounded = Math.round(
+        Number(`0.${decimal}e${exp}`),
+      ).toString();
+      return Number(`${integer}.${decimalRounded}`);
+    }
+    return value;
+  };
 
-  //   return () => clearInterval(intervalId); // Cleanup interval on component unmount or speed change
-  // }, [simulationSpeed]);
+  const adjustedDelta = round10(
+    targetDeltaTime / StepSizes[stepSize],
+    StepPrecisions[stepSize],
+  );
+  function setDeltaTime(value: number) {
+    const deltaTime = value * StepSizes[stepSize];
+    if (Number.isNaN(deltaTime)) {
+      return;
+    }
+    if (luaApi) {
+      updateDeltaTimeNow(luaApi, deltaTime);
+    }
+  }
+
+  function setPositiveDeltaTime(value: number) {
+    const dt = value;
+    setDeltaTime(dt);
+  }
+
+  function setNegativeDeltaTime(value: number) {
+    const dt = -value;
+    setDeltaTime(dt);
+  }
+
+  function deltaTimeStepsContol() {
+    const adjustedNextDelta = round10(
+      nextDeltaTimeStep / StepSizes[stepSize],
+      StepPrecisions[stepSize],
+    );
+    const adjustedPrevDelta = round10(
+      prevDeltaTimeStep / StepSizes[stepSize],
+      StepPrecisions[stepSize],
+    );
+
+    const nextLabel = hasNextDeltaTimeStep
+      ? `${adjustedNextDelta} ${stepSize} / second`
+      : 'None';
+    const prevLabel = hasPrevDeltaTimeStep
+      ? `${adjustedPrevDelta} ${stepSize} / second`
+      : 'None';
+
+    return (
+      <div className="grid grid-cols-3 gap-2">
+        <div className="gap-.5 grid">
+          <Button
+            variant="default"
+            size="sm"
+            disabled={!hasPrevDeltaTimeStep}
+            onClick={setPrevDeltaTimeStep}
+          >
+            <Rewind />
+          </Button>
+          <Label className="text-xs text-zinc-500"> {prevLabel}</Label>
+        </div>
+        <Button variant="default" size="sm" onClick={togglePause}>
+          {paused ? <Play /> : <Pause />}
+        </Button>
+        <div className="gap-.5 grid">
+          <Button
+            variant="default"
+            size="sm"
+            disabled={!hasNextDeltaTimeStep}
+            onClick={setNextDeltaTimeStep}
+          >
+            <FastForward />
+          </Button>
+          <Label className="text-xs text-zinc-500"> {nextLabel}</Label>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       {time && (
-        <div className="flex flex-col items-center justify-center gap-4">
-          {/* <input
-            type="datetime-local"
-            value={time.toISOString().slice(0, 16)}
-            onChange={(e) => handleDateChange(new Date(e.target.value))}
-          /> */}
-          <DateComponent date={time} onChange={changeDate} />
-          <div className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-            {timeLabel}
+        <div className="grid gap-2 p-4">
+          <div className="grid gap-2">
+            <Label>Select Date</Label>
+            <DateComponent date={time} onChange={changeDate} />
           </div>
-          <div className="flex flex-row items-center justify-between gap-2">
-            <Button onClick={realtime}>Realtime</Button>
-            <Button onClick={now}>Now</Button>
+          <div className="grid gap-2">
+            <Label>Simulation Speed</Label>
+            {/* <Separator /> */}
+            <SelectableDropdown
+              placeholder="Select a Unit"
+              options={Object.values(Steps)}
+              selected={stepSize}
+              setSelected={setStepSize}
+            />
           </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="gap-.5 grid">
+              <Input
+                {...Limits[stepSize]}
+                disabled={!luaApi || adjustedDelta >= 0}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  console.log(e.target.valueAsNumber);
+                  setNegativeDeltaTime(e.target.valueAsNumber);
+                }}
+                placeholder={`Negative ${stepSize} / second`}
+                value={adjustedDelta >= 0 ? undefined : -adjustedDelta}
+                type="number"
+                // readOnly
+                // reverse
+                // noValue={adjustedDelta >= 0}
+                // showOutsideRangeHint={false}
+              />
+              <Label className="text-xs text-zinc-500">{`Negative ${stepSize} / second`}</Label>
+            </div>
+            <div className="gap-.5 grid">
+              <Input
+                {...Limits[stepSize]}
+                disabled={!luaApi || adjustedDelta < 0}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  console.log(e.target.valueAsNumber);
+                  setPositiveDeltaTime(e.target.valueAsNumber);
+                }}
+                placeholder={`${stepSize} / second`}
+                value={adjustedDelta < 0 ? NaN : adjustedDelta}
+                type="number"
+                // readOnly
+              />
+              <Label className="text-xs text-zinc-500">{`${stepSize} / second`}</Label>
+            </div>
+          </div>
+          {deltaTimeStepsContol()}
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="default" size="sm" onClick={realtime}>
+              Realtime
+            </Button>
+            <Button variant="default" size="sm" onClick={now}>
+              Now
+            </Button>
+          </div>
+          {/* </div> */}
+          <ButtonLabel>{timeLabel}</ButtonLabel>
         </div>
       )}
-
-      {/* <input
-        type="range"
-        min="-10"
-        max="10"
-        value={simulationSpeed}
-        onChange={(e) => handleSimulationSpeedChange(Number(e.target.value))}
-      /> 
-
-      
-       <div>Speed: {simulationSpeed}x</div>{' '}
-       <button
-        onClick={() => {
-          setDisplayUnit('seconds');
-          handleSimulationSpeedChange(1.0);
-        }}
-      >
-        Realtime
-      </button> 
-      <button onClick={() => setDate(new Date())}>Now</button> 
-       Step 2: Add dropdown for selecting display unit 
-       <select
-        value={displayUnit}
-        onChange={(e) => setDisplayUnit(e.target.value)}
-      >
-        <option value="seconds">Seconds</option>
-        <option value="minutes">Minutes</option>
-        <option value="hours">Hours</option>
-        <option value="days">Days</option>
-        <option value="years">Years</option>
-      </select> */}
     </div>
   );
 };

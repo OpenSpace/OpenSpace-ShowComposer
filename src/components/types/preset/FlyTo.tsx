@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { NavigationAnchorKey } from '@/store/apiStore';
+import ButtonLabel from '@/components/common/ButtonLabel';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -71,10 +72,10 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
       }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="flex flex-row gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>{' '}
+      <ButtonLabel>
+        {component.gui_name}
         <Information content={component.gui_description} />
-      </div>
+      </ButtonLabel>
     </div>
   ) : null;
 };
@@ -269,12 +270,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         <div className="my-4 grid grid-cols-2 gap-4">
           <Button onClick={setFromOpenspace}>Set Target from OpenSpace</Button>
           <div className="flex items-center space-x-2">
-            <Switch
-              id="geo"
-              checked={geo}
-              disabled={!hasGeoOption}
-              onCheckedChange={setGeo}
-            />
             <Label id="geo">Fly To Specific Geo coordinates</Label>
           </div>
         </div>
@@ -331,10 +326,13 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <ImageUpload
-            value={backgroundImage}
-            onChange={(v) => setBackgroundImage(v)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor="description"> Background Image</Label>
+            <ImageUpload
+              value={backgroundImage}
+              onChange={(v) => setBackgroundImage(v)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description"> Gui Description</Label>
             <Textarea

@@ -15,9 +15,13 @@ interface DropdownMenuProps {
 const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className="z-[999999]">
-        <Button size="icon" variant="ghost" className="h-5 w-5">
-          <EllipsisVertical className="h-5 w-5 stroke-slate-700/70 " />
+      <DropdownMenuTrigger asChild className="z-[999999] ">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-5 w-5 hover:bg-slate-900/40"
+        >
+          <EllipsisVertical className="h-5 w-5 stroke-slate-500 transition-colors duration-300  group-hover:stroke-white" />
           <span className="sr-only">More</span>
         </Button>
       </DropdownMenuTrigger>

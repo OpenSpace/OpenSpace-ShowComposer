@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { capitalize } from 'lodash';
+import ButtonLabel from '@/components/common/ButtonLabel';
 
 interface FadeGUIProps {
   component: FadeComponent;
@@ -92,22 +93,16 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
       }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="flex flex-row gap-4">
-        <span
-          style={{
-            color: `rgba(0,0,0,${property?.value})`,
-            borderColor: 'black',
-            fontSize: 64,
-          }}
-        >
-          •
-        </span>
-        <span>{`Fade: ${Math.floor(property?.value * 100)}%`}</span>
-      </div>
-      <div className="flex flex-row gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>
-        <Information content={component.gui_description} />
-      </div>
+      <ButtonLabel>
+        <>
+          {`${component.gui_name}  ${
+            !isNaN(property?.value)
+              ? `:  + ${Math.floor(property?.value * 100)}%`
+              : ''
+          }`}
+          <Information content={component.gui_description} />
+        </>
+      </ButtonLabel>
     </div>
   ) : null;
 };
@@ -136,7 +131,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
-  const [action, setAction] = useState<string>(component?.action || 'on');
+  const [action, setAction] = useState<string>(component?.action || 'toggle');
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
@@ -249,10 +244,13 @@ const FadeModal: React.FC<FadeModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <ImageUpload
-            value={backgroundImage}
-            onChange={(v) => setBackgroundImage(v)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor="description"> Background Image</Label>
+            <ImageUpload
+              value={backgroundImage}
+              onChange={(v) => setBackgroundImage(v)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description"> Gui Description</Label>
             <Textarea

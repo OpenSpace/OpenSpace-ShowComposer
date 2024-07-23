@@ -85,6 +85,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties as Property[],
           'Fadable',
         );
+        usePropertyStore.getState().setProperties(fadeables);
 
         const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
         // console.log(boolProps);
@@ -110,7 +111,6 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         // renderables.forEach((property) => {
         //   usePropertyStore.getState().setProperty(property.uri, property);
         // });
-        usePropertyStore.getState().setProperties(fadeables);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({

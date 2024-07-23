@@ -21,9 +21,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         theme: 'snow',
         modules: {
           toolbar: [
-            [{ header: [1, 2, false] }],
-            ['bold', 'italic', 'underline'],
-            ['image', 'code-block'],
+            // [{ header: [1, 2, false] }],
+            [{ header: [1, 2, 3, false] }],
+
+            // ['bold', 'italic', 'underline'],
+            // ['image', 'code-block'],
+            [{ size: [] }],
+            ['bold', 'italic', 'underline', 'blockquote'],
+
+            // ['link', 'image', 'video'],
+            ['clean'],
           ],
         },
       });

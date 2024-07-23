@@ -7,6 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from '@/components/ui/pagination';
 
 interface PaginationProps {
@@ -28,6 +29,43 @@ const Pagination: React.FC<PaginationProps> = ({
     }
   };
 
+  const visiblePages = () => {
+    const pages = [];
+    if (length <= 4) {
+      // If 4 or fewer pages, show all
+      for (let i = 0; i < length; i++) {
+        pages.push(i);
+      }
+    } else {
+      // If more than 4 pages
+      if (currentIndex <= 2) {
+        // Current index is among the first 3 pages
+        for (let i = 0; i < 3; i++) {
+          pages.push(i);
+        }
+        // pages.push('ellipsis');
+      } else if (currentIndex > 2 && currentIndex < length - 2) {
+        // Current index is in the middle, show previous ellipsis, current, next, and end ellipsis
+        // pages.push('prevEllipsis');
+        pages.push(currentIndex - 1);
+        pages.push(currentIndex);
+        pages.push(currentIndex + 1);
+        // pages.push('ellipsis');
+      } else {
+        // Current index is among the last 3 pages
+        // pages.push('prevEllipsis');
+        for (let i = length - 3; i < length; i++) {
+          pages.push(i);
+        }
+      }
+    }
+    return pages;
+  };
+  //   const handleEllipsisClick = () => {
+  //     const nextPage = Math.min(currentIndex + 4, length - 1);
+  //     setIndex(nextPage);
+  //   };
+
   // Add event listener when component mounts
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
@@ -38,7 +76,7 @@ const Pagination: React.FC<PaginationProps> = ({
     };
   }, [currentIndex, length]); // Dependencies array ensures effect runs when currentIndex or length changes
   return (
-    <div className="absolute bottom-0 left-0 z-[99] mb-6 flex w-full items-center justify-center">
+    <div className="absolute bottom-0 left-0 z-[49] mb-6 flex w-full items-center justify-center">
       <PaginationContainer>
         <PaginationContent>
           <PaginationItem>
@@ -51,9 +89,10 @@ const Pagination: React.FC<PaginationProps> = ({
               onClick={() => setIndex(currentIndex - 1)}
             />
           </PaginationItem>
+          {length > 4 && currentIndex > 2 && <PaginationEllipsis />}
           {
             //array of length length
-            Array.from({ length }, (_, i) => i).map((index) => (
+            visiblePages().map((index) => (
               <PaginationItem key={index}>
                 <PaginationLink
                   className="cursor-pointer"
@@ -65,6 +104,7 @@ const Pagination: React.FC<PaginationProps> = ({
               </PaginationItem>
             ))
           }
+          {length > 4 && currentIndex < length - 2 && <PaginationEllipsis />}
           <PaginationItem>
             <PaginationNext
               className={`${

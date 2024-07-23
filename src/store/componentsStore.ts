@@ -115,6 +115,7 @@ export interface NumberComponent extends ComponentBase {
   min: number;
   max: number;
   step: number;
+  exponent: number;
   property: string;
   backgroundImage: string;
   triggerAction: (value: number) => void;
@@ -184,7 +185,6 @@ export const isMultiOption = (option: any): option is MultiOption => {
 
 export interface MultiComponent extends ComponentBase {
   type: 'multi';
-  intDuration: number;
   components: {
     component: MultiOption['id'];
     delay: number;
@@ -192,6 +192,8 @@ export interface MultiComponent extends ComponentBase {
     chained: boolean;
     totalOffset: number;
   }[];
+  backgroundImage: string;
+  triggerAction: () => void;
 }
 
 export type Component =
@@ -273,13 +275,20 @@ export const useStore = create<State>()(
               ?.components.forEach((compId) => {
                 delete state.components[compId];
               });
-            state.pages = state.pages.filter((page) => page.id !== pageID);
-            // state.pages = state.pages.filter((_, index) => index !== page);
             state.currentPageIndex = Math.min(
-              state.currentPageIndex,
+              Math.max(state.currentPageIndex, 0),
               state.pages.length - 1,
             );
-            state.currentPage = state.pages[state.currentPageIndex].id;
+            state.pages = state.pages.filter((page) => page.id !== pageID);
+            if (state.pages.length === 0) {
+              const newId = uuidv4();
+              const newPage = { id: newId, components: [] };
+              state.pages.push(newPage);
+              state.currentPageIndex = state.pages.length - 1;
+              state.currentPage = newPage.id;
+            } else {
+              state.currentPage = state.pages[state.currentPageIndex].id;
+            }
           }),
         goToPage: (page: number) =>
           set((state) => {

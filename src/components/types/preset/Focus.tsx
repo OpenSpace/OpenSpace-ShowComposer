@@ -19,6 +19,7 @@ import {
   RetargetAnchorKey,
 } from '@/store/apiStore';
 import ImageUpload from '@/components/common/ImageUpload';
+import ButtonLabel from '@/components/common/ButtonLabel';
 interface FocusGUIProps {
   component: SetFocusComponent;
   shouldRender?: boolean;
@@ -91,15 +92,15 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
       }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="bg-black bg-opacity-25 p-4 text-white">
-        <div className="flex flex-row gap-4">
-          <span>{`Current Anchor: ${CurrentAnchor?.value}`}</span>
-        </div>
-        <div className="flex flex-row gap-4">
-          <h1 className="text-2xl"> {component.gui_name}</h1>
+      <ButtonLabel>
+        <div className="flex flex-col gap-2">
+          {component.gui_name}
+          {CurrentAnchor?.value && (
+            <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
+          )}
           <Information content={component.gui_description} />
         </div>
-      </div>
+      </ButtonLabel>
     </div>
   ) : null;
 };
@@ -230,10 +231,13 @@ const FocusModal: React.FC<FocusModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <ImageUpload
-            value={backgroundImage}
-            onChange={(v) => setBackgroundImage(v)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor="description"> Background Image</Label>
+            <ImageUpload
+              value={backgroundImage}
+              onChange={(v) => setBackgroundImage(v)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description"> Gui Description</Label>
             <Textarea

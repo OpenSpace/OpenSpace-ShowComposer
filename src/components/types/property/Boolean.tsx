@@ -7,11 +7,14 @@ import {
   Toggle,
   ConnectionState,
 } from '@/store';
-import Autocomplete from '@/components/common/AutoComplete';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import { triggerBool } from '@/utils/triggerHelpers';
 import ImageUpload from '@/components/common/ImageUpload';
+import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface BoolGUIProps {
   component: BooleanComponent;
@@ -168,23 +171,26 @@ const BoolModal: React.FC<BoolModalProps> = ({
     }, {});
 
   return (
-    <div className="mb-4">
-      <div className="mb-1 flex flex-col gap-2">
-        <div className="flex flex-row items-center justify-between gap-8">
-          <div className="text-sm font-medium text-black">Property</div>
-          <Autocomplete
-            options={sortedKeys}
-            onChange={(v) => setProperty(sortedKeys[v])}
-            initialValue={
-              Object.keys(sortedKeys).find(
-                (key) => sortedKeys[key] === property,
-              ) as string
-            }
-          />
+    <>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <div className="text-sm font-medium text-black">Property</div>
+            <VirtualizedCombobox
+              options={Object.keys(sortedKeys)}
+              selectOption={(v: string) => setProperty(sortedKeys[v])}
+              selectedOption={
+                Object.keys(sortedKeys).find(
+                  (key) => sortedKeys[key] === property,
+                ) || ''
+              }
+              searchPlaceholder="Search the Scene..."
+            />
+          </div>
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Action Type</div>
-          <div className="w-[50%]">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <Label>Action Type</Label>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
@@ -192,34 +198,40 @@ const BoolModal: React.FC<BoolModalProps> = ({
             />
           </div>
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Gui Name</div>
-          <input
-            type="text"
-            className="w-[50%] rounded border p-2"
-            value={gui_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setGuiName(e.target.value)
-            }
-          />
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="gioname">Component Name</Label>
+            <Input
+              id="guiname"
+              placeholder="Name of Component"
+              type="text"
+              value={gui_name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setGuiName(e.target.value)
+              }
+            />
+          </div>
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Gui Description</div>
-          <input
-            type="textbox"
-            className="w-[50%] rounded border p-2"
-            value={gui_description}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setGuiDescription(e.target.value)
-            }
+        <div className="grid grid-cols-1 gap-4">
+          <ImageUpload
+            value={backgroundImage}
+            onChange={(v) => setBackgroundImage(v)}
           />
+          <div className="grid gap-2">
+            <Label htmlFor="description"> Gui Description</Label>
+            <Textarea
+              className="w-full"
+              id="description"
+              value={gui_description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setGuiDescription(e.target.value)
+              }
+              placeholder="Type your message here."
+            />
+          </div>
         </div>
-        <ImageUpload
-          value={backgroundImage}
-          onChange={(v) => setBackgroundImage(v)}
-        />
       </div>
-    </div>
+    </>
   );
 };
 

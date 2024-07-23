@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import { throttle } from './throttle';
 import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
@@ -52,6 +53,8 @@ function isDate(date: any): date is Date {
 const updateTime = (newTimeState: TimeState) => {
   //   const { newTime } = newTimeState;
   const { time: newTime } = newTimeState;
+  // console.log(newTimeState);
+  // console.log(newTimeState);
 
   const newState = { ...newTimeState };
 
@@ -82,6 +85,7 @@ const updateTime = (newTimeState: TimeState) => {
       updateCappedTime();
     }
   }
+  // debounce(() => console.log(newState), 1000);
   return newState;
 };
 
@@ -93,7 +97,7 @@ async function jumpToTime(
 ) {
   let timeNow = usePropertyStore.getState().properties['time']?.['timeCapped'];
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
-
+  // console.log('NEW TIME: ', newTime);
   if (!isDate(timeNow)) {
     timeNow = new Date(timeNow);
   }
@@ -104,7 +108,7 @@ async function jumpToTime(
     Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000,
   );
 
-  console.log(timeDiffSeconds);
+  // console.log(timeDiffSeconds);
   const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
   if (fadeScene && diffBiggerThanADay && interpolate) {
     const promise = new Promise((resolve) => {
@@ -131,4 +135,18 @@ async function jumpToTime(
   }
 }
 
-export { updateTime, jumpToTime, isDate };
+function formatDate(date: Date) {
+  const pad = (n: number) => (n < 10 ? '0' + n : n);
+
+  const day = pad(date.getDate());
+  const month = pad(date.getMonth() + 1); // Months are zero-based in JavaScript
+  const year = date.getFullYear();
+
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+export { updateTime, jumpToTime, isDate, formatDate };

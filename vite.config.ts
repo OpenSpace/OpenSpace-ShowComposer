@@ -14,4 +14,15 @@ export default defineConfig({
       '@': path.resolve('./src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/lodash')) return 'lodash'; // Split Lodash into its own chunk
+          if (id.includes('node_modules')) return 'vendor'; // Other node modules go into the vendor chunk
+          // Optionally, add more conditions here to split your own code into chunks.
+        },
+      },
+    },
+  },
 });
