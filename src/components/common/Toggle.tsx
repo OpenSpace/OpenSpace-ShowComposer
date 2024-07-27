@@ -6,16 +6,22 @@ interface ToggleComponentProps {
   value: boolean;
   setValue: (value: boolean) => void;
   label?: string;
+  disabled?: boolean;
 }
 
-const Toggle: React.FC<ToggleComponentProps> = ({ value, setValue, label }) => {
+const Toggle: React.FC<ToggleComponentProps> = ({
+  value,
+  setValue,
+  disabled = false,
+  label,
+}) => {
   return (
     <div className="grid-2 grid gap-2">
       <Label>{label}</Label>
       <Switch
         id="geo"
         checked={value}
-        // disabled={!hasGeoOption}
+        disabled={disabled}
         onCheckedChange={setValue}
       />
     </div>

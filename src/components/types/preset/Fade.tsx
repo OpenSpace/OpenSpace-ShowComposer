@@ -8,8 +8,8 @@ import {
 import { useEffect, useState } from 'react';
 import { triggerFade } from '@/utils/triggerHelpers';
 import { Toggle } from '@/store/componentsStore';
+
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-// import Autocomplete from '@/components/common/AutoComplete';
 import Information from '@/components/common/Information';
 import ImageUpload from '@/components/common/ImageUpload';
 // import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { capitalize } from 'lodash';
 import ButtonLabel from '@/components/common/ButtonLabel';
-
+import StatusBarControlled from '@/components/StatusBarControlled';
 interface FadeGUIProps {
   component: FadeComponent;
   shouldRender?: boolean;
@@ -91,13 +91,16 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`,
       }}
-      onClick={() => component.triggerAction?.()}
+      onClick={() => {
+        component.triggerAction?.();
+      }}
     >
+      <StatusBarControlled progress={property?.value} debounceDuration={100} />
       <ButtonLabel>
         <>
           {`${component.gui_name}  ${
             !isNaN(property?.value)
-              ? `:  + ${Math.floor(property?.value * 100)}%`
+              ? `: ${Math.floor(property?.value * 100)}%`
               : ''
           }`}
           <Information content={component.gui_description} />

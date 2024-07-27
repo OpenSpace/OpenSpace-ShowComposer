@@ -61,12 +61,7 @@ const Pagination: React.FC<PaginationProps> = ({
     }
     return pages;
   };
-  //   const handleEllipsisClick = () => {
-  //     const nextPage = Math.min(currentIndex + 4, length - 1);
-  //     setIndex(nextPage);
-  //   };
 
-  // Add event listener when component mounts
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
 
@@ -76,9 +71,9 @@ const Pagination: React.FC<PaginationProps> = ({
     };
   }, [currentIndex, length]); // Dependencies array ensures effect runs when currentIndex or length changes
   return (
-    <div className="absolute bottom-0 left-0 z-[49] mb-6 flex w-full items-center justify-center">
+    <div className="absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center">
       <PaginationContainer>
-        <PaginationContent>
+        <PaginationContent className="z-[49]">
           <PaginationItem>
             <PaginationPrevious
               className={`${

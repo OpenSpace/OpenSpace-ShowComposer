@@ -62,6 +62,7 @@ const DroppableWorkspace: React.FC<{ children: React.ReactNode }> = ({
   return (
     <>
       <div
+        id="workspace"
         className="relative h-full w-full rounded-lg border "
         style={{
           overflow: 'hidden',

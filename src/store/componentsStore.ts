@@ -46,6 +46,15 @@ interface ComponentBase {
   intDuration?: number;
 }
 
+export interface TimeComponent extends ComponentBase {
+  type: 'timepanel';
+  minimized: boolean;
+}
+export interface NavComponent extends ComponentBase {
+  type: 'navpanel';
+  minimized: boolean;
+}
+
 export interface RichTextComponent extends ComponentBase {
   type: 'richtext';
   text: string;
@@ -211,10 +220,24 @@ export type Component =
   | NumberComponent
   | MultiComponent;
 
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface TempPositions {
+  [key: string]: Position;
+}
+
 interface State {
   pages: Array<Page>;
   currentPage: Page['id'];
   currentPageIndex: number;
+  timepanel: TimeComponent | null;
+  navpanel: NavComponent | null;
+  tempPositions: TempPositions;
+  setTempPositions: (newPositions: TempPositions) => void;
+  setTempPosition: (id: string, x: number, y: number) => void;
   components: Record<string, Component>;
   overlappedComponents: { [key: Component['id']]: Component['id'][] }; // Map component ID to list of overlapping component IDs
   selectedComponents: Component['id'][];
@@ -227,6 +250,8 @@ interface State {
     pageId: Page['id'],
   ) => void;
   getComponentById: (id: Component['id']) => Component;
+  createPanels: () => void;
+  updatePanel: (updates: Partial<TimeComponent | NavComponent>) => void;
   addPage: () => void;
   deletePage: (pageID: string) => void;
   goToPage: (page: number) => void;
@@ -251,10 +276,23 @@ export const useStore = create<State>()(
       immer((set, get) => ({
         pages: [],
         currentPageIndex: 0,
+        navpanel: null,
+        timepanel: null,
         currentPage: '',
         components: {},
+        tempPositions: {},
         overlappedComponents: {},
         selectedComponents: [],
+        setTempPosition(id, x, y) {
+          set((state) => {
+            state.tempPositions[id] = { x, y };
+          });
+        },
+        setTempPositions(newPositions: TempPositions) {
+          set((state) => {
+            state.tempPositions = newPositions;
+          });
+        },
         getComponentById: (id: Component['id']) => {
           const state = get();
           return state.components[id];
@@ -275,19 +313,21 @@ export const useStore = create<State>()(
               ?.components.forEach((compId) => {
                 delete state.components[compId];
               });
-            state.currentPageIndex = Math.min(
+            state.pages = state.pages.filter((page) => page.id !== pageID);
+            let newIndex = Math.min(
               Math.max(state.currentPageIndex, 0),
               state.pages.length - 1,
             );
-            state.pages = state.pages.filter((page) => page.id !== pageID);
+            state.currentPageIndex = newIndex;
             if (state.pages.length === 0) {
               const newId = uuidv4();
               const newPage = { id: newId, components: [] };
               state.pages.push(newPage);
-              state.currentPageIndex = state.pages.length - 1;
+              state.currentPageIndex = 0;
+              newIndex = 0;
               state.currentPage = newPage.id;
             } else {
-              state.currentPage = state.pages[state.currentPageIndex].id;
+              state.currentPage = state.pages[newIndex].id;
             }
           }),
         goToPage: (page: number) =>
@@ -315,6 +355,51 @@ export const useStore = create<State>()(
             state.pages
               .find((page) => page.id === pageId)
               ?.components.filter((compId) => compId !== componentId);
+          }),
+        createPanels: () =>
+          set((state) => {
+            state.timepanel = {
+              id: uuidv4(),
+              type: 'timepanel',
+              isMulti: 'false' as MultiState,
+              minimized: false,
+              x: 225,
+              y: 575,
+              minWidth: 325,
+              minHeight: 425,
+              width: 325,
+              height: 425,
+              gui_name: 'Time Panel',
+              gui_description: '',
+            };
+            state.navpanel = {
+              id: uuidv4(),
+              type: 'navpanel',
+              isMulti: 'false' as MultiState,
+              minimized: false,
+              x: 0,
+              y: 675,
+              minWidth: 225,
+              minHeight: 325,
+              width: 225,
+              height: 325,
+              gui_name: 'Nav Panel',
+              gui_description: '',
+            };
+          }),
+        updatePanel: (updates: Partial<TimeComponent | NavComponent>) =>
+          set((state) => {
+            if (updates.type === 'timepanel') {
+              const component = state.timepanel;
+              if (component) {
+                Object.assign(component, updates);
+              }
+            } else if (updates.type === 'navpanel') {
+              const component = state.navpanel;
+              if (component) {
+                Object.assign(component, updates);
+              }
+            }
           }),
         addComponent: (component: Component) =>
           set(

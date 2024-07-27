@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 
 import ComponentModal from '@/components/ComponentModal';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { Button } from '@/components/ui/button';
 import { useComponentStore } from '@/store';
 import {
   MultiOption,
@@ -37,6 +36,7 @@ import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
+import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 
 // // Define the type for list items
 // set up chained v paralell data handling
@@ -403,21 +403,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
   );
 };
 
-//component that takes a progress, currentProgress and triggers the animation over a certain amount of time as a prop
-const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
-  return (
-    <div
-      //   className="transition-[width] duration-300"
-      style={{
-        // width: '100%',
-        animation: `slide ${progress}s linear`,
-        height: '100%',
-        backgroundColor: 'green',
-      }}
-    ></div>
-  );
-};
-
 function renderByType(component: MultiOption) {
   let content;
   switch (component?.type) {
@@ -478,6 +463,18 @@ interface MultiGUIComponentProps {
 const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   // const items = component.components;
   const getComponentById = useComponentStore((state) => state.getComponentById);
+  const fadeOutDuration = 400; // 1 second fade out
+  const statusBarRef = useRef<StatusBarRef>(null);
+  const triggerAnimation = () => {
+    statusBarRef.current?.triggerAnimation();
+  };
+
+  useEffect(() => {
+    if (component.components.length == 0) {
+      return;
+    }
+    console.log(component.components);
+  }, [component.components]);
 
   const finalDelay = useMemo(() => {
     return (
@@ -497,6 +494,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   }, [component.components, finalDelay]);
 
   const [currentItem, setCurrentItem] = useState('');
+  // const [currentDelay, setCurrentDelay] = useState(0);
   const [trigger, setTrigger] = useState(false);
 
   const triggerComponents = useCallback(async () => {
@@ -505,15 +503,26 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     for (const item of component.components) {
       await new Promise((resolve) =>
         setTimeout(() => {
-          console.log(
-            `Triggering ${(getComponentById(item.component) as MultiOption)
-              ?.gui_name} after ${item.delay}`,
-          );
-          setCurrentItem(
-            (getComponentById(item.component) as MultiOption)?.gui_name || '',
-          );
-          (getComponentById(item.component) as MultiOption).triggerAction?.();
-          //if last item, set trigger to false
+          const tempComponent = getComponentById(item.component) as
+            | MultiOption
+            | undefined;
+          if (tempComponent) {
+            console.log(
+              `Triggering ${tempComponent.gui_name} after ${item.totalOffset}`,
+            );
+            setCurrentItem(tempComponent.gui_name || '');
+            tempComponent.triggerAction?.();
+
+            if (tempComponent.intDuration) {
+              // setCurrentDelay(tempComponent.intDuration);
+
+              setTimeout(() => {
+                setCurrentItem('');
+              }, tempComponent.intDuration * 1000);
+            }
+            triggerAnimation();
+          }
+
           if (item === component.components[component.components.length - 1]) {
             setTimeout(() => {
               setTrigger(false);
@@ -525,7 +534,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           }
 
           //
-        }, item.delay * 1000),
+        }, item.totalOffset * 1000),
       );
     }
   }, [component.components, finalDelay]);
@@ -535,22 +544,30 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
       style={{
         //cover and center the background image
+        pointerEvents: trigger ? 'none' : 'auto',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`,
       }}
-      onClick={triggerComponents}
+      onClick={() => {
+        triggerComponents();
+        triggerAnimation();
+      }}
     >
+      {/* {currentDelay && ( */}
+      <StatusBar
+        ref={statusBarRef}
+        duration={totalDelay}
+        fadeOutDuration={fadeOutDuration}
+      />
+      {/* )} */}
       <ButtonLabel>
-        <>
+        <div className="flex flex-col gap-2">
           <p>Trigger Components</p>
-          <p>CurrentItem: {currentItem}</p>
-        </>
+          {currentItem && <p>CurrentItem: {currentItem}</p>}
+        </div>
       </ButtonLabel>
 
-      <div className="h-4 border-2 border-black">
-        {trigger && <ProgressBar progress={totalDelay} />}
-      </div>
       {/* add none rendered versions of components to dom to register their actions and subscriptions */}
       {component?.components.map((v, _i) => {
         return renderByType(getComponentById(v.component) as MultiOption);

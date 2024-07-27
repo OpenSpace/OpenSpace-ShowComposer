@@ -5,6 +5,10 @@ const SubscriptionPanel = () => {
     (state) => state.propertySubscriptions,
   );
 
+  // loop throught topics and usePropertySTore to get the value fo each topic
+  // loop through subscriptions and usePropertyStore to get the value for each subscription
+  // console.log(topics, subscriptions);
+
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );

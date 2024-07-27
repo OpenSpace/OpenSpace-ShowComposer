@@ -1,4 +1,3 @@
-import { debounce } from 'lodash';
 import { throttle } from './throttle';
 import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
@@ -135,16 +134,17 @@ async function jumpToTime(
   }
 }
 
+// how do
 function formatDate(date: Date) {
   const pad = (n: number) => (n < 10 ? '0' + n : n);
 
-  const day = pad(date.getDate());
-  const month = pad(date.getMonth() + 1); // Months are zero-based in JavaScript
-  const year = date.getFullYear();
+  const day = pad(date.getUTCDate());
+  const month = pad(date.getUTCMonth() + 1); // Months are zero-based in JavaScript
+  const year = date.getUTCFullYear();
 
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
+  const hours = pad(date.getUTCHours());
+  const minutes = pad(date.getUTCMinutes());
+  const seconds = pad(date.getUTCSeconds());
 
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }

@@ -55,9 +55,15 @@ import {
 import SubscriptionPanel from './components/SubscriptionPanel';
 import BottomDrawer from './components/common/BottomDrawer';
 import Pagination from './components/Pagination';
-import { MultiComponent, MultiState } from './store/componentsStore';
+import DraggablePanel from './components/DraggablePanel';
+import {
+  MultiComponent,
+  NavComponent,
+  TimeComponent,
+} from './store/componentsStore';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
+import FeedbackPanel from './components/FeedbackPanel';
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,7 +82,11 @@ const App = () => {
     (state) => state.removeAllComponents,
   );
   const removeComponent = useComponentStore((state) => state.removeComponent);
-  const addComponent = useComponentStore((state) => state.addComponent);
+  // const addComponent = useComponentStore((state) => state.addComponent);
+  const createPanels = useComponentStore((state) => state.createPanels);
+  const updatePanel = useComponentStore((state) => state.updatePanel);
+  const NavPanel = useComponentStore((state) => state.navpanel);
+  const TimePanel = useComponentStore((state) => state.timepanel);
   const updateComponent = useComponentStore((state) => state.updateComponent);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const addPage = useComponentStore((state) => state.addPage);
@@ -90,6 +100,8 @@ const App = () => {
     if (pagesLength == 0 && currentPage == '') {
       addPage();
     }
+
+    if (!NavPanel || !TimePanel) createPanels();
   }, []);
 
   type ComponentTypeData = {
@@ -121,17 +133,19 @@ const App = () => {
     { type: 'title', name: 'Title', icon: <LetterText /> },
     { type: 'video', name: 'Video', icon: <Video /> },
     { type: 'image', name: 'Image', icon: <Image /> },
-    {
-      type: 'timepanel',
-      name: 'Time Panel',
-      icon: <Clock className="h-5 w-5" />,
-    },
-    {
-      type: 'navpanel',
-      name: 'Nav Panel',
-      icon: <Compass className="h-5 w-5" />,
-    },
   ];
+  const timeType = {
+    type: 'timepanel',
+    name: 'Time Panel',
+    icon: <Clock className="h-5 w-5" />,
+  };
+
+  const navType = {
+    type: 'navpanel',
+    name: 'Nav Panel',
+    icon: <Compass className="h-5 w-5" />,
+  };
+
   const allComponentTypes = [
     ...presetComponentTypes,
     ...propertyComponentTypes,
@@ -144,23 +158,29 @@ const App = () => {
     setCurrentComponentId(newId);
     setIsModalOpen(true);
   };
-
-  const handleImmediateAddComponent = (type: ComponentType) => {
-    const newId = uuidv4();
-    addComponent({
-      id: newId,
-      type: type,
-      isMulti: 'false' as MultiState,
-      gui_description: '',
-      gui_name: '',
-      x: 0,
-      y: 0,
-      minHeight: 150,
-      minWidth: 150,
-      width: type == 'timepanel' ? 300 : 275,
-      height: type == 'timepanel' ? 425 : 330,
+  const minimize = (component: TimeComponent | NavComponent | null) => {
+    updatePanel({
+      type: component?.type,
+      minimized: component ? !component.minimized : false,
     });
   };
+
+  // const handleImmediateAddComponent = (type: ComponentType) => {
+  //   const newId = uuidv4();
+  //   // addComponent({
+  //   //   id: newId,
+  //   //   type: type,
+  //   //   isMulti: 'false' as MultiState,
+  //   //   gui_description: '',
+  //   //   gui_name: '',
+  //   //   x: 0,
+  //   //   y: 0,
+  //   //   minHeight: 150,
+  //   //   minWidth: 150,
+  //   //   width: type == 'timepanel' ? 300 : 275,
+  //   //   height: type == 'timepanel' ? 425 : 330,
+  //   // });
+  // };
 
   const handleEditComponent = (id: string) => {
     setCurrentComponentId(id);
@@ -234,13 +254,11 @@ const App = () => {
         <ResizablePanel
           collapsible
           ref={panelRef}
-          // defaultSize={20}
           defaultSize={sizes[0]}
           onResize={(size) => handleResize(0, size)}
-          collapsedSize={5}
+          collapsedSize={0}
+          // minSize={}
           maxSize={25}
-          // minSize={isPresentMode ? 0 : 5}
-          // className="border"
           className={`${
             collapsing ? 'transition-all duration-300' : ''
           } h-screen max-w-[320px] `}
@@ -253,8 +271,8 @@ const App = () => {
                 </h2>
               </div>
               <Separator />
-              <div className="flex  flex-col gap-4 px-4 py-1">
-                <div className="flex flex-wrap gap-2">
+              <div className="flex  flex-col gap-4 px-4 py-1 @container">
+                <div className="flex flex-wrap gap-2 ">
                   <ToggleGroup type="single">
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -308,76 +326,76 @@ const App = () => {
                 {/* <ImageUpload /> */}
               </div>
               <Separator />
-              <ScrollArea className="flex-0 ">
-                <div className="grid gap-4 p-4">
+              <ScrollArea className="flex-0 @container">
+                <div className="grid gap-2 p-4 @[167px]:gap-4">
                   <h2 className="text-xs font-bold ">Static Components</h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                  <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
                     {staticComponentTypes.map((v, _i) => (
                       <Button
                         key={v.type}
                         size={'sm'}
                         variant={'outline'}
-                        className="flex flex-row items-center justify-between "
+                        className="flex flex-row items-center justify-between @container"
                         onClick={() =>
-                          v.type == 'timepanel' || v.type == 'navpanel'
-                            ? handleImmediateAddComponent(v.type)
-                            : handleAddComponent(v.type)
+                          // v.type == 'timepanel' || v.type == 'navpanel'
+                          //   ? handleImmediateAddComponent(v.type)
+                          //   :
+                          handleAddComponent(v.type)
                         }
                       >
                         {v.icon}
-                        {v.name}
+                        <span className="hidden @[40px]:inline">{v.name}</span>
                       </Button>
                     ))}
                   </div>
                   <h2 className="mt-4 text-xs font-bold text-black">
                     Preset Components
                   </h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                  <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
                     {presetComponentTypes.map((v, _i) => (
                       <Button
                         key={v.type}
                         size={'sm'}
                         variant={'secondary'}
-                        className="flex flex-row items-center justify-between "
+                        className="flex flex-row items-center justify-between @container"
                         onClick={() =>
-                          v.type == 'timepanel' || v.type == 'navpanel'
-                            ? handleImmediateAddComponent(v.type)
-                            : handleAddComponent(v.type)
+                          // v.type == 'timepanel' || v.type == 'navpanel'
+                          //   ? handleImmediateAddComponent(v.type)
+                          //   :
+                          handleAddComponent(v.type)
                         }
                       >
                         {v.icon}
-                        {v.name}
+                        <span className="hidden @[40px]:inline">{v.name}</span>
                       </Button>
                     ))}
                   </div>
                   <h2 className="mt-4 text-xs font-bold text-black">
                     Property Components
                   </h2>
-                  <div className="col-2 grid gap-4 sm:grid-cols-2">
+                  <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
                     {propertyComponentTypes.map((v, _i) => (
                       <Button
                         key={v.type}
                         size={'sm'}
                         variant={'default'}
-                        className="flex flex-row items-center justify-between "
+                        className="flex  flex-row items-center justify-between @container"
                         onClick={() =>
-                          v.type == 'timepanel' || v.type == 'navpanel'
-                            ? handleImmediateAddComponent(v.type)
-                            : handleAddComponent(v.type)
+                          // v.type == 'timepanel' || v.type == 'navpanel'
+                          // ? handleImmediateAddComponent(v.type)
+                          // :
+                          handleAddComponent(v.type)
                         }
                       >
                         {v.icon}
-                        {v.name}
+                        <span className="hidden @[40px]:inline">{v.name}</span>
                       </Button>
                     ))}
                   </div>
                 </div>
               </ScrollArea>
               <Separator />
-
-              {/* <div className="grid w-full gap-4 p-4">
-             
-            </div> */}
+              <FeedbackPanel />
             </div>
           </div>
         </ResizablePanel>
@@ -399,6 +417,8 @@ const App = () => {
             {/* <div className={`flex-1`}> */}
             <div className=" m-0 h-full w-full bg-slate-100/40 p-4 pl-2 ">
               <DroppableWorkspace>
+                {NavPanel && <DraggablePanel component={NavPanel} />}
+                {TimePanel && <DraggablePanel component={TimePanel} />}
                 {getPageById(currentPage).components.map((component) => {
                   const c = components[component];
                   return (
@@ -411,6 +431,39 @@ const App = () => {
                   );
                 })}
               </DroppableWorkspace>
+            </div>
+            <div className="absolute bottom-7 left-6 flex flex-row gap-2">
+              <Tooltip>
+                <TooltipContent>Toggle Nav Panel</TooltipContent>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant={'outline'}
+                    onClick={() => minimize(NavPanel)}
+                    className={`z-40 ${
+                      !NavPanel?.minimized ? 'opacity-60' : 'opacity-100'
+                    }`}
+                  >
+                    {navType.icon}
+                  </Button>
+                </TooltipTrigger>
+              </Tooltip>
+              <Tooltip>
+                <TooltipContent>Toggle Time Panel</TooltipContent>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant={'outline'}
+                    className={`z-40 ${
+                      !TimePanel?.minimized ? 'opacity-60' : 'opacity-100'
+                    }`}
+                    // pressed={!TimePanel?.minimized || false}
+                    onClick={() => minimize(TimePanel)}
+                  >
+                    {timeType.icon}
+                  </Button>
+                </TooltipTrigger>
+              </Tooltip>
             </div>
             <Pagination
               currentIndex={currentPageIndex}

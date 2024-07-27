@@ -128,7 +128,7 @@ export const usePropertyStore = create<State>()(
           false,
           'property/unsubscribe',
         ),
-      subscribeToTopic: (topicName: string, throttleAmt: number = 200) =>
+      subscribeToTopic: (topicName: string, _throttleAmt: number = 200) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
@@ -146,10 +146,10 @@ export const usePropertyStore = create<State>()(
 
                 // .setProperty(propName, normalizeKeys(value));
               };
-              const throttledHandleUpdates = throttle(
-                testSetProperty,
-                throttleAmt,
-              );
+              // const throttledHandleUpdates = throttle(
+              //   testSetProperty,
+              //   throttleAmt,
+              // );
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {

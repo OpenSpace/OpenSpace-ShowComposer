@@ -9,6 +9,8 @@ export { usePropertyStore } from './propertyStore';
 export { useOpenSpaceApiStore, ConnectionState } from './apiStore';
 export type {
   ComponentType,
+  NavComponent,
+  TimeComponent,
   FadeComponent,
   SetTimeComponent,
   RichTextComponent,

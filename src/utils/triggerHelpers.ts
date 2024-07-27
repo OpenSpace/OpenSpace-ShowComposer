@@ -1,4 +1,4 @@
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore } from '@/store';
 
 const triggerFade = async (
   property: string,
@@ -6,12 +6,10 @@ const triggerFade = async (
   action: 'on' | 'off' | 'toggle',
 ) => {
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
-  console.log(property);
-  //   console.log(luaApi);
-  const propertyValue = usePropertyStore.getState().properties[property];
-  console.log(propertyValue);
-  //   let alsoProValue = await luaApi.getPropertyValue(property);
-  //   console.log(alsoProValue);
+  if (!luaApi) {
+    console.log('No Api Access');
+    return;
+  }
 
   console.log('triggerFade', property, intDuration, action);
   switch (action) {
@@ -22,36 +20,15 @@ const triggerFade = async (
       luaApi.setPropertyValueSingle(property, 0.0, intDuration);
       break;
     case 'toggle':
-      //   if (propertyValue?.value) {
-      //     console.log('toggle', propertyValue.value === 0 ? 1.0 : 0.0);
-      //     luaApi.setPropertyValueSingle(
-      //       property,
-      //       propertyValue.value === 0 ? 1.0 : 0.0,
-      //       intDuration,
-      //     );
-      //   } else {
       const value = await luaApi.getPropertyValue(property);
-      console.log('toggle', value[1] === 0 ? 1.0 : 0.0);
+      console.log('toggle', value[1] < 0.5 ? 1.0 : 0.0);
       luaApi.setPropertyValueSingle(
         property,
-        value[1] === 0 ? 1.0 : 0.0,
+        value[1] < 0.5 ? 1.0 : 0.0,
         intDuration,
       );
-      //   }
       break;
   }
-
-  //   luaApi.setPropertyValueSingle(property, 1.0, fadeDuration);
-  //   / let isEnabled = false;
-  //     const returnValue = await openspace.getPropertyValue("Scene." + object + "Trail.Renderable.Enabled");
-  //     if (returnValue) {
-  //       isEnabled = returnValue[1];
-  //     }
-  //     if (!isEnabled) {
-  //       openspace.setPropertyValue("Scene." + object + "Trail.Renderable.Opacity", 0)
-  //       openspace.setPropertyValue("Scene." + object + "Trail.Renderable.Enabled", true)
-  //     }
-  //     openspace.setPropertyValue("Scene." + object + "Trail.Renderable.Opacity", 1, 1)
 };
 
 const triggerBool = async (
@@ -59,7 +36,10 @@ const triggerBool = async (
   action: 'on' | 'off' | 'toggle',
 ) => {
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
-  // const propertyValue = usePropertyStore.getState().properties[property];
+  if (!luaApi) {
+    console.log('No Api Access');
+    return;
+  } // const propertyValue = usePropertyStore.getState().properties[property];
   console.log('triggerBool', property, action);
   switch (action) {
     case 'on':
@@ -78,9 +58,11 @@ const triggerBool = async (
 
 const triggerTrigger = async (property: string) => {
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
-  // const propertyValue = await usePropertyStore.getState().properties[property];
+  if (!luaApi) {
+    console.log('No Api Access');
+    return;
+  } // const propertyValue = await usePropertyStore.getState().properties[property];
   const value = await luaApi.getPropertyValue(property);
-
   console.log('triggerBool', property, value);
   luaApi.setPropertyValueSingle(property, true);
 };

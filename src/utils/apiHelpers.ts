@@ -215,6 +215,8 @@ export const getActionSceneNodes = (
   return sortedProps;
 };
 
+// functio
+
 export function normalizeKeys(obj: Record<string, any>): Record<string, any> {
   return Object.keys(obj).reduce(
     (acc, key) => {

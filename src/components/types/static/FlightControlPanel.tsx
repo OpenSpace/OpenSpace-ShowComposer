@@ -1,12 +1,19 @@
 import Information from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { Label } from '@/components/ui/label';
+import { Rotate3d, ZoomIn, RefreshCcwDot } from 'lucide-react';
+
 import {
   ConnectionState,
   useOpenSpaceApiStore,
   usePropertyStore,
 } from '@/store';
 import { useEffect } from 'react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
 export const RetargetAnchorKey =
@@ -42,15 +49,15 @@ const FlightControlPanel = () => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
 
   const rotationFriction = usePropertyStore(
-    (state) => state.properties[RotationalFrictionKey]?.Value || false,
+    (state) => state.properties[RotationalFrictionKey]?.value || false,
   );
 
   const zoomFriction = usePropertyStore(
-    (state) => state.properties[ZoomFrictionKey]?.Value || false,
+    (state) => state.properties[ZoomFrictionKey]?.value || false,
   );
 
   const rollFriction = usePropertyStore(
-    (state) => state.properties[RollFrictionKey]?.Value || false,
+    (state) => state.properties[RollFrictionKey]?.value || false,
   );
   // const camera = usePropertyStore(
   //   (state) => state.properties['camera'] || false,
@@ -94,6 +101,7 @@ const FlightControlPanel = () => {
 
   function sendFlightControlInput(payload: InputStatePayload) {
     // console.log('Sending flight control input');
+    console.log(flightControlTopic);
     flightControlTopic && flightControlTopic.talk(payload);
   }
 
@@ -119,7 +127,7 @@ const FlightControlPanel = () => {
       <p>Click and drag to rotate. Hold</p>
       <ul className="list-inside">
         <li>SHIFT to pan</li>
-        <li>CTRL to zoom (y-axis) or roll (x-axis)</li>
+        <li>ALT(option on Mac) to zoom (y-axis) or roll (x-axis)</li>
       </ul>
       <br />
       <p>
@@ -213,6 +221,8 @@ const FlightControlPanel = () => {
   }
 
   function mouseMove(event: React.MouseEvent) {
+    console.log(event);
+    event.preventDefault();
     if (!mouseIsDown) {
       return;
     }
@@ -224,13 +234,14 @@ const FlightControlPanel = () => {
     if (event.shiftKey) {
       inputState.values.panX = -deltaX;
       inputState.values.panY = deltaY;
-    } else if (event.ctrlKey) {
+    } else if (event.altKey) {
       inputState.values.zoomIn = deltaY;
       inputState.values.localRollX = -deltaX;
     } else {
       inputState.values.orbitX = -deltaX;
       inputState.values.orbitY = deltaY;
     }
+    console.log('Sending input state', inputState);
 
     sendFlightControlInput({
       type: 'inputState',
@@ -239,68 +250,91 @@ const FlightControlPanel = () => {
   }
 
   return (
-    <div className="z-9 absolute left-0 top-[60px] flex w-full flex-col items-center justify-center">
-      <div>
-        <div className="flex flex-row gap-2">
-          <Toggle
-            variant={'outline'}
-            pressed={rotationFriction}
-            onPressedChange={(_pressed) => {
-              toggleRotation();
-            }}
-          >
-            Rotation
-          </Toggle>
-          <Button
-            size={'sm'}
-            className="rounded px-2 py-1 text-white"
-            onClick={toggleZoom}
-            //   title="Zoom friction"
-            style={{ background: zoomFriction ? '#222' : '#888' }}
-            //   disabled={false}
-          >
-            <span style={{ marginLeft: 5 }}>Zoom</span>
-          </Button>
-          <Button
-            size={'sm'}
-            className="rounded px-2 py-1 text-white"
-            onClick={toggleRoll}
-            style={{ background: rollFriction ? '#222' : '#888' }}
-          >
-            <span style={{ marginLeft: 5 }}>Roll</span>
-          </Button>
+    <div
+      id="flightPanel"
+      className="z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4"
+    >
+      <div className="flex w-full flex-col gap-2 px-4">
+        {/* <div className="flex w-full flex-row justify-start"></div> */}
+        <Label className="flex w-full justify-start">Camera Friction</Label>
+        <div className="flex w-full flex-row justify-center gap-2">
+          <div className="grid grid-cols-3 gap-2">
+            <Tooltip>
+              <TooltipContent>Rotation Friction</TooltipContent>
+              <TooltipTrigger asChild>
+                <Button
+                  size={'icon'}
+                  onClick={toggleRotation}
+                  variant={rotationFriction ? 'default' : 'outline'}
+                  className={`${
+                    rotationFriction ? 'opacity-100' : 'opacity-60'
+                  }`}
+                >
+                  <Rotate3d />
+                </Button>
+              </TooltipTrigger>
+            </Tooltip>
+            <Tooltip>
+              <TooltipContent>Zoom Friction</TooltipContent>
+              <TooltipTrigger asChild>
+                <Button
+                  size={'icon'}
+                  onClick={toggleZoom}
+                  variant={zoomFriction ? 'default' : 'outline'}
+                  className={`${zoomFriction ? 'opacity-100' : 'opacity-60'}`}
+                >
+                  <ZoomIn />
+                </Button>
+              </TooltipTrigger>
+            </Tooltip>
+            <Tooltip>
+              <TooltipContent>Roll Friction</TooltipContent>
+              <TooltipTrigger asChild>
+                <Button
+                  size={'icon'}
+                  onClick={toggleRoll}
+                  variant={rollFriction ? 'default' : 'outline'}
+                  className={`${rollFriction ? 'opacity-100' : 'opacity-60'}`}
+                >
+                  <RefreshCcwDot />
+                </Button>
+              </TooltipTrigger>
+            </Tooltip>
+          </div>
           <Information content="Controls to disable friction for different camera movements" />
         </div>
+        {/* </div> */}
       </div>
-      <div className="flex flex-row gap-2">
-        <div>Control Area</div>
-        <Information content={infoBoxContent} />
+      <div className="flex w-full flex-col items-center gap-2 px-4">
+        <div className="flex w-full flex-row justify-start gap-2">
+          <Label>Control Area</Label>
+          <Information content={infoBoxContent} />
+        </div>
+        <div
+          className="bg-slate-800/40"
+          style={{
+            // float: 'left',
+            height: '180px',
+            width: '180px',
+            outline: '2px solid gray',
+            // outlineOffset: '-10px',
+            // paddingTop: '2px',
+            cursor: 'crosshair',
+            zIndex: 9999,
+          }}
+          onPointerDown={mouseDown}
+          onPointerUp={mouseUp}
+          onPointerCancel={mouseUp}
+          onPointerLeave={mouseUp}
+          onLostPointerCapture={mouseUp}
+          onPointerMove={mouseMove}
+          onTouchStart={touchDown}
+          onTouchEnd={touchUp}
+          onTouchCancel={touchUp}
+          onTouchMove={touchMove}
+          id="controlArea"
+        />
       </div>
-      <div
-        //   className={styles.control_area}
-        style={{
-          // float: 'left',
-          height: '200px',
-          width: '200px',
-          outline: '2px solid gray',
-          outlineOffset: '-10px',
-          paddingTop: '2px',
-          cursor: 'crosshair',
-          zIndex: 9999,
-        }}
-        onPointerDown={mouseDown}
-        onPointerUp={mouseUp}
-        onPointerCancel={mouseUp}
-        onPointerLeave={mouseUp}
-        onLostPointerCapture={mouseUp}
-        onPointerMove={mouseMove}
-        onTouchStart={touchDown}
-        onTouchEnd={touchUp}
-        onTouchCancel={touchUp}
-        onTouchMove={touchMove}
-        id="controlArea"
-      />
-      {/* s */}
     </div>
   );
 };

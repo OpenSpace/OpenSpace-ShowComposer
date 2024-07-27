@@ -1,5 +1,5 @@
 // DraggableComponent.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { Rnd } from 'react-rnd';
 import { DraggableEvent, DraggableData } from 'react-draggable';
@@ -51,19 +51,17 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   onEdit,
   onDelete,
 }) => {
-  // const [] = useOpenSpaceApi;
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const tempPosition = useComponentStore(
+    (state) => state.tempPositions[component.id],
+  );
+  const setTempPositions = useComponentStore((state) => state.setTempPositions);
+  const setTempPosition = useComponentStore((state) => state.setTempPosition);
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
-
   const updateComponent = useComponentStore((state) => state.updateComponent);
-  // const checkOverlap = useComponentStore((state) => state.checkOverlap);
   const getComponentById = useComponentStore((state) => state.getComponentById);
 
-  const overlappedComponents = useComponentStore(
-    (state) => state.overlappedComponents,
-  );
   const selectedComponents = useComponentStore(
     (state) => state.selectedComponents,
   );
@@ -85,15 +83,6 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  // useEffect(() => {
-  //   if (component) {
-  //     const { id, isMulti, gui_name } = component;
-  //     console.log('isMulti', isMulti);
-  //     console.log('gui_name', gui_name);
-  //     console.log('id', id);
-  //   }
-  // }, [component]);
-
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
     if (selectedComponents.includes(component.id)) {
@@ -114,6 +103,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         y: roundToNearest(d.y, 25),
       });
     }
+    setTempPositions({});
     // checkOverlap({ ...component, x: d.x, y: d.y });
   };
 
@@ -126,9 +116,6 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         selectComponent(component.id);
       }
     }
-    // else {
-    //   selectComponent(component.id);
-    // }
   };
 
   let content;
@@ -185,10 +172,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       content = <div>Unknown component type</div>;
       break;
   }
-  const isOverlapped = overlappedComponents[component?.id]?.length > 0;
+  // const isOverlapped = overlappedComponents[component?.id]?.length > 0;
   const isSelected = selectedComponents.includes(component?.id);
   const isMultiLoading = component?.isMulti?.includes('pending');
   const isHidden = component?.isMulti?.includes('true');
+
+  const getComponentPosition = () => {
+    return tempPosition || { x: component?.x, y: component?.y };
+  };
 
   return (
     <>
@@ -200,7 +191,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           width: component?.width,
           height: component?.height,
         }}
-        position={{ x: component?.x, y: component?.y }}
+        position={getComponentPosition()}
         size={{ width: component?.width, height: component?.height }}
         onDragStart={() => {
           setIsDragging(true);
@@ -212,31 +203,37 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
             selectedComponents.forEach((id) => {
               const comp = getComponentById(id);
               if (comp) {
-                updateComponent(id, { x: comp.x + deltaX, y: comp.y + deltaY });
+                setTempPosition(id, comp.x + deltaX, comp.y + deltaY);
               }
             });
           }
-          // checkOverlap({
-          //   ...component,
-          //   x: d.x,
-          //   y: d.y,
-          // });
         }}
         onDragStop={(e: DraggableEvent, d: DraggableData) =>
           handleDragStop(e, d)
         }
         onResizeStop={(_e, _direction, ref, _delta, position) => {
+          console.log(_delta);
+          console.log(
+            'onResizeStop',
+            parseInt(ref.style.width),
+            ref.style.height,
+          );
+          console.log(
+            'onResizeStop',
+            roundToNearest(position.x, 25),
+            roundToNearest(position.y, 25),
+          );
           updateComponent(component.id, {
-            width: parseInt(ref.style.width),
-            height: parseInt(ref.style.height),
-            x: position.x,
-            y: position.y,
+            width: roundToNearest(parseInt(ref.style.width), 25),
+            height: roundToNearest(parseInt(ref.style.height), 25),
+            x: roundToNearest(position.x, 25),
+            y: roundToNearest(position.y, 25),
           });
           // checkOverlap({ ...component, x: position.x, y: position.y });
         }}
         disableDragging={isPresentMode} // Conditionally disable dragging
-        enableResizing={!isPresentMode ? undefined : false} // Conditionally disable resizing
-        resizeGrid={[25, 25]}
+        enableResizing={!isPresentMode ? true : false} // Conditionally disable resizing
+        // resizeGrid={[25, 25]}
         minHeight={component?.minHeight || 100}
         minWidth={component?.minWidth || 100}
         // bounds="parent"
@@ -248,27 +245,26 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           ${isHidden ? '!hidden' : ''}
           ${
             isPresentMode
-              ? 'border-0 bg-opacity-0'
+              ? 'border bg-opacity-0'
               : 'border-0 bg-gray-300 bg-opacity-25'
           }
           absolute cursor-move rounded-lg ${
             isDragging || isSelected ? 'z-50 border-blue-500 shadow-lg ' : ''
-          } ${isOverlapped ? 'border-red-500 bg-red-200' : ''} 
+          } 
           rounded-lg 
-          transition-colors duration-300
           ${isMultiLoading ? 'opacity-25' : 'opacity-100'}
           `}
+        // transition-colors duration-300
+        //
       >
         {!isPresentMode && (
-          <div className="drag-handle transition-color group group absolute z-[99] flex h-[30px] w-full  cursor-move items-center justify-end rounded-t-lg bg-slate-500/0  duration-300 hover:bg-slate-900/40 ">
+          <div className="drag-handle transition-color group absolute z-[99] flex h-[30px] w-full  cursor-move items-center justify-end rounded-t-lg bg-slate-500/0  duration-300 hover:bg-slate-900/40 ">
             <div className="absolute flex w-full flex-col items-center justify-center gap-1">
-              {/* <div className="flex gap-2"> */}
               <GripHorizontal
                 className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white   ${
                   isSelected ? 'stroke-white' : ''
                 }`}
               />
-              {/* </div> */}
             </div>
             <div className="absolute right-1.5 top-1.5">
               <DropdownMenuComponent

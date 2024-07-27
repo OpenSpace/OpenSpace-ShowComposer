@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import Information from '@/components/common/Information';
 import Toggle from '@/components/common/Toggle';
 import DateComponent from '@/components/timepicker/DateComponent';
@@ -9,7 +9,7 @@ import {
   useComponentStore,
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
-import { formatDate, isDate, jumpToTime } from '@/utils/time';
+import { formatDate, jumpToTime } from '@/utils/time';
 
 import { Clock } from 'lucide-react';
 import ImageUpload from '@/components/common/ImageUpload';
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonLabel from '@/components/common/ButtonLabel';
-
+import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 interface SetTimeComponentProps {
   component: SetTimeType;
 }
@@ -70,6 +70,11 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   ]);
 
   // Fadetime is in seconds
+  const fadeOutDuration = 400; // 1 second fade out
+  const statusBarRef = useRef<StatusBarRef>(null);
+  const triggerAnimation = () => {
+    statusBarRef.current?.triggerAnimation();
+  };
 
   return (
     <div
@@ -82,8 +87,16 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
       }}
       onClick={() => {
         component.triggerAction?.();
+        triggerAnimation();
       }}
     >
+      {component?.intDuration && (
+        <StatusBar
+          ref={statusBarRef}
+          duration={component?.intDuration}
+          fadeOutDuration={fadeOutDuration}
+        />
+      )}
       <ButtonLabel>
         <Clock className="h-4 w-4" />
         {component.gui_name}
@@ -124,7 +137,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const timeLabel = useMemo(() => {
     if (componentTime) {
       try {
-        return componentTime.toUTCString();
+        return formatDate(componentTime);
       } catch {
         return componentTime;
       }
@@ -134,7 +147,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
 
   useEffect(() => {
     if (timeLabel) {
-      setGuiName(`Go to ${formatDate(componentTime)}`);
+      setGuiName(`Go to ${timeLabel}`);
     }
   }, [timeLabel]);
 

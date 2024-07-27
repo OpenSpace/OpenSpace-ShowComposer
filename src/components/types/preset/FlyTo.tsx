@@ -8,17 +8,19 @@ import {
   useComponentStore,
 } from '@/store';
 import { FlyToComponent } from '@/store/componentsStore';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+
 // import { }
 // react-icon for flight
 import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import ButtonLabel from '@/components/common/ButtonLabel';
+import Toggle from '@/components/common/Toggle';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -31,6 +33,12 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useComponentStore((state) => state.updateComponent);
+
+  const fadeOutDuration = 400; // 1 second fade out
+  const statusBarRef = useRef<StatusBarRef>(null);
+  const triggerAnimation = () => {
+    statusBarRef.current?.triggerAnimation();
+  };
 
   useEffect(() => {
     if (luaApi) {
@@ -70,8 +78,18 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`,
       }}
-      onClick={() => component.triggerAction?.()}
+      onClick={() => {
+        component.triggerAction?.();
+        triggerAnimation();
+      }}
     >
+      {component?.intDuration && (
+        <StatusBar
+          ref={statusBarRef}
+          duration={component?.intDuration}
+          fadeOutDuration={fadeOutDuration}
+        />
+      )}
       <ButtonLabel>
         {component.gui_name}
         <Information content={component.gui_description} />
@@ -198,13 +216,13 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     const shouldGeo = options?.find(
       (option) => option.name === CurrentAnchor.value,
     )?.shouldGeo;
-
+    console.log(camera);
     setTarget(CurrentAnchor.value);
     if (shouldGeo) {
       setLat(camera?.latitude || 0);
       setLong(camera?.longitude || 0);
       setAlt(
-        Math.round(camera?.altitude * unitMultiplier(camera.altitudeunit)) || 0,
+        Math.round(camera?.altitude * unitMultiplier(camera.altitudeUnit)) || 0,
       );
       setGeo(true);
     }
@@ -256,10 +274,10 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="duration">Fade Duration</Label>
+            <Label htmlFor="duration">Flight Duration</Label>
             <Input
               id="duration"
-              placeholder="Duration to Fade"
+              placeholder="Duration to Flight"
               type="number"
               // className=""
               value={intDuration}
@@ -267,10 +285,15 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             />
           </div>
         </div>
-        <div className="my-4 grid grid-cols-2 gap-4">
+        <div className="my-4 grid grid-cols-2 items-center gap-4">
           <Button onClick={setFromOpenspace}>Set Target from OpenSpace</Button>
           <div className="flex items-center space-x-2">
-            <Label id="geo">Fly To Specific Geo coordinates</Label>
+            <Toggle
+              value={geo}
+              disabled={!hasGeoOption}
+              setValue={setGeo}
+              label="Set Coordinates/Altitude"
+            />
           </div>
         </div>
         {hasGeoOption && (

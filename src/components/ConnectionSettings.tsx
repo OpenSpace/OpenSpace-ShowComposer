@@ -83,7 +83,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
           <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent className="bg-white">
-          OpenSpace Connection Settings{' '}
+          OpenSpace Connection Settings
         </TooltipContent>
       </Tooltip>
 

@@ -17,7 +17,9 @@ type DateComponentProps = {
 };
 
 const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
-  //   console.log(date);
+  if (date === undefined) {
+    return null;
+  }
 
   const dateObj = new Date(date);
 

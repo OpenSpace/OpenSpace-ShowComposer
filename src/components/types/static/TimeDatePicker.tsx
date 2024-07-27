@@ -12,13 +12,15 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { FastForward, Pause, Rewind, Play } from 'lucide-react';
 import { throttle } from 'lodash';
+import ButtonLabel from '@/components/common/ButtonLabel';
+import { formatDate } from '@/utils/time';
 
 const updateDelayMs = 1000;
 
 const updateDeltaTimeNow = (
   openspace: any,
   value: number,
-  interpolationTime = undefined,
+  _interpolationTime = undefined,
 ) => {
   // Calling interpolateDeltaTime with one or two arguments actually make a difference,
   // even if the second argument is undefined. This is because undefined is translated to
@@ -210,7 +212,7 @@ const TimeDatePicker = () => {
   const timeLabel = useMemo(() => {
     if (time) {
       try {
-        return time.toUTCString();
+        return formatDate(time);
       } catch {
         return time;
       }
@@ -270,104 +272,107 @@ const TimeDatePicker = () => {
     const prevLabel = hasPrevDeltaTimeStep
       ? `${adjustedPrevDelta} ${stepSize} / second`
       : 'None';
-
     return (
       <div className="grid grid-cols-3 gap-2">
         <div className="gap-.5 grid">
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
             disabled={!hasPrevDeltaTimeStep}
             onClick={setPrevDeltaTimeStep}
           >
-            <Rewind />
+            <Rewind fill="black" />
           </Button>
           <Label className="text-xs text-zinc-500"> {prevLabel}</Label>
         </div>
-        <Button variant="default" size="sm" onClick={togglePause}>
-          {paused ? <Play /> : <Pause />}
+        <Button variant="outline" size="sm" onClick={togglePause}>
+          {paused ? <Play fill="black" /> : <Pause fill="black" />}
         </Button>
         <div className="gap-.5 grid">
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
             disabled={!hasNextDeltaTimeStep}
             onClick={setNextDeltaTimeStep}
           >
-            <FastForward />
+            <FastForward fill="black" />
           </Button>
           <Label className="text-xs text-zinc-500"> {nextLabel}</Label>
         </div>
       </div>
     );
   }
-
+  if (!time) return null;
   return (
     <div>
-      {time && (
-        <div className="grid gap-2 p-4">
-          <div className="grid gap-2">
-            <Label>Select Date</Label>
-            <DateComponent date={time} onChange={changeDate} />
-          </div>
-          <div className="grid gap-2">
-            <Label>Simulation Speed</Label>
-            {/* <Separator /> */}
-            <SelectableDropdown
-              placeholder="Select a Unit"
-              options={Object.values(Steps)}
-              selected={stepSize}
-              setSelected={setStepSize}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="gap-.5 grid">
-              <Input
-                {...Limits[stepSize]}
-                disabled={!luaApi || adjustedDelta >= 0}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  console.log(e.target.valueAsNumber);
-                  setNegativeDeltaTime(e.target.valueAsNumber);
-                }}
-                placeholder={`Negative ${stepSize} / second`}
-                value={adjustedDelta >= 0 ? undefined : -adjustedDelta}
-                type="number"
-                // readOnly
-                // reverse
-                // noValue={adjustedDelta >= 0}
-                // showOutsideRangeHint={false}
-              />
-              <Label className="text-xs text-zinc-500">{`Negative ${stepSize} / second`}</Label>
-            </div>
-            <div className="gap-.5 grid">
-              <Input
-                {...Limits[stepSize]}
-                disabled={!luaApi || adjustedDelta < 0}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  console.log(e.target.valueAsNumber);
-                  setPositiveDeltaTime(e.target.valueAsNumber);
-                }}
-                placeholder={`${stepSize} / second`}
-                value={adjustedDelta < 0 ? NaN : adjustedDelta}
-                type="number"
-                // readOnly
-              />
-              <Label className="text-xs text-zinc-500">{`${stepSize} / second`}</Label>
-            </div>
-          </div>
-          {deltaTimeStepsContol()}
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="default" size="sm" onClick={realtime}>
-              Realtime
-            </Button>
-            <Button variant="default" size="sm" onClick={now}>
-              Now
-            </Button>
-          </div>
-          {/* </div> */}
-          <ButtonLabel>{timeLabel}</ButtonLabel>
+      <div className="grid gap-2 p-0">
+        <div className="grid gap-2">
+          <Label>Select Date</Label>
+          <DateComponent date={time} onChange={changeDate} />
         </div>
-      )}
+        <div className="grid gap-2">
+          <Label>Simulation Speed</Label>
+          {/* <Separator /> */}
+          <SelectableDropdown
+            placeholder="Select a Unit"
+            options={Object.values(Steps)}
+            selected={stepSize}
+            setSelected={setStepSize}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="gap-.5 grid">
+            <Input
+              {...Limits[stepSize]}
+              disabled={!luaApi || adjustedDelta >= 0}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                console.log(e.target.valueAsNumber);
+                setNegativeDeltaTime(e.target.valueAsNumber);
+              }}
+              placeholder={`Negative ${stepSize} / second`}
+              value={adjustedDelta >= 0 ? 0 : -adjustedDelta}
+              type="number"
+              // readOnly
+              // reverse
+              // noValue={adjustedDelta >= 0}
+              // showOutsideRangeHint={false}
+            />
+            <Label className="text-xs text-zinc-500">{`Negative ${stepSize} / second`}</Label>
+          </div>
+          <div className="gap-.5 grid">
+            <Input
+              {...Limits[stepSize]}
+              disabled={!luaApi || adjustedDelta < 0}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                console.log(e.target.valueAsNumber);
+                setPositiveDeltaTime(e.target.valueAsNumber);
+              }}
+              placeholder={`${stepSize} / second`}
+              value={adjustedDelta < 0 ? 0 : adjustedDelta}
+              type="number"
+              // readOnly
+            />
+            <Label className="text-xs text-zinc-500">{`${stepSize} / second`}</Label>
+          </div>
+        </div>
+        {deltaTimeStepsContol()}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant={targetDeltaTime == 1 ? 'default' : 'outline'}
+            size="sm"
+            onClick={realtime}
+            className={`${targetDeltaTime == 1 ? 'opacity-100' : 'opacity-60'}`}
+          >
+            Realtime
+          </Button>
+          <Button variant="outline" size="sm" onClick={now}>
+            Now
+          </Button>
+        </div>
+        {/* </div> */}
+        <ButtonLabel className="border bg-transparent">{timeLabel}</ButtonLabel>
+      </div>
+      {/* )} */}
     </div>
   );
 };
