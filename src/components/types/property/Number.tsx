@@ -100,40 +100,50 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   }, [component.id, component.property, luaApi]);
 
   return (
-    <div className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center hover:cursor-pointer">
-      <div className="flex flex-row gap-4">
-        <span>{`Current Value: ${property?.value}`}</span>
-      </div>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm font-medium text-black">Set Value</div>
-          <div className=" flex flex-col gap-4">
-            <Input
-              type="number"
-              className="w-24 p-2"
-              value={tempValue}
-              min={component.min}
-              max={component.max}
-              step={component.step}
-              onChange={handleChange}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-            />
-            <Slider
-              value={property?.value}
-              min={component.min}
-              max={component.max}
-              step={component.step}
-              exponent={component.exponent}
-              onChange={(v) => component.triggerAction?.(v)}
-            />
-          </div>
+    <div
+      className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center gap-8 hover:cursor-pointer"
+      style={{
+        //cover and center the background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: `url(${component.backgroundImage})`,
+      }}
+    >
+      {/* <ButtonLabel>
+        <>
+          {component.gui_name}
+          <Information content={component.gui_description} />
+        </>
+      </ButtonLabel> */}
+
+      <div className="grid w-[85%] gap-4 py-4">
+        <div className="flex flex-row gap-2">
+          <Label>{component.gui_name}</Label>
+          <Information content={component.gui_description} />
         </div>
 
-        <Information content={component.gui_description} />
+        <Slider
+          value={property?.value || 0}
+          min={component.min}
+          max={component.max}
+          step={component.step}
+          exponent={component.exponent}
+          onChange={(v) => component.triggerAction?.(v)}
+        />
+
+        <Input
+          type="number"
+          className="w-auto bg-opacity-50 text-xs"
+          value={tempValue || 0}
+          min={component.min}
+          max={component.max}
+          step={component.step}
+          onChange={handleChange}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+        />
       </div>
     </div>
   );
@@ -154,13 +164,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
 
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
-  //   const propertyData = usePropertyStore(
-  //     (state) => state.properties[component?.property || ''],
-  //   );
 
-  const [propertyData, setPropertyData] = useState<any>(
-    usePropertyStore.getState().properties[component?.property || ''],
-  );
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
@@ -174,12 +178,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [exponent, setExponent] = useState<number>(component?.exponent || 1);
 
   useEffect(() => {
-    if (property) {
-      setPropertyData(usePropertyStore.getState().properties[property]);
-    }
-  }, [property]);
-  useEffect(() => {
-    // console.log(properties);
+    const propertyData = usePropertyStore.getState().properties[property];
     console.log(propertyData);
     if (!propertyData) return;
     setMax(parseFloat(propertyData.description.AdditionalData.MaximumValue));
@@ -197,7 +196,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
     // let name = propertyData.uri.split('.')[1];
     setGuiName(`${name} > ${propertyData.description.Name}`);
     setGuiDescription(propertyData.description.description);
-  }, [propertyData]);
+  }, [property]);
 
   //   const [action, setAction] = useState<string>(component?.action || 'on');
 
@@ -254,7 +253,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
     <div className="grid grid-cols-1 gap-4">
       <div className="grid grid-cols-1 gap-4">
         <div className="grid gap-2">
-          <div className="text-sm font-medium text-black">Property</div>
+          <Label>Property</Label>
           <VirtualizedCombobox
             options={Object.keys(sortedKeys)}
             selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -267,14 +266,14 @@ const NumberModal: React.FC<NumberModalProps> = ({
           />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="min">Range Min</Label>
           <Input
             id="min"
             placeholder="Slider Min"
             type="number"
-            value={min}
+            value={min || 0}
             onChange={(e) => setMin(parseFloat(e.target.value))}
           />
         </div>
@@ -284,7 +283,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
             id="max"
             placeholder="Slider Max"
             type="number"
-            value={max}
+            value={max || 0}
             onChange={(e) => setMax(parseFloat(e.target.value))}
           />
         </div>
@@ -294,7 +293,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
             id="step"
             placeholder="Slider Step"
             type="number"
-            value={step}
+            value={step || 0}
             onChange={(e) => setStep(parseFloat(e.target.value))}
           />
         </div>
@@ -304,7 +303,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
             id="exp"
             placeholder="Exponent"
             type="number"
-            value={exponent}
+            value={exponent || 0}
             onChange={(e) => setExponent(parseFloat(e.target.value))}
           />
         </div>

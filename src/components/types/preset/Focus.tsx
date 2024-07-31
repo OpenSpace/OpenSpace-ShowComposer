@@ -138,9 +138,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-  // const CurrentAnchor = usePropertyStore(
-  //   (state) => state.properties[NavigationAnchorKey],
-  // );
+  const CurrentAnchor = usePropertyStore(
+    (state) => state.properties[NavigationAnchorKey],
+  );
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -157,10 +157,14 @@ const FocusModal: React.FC<FocusModalProps> = ({
 
   useEffect(() => {
     if (property !== lastProperty) {
+      console.log(CurrentAnchor);
       setGuiName(`Focus on ${property}`);
+      setGuiDescription(
+        `Focus on ${property}. ${CurrentAnchor?.description.description}`,
+      );
       setLastProperty(property);
     }
-  }, [property]);
+  }, [property, CurrentAnchor]);
   useEffect(() => {
     handleComponentData({
       property,

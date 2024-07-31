@@ -11,7 +11,6 @@ import {
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { formatDate, jumpToTime } from '@/utils/time';
 
-import { Clock } from 'lucide-react';
 import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -90,7 +89,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
         triggerAnimation();
       }}
     >
-      {component?.intDuration && (
+      {component?.interpolate && component.intDuration && (
         <StatusBar
           ref={statusBarRef}
           duration={component?.intDuration}
@@ -98,9 +97,10 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
         />
       )}
       <ButtonLabel>
-        <Clock className="h-4 w-4" />
-        {component.gui_name}
-        <Information content={component.gui_description} />
+        <div className="flex flex-row gap-2">
+          {component.gui_name}
+          <Information content={component.gui_description} />
+        </div>
       </ButtonLabel>
     </div>
   );
@@ -125,7 +125,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const [interpolate, setInterpolate] = useState(
     component?.interpolate || false,
   );
-  const [intDuration, setIntDuration] = useState(component?.intDuration || 0);
+  const [intDuration, setIntDuration] = useState(component?.intDuration || 4);
   const [fadeScene, setFadeScene] = useState(component?.fadeScene || false); //
   const [gui_name, setGuiName] = useState(component?.gui_name); //
   const [gui_description, setGuiDescription] = useState(
@@ -148,8 +148,15 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   useEffect(() => {
     if (timeLabel) {
       setGuiName(`Go to ${timeLabel}`);
+      if (interpolate) {
+        setGuiDescription(
+          `Interpolates Time to ${timeLabel} over ${intDuration} seconds.`,
+        );
+      } else {
+        setGuiDescription(`Sets Time to ${timeLabel}`);
+      }
     }
-  }, [timeLabel]);
+  }, [timeLabel, intDuration, interpolate]);
 
   useEffect(() => {
     handleComponentData({
@@ -236,6 +243,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             />
             <Toggle
               label="Fade Scene"
+              disabled={!interpolate}
               value={fadeScene}
               setValue={setFadeScene}
             />

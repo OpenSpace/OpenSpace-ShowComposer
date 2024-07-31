@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type ComponentType =
   | 'fade'
   | 'flyto'
+  | 'statuspanel'
   | 'timepanel'
   | 'navpanel'
   | 'settime'
@@ -52,6 +53,10 @@ export interface TimeComponent extends ComponentBase {
 }
 export interface NavComponent extends ComponentBase {
   type: 'navpanel';
+  minimized: boolean;
+}
+export interface StatusComponent extends ComponentBase {
+  type: 'statuspanel';
   minimized: boolean;
 }
 
@@ -196,10 +201,13 @@ export interface MultiComponent extends ComponentBase {
   type: 'multi';
   components: {
     component: MultiOption['id'];
-    delay: number;
     buffer: number;
+    startTime: number;
+    endTime: number;
+    // delay: number;
+    // buffer: number;
     chained: boolean;
-    totalOffset: number;
+    // totalOffset: number;
   }[];
   backgroundImage: string;
   triggerAction: () => void;
@@ -235,6 +243,7 @@ interface State {
   currentPageIndex: number;
   timepanel: TimeComponent | null;
   navpanel: NavComponent | null;
+  statuspanel: StatusComponent | null;
   tempPositions: TempPositions;
   setTempPositions: (newPositions: TempPositions) => void;
   setTempPosition: (id: string, x: number, y: number) => void;
@@ -251,7 +260,9 @@ interface State {
   ) => void;
   getComponentById: (id: Component['id']) => Component;
   createPanels: () => void;
-  updatePanel: (updates: Partial<TimeComponent | NavComponent>) => void;
+  updatePanel: (
+    updates: Partial<TimeComponent | NavComponent | StatusComponent>,
+  ) => void;
   addPage: () => void;
   deletePage: (pageID: string) => void;
   goToPage: (page: number) => void;
@@ -278,6 +289,7 @@ export const useStore = create<State>()(
         currentPageIndex: 0,
         navpanel: null,
         timepanel: null,
+        statuspanel: null,
         currentPage: '',
         components: {},
         tempPositions: {},
@@ -362,9 +374,9 @@ export const useStore = create<State>()(
               id: uuidv4(),
               type: 'timepanel',
               isMulti: 'false' as MultiState,
-              minimized: false,
-              x: 225,
-              y: 575,
+              minimized: true,
+              x: 250,
+              y: 500,
               minWidth: 325,
               minHeight: 425,
               width: 325,
@@ -376,9 +388,9 @@ export const useStore = create<State>()(
               id: uuidv4(),
               type: 'navpanel',
               isMulti: 'false' as MultiState,
-              minimized: false,
+              minimized: true,
               x: 0,
-              y: 675,
+              y: 600,
               minWidth: 225,
               minHeight: 325,
               width: 225,
@@ -386,8 +398,24 @@ export const useStore = create<State>()(
               gui_name: 'Nav Panel',
               gui_description: '',
             };
+            state.statuspanel = {
+              id: uuidv4(),
+              type: 'statuspanel',
+              isMulti: 'false' as MultiState,
+              minimized: true,
+              x: 600,
+              y: 675,
+              minWidth: 275,
+              minHeight: 250,
+              width: 275,
+              height: 250,
+              gui_name: 'Status Panel',
+              gui_description: '',
+            };
           }),
-        updatePanel: (updates: Partial<TimeComponent | NavComponent>) =>
+        updatePanel: (
+          updates: Partial<TimeComponent | NavComponent | StatusComponent>,
+        ) =>
           set((state) => {
             if (updates.type === 'timepanel') {
               const component = state.timepanel;
@@ -396,6 +424,11 @@ export const useStore = create<State>()(
               }
             } else if (updates.type === 'navpanel') {
               const component = state.navpanel;
+              if (component) {
+                Object.assign(component, updates);
+              }
+            } else if (updates.type === 'statuspanel') {
+              const component = state.statuspanel;
               if (component) {
                 Object.assign(component, updates);
               }

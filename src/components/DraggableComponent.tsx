@@ -38,8 +38,6 @@ import { MultiGUIComponent } from './types/preset/Multi';
 import { Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 import { ImageGUIComponent } from './types/static/Image';
 
-// import SimulationIncrement from './timepicker/SimulationIncrement';
-
 interface DraggableComponentProps {
   component: Component;
   onEdit: () => void;
@@ -115,6 +113,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       } else {
         selectComponent(component.id);
       }
+      e.stopPropagation();
     }
   };
 

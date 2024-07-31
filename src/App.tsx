@@ -37,6 +37,7 @@ import {
   ToggleRight,
   CirclePlay,
   Hash,
+  View,
 } from 'lucide-react';
 
 import {
@@ -60,6 +61,7 @@ import {
   MultiComponent,
   NavComponent,
   TimeComponent,
+  StatusComponent,
 } from './store/componentsStore';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
@@ -87,6 +89,7 @@ const App = () => {
   const updatePanel = useComponentStore((state) => state.updatePanel);
   const NavPanel = useComponentStore((state) => state.navpanel);
   const TimePanel = useComponentStore((state) => state.timepanel);
+  const StatusPanel = useComponentStore((state) => state.statuspanel);
   const updateComponent = useComponentStore((state) => state.updateComponent);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const addPage = useComponentStore((state) => state.addPage);
@@ -101,7 +104,7 @@ const App = () => {
       addPage();
     }
 
-    if (!NavPanel || !TimePanel) createPanels();
+    if (!NavPanel || !TimePanel || !StatusPanel) createPanels();
   }, []);
 
   type ComponentTypeData = {
@@ -146,6 +149,12 @@ const App = () => {
     icon: <Compass className="h-5 w-5" />,
   };
 
+  const statusType = {
+    type: 'statuspanel',
+    name: 'Status Panel',
+    icon: <View className="h-5 w-5" />,
+  };
+
   const allComponentTypes = [
     ...presetComponentTypes,
     ...propertyComponentTypes,
@@ -158,29 +167,14 @@ const App = () => {
     setCurrentComponentId(newId);
     setIsModalOpen(true);
   };
-  const minimize = (component: TimeComponent | NavComponent | null) => {
+  const minimize = (
+    component: TimeComponent | NavComponent | StatusComponent | null,
+  ) => {
     updatePanel({
       type: component?.type,
       minimized: component ? !component.minimized : false,
     });
   };
-
-  // const handleImmediateAddComponent = (type: ComponentType) => {
-  //   const newId = uuidv4();
-  //   // addComponent({
-  //   //   id: newId,
-  //   //   type: type,
-  //   //   isMulti: 'false' as MultiState,
-  //   //   gui_description: '',
-  //   //   gui_name: '',
-  //   //   x: 0,
-  //   //   y: 0,
-  //   //   minHeight: 150,
-  //   //   minWidth: 150,
-  //   //   width: type == 'timepanel' ? 300 : 275,
-  //   //   height: type == 'timepanel' ? 425 : 330,
-  //   // });
-  // };
 
   const handleEditComponent = (id: string) => {
     setCurrentComponentId(id);
@@ -395,7 +389,7 @@ const App = () => {
                 </div>
               </ScrollArea>
               <Separator />
-              <FeedbackPanel />
+              <FeedbackPanel className="p-4" />
             </div>
           </div>
         </ResizablePanel>
@@ -419,6 +413,7 @@ const App = () => {
               <DroppableWorkspace>
                 {NavPanel && <DraggablePanel component={NavPanel} />}
                 {TimePanel && <DraggablePanel component={TimePanel} />}
+                {StatusPanel && <DraggablePanel component={StatusPanel} />}
                 {getPageById(currentPage).components.map((component) => {
                   const c = components[component];
                   return (
@@ -461,6 +456,21 @@ const App = () => {
                     onClick={() => minimize(TimePanel)}
                   >
                     {timeType.icon}
+                  </Button>
+                </TooltipTrigger>
+              </Tooltip>
+              <Tooltip>
+                <TooltipContent>Toggle Status Panel</TooltipContent>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant={'outline'}
+                    onClick={() => minimize(StatusPanel)}
+                    className={`z-40 ${
+                      !StatusPanel?.minimized ? 'opacity-60' : 'opacity-100'
+                    }`}
+                  >
+                    {statusType.icon}
                   </Button>
                 </TooltipTrigger>
               </Tooltip>

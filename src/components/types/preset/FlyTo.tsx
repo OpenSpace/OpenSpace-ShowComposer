@@ -172,7 +172,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [lat, setLat] = useState<number>(component?.lat || 0);
   const [alt, setAlt] = useState<number>(component?.alt || 0);
   const [intDuration, setIntDuration] = useState<number>(
-    component?.intDuration || 0,
+    component?.intDuration || 4,
   );
   const [target, setTarget] = useState<string>(component?.target || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -231,6 +231,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   useEffect(() => {
     if (target !== lastTarget) {
       setGuiName(`Fly To ${target}`);
+      setGuiDescription(`Fly to ${target}`);
       setLastTarget(target);
     }
   }, [target]);

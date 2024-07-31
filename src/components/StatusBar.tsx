@@ -1,5 +1,5 @@
-import { set } from 'lodash';
 import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 interface StatusBarProps {
   duration: number;
@@ -14,18 +14,13 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
   ({ duration: incDuration, fadeOutDuration: incFadeDuration }, ref) => {
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
-    const [duration, setDuration] = useState(incDuration); // Adjust based on your preference
-    const [fadeOutDuration, setFadeOutDuration] = useState(incFadeDuration); // Adjust based on your preference
-    const triggerAnimation = () => {
-      // setDuration(0);
-      // setFadeOutDuration(0);
-      // setIsAnimatingWidth(false);
+    const [duration, _setDuration] = useState(incDuration);
+    const [fadeOutDuration, _setFadeOutDuration] = useState(incFadeDuration);
+    const [startTime, setStartTime] = useState<number | null>(null);
+    const [progress, setProgress] = useState(0);
 
-      // setTimeout(() => {
-      //   setDuration(incDuration);
-      //   setFadeOutDuration(incFadeDuration);
-      //   setIsAnimatingWidth(true);
-      // }, 1);
+    const triggerAnimation = () => {
+      setStartTime(Date.now());
       setIsAnimatingWidth(true);
     };
 
@@ -36,6 +31,22 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     useEffect(() => {
       if (isAnimatingWidth) {
         const widthAnimationDuration = duration * 1000;
+        // const totalAnimationDuration = widthAnimationDuration + fadeOutDuration * 1000;
+        const updateProgress = () => {
+          if (startTime) {
+            const elapsedTime = Date.now() - startTime;
+            const newProgress = Math.min(
+              (elapsedTime / widthAnimationDuration) * 100,
+              100,
+            );
+            setProgress(newProgress);
+
+            if (newProgress < 100) {
+              requestAnimationFrame(updateProgress);
+            }
+          }
+        };
+        updateProgress();
 
         // Trigger opacity fade-out after width animation completes
         const widthAnimationTimeout = setTimeout(() => {
@@ -46,6 +57,7 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
         const fadeOutTimeout = setTimeout(() => {
           setIsAnimatingWidth(false);
           setIsFadingOut(false);
+          setProgress(0);
         }, widthAnimationDuration + fadeOutDuration);
 
         return () => {
@@ -57,10 +69,8 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
 
     return (
       <div
-        className={`absolute left-0 top-0 h-full bg-slate-700/40 ease-linear ${
-          isAnimatingWidth
-            ? 'pointer-events-none w-full transition-[width]'
-            : 'pointer-events-auto w-0'
+        className={`absolute left-0 top-0 flex  h-full w-full flex-col justify-end  p-4 ease-linear  ${
+          isAnimatingWidth ? 'pointer-events-none ' : 'pointer-events-auto '
         } ${
           isFadingOut
             ? `duration-[${fadeOutDuration}ms] opacity-0 transition-opacity`
@@ -69,12 +79,15 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
         style={{
           transitionDuration: isFadingOut
             ? `${fadeOutDuration}ms`
-            : isAnimatingWidth
-              ? `${duration}s`
-              : '0ms',
+            : // :
+              // isAnimatingWidth
+              //   ? `${duration}s`
+              '0ms',
           opacity: !(isAnimatingWidth || isFadingOut) ? 0 : '',
         }}
-      />
+      >
+        <Progress value={progress} />
+      </div>
     );
   },
 );

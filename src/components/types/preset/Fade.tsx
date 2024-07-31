@@ -48,7 +48,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
-    subscribeToProperty(component.property, 50);
+    subscribeToProperty(component.property, 1);
     return () => {
       unsubscribeFromProperty(component.property);
     };
@@ -84,7 +84,14 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
 
   return shouldRender ? (
     <div
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      className={`${
+        property?.value == 1
+          ? 'border-green-500'
+          : property?.value == 0
+            ? 'border-red-500'
+            : 'border-grey-500'
+      } absolute right-0 top-0 flex h-full w-full items-center
+        justify-center rounded border-8 transition-colors hover:cursor-pointer`}
       style={{
         //cover and center the background image
         backgroundSize: 'cover',
@@ -97,14 +104,10 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
     >
       <StatusBarControlled progress={property?.value} debounceDuration={100} />
       <ButtonLabel>
-        <>
-          {`${component.gui_name}  ${
-            !isNaN(property?.value)
-              ? `: ${Math.floor(property?.value * 100)}%`
-              : ''
-          }`}
+        <div className="flex flex-row gap-2">
+          {component.gui_name}
           <Information content={component.gui_description} />
-        </>
+        </div>
       </ButtonLabel>
     </div>
   ) : null;
@@ -128,7 +131,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
   const [intDuration, setIntDuration] = useState<number>(
-    component?.intDuration || 0,
+    component?.intDuration || 4,
   );
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
@@ -149,6 +152,12 @@ const FadeModal: React.FC<FadeModalProps> = ({
           .replace(/Scene.|.Renderable|.Opacity/g, '')
           .split('.')
           .pop()}`,
+      );
+      setGuiDescription(
+        `Fade ${property
+          .replace(/Scene.|.Renderable|.Opacity/g, '')
+          .split('.')
+          .pop()} ${action === 'toggle' ? 'in and out' : action}`,
       );
       setLastProperty(property);
     }
@@ -226,6 +235,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
               id="duration"
               placeholder="Duration to Fade"
               type="number"
+              min={0}
+              max={20}
+              step={0.1}
               // className=""
               value={intDuration}
               onChange={(e) => setIntDuration(parseFloat(e.target.value))}

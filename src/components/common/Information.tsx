@@ -14,7 +14,10 @@ const Information = ({ content }: { content: ReactNode | string }) => {
           <TooltipTrigger>
             <Info size={16} />
           </TooltipTrigger>
-          <TooltipContent sticky="always" className="z-[999999] bg-white">
+          <TooltipContent
+            sticky="always"
+            className="z-[999999] max-w-[200px] bg-white"
+          >
             {content}
           </TooltipContent>
         </Tooltip>

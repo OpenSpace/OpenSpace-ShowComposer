@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
+import ButtonLabel from '@/components/common/ButtonLabel';
 
 interface TriggerGUIProps {
   component: TriggerComponent;
@@ -72,10 +73,12 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
       }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="flex flex-row gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>
-        <Information content={component.gui_description} />
-      </div>
+      <ButtonLabel>
+        <>
+          {component.gui_name}
+          <Information content={component.gui_description} />
+        </>
+      </ButtonLabel>
     </div>
   ) : null;
 };
@@ -103,6 +106,27 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  // const [lastProperty, setLastProperty] = useState<string>(
+  //   component?.property || '',
+  // );
+
+  useEffect(() => {
+    // console.log(properties);
+    const propertyData = usePropertyStore.getState().properties[property];
+    if (!propertyData) return;
+    const name = propertyData.uri
+      //only exacly '.Layers' should be removed
+      .replace(/Scene.|.Renderable|\.Layers/g, '')
+      .split('.')
+      .slice(0, -1)
+      .join('.')
+      .replace(/\./g, ' > ')
+      .trim();
+    // let name = propertyData.uri.split('.')[1];
+    setGuiName(`${name} > ${propertyData.description.Name}`);
+    setGuiDescription(propertyData.description.description);
+  }, [property]);
+
   useEffect(() => {
     handleComponentData({
       property,

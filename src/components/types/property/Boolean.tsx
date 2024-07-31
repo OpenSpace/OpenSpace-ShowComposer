@@ -15,6 +15,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import ButtonLabel from '@/components/common/ButtonLabel';
 
 interface BoolGUIProps {
   component: BooleanComponent;
@@ -74,31 +75,22 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
 
   return shouldRender ? (
     <div
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
+      className={`absolute right-0 top-0 flex h-full w-full items-center justify-center rounded border-8 transition-colors  hover:cursor-pointer ${
+        property?.value ? 'border-green-500' : 'border-red-500'
+      }`}
       style={{
-        //cover and center the background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`,
       }}
       onClick={() => component.triggerAction?.()}
     >
-      <div className="flex flex-row gap-4">
-        <span
-          style={{
-            color: `rgba(0,0,0,${property?.value})`,
-            borderColor: 'black',
-            fontSize: 64,
-          }}
-        >
-          •
-        </span>
-        <span>{`Current State: ${property?.value ? 'True ' : 'False'}`}</span>
-      </div>
-      <div className="flex flex-row gap-4">
-        <h1 className="text-2xl"> {component.gui_name}</h1>
-        <Information content={component.gui_description} />
-      </div>
+      <ButtonLabel>
+        <div className="flex gap-2">
+          {component.gui_name}
+          <Information content={component.gui_description} />
+        </div>
+      </ButtonLabel>
     </div>
   ) : null;
 };
@@ -123,10 +115,28 @@ const BoolModal: React.FC<BoolModalProps> = ({
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
-  const [action, setAction] = useState<string>(component?.action || 'on');
+  const [action, setAction] = useState<string>(component?.action || 'toggle');
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+
+  useEffect(() => {
+    // console.log(properties);
+    const propertyData = usePropertyStore.getState().properties[property];
+    if (!propertyData) return;
+    const name = propertyData.uri
+      //only exacly '.Layers' should be removed
+      .replace(/Scene.|.Renderable|\.Layers/g, '')
+      .split('.')
+      .slice(0, -1)
+      .join('.')
+      .replace(/\./g, ' > ')
+      .trim();
+    // let name = propertyData.uri.split('.')[1];
+    setGuiName(`${name} > ${propertyData.description.Name} > ${action}`);
+    setGuiDescription(propertyData.description.description);
+  }, [property, action]);
+
   useEffect(() => {
     handleComponentData({
       property,

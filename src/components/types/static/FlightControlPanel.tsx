@@ -221,7 +221,6 @@ const FlightControlPanel = () => {
   }
 
   function mouseMove(event: React.MouseEvent) {
-    console.log(event);
     event.preventDefault();
     if (!mouseIsDown) {
       return;

@@ -21,7 +21,8 @@ import {
   Droppable,
   Draggable,
   DropResult,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
+
 import { v4 as uuidv4 } from 'uuid';
 import { FlyToGUIComponent } from './FlyTo';
 import { FadeGUIComponent } from './Fade';
@@ -32,20 +33,28 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Edit2, XIcon, Link, Unlink } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
-import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Information from '@/components/common/Information';
 
 // // Define the type for list items
 // set up chained v paralell data handling
 interface MultiType {
   component: MultiOption['id'];
-  delay: number;
+  // delay: number;
   buffer: number;
   chained: boolean;
-  totalOffset: number;
+  // totalOffset: number;
+  endTime: number;
+  startTime: number;
   id: string;
 }
 interface MultiModalProps {
@@ -77,6 +86,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
       isMultiOption(getComponentById(c)),
     ),
   );
+  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [gui_description, setGuiDescription] = useState<string>(
+    component?.gui_description || '',
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState('');
   const [currentComponentType, setCurrentComponentType] = useState<
@@ -88,7 +101,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const [initalData, setInitialData] = useState<Partial<MultiOption>>({
     isMulti: 'pendingSave',
   });
-  const [itemOrder, setItemOrder] = useState<string[]>(items.map((v) => v.id));
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
     setInitialData({ isMulti: 'pendingSave' });
@@ -98,29 +110,100 @@ const MultiModal: React.FC<MultiModalProps> = ({
     setIsModalOpen(true);
     setCancelCallback(() => () => {
       setItems(items.filter((item) => item.id !== newId));
-      //   updateComponent(newId, {
-      //     isMulti: 'pendingDelete',
-      //   });
     });
   };
 
   // make copy of multiotions and remove items as tehy are added to items
+  // find last longest delay + duration
+
+  // item a : [
+  //   startTime
+  //   endTime
+  // ]
+
+  // if there a gro
+
+  function sortAdjacentUnchainedItems(tempItems: MultiType[]) {
+    // Identify and sort unchained items that are adjacent to other unchained items
+    let unchainedGroups: MultiType[][] = [];
+    let currentGroup: MultiType[] = [];
+
+    for (let i = 0; i < tempItems.length; i++) {
+      if (!tempItems[i].chained) {
+        currentGroup.push(tempItems[i]);
+      } else {
+        if (currentGroup.length > 1) {
+          unchainedGroups.push([...currentGroup]);
+        }
+        currentGroup = [];
+      }
+    }
+    if (currentGroup.length > 1) {
+      unchainedGroups.push([...currentGroup]);
+    }
+
+    // Sort each group by intDuration + buffer
+    unchainedGroups.forEach((group) => {
+      group.sort((a, b) => {
+        const componentA = getComponentById(a.component) ?? { intDuration: 0 };
+        const componentB = getComponentById(b.component) ?? { intDuration: 0 };
+        const durationA = componentA.intDuration || 0 + a.buffer;
+        const durationB = componentB.intDuration || 0 + b.buffer;
+        return durationA - durationB;
+      });
+    });
+
+    // Reinsert sorted groups back into tempItems
+    let sortedIndex = 0;
+    for (let i = 0; i < tempItems.length; i++) {
+      if (!tempItems[i].chained && sortedIndex < unchainedGroups.length) {
+        const group = unchainedGroups[sortedIndex];
+        for (let j = 0; j < group.length; j++) {
+          tempItems[i + j] = group[j];
+        }
+        i += group.length - 1;
+        sortedIndex++;
+      }
+    }
+  }
 
   function recalculateOffsets(tempItems: MultiType[]) {
-    let totalDelay = 0;
+    // let totalDelay = 0;
+    let originalOrder = tempItems.map((v) => v.id);
+    sortAdjacentUnchainedItems(tempItems);
+
+    let lastStartTime = 0;
+    let lastEndTime = 0;
     for (let i = 0; i < tempItems.length; i++) {
       if (i == 0) {
         tempItems[i].chained = false;
       }
-      tempItems[i].delay = tempItems[i].chained ? totalDelay : 0;
-      tempItems[i].totalOffset =
-        tempItems[i].buffer + (tempItems[i].chained ? tempItems[i].delay : 0);
-      const component = getComponentById(tempItems[i].component);
-      totalDelay =
-        tempItems[i].buffer + (component ? component?.intDuration || 0 : 0);
+
+      if (!tempItems[i].chained) {
+        tempItems[i].startTime = lastStartTime + tempItems[i].buffer;
+        // lastStartTime = lastStartTime ;
+      } else {
+        tempItems[i].startTime = lastEndTime + tempItems[i].buffer;
+        lastStartTime = tempItems[i].startTime;
+      }
+      tempItems[i].endTime =
+        tempItems[i].startTime +
+        (getComponentById(tempItems[i].component)?.intDuration || 1.0);
+
+      lastEndTime = tempItems[i].endTime;
     }
+    //put back in original order
+    tempItems.sort((a, b) => {
+      return originalOrder.indexOf(a.id) - originalOrder.indexOf(b.id);
+    });
   }
   // console.log(items);
+
+  useEffect(() => {
+    const newItems = Array.from(items);
+    recalculateOffsets(newItems);
+    setItems(newItems);
+  }, [items]);
 
   useEffect(() => {
     setAvailableOptions(
@@ -128,22 +211,22 @@ const MultiModal: React.FC<MultiModalProps> = ({
         (component) => !items.some((item) => item.id === component),
       ),
     );
-    if (itemOrder != items.map((v) => v.id)) {
-      recalculateOffsets(items);
-    }
-    setItemOrder(items.map((v) => v.id));
 
     handleComponentData({
       components: items.map((v) => ({
         component: v.component,
-        delay: v.delay,
+        // delay: v.delay,
+        startTime: v.startTime,
+        endTime: v.endTime,
         buffer: v.buffer,
-        totalOffset: v.totalOffset,
+        // totalOffset: v.totalOffset,
         chained: v.chained,
       })),
-      backgroundImage: backgroundImage,
+      backgroundImage,
+      gui_description,
+      gui_name,
     });
-  }, [items, backgroundImage]);
+  }, [items, backgroundImage, gui_name, gui_description]);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -158,9 +241,11 @@ const MultiModal: React.FC<MultiModalProps> = ({
     const newItem: MultiType = {
       id: component,
       component: component, // Placeholder component
-      delay: 0, // Default delay of 1 second
+      // delay: 0, // Default delay of 1 second
       buffer: 0,
-      totalOffset: 0,
+      startTime: 0,
+      endTime: 0,
+      // totalOffset: 0,
       chained: items.length > 0 ? true : false,
     };
     setItems([...items, newItem]);
@@ -170,236 +255,262 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const removeItem = (id: string) => {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
-    // console.log('removeItem', id);
-    // console.log(multiOptions.find((v) => v == id)?.isMulti);
     updateComponent(id, {
       isMulti: 'pendingDelete',
     });
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="grid gap-2">
-          {/* <Label>Add Existing Component</Label> */}
-          <SelectableDropdown
-            placeholder="Add Existing Component"
-            shouldClear={true}
-            options={availableOptions.map((component) => ({
-              value: component,
-              label: getComponentById(component)?.gui_name,
-            }))}
-            selected={undefined}
-            setSelected={(id: string) => {
-              addItem(id);
-            }}
-          />
-        </div>
-        <div className="grid gap-2">
-          {/* <Label>Add New Component</Label> */}
+    <Tabs defaultValue="multi" className="w-auto">
+      <TabsList className="mb-4">
+        <TabsTrigger value="multi">Multi Settings</TabsTrigger>
+        <TabsTrigger value="visual">Visual Settings</TabsTrigger>
+      </TabsList>
+      <TabsContent value="multi">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              {/* <Label>Add Existing Component</Label> */}
+              <SelectableDropdown
+                placeholder="Add Existing Component"
+                shouldClear={true}
+                options={availableOptions.map((component) => ({
+                  value: component,
+                  label: getComponentById(component)?.gui_name,
+                }))}
+                selected={undefined}
+                setSelected={(id: string) => {
+                  addItem(id);
+                }}
+              />
+            </div>
+            <div className="grid gap-2">
+              {/* <Label>Add New Component</Label> */}
 
-          <SelectableDropdown
-            placeholder="Add New Component"
-            options={MultiOptions}
-            selected={undefined}
-            shouldClear={true}
-            setSelected={(type: string) =>
-              handleAddComponent(type as ComponentType)
-            }
-          />
-        </div>
-      </div>
-      {/* {availableOptions.map((component, index) => (
+              <SelectableDropdown
+                placeholder="Add New Component"
+                options={MultiOptions}
+                selected={undefined}
+                shouldClear={true}
+                setSelected={(type: string) =>
+                  handleAddComponent(type as ComponentType)
+                }
+              />
+            </div>
+          </div>
+          {/* {availableOptions.map((component, index) => (
         <button key={index} onClick={() => addItem(component)}>
           Add {getComponentById(component).type}
         </button>
       ))} */}
-      <p className="text-sm text-slate-500 dark:text-slate-400">
-        <b>Delay:</b> This delay is applied differently based on the item's
-        chaining status: For chained items, the delay is added after the
-        completion of the previous item's duration. For unchained items, the
-        delay is from the start the beginning of the workflow or the start time
-        of the previous item.
-      </p>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              //   className="flex flex-row"
-            >
-              {items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2"
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            <b>Delay:</b> This delay is applied differently based on the item's
+            chaining status: For chained items, the delay is added after the
+            completion of the previous item's duration. For unchained items, the
+            delay is from the start the beginning of the workflow or the start
+            time of the previous item.
+          </p>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  //   className="flex flex-row"
+                >
+                  {items.map((item, index) => (
+                    <Draggable
+                      key={item.id}
+                      draggableId={item.id}
+                      index={index}
                     >
-                      <div className="w-[40%] overflow-hidden whitespace-nowrap">
-                        {getComponentById(item.id)?.gui_name}
-                      </div>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Toggle
-                            disabled={index == 0}
-                            pressed={item.chained}
-                            onPressedChange={(pressed) => {
-                              const newItems = Array.from(items);
-                              console.log(pressed);
-                              newItems[index].chained = pressed;
-                              recalculateOffsets(newItems);
-                              setItems(newItems);
-                            }}
-                            className="p-1"
-                          >
-                            {item.chained ? (
-                              <Link size={20} />
-                            ) : (
-                              <Unlink size={20} />
-                            )}
-                          </Toggle>
-                          {/* <ToggleGroup
-                            type="single"
-                            // onChange={}
-                            value={item.chained ? 'chained' : 'unchained'}
-                            onValueChange={(value) => {
-                              const newItems = Array.from(items);
-                              newItems[index].chained = value === 'chained';
-                              recalculateOffsets(newItems);
-                              setItems(newItems);
-                            }}
-                          >
-                            <ToggleGroupItem
-                              disabled={index == 0}
-                              value="chained"
-                            >
-                              <Link size={20} />
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="unchained">
-                              <Unlink size={20} />
-                              {/* <ArrowsUpFromLine
-                                size={20}
-                                className="rotate-90"
-                              /> 
-                            </ToggleGroupItem> 
-                        </ToggleGroup> */}
-                        </TooltipTrigger>
-                        <TooltipContent className="w-[200px] bg-white">
-                          <b>Chained Items:</b> These items start their
-                          operation after the previous item has completed its
-                          duration.
-                          <br />
-                          <b>Unchained Items:</b> These run concurrently with
-                          the previous item, not waiting for the previous
-                          operations to complete.
-                        </TooltipContent>
-                      </Tooltip>
-                      <div className="flex items-center gap-1">
-                        <Label> Delay</Label>
-                        <Input
-                          type="number"
-                          className="w-20"
-                          name="delay"
-                          min="0"
-                          max="20"
-                          step="0.2"
-                          value={item.buffer}
-                          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                            const value = e.currentTarget.value;
-                            const newItems = Array.from(items);
-                            newItems[index].buffer = parseFloat(value);
-                            console.log(value);
-                            setItems(newItems);
-                          }}
-                        />
-                      </div>
-                      <div className="flex-0 grid grid-cols-2 gap-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Toggle
-                              pressed={undefined}
-                              onPressedChange={(_pressed: boolean) => {
-                                setInitialData({});
-                                setCurrentComponentId(item.id);
-                                setCurrentComponentType(
-                                  getComponentById(item.id)?.type,
-                                );
-                                setCancelCallback(() => () => {
-                                  setItems(items);
-                                });
-
-                                setIsModalOpen(true);
-                              }}
-                              className="p-1"
-                            >
-                              <Edit2
-                                size={20} // Adjust size as needed
-                                onClick={() => {
-                                  // Your edit action here
-                                  setInitialData({});
-                                  setCurrentComponentId(item.id);
-                                  setCurrentComponentType(
-                                    getComponentById(item.id)?.type,
-                                  );
-                                  setCancelCallback(() => () => {
-                                    setItems(items);
-                                  });
-
-                                  setIsModalOpen(true);
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2"
+                        >
+                          <div className="w-[40%] overflow-hidden whitespace-nowrap">
+                            {getComponentById(item.id)?.gui_name}
+                          </div>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Toggle
+                                disabled={index == 0}
+                                pressed={item.chained}
+                                onPressedChange={(pressed) => {
+                                  const newItems = Array.from(items);
+                                  console.log(pressed);
+                                  newItems[index].chained = pressed;
+                                  recalculateOffsets(newItems);
+                                  setItems(newItems);
                                 }}
-                                style={{ cursor: 'pointer' }} // Makes the icon behave like a button
-                              />
-                            </Toggle>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white">
-                            Edit Component
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Toggle
-                              pressed={undefined}
-                              onClick={() => removeItem(item.id)}
-                              className="p-1"
-                            >
-                              <XIcon
-                                size={20} // Adjust size as needed
-                              />
-                            </Toggle>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white">
-                            Remove from Component
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
+                                className="p-1"
+                              >
+                                {item.chained ? (
+                                  <Link size={20} />
+                                ) : (
+                                  <Unlink size={20} />
+                                )}
+                              </Toggle>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-[200px] bg-white">
+                              <b>Chained Items:</b> These items start their
+                              operation after the previous item has completed
+                              its duration.
+                              <br />
+                              <b>Unchained Items:</b> These run concurrently
+                              with the previous item, not waiting for the
+                              previous operations to complete.
+                            </TooltipContent>
+                          </Tooltip>
+                          <div className="flex items-center gap-1">
+                            <Label> Delay</Label>
+                            <Input
+                              type="number"
+                              className="w-20"
+                              name="delay"
+                              min="0"
+                              max="20"
+                              step="0.2"
+                              value={item.buffer}
+                              onChange={(
+                                e: React.FormEvent<HTMLInputElement>,
+                              ) => {
+                                const value = e.currentTarget.value;
+                                const newItems = Array.from(items);
+                                newItems[index].buffer = parseFloat(value);
+                                console.log(value);
+                                setItems(newItems);
+                              }}
+                            />
+                          </div>
+                          <div className="flex-0 grid grid-cols-2 gap-2">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Toggle
+                                  pressed={undefined}
+                                  onPressedChange={(_pressed: boolean) => {
+                                    setInitialData({});
+                                    setCurrentComponentId(item.id);
+                                    setCurrentComponentType(
+                                      getComponentById(item.id)?.type,
+                                    );
+                                    setCancelCallback(() => () => {
+                                      setItems(items);
+                                    });
+
+                                    setIsModalOpen(true);
+                                  }}
+                                  className="p-1"
+                                >
+                                  <Edit2
+                                    size={20} // Adjust size as needed
+                                    onClick={() => {
+                                      // Your edit action here
+                                      setInitialData({});
+                                      setCurrentComponentId(item.id);
+                                      setCurrentComponentType(
+                                        getComponentById(item.id)?.type,
+                                      );
+                                      setCancelCallback(() => () => {
+                                        setItems(items);
+                                      });
+
+                                      setIsModalOpen(true);
+                                    }}
+                                    style={{ cursor: 'pointer' }} // Makes the icon behave like a button
+                                  />
+                                </Toggle>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white">
+                                Edit Component
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Toggle
+                                  pressed={undefined}
+                                  onClick={() => removeItem(item.id)}
+                                  className="p-1"
+                                >
+                                  <XIcon
+                                    size={20} // Adjust size as needed
+                                  />
+                                </Toggle>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white">
+                                Remove from Component
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </div>
+      </TabsContent>
+      <TabsContent value="visual">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="gioname">Component Name</Label>
+              <Input
+                id="guiname"
+                placeholder="Name of Component"
+                type="text"
+                value={gui_name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setGuiName(e.target.value)
+                }
+              />
             </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <div className="grid gap-2">
-        <Label htmlFor="description"> Background Image</Label>
-        <ImageUpload
-          value={backgroundImage}
-          onChange={(v) => setBackgroundImage(v)}
-        />
-      </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="description"> Background Image</Label>
+              <ImageUpload
+                value={backgroundImage}
+                onChange={(v) => setBackgroundImage(v)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description"> Gui Description</Label>
+              <Textarea
+                className="w-full"
+                id="description"
+                value={gui_description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setGuiDescription(e.target.value)
+                }
+                placeholder="Type your message here."
+              />
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+
       <ComponentModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          // recalculateOffsets(items);
+          const newItems = Array.from(items);
+          recalculateOffsets(newItems);
+          setItems(newItems);
+          setIsModalOpen(false);
+        }}
         onCancel={cancelCallback}
         componentId={currentComponentId}
         initialData={initalData}
         type={currentComponentType}
       />
-    </div>
+    </Tabs>
   );
 };
 
@@ -409,6 +520,7 @@ function renderByType(component: MultiOption) {
     case 'flyto':
       content = (
         <FlyToGUIComponent
+          key={component.id}
           component={component as FlyToComponent}
           shouldRender={false}
         />
@@ -417,6 +529,7 @@ function renderByType(component: MultiOption) {
     case 'fade':
       content = (
         <FadeGUIComponent
+          key={component.id}
           component={component as FadeComponent}
           shouldRender={false}
         />
@@ -425,6 +538,7 @@ function renderByType(component: MultiOption) {
     case 'setfocus':
       content = (
         <FocusComponent
+          key={component.id}
           component={component as SetFocusComponent}
           shouldRender={false}
         />
@@ -433,6 +547,7 @@ function renderByType(component: MultiOption) {
     case 'boolean':
       content = (
         <BoolGUIComponent
+          key={component.id}
           component={component as BooleanComponent}
           shouldRender={false}
         />
@@ -441,6 +556,7 @@ function renderByType(component: MultiOption) {
     case 'trigger':
       content = (
         <TriggerGUIComponent
+          key={component.id}
           component={component as TriggerComponent}
           shouldRender={false}
         />
@@ -455,9 +571,6 @@ function renderByType(component: MultiOption) {
 interface MultiGUIComponentProps {
   component: MultiComponent;
 }
-// have a mini gui item for each component - shows relevant state and Property/gui name
-// have that item appear and disappear based on the delay
-// have status bar representing total amount of delay as it oges through the sequence
 
 // MultiGUIComponent
 const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
@@ -474,70 +587,91 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       return;
     }
     console.log(component.components);
-  }, [component.components]);
+  }, [component]);
 
-  const finalDelay = useMemo(() => {
-    return (
-      getComponentById(
-        component.components[component.components.length - 1]?.component,
-      )?.intDuration || 0
-    );
-  }, [component.components]);
+  // const finalDelay = useMemo(() => {
+  //   return (
+  //     getComponentById(
+  //       component.components[component.components.length - 1]?.component,
+  //     )?.intDuration || 0
+  //   );
+  // }, [component.components]);
+  // const finalDelay = useMemo(() => {
+  //   return Math.max(
+  //     ...component.components.map((item) => {
+  //       const tempComponent = getComponentById(item.component);
+  //       return item.totalOffset + (tempComponent?.intDuration || 0);
+  //     }),
+  //     0,
+  //   );
+  // }, [component.components]);
 
   // console.log(component.components);
-  const totalDelay = useMemo(() => {
-    return (
-      component.components
-        .map((v) => v.totalOffset)
-        .reduce((acc, item) => acc + item, 0) + finalDelay
-    );
-  }, [component.components, finalDelay]);
 
-  const [currentItem, setCurrentItem] = useState('');
+  const totalDelay = useMemo(() => {
+    return component.components[component.components.length - 1]?.endTime || 0;
+  }, [component.components]);
+
+  const [currentItems, setCurrentItems] = useState<string[]>([]);
   // const [currentDelay, setCurrentDelay] = useState(0);
   const [trigger, setTrigger] = useState(false);
+  const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const triggerComponents = useCallback(async () => {
-    //trigger the start of status until total delay
+  const triggerComponents = useCallback(() => {
     setTrigger(true);
-    for (const item of component.components) {
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          const tempComponent = getComponentById(item.component) as
-            | MultiOption
-            | undefined;
-          if (tempComponent) {
-            console.log(
-              `Triggering ${tempComponent.gui_name} after ${item.totalOffset}`,
+    component.components.forEach((item, index) => {
+      const triggerComponent = () => {
+        const tempComponent = getComponentById(item.component) as
+          | MultiOption
+          | undefined;
+        if (tempComponent) {
+          console.log(
+            `Triggering ${tempComponent.gui_name} after ${item.startTime} seconds`,
+          );
+          setCurrentItems((items) => [...items, tempComponent.gui_name || '']);
+          tempComponent.triggerAction?.();
+
+          if (item.endTime) {
+            const intDurationTimeoutId = setTimeout(
+              () => {
+                console.log(
+                  `Removing ${tempComponent.gui_name} after ${item.endTime} seconds`,
+                );
+                setCurrentItems((items) =>
+                  items.filter((i) => i !== tempComponent.gui_name),
+                );
+              },
+              ((item.endTime == 0 ? 0.5 : item.endTime) - item.startTime) *
+                1000,
             );
-            setCurrentItem(tempComponent.gui_name || '');
-            tempComponent.triggerAction?.();
-
-            if (tempComponent.intDuration) {
-              // setCurrentDelay(tempComponent.intDuration);
-
-              setTimeout(() => {
-                setCurrentItem('');
-              }, tempComponent.intDuration * 1000);
-            }
-            triggerAnimation();
+            timeoutIds.current.push(intDurationTimeoutId);
           }
+          triggerAnimation();
+        }
 
-          if (item === component.components[component.components.length - 1]) {
-            setTimeout(() => {
-              setTrigger(false);
-              setCurrentItem('');
-              resolve('done');
-            }, finalDelay * 1000);
-          } else {
-            resolve('done');
-          }
+        if (index === component.components.length - 1) {
+          const finalDelayTimeoutId = setTimeout(() => {
+            setTrigger(false);
+            setCurrentItems([]);
+          }, item.endTime * 1000);
+          timeoutIds.current.push(finalDelayTimeoutId);
+        }
+      };
 
-          //
-        }, item.totalOffset * 1000),
+      const totalOffsetTimeoutId = setTimeout(
+        triggerComponent,
+        item.startTime * 1000,
       );
-    }
-  }, [component.components, finalDelay]);
+      timeoutIds.current.push(totalOffsetTimeoutId);
+    });
+  }, [component.components]);
+
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach(clearTimeout);
+      timeoutIds.current = [];
+    };
+  }, []);
 
   return (
     <div
@@ -554,17 +688,23 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
         triggerAnimation();
       }}
     >
-      {/* {currentDelay && ( */}
       <StatusBar
         ref={statusBarRef}
         duration={totalDelay}
         fadeOutDuration={fadeOutDuration}
       />
-      {/* )} */}
       <ButtonLabel>
         <div className="flex flex-col gap-2">
-          <p>Trigger Components</p>
-          {currentItem && <p>CurrentItem: {currentItem}</p>}
+          <p>{component.gui_name}</p>
+          {currentItems.length > 0 && (
+            <div className="grid-rows grid gap-1">
+              <Label>Current Items:</Label>
+              {currentItems.map((v) => (
+                <Label>{v}</Label>
+              ))}
+            </div>
+          )}
+          <Information content={component?.gui_description} />
         </div>
       </ButtonLabel>
 
