@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Image as LucideImage } from 'lucide-react'; // Ensure you have the correct import path
 import { cn } from '@/lib/utils';
-
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
 }
-
 const Image: React.FC<ImageProps> = ({ src, alt, ...props }) => {
   const [imageError, setImageError] = useState(false);
-
   useEffect(() => {
     setImageError(false);
   }, [src]);
   const onError = () => {
     setImageError(true);
   };
-
   return (
     <>
       {!imageError ? (
@@ -39,5 +35,4 @@ const Image: React.FC<ImageProps> = ({ src, alt, ...props }) => {
     </>
   );
 };
-
 export default Image;

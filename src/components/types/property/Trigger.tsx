@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
   useComponentStore,
@@ -14,12 +15,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import ButtonLabel from '@/components/common/ButtonLabel';
-
+import { formatName } from '@/utils/apiHelpers';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
 interface TriggerGUIProps {
   component: TriggerComponent;
   shouldRender?: boolean;
 }
-
 const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   component,
   shouldRender = true,
@@ -35,10 +37,9 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    console.log('Subscribing to property', component.property);
+    // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 500);
     return () => {
       unsubscribeFromProperty(component.property);
@@ -49,11 +50,9 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component);
+      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           triggerTrigger(component.property);
@@ -61,16 +60,9 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
       });
     }
   }, [component.id, component.property, luaApi]);
-
   return shouldRender ? (
-    <div
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
-      style={{
-        //cover and center the background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
-      }}
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
       onClick={() => component.triggerAction?.()}
     >
       <ButtonLabel>
@@ -79,7 +71,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
           <Information content={component.gui_description} />
         </>
       </ButtonLabel>
-    </div>
+    </ComponentContainer>
   ) : null;
 };
 
@@ -95,86 +87,69 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
-
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
+  );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  // const [lastProperty, setLastProperty] = useState<string>(
-  //   component?.property || '',
-  // );
 
   useEffect(() => {
     // console.log(properties);
     const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData) return;
-    const name = propertyData.uri
-      //only exacly '.Layers' should be removed
-      .replace(/Scene.|.Renderable|\.Layers/g, '')
-      .split('.')
-      .slice(0, -1)
-      .join('.')
-      .replace(/\./g, ' > ')
-      .trim();
-    // let name = propertyData.uri.split('.')[1];
-    setGuiName(`${name} > ${propertyData.description.Name}`);
+    if (!propertyData || lockName) return;
+    setGuiName(formatName(propertyData.uri));
     setGuiDescription(propertyData.description.description);
   }, [property]);
-
   useEffect(() => {
     handleComponentData({
       property,
       //   action: action as Toggle,
       gui_name,
       gui_description,
+      lockName,
       backgroundImage,
     });
   }, [
     property,
     gui_name,
     gui_description,
+    lockName,
     backgroundImage,
     handleComponentData,
   ]);
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
-
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].type === 'Trigger')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
-
       if (periodCountA !== periodCountB) {
         return periodCountA - periodCountB;
       }
-
       return a.localeCompare(b);
     })
     .reduce((acc: Record<string, string>, key) => {
-      //   const newValue = key
-      // .replace(/Scene.|.Renderable|.Opacity/g, '')
-      // .replace(/\./g, ' > ')
-      // .trim();
-      const newValue = key;
+      const newValue = formatName(key);
       acc[newValue] = key;
       return acc;
     }, {});
-
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <div className="text-sm font-medium text-black">Property</div>
+            <div className="text-sm font-medium text-black">
+              {getCopy('Trigger', 'property')}
+            </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -187,9 +162,11 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="gioname">Component Name</Label>
+        <div className="grid grid-cols-4 gap-2">
+          <div className="col-span-3 grid gap-2">
+            <Label htmlFor="gioname">
+              {getCopy('Trigger', 'component_name')}
+            </Label>
             <Input
               id="guiname"
               placeholder="Name of Component"
@@ -200,6 +177,13 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
               }
             />
           </div>
+          <div className="col-span-1 mt-6 grid gap-2">
+            <ToggleComponent
+              label={'Lock Name'}
+              value={lockName}
+              setValue={setLockName}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <ImageUpload
@@ -207,7 +191,9 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
             onChange={(v) => setBackgroundImage(v)}
           />
           <div className="grid gap-2">
-            <Label htmlFor="description"> Gui Description</Label>
+            <Label htmlFor="description">
+              {getCopy('Trigger', 'gui_description')}
+            </Label>
             <Textarea
               className="w-full"
               id="description"
@@ -223,5 +209,4 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
     </>
   );
 };
-
 export { TriggerModal, TriggerGUIComponent };

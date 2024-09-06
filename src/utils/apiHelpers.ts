@@ -2,27 +2,15 @@
 // @ts-ignore
 
 import { get } from 'http';
-// import { isNull } from 'util';
 
-// @ts-nocheck
 export const InterestingTag = 'GUI.Interesting';
 
-// interface PropertyRenderable {
-//   uri: string;
-//   description: {
-//     Type?: string; // Optional based on your comment in the code
-//     MetaData: {
-//       IsReadOnly: boolean;
-//     };
-//   };
-//   type?: string;
-// }
 export interface Property {
   Description: {
     Identifier: string;
     Type?: ActionType;
   };
-  Value: any;
+  Value: string | number | boolean;
   type?: ActionType;
   uri: string;
   description?: {
@@ -45,7 +33,7 @@ export interface PropertyOwner {
     Type?: ActionType;
     MetaData?: { IsReadOnly: boolean };
   };
-  value?: string;
+  value?: string | number | boolean;
   uri?: string;
   name?: string;
 }
@@ -147,7 +135,7 @@ const RegexLibrary = {
     regex: /^Scene\.(.*?)/,
   },
   Fadable: {
-    regex: /Scene\.(.*?)\.Opacity/,
+    regex: /Scene\.(.*?)\.Fade/,
   },
   TriggerProperty: {
     regex: /Scene\.(.*?)\.Renderable.Color/,
@@ -246,4 +234,13 @@ export function getStringBetween(
 
   // Extract the string between
   return fullString.substring(searchStartIndex, endIndex);
+}
+
+export function formatName(name: string) {
+  return name
+    .replace(/Scene.|.Renderable|.Opacity/g, '')
+    .replace(/.Fade/g, '')
+    .replace(/\./g, ' > ')
+    .replace(/(?<=[a-z])([A-Z])/g, ' $1')
+    .trim();
 }

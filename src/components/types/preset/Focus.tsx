@@ -1,4 +1,5 @@
 import { SetFocusComponent } from '@/store/componentsStore';
+import { getCopy } from '@/utils/copyHelpers';
 import {
   ConnectionState,
   useOpenSpaceApiStore,
@@ -6,11 +7,10 @@ import {
   useComponentStore,
 } from '@/store';
 import { useEffect, useState } from 'react';
-import { getStringBetween } from '@/utils/apiHelpers';
+import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import Information from '@/components/common/Information';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import {
@@ -20,11 +20,13 @@ import {
 } from '@/store/apiStore';
 import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
+
 interface FocusGUIProps {
   component: SetFocusComponent;
   shouldRender?: boolean;
 }
-
 const FocusComponent: React.FC<FocusGUIProps> = ({
   component,
   shouldRender = true,
@@ -46,10 +48,9 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey],
   );
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    console.log('Subscribing to property', component.property);
+    // console.log('Subscribing to property', component.property);
     subscribeToProperty(NavigationAnchorKey, 1000);
     // subscribeToProperty(`Scene.${component.property}`, 1000);
     return () => {
@@ -62,14 +63,13 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component);
+      // console.log('Registering trigger action');
+      // console.log(component);
       updateComponent(component.id, {
         triggerAction: () => {
-          console.log('Triggering action', component.property);
+          // console.log('Triggering action', component.property);
           luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
           luaApi.setPropertyValueSingle(
             NavigationAnchorKey,
@@ -80,17 +80,12 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
       });
     }
   }, [component.id, component.property, luaApi]);
-
   return shouldRender ? (
-    <div
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
-      style={{
-        //cover and center the background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
+      onClick={() => {
+        component.triggerAction?.();
       }}
-      onClick={() => component.triggerAction?.()}
     >
       <ButtonLabel>
         <div className="flex flex-col gap-2">
@@ -101,16 +96,14 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
           <Information content={component.gui_description} />
         </div>
       </ButtonLabel>
-    </div>
+    </ComponentContainer>
   ) : null;
 };
-
 interface FocusModalProps {
   component: SetFocusComponent | null;
   handleComponentData: (data: Partial<SetFocusComponent>) => void;
   //   isOpen: boolean;
 }
-
 const FocusModal: React.FC<FocusModalProps> = ({
   component,
   handleComponentData,
@@ -119,10 +112,12 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
+  );
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
@@ -141,7 +136,6 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey],
   );
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     subscribeToProperty(NavigationAnchorKey, 1000);
@@ -156,8 +150,8 @@ const FocusModal: React.FC<FocusModalProps> = ({
   // }, [CurrentAnchor.description.description]);
 
   useEffect(() => {
-    if (property !== lastProperty) {
-      console.log(CurrentAnchor);
+    if (property !== lastProperty && !lockName) {
+      // console.log(CurrentAnchor);
       setGuiName(`Focus on ${property}`);
       setGuiDescription(
         `Focus on ${property}. ${CurrentAnchor?.description.description}`,
@@ -169,6 +163,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     handleComponentData({
       property,
       backgroundImage,
+      lockName,
       gui_name,
       gui_description,
     });
@@ -177,37 +172,35 @@ const FocusModal: React.FC<FocusModalProps> = ({
     backgroundImage,
     gui_name,
     gui_description,
+    lockName,
     handleComponentData,
   ]);
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
-
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => a.includes('.Renderable'))
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
-
       if (periodCountA !== periodCountB) {
         return periodCountA - periodCountB;
       }
-
       return a.localeCompare(b);
     })
     .reduce((acc: Record<string, string>, key) => {
       const newValue = getStringBetween(key, 'Scene.', '.Renderable');
-      acc[newValue] = newValue;
+      acc[formatName(newValue)] = newValue;
       return acc;
     }, {});
-
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <div className="text-sm font-medium text-black">Property</div>
+            <div className="text-sm font-medium text-black">
+              {getCopy('Focus', 'property')}
+            </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -220,9 +213,11 @@ const FocusModal: React.FC<FocusModalProps> = ({
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="gioname">Component Name</Label>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="col-span-3 grid gap-2">
+            <Label htmlFor="gioname">
+              {getCopy('Focus', 'component_name')}
+            </Label>
             <Input
               id="guiname"
               placeholder="Name of Component"
@@ -233,17 +228,28 @@ const FocusModal: React.FC<FocusModalProps> = ({
               }
             />
           </div>
+          <div className="cols-span-1 mt-6 grid gap-2">
+            <ToggleComponent
+              label="Lock Name"
+              value={lockName}
+              setValue={setLockName}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="description"> Background Image</Label>
+            <Label htmlFor="description">
+              {getCopy('Focus', 'background_image')}
+            </Label>
             <ImageUpload
               value={backgroundImage}
               onChange={(v) => setBackgroundImage(v)}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="description"> Gui Description</Label>
+            <Label htmlFor="description">
+              {getCopy('Focus', 'gui_description')}
+            </Label>
             <Textarea
               className="w-full"
               id="description"
@@ -259,5 +265,4 @@ const FocusModal: React.FC<FocusModalProps> = ({
     </>
   );
 };
-
 export { FocusModal, FocusComponent };

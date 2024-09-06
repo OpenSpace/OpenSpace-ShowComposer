@@ -1,4 +1,4 @@
-import { throttle } from './throttle';
+import { throttle } from 'lodash';
 import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
 export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
@@ -94,7 +94,7 @@ async function jumpToTime(
   fadeTime: number,
   fadeScene: boolean,
 ) {
-  let timeNow = usePropertyStore.getState().properties['time']?.['timeCapped'];
+  let timeNow = usePropertyStore.getState().time?.['timeCapped'];
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
   // console.log('NEW TIME: ', newTime);
   if (!isDate(timeNow)) {
@@ -114,17 +114,17 @@ async function jumpToTime(
       luaApi.setPropertyValueSingle(
         'RenderEngine.BlackoutFactor',
         0,
-        fadeTime,
+        fadeTime / 2.0,
         'QuadraticEaseOut',
       );
-      setTimeout(() => resolve('done!'), fadeTime * 1000);
+      setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
     });
     await promise;
     luaApi.time.setTime(newTime);
     luaApi.setPropertyValueSingle(
       'RenderEngine.BlackoutFactor',
       1,
-      fadeTime,
+      fadeTime / 2.0,
       'QuadraticEaseIn',
     );
   } else if (!interpolate) {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-
+import { getCopy } from '@/utils/copyHelpers';
 import ComponentModal from '@/components/ComponentModal';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { useComponentStore } from '@/store';
@@ -22,7 +22,6 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-
 import { v4 as uuidv4 } from 'uuid';
 import { FlyToGUIComponent } from './FlyTo';
 import { FadeGUIComponent } from './Fade';
@@ -44,15 +43,14 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Information from '@/components/common/Information';
+import ComponentContainer from '@/components/common/ComponentContainer';
 
 // // Define the type for list items
 // set up chained v paralell data handling
 interface MultiType {
   component: MultiOption['id'];
-  // delay: number;
   buffer: number;
   chained: boolean;
-  // totalOffset: number;
   endTime: number;
   startTime: number;
   id: string;
@@ -68,7 +66,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
 }) => {
   const [items, setItems] = useState<MultiType[]>(
     component
-      ? component.components.map((v) => ({ ...v, id: v.component }))
+      ? component.components.map((v) => ({
+          ...v,
+          id: v.component,
+        }))
       : [],
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
@@ -103,7 +104,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
   });
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
-    setInitialData({ isMulti: 'pendingSave' });
+    setInitialData({
+      isMulti: 'pendingSave',
+    });
     setCurrentComponentType(type);
     setCurrentComponentId(newId);
     addItem(newId);
@@ -113,21 +116,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
     });
   };
 
-  // make copy of multiotions and remove items as tehy are added to items
-  // find last longest delay + duration
-
-  // item a : [
-  //   startTime
-  //   endTime
-  // ]
-
-  // if there a gro
-
   function sortAdjacentUnchainedItems(tempItems: MultiType[]) {
     // Identify and sort unchained items that are adjacent to other unchained items
     let unchainedGroups: MultiType[][] = [];
     let currentGroup: MultiType[] = [];
-
     for (let i = 0; i < tempItems.length; i++) {
       if (!tempItems[i].chained) {
         currentGroup.push(tempItems[i]);
@@ -145,8 +137,12 @@ const MultiModal: React.FC<MultiModalProps> = ({
     // Sort each group by intDuration + buffer
     unchainedGroups.forEach((group) => {
       group.sort((a, b) => {
-        const componentA = getComponentById(a.component) ?? { intDuration: 0 };
-        const componentB = getComponentById(b.component) ?? { intDuration: 0 };
+        const componentA = getComponentById(a.component) ?? {
+          intDuration: 0,
+        };
+        const componentB = getComponentById(b.component) ?? {
+          intDuration: 0,
+        };
         const durationA = componentA.intDuration || 0 + a.buffer;
         const durationB = componentB.intDuration || 0 + b.buffer;
         return durationA - durationB;
@@ -166,19 +162,16 @@ const MultiModal: React.FC<MultiModalProps> = ({
       }
     }
   }
-
   function recalculateOffsets(tempItems: MultiType[]) {
     // let totalDelay = 0;
     let originalOrder = tempItems.map((v) => v.id);
     sortAdjacentUnchainedItems(tempItems);
-
     let lastStartTime = 0;
     let lastEndTime = 0;
     for (let i = 0; i < tempItems.length; i++) {
       if (i == 0) {
         tempItems[i].chained = false;
       }
-
       if (!tempItems[i].chained) {
         tempItems[i].startTime = lastStartTime + tempItems[i].buffer;
         // lastStartTime = lastStartTime ;
@@ -189,7 +182,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
       tempItems[i].endTime =
         tempItems[i].startTime +
         (getComponentById(tempItems[i].component)?.intDuration || 1.0);
-
       lastEndTime = tempItems[i].endTime;
     }
     //put back in original order
@@ -204,22 +196,18 @@ const MultiModal: React.FC<MultiModalProps> = ({
     recalculateOffsets(newItems);
     setItems(newItems);
   }, [items]);
-
   useEffect(() => {
     setAvailableOptions(
       multiOptions.filter(
         (component) => !items.some((item) => item.id === component),
       ),
     );
-
     handleComponentData({
       components: items.map((v) => ({
         component: v.component,
-        // delay: v.delay,
         startTime: v.startTime,
         endTime: v.endTime,
         buffer: v.buffer,
-        // totalOffset: v.totalOffset,
         chained: v.chained,
       })),
       backgroundImage,
@@ -227,7 +215,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
       gui_name,
     });
   }, [items, backgroundImage, gui_name, gui_description]);
-
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const newList = Array.from(items);
@@ -236,11 +223,11 @@ const MultiModal: React.FC<MultiModalProps> = ({
     setItems(newList);
   };
 
-  // Add a new item to the list (simplified for demonstration)
   const addItem = (component: MultiOption['id']) => {
     const newItem: MultiType = {
       id: component,
-      component: component, // Placeholder component
+      component: component,
+      // Placeholder component
       // delay: 0, // Default delay of 1 second
       buffer: 0,
       startTime: 0,
@@ -249,9 +236,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
       chained: items.length > 0 ? true : false,
     };
     setItems([...items, newItem]);
-    updateComponent(component, { isMulti: 'pendingSave' });
+    updateComponent(component, {
+      isMulti: 'pendingSave',
+    });
   };
-
   const removeItem = (id: string) => {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
@@ -259,12 +247,15 @@ const MultiModal: React.FC<MultiModalProps> = ({
       isMulti: 'pendingDelete',
     });
   };
-
   return (
     <Tabs defaultValue="multi" className="w-auto">
       <TabsList className="mb-4">
-        <TabsTrigger value="multi">Multi Settings</TabsTrigger>
-        <TabsTrigger value="visual">Visual Settings</TabsTrigger>
+        <TabsTrigger value="multi">
+          {getCopy('Multi', 'multi_settings')}
+        </TabsTrigger>
+        <TabsTrigger value="visual">
+          {getCopy('Multi', 'visual_settings')}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="multi">
         <div className="grid grid-cols-1 gap-4">
@@ -299,16 +290,13 @@ const MultiModal: React.FC<MultiModalProps> = ({
             </div>
           </div>
           {/* {availableOptions.map((component, index) => (
-        <button key={index} onClick={() => addItem(component)}>
-          Add {getComponentById(component).type}
-        </button>
-      ))} */}
+           <button key={index} onClick={() => addItem(component)}>
+           Add {getComponentById(component).type}
+           </button>
+           ))} */}
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            <b>Delay:</b> This delay is applied differently based on the item's
-            chaining status: For chained items, the delay is added after the
-            completion of the previous item's duration. For unchained items, the
-            delay is from the start the beginning of the workflow or the start
-            time of the previous item.
+            <b>{getCopy('Multi', 'delay:')}</b>
+            {getCopy('Multi', 'delay_copy')}
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">
@@ -341,7 +329,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                 pressed={item.chained}
                                 onPressedChange={(pressed) => {
                                   const newItems = Array.from(items);
-                                  console.log(pressed);
                                   newItems[index].chained = pressed;
                                   recalculateOffsets(newItems);
                                   setItems(newItems);
@@ -356,17 +343,21 @@ const MultiModal: React.FC<MultiModalProps> = ({
                               </Toggle>
                             </TooltipTrigger>
                             <TooltipContent className="w-[200px] bg-white">
-                              <b>Chained Items:</b> These items start their
-                              operation after the previous item has completed
-                              its duration.
+                              <b>{getCopy('Multi', 'chained_items:')}</b>
+                              {getCopy(
+                                'Multi',
+                                'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.',
+                              )}
                               <br />
-                              <b>Unchained Items:</b> These run concurrently
-                              with the previous item, not waiting for the
-                              previous operations to complete.
+                              <b>{getCopy('Multi', 'unchained_items:')}</b>
+                              {getCopy(
+                                'Multi',
+                                'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.',
+                              )}
                             </TooltipContent>
                           </Tooltip>
                           <div className="flex items-center gap-1">
-                            <Label> Delay</Label>
+                            <Label>{getCopy('Multi', 'delay')}</Label>
                             <Input
                               type="number"
                               className="w-20"
@@ -381,7 +372,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                 const value = e.currentTarget.value;
                                 const newItems = Array.from(items);
                                 newItems[index].buffer = parseFloat(value);
-                                console.log(value);
                                 setItems(newItems);
                               }}
                             />
@@ -400,7 +390,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                     setCancelCallback(() => () => {
                                       setItems(items);
                                     });
-
                                     setIsModalOpen(true);
                                   }}
                                   className="p-1"
@@ -417,15 +406,16 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                       setCancelCallback(() => () => {
                                         setItems(items);
                                       });
-
                                       setIsModalOpen(true);
                                     }}
-                                    style={{ cursor: 'pointer' }} // Makes the icon behave like a button
+                                    style={{
+                                      cursor: 'pointer',
+                                    }} // Makes the icon behave like a button
                                   />
                                 </Toggle>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white">
-                                Edit Component
+                                {getCopy('Multi', 'edit_component')}
                               </TooltipContent>
                             </Tooltip>
                             <Tooltip>
@@ -441,7 +431,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                 </Toggle>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white">
-                                Remove from Component
+                                {getCopy('Multi', 'remove_from_component')}
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -460,7 +450,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
         <div className="grid grid-cols-1 gap-4">
           <div className="grid grid-cols-1 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="gioname">Component Name</Label>
+              <Label htmlFor="gioname">
+                {getCopy('Multi', 'component_name')}
+              </Label>
               <Input
                 id="guiname"
                 placeholder="Name of Component"
@@ -474,14 +466,18 @@ const MultiModal: React.FC<MultiModalProps> = ({
           </div>
           <div className="grid grid-cols-1 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="description"> Background Image</Label>
+              <Label htmlFor="description">
+                {getCopy('Multi', 'background_image')}
+              </Label>
               <ImageUpload
                 value={backgroundImage}
                 onChange={(v) => setBackgroundImage(v)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description"> Gui Description</Label>
+              <Label htmlFor="description">
+                {getCopy('Multi', 'gui_description')}
+              </Label>
               <Textarea
                 className="w-full"
                 id="description"
@@ -513,7 +509,6 @@ const MultiModal: React.FC<MultiModalProps> = ({
     </Tabs>
   );
 };
-
 function renderByType(component: MultiOption) {
   let content;
   switch (component?.type) {
@@ -581,40 +576,18 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   const triggerAnimation = () => {
     statusBarRef.current?.triggerAnimation();
   };
-
-  useEffect(() => {
-    if (component.components.length == 0) {
-      return;
-    }
-    console.log(component.components);
-  }, [component]);
-
-  // const finalDelay = useMemo(() => {
-  //   return (
-  //     getComponentById(
-  //       component.components[component.components.length - 1]?.component,
-  //     )?.intDuration || 0
-  //   );
-  // }, [component.components]);
-  // const finalDelay = useMemo(() => {
-  //   return Math.max(
-  //     ...component.components.map((item) => {
-  //       const tempComponent = getComponentById(item.component);
-  //       return item.totalOffset + (tempComponent?.intDuration || 0);
-  //     }),
-  //     0,
-  //   );
-  // }, [component.components]);
-
-  // console.log(component.components);
+  // useEffect(() => {
+  //   if (component.components.length == 0) {
+  //     return;
+  //   }
+  // }, [component]);
 
   const totalDelay = useMemo(() => {
     return component.components[component.components.length - 1]?.endTime || 0;
   }, [component.components]);
-
   const [currentItems, setCurrentItems] = useState<string[]>([]);
   // const [currentDelay, setCurrentDelay] = useState(0);
-  const [trigger, setTrigger] = useState(false);
+  const [_trigger, setTrigger] = useState(false);
   const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const triggerComponents = useCallback(() => {
@@ -625,18 +598,17 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           | MultiOption
           | undefined;
         if (tempComponent) {
-          console.log(
-            `Triggering ${tempComponent.gui_name} after ${item.startTime} seconds`,
-          );
+          // console.log(
+          //   `Triggering ${tempComponent.gui_name} after ${item.startTime} seconds`,
+          // );
           setCurrentItems((items) => [...items, tempComponent.gui_name || '']);
           tempComponent.triggerAction?.();
-
           if (item.endTime) {
             const intDurationTimeoutId = setTimeout(
               () => {
-                console.log(
-                  `Removing ${tempComponent.gui_name} after ${item.endTime} seconds`,
-                );
+                // console.log(
+                //   `Removing ${tempComponent.gui_name} after ${item.endTime} seconds`,
+                // );
                 setCurrentItems((items) =>
                   items.filter((i) => i !== tempComponent.gui_name),
                 );
@@ -648,7 +620,6 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           }
           triggerAnimation();
         }
-
         if (index === component.components.length - 1) {
           const finalDelayTimeoutId = setTimeout(() => {
             setTrigger(false);
@@ -657,7 +628,6 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           timeoutIds.current.push(finalDelayTimeoutId);
         }
       };
-
       const totalOffsetTimeoutId = setTimeout(
         triggerComponent,
         item.startTime * 1000,
@@ -672,18 +642,11 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       timeoutIds.current = [];
     };
   }, []);
-
   return (
-    <div
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"
-      style={{
-        //cover and center the background image
-        pointerEvents: trigger ? 'none' : 'auto',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
-      }}
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
       onClick={() => {
+        // component.triggerAction?.();
         triggerComponents();
         triggerAnimation();
       }}
@@ -698,9 +661,9 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           <p>{component.gui_name}</p>
           {currentItems.length > 0 && (
             <div className="grid-rows grid gap-1">
-              <Label>Current Items:</Label>
+              <Label>{getCopy('Multi', 'current_items:')}</Label>
               {currentItems.map((v) => (
-                <Label>{v}</Label>
+                <Label key={v}>{v}</Label>
               ))}
             </div>
           )}
@@ -712,8 +675,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       {component?.components.map((v, _i) => {
         return renderByType(getComponentById(v.component) as MultiOption);
       })}
-    </div>
+    </ComponentContainer>
   );
 };
-
 export { MultiModal, MultiGUIComponent };

@@ -1,13 +1,12 @@
 import { Input } from '@/components/ui/input';
+import { getCopy } from '@/utils/copyHelpers';
 import { Label } from '@/components/ui/label';
 import { TitleComponent } from '@/store';
 import { throttle } from 'lodash';
 import React, { useEffect, useState, useRef } from 'react';
-
 interface TitleGUIProps {
   component: TitleComponent;
 }
-
 const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
   const [textStyle, setTextStyle] = useState({
     fontSize: '1rem',
@@ -16,7 +15,6 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
     // position: 'static',
   });
   const containerRef = useRef<HTMLDivElement>(null);
-
   function measureTextDimensions(
     text: string | null,
     style: {
@@ -54,22 +52,22 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
 
     // Clean up by removing the element from the document
     document.body.removeChild(element);
-
     return dimensions;
   }
   const throttledMeasureAndApply = throttle((width, height) => {
     let minSize = 12,
       maxSize = 1000;
     const precision = 0.01;
-
     let size = (minSize + maxSize) / 2;
     while (maxSize - minSize > precision) {
       size = (minSize + maxSize) / 2;
       const trialStyle = {
         fontSize: `${size}px`,
         lineHeight: `${size * 1.1}px`,
-        visibility: 'hidden', // Hide the element
-        position: 'absolute', // Avoid affecting layout
+        visibility: 'hidden',
+        // Hide the element
+        position: 'absolute',
+        // Avoid affecting layout
         whiteSpace: 'nowrap', // Prevent line breaks during width measurement
       };
 
@@ -79,7 +77,6 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
         trialStyle,
         width - 160,
       );
-
       if (textWidth <= width && textHeight <= height) {
         minSize = size + precision;
       } else {
@@ -109,13 +106,13 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
       resizeObserver.disconnect();
     };
   }, []);
-
   return (
     <div
       ref={containerRef}
       className="absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center"
     >
       <h1
+        className="dark:text-white"
         style={{
           fontSize: textStyle.fontSize,
           lineHeight: textStyle.lineHeight,
@@ -133,18 +130,17 @@ interface TitleModalProps {
   handleComponentData: (data: Partial<TitleComponent>) => void;
   isOpen: boolean;
 }
-
 const TitleModal: React.FC<TitleModalProps> = ({
   component,
   handleComponentData,
   isOpen,
 }) => {
   const [text, setText] = useState(component?.text || '');
-
   useEffect(() => {
-    handleComponentData({ text });
+    handleComponentData({
+      text,
+    });
   }, [text, handleComponentData]);
-
   useEffect(() => {
     if (component) {
       setText(component?.text);
@@ -152,16 +148,14 @@ const TitleModal: React.FC<TitleModalProps> = ({
       setText('');
     }
   }, [component, setText]);
-
   useEffect(() => {
     if (!isOpen) {
       setText('');
     }
   }, [isOpen, setText]);
-
   return (
     <div className="grid grid-cols-1 gap-4">
-      <Label>Title</Label>
+      <Label>{getCopy('Title', 'title')}</Label>
       <Input
         // className="w-full rounded border p-2"
         value={text}
@@ -171,5 +165,4 @@ const TitleModal: React.FC<TitleModalProps> = ({
     </div>
   );
 };
-
 export { TitleModal, TitleGUIComponent };

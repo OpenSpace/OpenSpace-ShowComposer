@@ -1,7 +1,7 @@
 export {
   useStore as useComponentStore,
-  saveStore,
-  loadStore,
+  // saveStore,
+  // loadStore,
 } from './componentsStore';
 
 export { useSettingsStore } from './settingsStore';

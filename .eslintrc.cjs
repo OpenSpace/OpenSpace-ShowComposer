@@ -38,6 +38,16 @@ module.exports = {
     'react/prop-types': 0,
     'prefer-const': 0,
     '@typescript-eslint/no-unused-vars': 0,
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/ban-ts-comment': [
+      'error',
+      {
+        'ts-ignore': false, // Allow @ts-ignore comments
+        'ts-expect-error': true, // Still enforce @ts-expect-error comments
+        'ts-nocheck': true,
+        'ts-check': true,
+      },
+    ],
     'react/display-name': 'off',
   },
   ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs', 'eslint.config.js'],

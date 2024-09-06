@@ -1,83 +1,99 @@
+import { Fragment } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import { usePropertyStore } from '@/store'; // Adjust the import path accordingly
+import { Label } from './ui/label';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { AudioWaveform } from 'lucide-react';
+import { Separator } from './ui/separator';
 const SubscriptionPanel = () => {
   const topics = usePropertyStore((state) => state.topicSubscriptions);
   const subscriptions = usePropertyStore(
     (state) => state.propertySubscriptions,
   );
+  const [open, setOpen] = useState<boolean>(false);
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+  };
 
-  // loop throught topics and usePropertySTore to get the value fo each topic
-  // loop through subscriptions and usePropertyStore to get the value for each subscription
-  // console.log(topics, subscriptions);
-
-  const unsubscribeFromTopic = usePropertyStore(
-    (state) => state.unsubscribeFromTopic,
-  );
-  const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
-  );
+  // const unsubscribeFromTopic = usePropertyStore(
+  //   (state) => state.unsubscribeFromTopic,
+  // );
+  // const unsubscribeFromProperty = usePropertyStore(
+  //   (state) => state.unsubscribeFromProperty,
+  // );
 
   return (
-    <div
-      className="gap-0 text-black"
-      style={{
-        border: '1px solid #ccc',
-        padding: '10px',
-        margin: '10px',
-        borderRadius: '5px',
-      }}
-    >
-      <h2 className="font-bold">Active Subscriptions</h2>
-      {Object.keys(topics).length > 0 ||
-      Object.keys(subscriptions).length > 0 ? (
-        <ul>
-          <>
-            {Object.entries(topics).map(([topicName, { count }]) => (
-              <li
-                key={topicName}
-                className="flex flex-row items-center justify-between"
-              >
-                <p>
-                  {topicName} -{'  '}
-                  <span className="text-xs font-bold">
-                    Subscribers: {count}
-                  </span>
-                </p>
-                <button
-                  className="mb-2  rounded border-[1px] border-black bg-white p-2 text-black"
-                  onClick={() => unsubscribeFromTopic(topicName)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Unsubscribe
-                </button>
-              </li>
-            ))}
-            {Object.entries(subscriptions).map(([topicName, { count }]) => (
-              <li
-                key={topicName}
-                className="flex flex-row items-center justify-between"
-              >
-                <p>
-                  {topicName} -{'  '}
-                  <span className="text-xs font-bold">
-                    Subscribers: {count}
-                  </span>{' '}
-                </p>
-                <button
-                  className="mb-2  rounded border-[1px] border-black bg-white p-2 text-black"
-                  onClick={() => unsubscribeFromProperty(topicName)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Unsubscribe
-                </button>
-              </li>
-            ))}
-          </>
-        </ul>
-      ) : (
-        <p>No active subscriptions.</p>
-      )}
-    </div>
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <div className="mt-0 flex flex-row items-center justify-start px-4 pb-4">
+              <Button className="w-auto gap-2" variant="outline" size="sm">
+                <AudioWaveform size={16} />{' '}
+                <Label>
+                  {getCopy('SubscriptionPanel', 'active_subscriptions')}
+                </Label>
+              </Button>
+            </div>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent className="bg-white">
+          {getCopy('SubscriptionPanel', 'active_property_subscriptions')}
+        </TooltipContent>
+      </Tooltip>
+
+      <PopoverContent className="w-auto">
+        <div className="m-4 rounded-md border border-gray-300 p-4">
+          <h2 className="mb-2 font-bold">
+            {getCopy('SubscriptionPanel', 'active_subscriptions')}
+          </h2>
+          {Object.keys(topics).length > 0 ||
+          Object.keys(subscriptions).length > 0 ? (
+            <div className="flex flex-col justify-center gap-2">
+              <>
+                {Object.entries(topics).map(([topicName, { count }]) => (
+                  <Fragment key={topicName}>
+                    <Separator key={topicName} />
+                    <div key={topicName} className="grid grid-cols-4 gap-2">
+                      <Label className="col-span-3 ">{topicName} </Label>
+                      <div className="flex flex-row justify-end gap-2">
+                        <Label>
+                          {getCopy('SubscriptionPanel', 'subscribers:')}
+                        </Label>
+                        <Label>{count}</Label>
+                      </div>
+                    </div>
+                  </Fragment>
+                ))}
+                {Object.entries(subscriptions).map(([topicName, { count }]) => (
+                  <Fragment key={topicName}>
+                    <Separator key={topicName} />
+                    <div key={topicName} className="grid grid-cols-4 gap-2">
+                      <Label className="col-span-3 ">{topicName} </Label>
+                      <div className="flex flex-row justify-end gap-2">
+                        <Label>
+                          {getCopy('SubscriptionPanel', 'subscribers:')}
+                        </Label>
+                        <Label>{count}</Label>
+                      </div>
+                    </div>
+                  </Fragment>
+                ))}
+              </>
+            </div>
+          ) : (
+            <p>{getCopy('SubscriptionPanel', 'no_active_subscriptions.')}</p>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
-
 export default SubscriptionPanel;

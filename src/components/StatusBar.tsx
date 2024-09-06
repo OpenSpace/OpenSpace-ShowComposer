@@ -14,11 +14,10 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
   ({ duration: incDuration, fadeOutDuration: incFadeDuration }, ref) => {
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
-    const [duration, _setDuration] = useState(incDuration);
+    const [duration, setDuration] = useState(incDuration);
     const [fadeOutDuration, _setFadeOutDuration] = useState(incFadeDuration);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [progress, setProgress] = useState(0);
-
     const triggerAnimation = () => {
       setStartTime(Date.now());
       setIsAnimatingWidth(true);
@@ -27,6 +26,10 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     useImperativeHandle(ref, () => ({
       triggerAnimation,
     }));
+
+    useEffect(() => {
+      setDuration(incDuration);
+    }, [incDuration]);
 
     useEffect(() => {
       if (isAnimatingWidth) {

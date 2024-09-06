@@ -12,7 +12,7 @@ const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
     <div className=" absolute right-0 top-0 flex h-full w-full items-center justify-center ">
       <div className="ql-snow">
         <div
-          className=" ql-editor prose-sm h-full w-full p-4 prose-headings:my-0 prose-p:my-0"
+          className=" ql-editor prose-sm z-[99] h-full w-full p-4 prose-headings:my-0 prose-p:my-0 dark:text-slate-200"
           dangerouslySetInnerHTML={{ __html: component.text }}
         />
       </div>

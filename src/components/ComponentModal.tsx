@@ -27,7 +27,7 @@ import { NumberModal } from './types/property/Number';
 import { VideoModal } from './types/static/Video';
 import { MultiModal } from './types/preset/Multi';
 import { ImageModal } from './types/static/Image';
-
+import { SessionPlaybackModal } from './types/preset/SessionPlayback';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -42,8 +42,14 @@ import {
 import {
   ImageComponent,
   MultiComponent,
+  PageComponent,
+  SessionPlaybackComponent,
+  SetNavComponent,
   allComponentLabels,
 } from '@/store/componentsStore';
+import { SetNavModal } from './types/preset/SetNavigation';
+import { PageModal } from './types/preset/Page';
+import { getCopy } from '@/utils/copyHelpers';
 interface ComponentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -75,24 +81,23 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const asyncPreSubmitOperation = useComponentStore(
     (state) => state.asyncPreSubmitOperation,
   );
+  const resetAsyncPreSubmitOperation = useComponentStore(
+    (state) => state.resetAsyncPreSubmitOperation,
+  );
   const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
     AsyncStatus.False,
   );
-
   const components = useComponentStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
-
   const [componentData, setComponentData] = useState<Partial<Component>>({
     ...initialData,
   });
-
   useEffect(() => {
     if (asyncOperationStatus == AsyncStatus.Pending && componentData) {
       // handleSubmit();
       setAsyncOperationStatus(AsyncStatus.True);
     }
   }, [asyncOperationStatus, componentData]);
-
   const handleSubmit = useCallback(async () => {
     if (componentId) {
       if (useComponentStore.getState().asyncPreSubmitOperation) {
@@ -109,9 +114,13 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
               )
               .forEach(([id, c]) => {
                 if (c.isMulti === 'pendingSave') {
-                  updateComponent(id, { isMulti: 'true' });
+                  updateComponent(id, {
+                    isMulti: 'true',
+                  });
                 } else if (c.isMulti === 'pendingDelete') {
-                  updateComponent(id, { isMulti: 'false' });
+                  updateComponent(id, {
+                    isMulti: 'false',
+                  });
                 }
               });
           }
@@ -141,9 +150,13 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
               )
               .forEach(([id, c]) => {
                 if (c.isMulti === 'pendingSave') {
-                  updateComponent(id, { isMulti: 'true' });
+                  updateComponent(id, {
+                    isMulti: 'true',
+                  });
                 } else if (c.isMulti === 'pendingDelete') {
-                  updateComponent(id, { isMulti: 'false' });
+                  updateComponent(id, {
+                    isMulti: 'false',
+                  });
                 }
               });
           }
@@ -152,30 +165,33 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       }
     }
   }, [componentData, component, asyncPreSubmitOperation]);
-
   useEffect(() => {
     if (asyncOperationStatus == AsyncStatus.True) {
       handleSubmit();
       setAsyncOperationStatus(AsyncStatus.False);
     }
   }, [asyncOperationStatus, handleSubmit]);
-
   const handleCancel = () => {
     if ((component ? component.type : type) == 'multi') {
       Object.entries(components)
         .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
         .forEach(([id, c]) => {
           if (c.isMulti === 'pendingSave') {
-            updateComponent(id, { isMulti: 'false' });
+            updateComponent(id, {
+              isMulti: 'false',
+            });
           } else if (c.isMulti === 'pendingDelete') {
-            updateComponent(id, { isMulti: 'true' });
+            updateComponent(id, {
+              isMulti: 'true',
+            });
           }
         });
     }
-    onCancel && onCancel();
+    // (null);
+    resetAsyncPreSubmitOperation();
     onClose();
+    if (onCancel) onCancel();
   };
-
   let content;
   switch (component ? component.type : type) {
     case 'title':
@@ -191,6 +207,15 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <SetTimeModal
           component={component as SetTimeComponent}
+          isOpen={isOpen}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'setnavstate':
+      content = (
+        <SetNavModal
+          component={component as SetNavComponent}
           isOpen={isOpen}
           handleComponentData={setComponentData}
         />
@@ -277,12 +302,28 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         />
       );
       break;
+    case 'sessionplayback':
+      content = (
+        <SessionPlaybackModal
+          component={component as SessionPlaybackComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'page':
+      content = (
+        <PageModal
+          component={component as PageComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
     default:
-      content = <div>Unknown component type</div>;
+      content = (
+        <div>{getCopy('ComponentModal', 'unknown_component_type')}</div>
+      );
   }
-
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <Card className="w-[510px] bg-white">
@@ -302,17 +343,19 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             </div>
           </CardTitle>
           <CardDescription>
-            Configure you component and add it to the workspace.
+            {getCopy('ComponentModal', 'configure_copy')}
           </CardDescription>
         </CardHeader>
         <CardContent>{content}</CardContent>
         <CardFooter>
           <div className="flex w-full flex-row justify-end gap-2">
             <Button variant={'outline'} onClick={handleCancel}>
-              Cancel
+              {getCopy('ComponentModal', 'cancel')}
             </Button>
             <Button onClick={handleSubmit}>
-              {component ? 'Save' : 'Create'}
+              {component
+                ? getCopy('ComponentModal', 'save')
+                : getCopy('ComponentModal', 'create')}
             </Button>
           </div>
         </CardFooter>
@@ -320,5 +363,4 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
     </div>
   );
 };
-
 export default ComponentModal;

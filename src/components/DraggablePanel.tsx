@@ -8,14 +8,15 @@ import {
   TimeComponent,
   NavComponent,
   StatusComponent,
+  RecordComponent,
 } from '@/store/componentsStore';
-import { useComponentStore } from '@/store';
+import { useComponentStore, useSettingsStore } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import FeedbackPanel from './FeedbackPanel';
-
+import RecordPanel from './types/static/SessionPanel';
 interface PanelProps {
-  component: TimeComponent | NavComponent | StatusComponent;
+  component: TimeComponent | NavComponent | StatusComponent | RecordComponent;
   originX?: number;
   originY?: number;
 }
@@ -27,7 +28,8 @@ const DraggablePanel: React.FC<PanelProps> = ({
 }) => {
   const updatePanel = useComponentStore((state) => state.updatePanel);
   const [isDragging, setIsDragging] = useState(false);
-
+  const scale = useSettingsStore((state) => state.pageScaleThrottled);
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
     updatePanel({
@@ -45,6 +47,8 @@ const DraggablePanel: React.FC<PanelProps> = ({
         return <FlightControlPanel />;
       case 'statuspanel':
         return <FeedbackPanel />;
+      case 'recordpanel':
+        return <RecordPanel />;
       default:
         return <div>Unknown type</div>;
     }
@@ -70,6 +74,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
         x: Math.max(component?.x, 0),
         y: Math.max(component?.y, 0),
       }}
+      scale={isPresentMode ? 1.0 : scale}
       size={{ width: component?.width, height: component?.height }}
       onDragStart={() => {
         setIsDragging(true);
@@ -91,8 +96,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
         isDragging ? 'z-50 border-blue-500 shadow-lg' : ''
       } 
       data=[state=open]:opacity-100 rounded-md 
-      border 
-      border-0 
+
       border-slate-200 
       bg-gray-300
       bg-opacity-75
@@ -103,7 +107,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
       duration-300
       data-[state=closed]:pointer-events-none 
       data-[state=open]:pointer-events-auto data-[state=closed]:opacity-0
-      dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50
+      dark:border dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50
       `}
     >
       <div className="drag-handle group absolute top-0 h-[30px] w-full cursor-move">
@@ -114,7 +118,12 @@ const DraggablePanel: React.FC<PanelProps> = ({
         </div>
       </div>
       <div className="absolute right-1 top-1 ">
-        <Button variant="ghost" size="icon" onClick={minimize}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="m-0 h-4 w-4 p-0"
+          onClick={minimize}
+        >
           <Minus size="20" />
         </Button>
       </div>

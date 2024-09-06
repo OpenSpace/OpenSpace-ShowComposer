@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import Information from '@/components/common/Information';
 import Toggle from '@/components/common/Toggle';
 import DateComponent from '@/components/timepicker/DateComponent';
@@ -10,7 +11,6 @@ import {
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { formatDate, jumpToTime } from '@/utils/time';
-
 import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -18,37 +18,32 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
+
 interface SetTimeComponentProps {
   component: SetTimeType;
 }
-
 const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );
-
   useEffect(() => {
-    console.log('CONNETION STATE:', connectionState);
     if (connectionState != ConnectionState.CONNECTED) return;
-
     subscribeToTopic('time');
     return () => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
-
   const updateComponent = useComponentStore((state) => state.updateComponent);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component.time);
+      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           jumpToTime(
@@ -74,16 +69,9 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   const triggerAnimation = () => {
     statusBarRef.current?.triggerAnimation();
   };
-
   return (
-    <div
-      className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center hover:cursor-pointer"
-      style={{
-        //cover and center the background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
-      }}
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
       onClick={() => {
         component.triggerAction?.();
         triggerAnimation();
@@ -102,25 +90,20 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
           <Information content={component.gui_description} />
         </div>
       </ButtonLabel>
-    </div>
+    </ComponentContainer>
   );
 };
-
 interface SetTimeModalProps {
   component: SetTimeType | null;
   handleComponentData: (data: Partial<SetTimeType>) => void;
   isOpen: boolean;
 }
-
 const SetTimeModal: React.FC<SetTimeModalProps> = ({
   component,
   handleComponentData,
   // isOpen,
 }) => {
-  const time = usePropertyStore(
-    (state) => state.properties['time']?.['timeCapped'],
-  );
-
+  const time = usePropertyStore((state) => state.time?.['timeCapped']);
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(
     component?.interpolate || false,
@@ -131,6 +114,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const [gui_description, setGuiDescription] = useState(
     component?.gui_description,
   ); //
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
+  );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
@@ -144,9 +130,8 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     }
     return time;
   }, [componentTime]);
-
   useEffect(() => {
-    if (timeLabel) {
+    if (timeLabel && !lockName) {
       setGuiName(`Go to ${timeLabel}`);
       if (interpolate) {
         setGuiDescription(
@@ -157,7 +142,6 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       }
     }
   }, [timeLabel, intDuration, interpolate]);
-
   useEffect(() => {
     handleComponentData({
       time: componentTime,
@@ -165,6 +149,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       intDuration,
       fadeScene,
       gui_name,
+      lockName,
       gui_description,
       backgroundImage,
     });
@@ -175,10 +160,10 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     handleComponentData,
     fadeScene,
     gui_name,
+    lockName,
     gui_description,
     backgroundImage,
   ]);
-
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
@@ -191,7 +176,6 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               delta: number;
               relative: boolean;
             }) => {
-              console.log(data);
               setCompontentTime(data.time);
             }}
           />
@@ -199,21 +183,16 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
         <Button
           onClick={() => {
             const newTime = new Date();
-            console.log(newTime.toJSON());
-            // try {
-            // const fixedTimeString = newTime.toJSON().replace('Z', '');
-            // setCompontentTime(new Date(fixedTimeString));
-            // } catch {
             setCompontentTime(newTime);
-            // }
           }}
         >
-          Set Time To Now
+          {getCopy('SetTime', 'set_time_to_now')}
         </Button>
-
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="guiname">Component Name</Label>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="col-span-3 grid gap-2">
+            <Label htmlFor="guiname">
+              {getCopy('SetTime', 'component_name')}
+            </Label>
             <Input
               id="guiname"
               placeholder="Name of Component"
@@ -224,9 +203,20 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               }
             />
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="duration">Fade Duration</Label>
+          <div className="cols-span-1 mt-6 grid gap-2">
+            <ToggleComponent
+              label="Lock Name"
+              value={lockName}
+              setValue={setLockName}
+            />
+          </div>
+        </div>
+        <div className="grid  gap-4">
+          <div className="grid grid-cols-4 gap-4">
+            <div className="col-span-2 grid gap-2">
+              <Label htmlFor="duration">
+                {getCopy('SetTime', 'fade_duration')}
+              </Label>
               <Input
                 id="duration"
                 placeholder="Duration to Fade"
@@ -236,29 +226,38 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
                 onChange={(e) => setIntDuration(parseFloat(e.target.value))}
               />
             </div>
-            <Toggle
-              label="Interpolate"
-              value={interpolate}
-              setValue={setInterpolate}
-            />
-            <Toggle
-              label="Fade Scene"
-              disabled={!interpolate}
-              value={fadeScene}
-              setValue={setFadeScene}
-            />
-            {/* </diov> */}
+            <div className="grid gap-2">
+              <Label />
+              <Toggle
+                label="Interpolate"
+                value={interpolate}
+                setValue={setInterpolate}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label />
+              <Toggle
+                label="Fade Scene"
+                disabled={!interpolate}
+                value={fadeScene}
+                setValue={setFadeScene}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-1 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="description"> Background Image</Label>
+              <Label htmlFor="description">
+                {getCopy('SetTime', 'background_image')}
+              </Label>
               <ImageUpload
                 value={backgroundImage}
                 onChange={(v) => setBackgroundImage(v)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description"> Gui Description</Label>
+              <Label htmlFor="description">
+                {getCopy('SetTime', 'gui_description')}
+              </Label>
               <Textarea
                 className="w-full"
                 id="description"
@@ -275,5 +274,4 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     </>
   );
 };
-
 export { SetTimeModal, SetTimeComponent };

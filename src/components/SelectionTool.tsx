@@ -12,7 +12,9 @@ const SelectionTool: React.FC = () => {
   const clearSelection = useComponentStore((state) => state.clearSelection);
   const getComponentById = useComponentStore((state) => state.getComponentById);
   const getPageById = useComponentStore((state) => state.getPageById);
+
   const handleMouseDown = (e: React.MouseEvent) => {
+    // e.preventDefault();
     clearSelection();
     setIsSelecting(true);
     const containerRect = containerRef.current!.getBoundingClientRect();
@@ -67,10 +69,11 @@ const SelectionTool: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className={`${isSelecting ? 'z-[9999]' : ''} relative h-full w-full`}
+      className="relative h-full w-full"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      style={{ zIndex: isSelecting ? 9999 : 0 }}
     >
       {isSelecting && (
         <div

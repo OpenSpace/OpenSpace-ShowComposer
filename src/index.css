@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Hide arrows in input number fields for a specific class */
+  .no-arrows::-webkit-outer-spin-button,
+  .no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    width: 0;
+    height: 0;
+  }
+  .no-arrows::-webkit-textfield-decoration-container {
+    /* display: none; */
+    margin-right: 12px;
+  }
+
+  .no-arrows {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield; /* Standard */
+    /* margin-left: 12px; */
+  }
+
+  .percent::after {
+    content: '%';
+    display: inline-block;
+  }
+}
+
+body {
+  font-family: 'Futura', sans-serif;
+}
 @keyframes slide {
   from {
     width: 0%;
@@ -9,4 +38,17 @@
   to {
     width: 100%;
   }
+}
+
+/* Dark mode toolbar icon color */
+.dark-mode .ql-toolbar .ql-stroke {
+  @apply dark:stroke-slate-200;
+}
+
+.dark-mode .ql-toolbar .ql-fill {
+  @apply dark:fill-slate-200;
+}
+
+.dark-mode .ql-picker-label {
+  @apply dark:text-slate-200;
 }

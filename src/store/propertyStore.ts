@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { devtools } from 'zustand/middleware';
 import { useOpenSpaceApiStore } from './apiStore';
-import { throttle } from '@/utils/throttle';
+import { throttle } from 'lodash';
 import { updateTime } from '@/utils/time';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
 import { normalizeKeys } from '@/utils/apiHelpers';
@@ -23,13 +23,20 @@ interface State {
   propertySubscriptions: Record<string, subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
   topicSubscriptions: Record<string, subscription>;
   properties: Record<string, any>;
+  time: any;
+  sessionRecording: any;
   favorites: Array<any>;
   setProperty: (name: string, value: any) => void;
   setProperties: (properties: Record<string, any>) => void;
   setFavorites: (favorites: Array<any>) => void;
+  refreshTopic: (name: string, properties?: string[]) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
-  subscribeToTopic: (topicName: string, throttleAmt?: number) => void;
+  subscribeToTopic: (
+    topicName: string,
+    throttleAmt?: number,
+    properties?: string[],
+  ) => void;
   unsubscribeFromTopic: (topicName: string) => void;
   connectToTopic: (topicName: string) => void;
 }
@@ -40,16 +47,20 @@ export const usePropertyStore = create<State>()(
       propertySubscriptions: {},
       topicSubscriptions: {}, // New topics state
       properties: {}, // New properties state
+      time: {},
+      sessionRecording: {},
       favorites: [],
       // Function to update a property's value
       setProperty: (name: string, value: any) =>
         set(
           (state: any) => {
             if (name == 'time') {
-              state.properties[name] = updateTime({
-                ...state.properties[name],
+              state.time = updateTime({
+                ...state.time,
                 ...value,
               });
+            } else if (name == 'sessionRecording') {
+              state.sessionRecording = { ...state.sessionRecording, ...value };
             } else {
               state.properties[name] = { ...state.properties[name], ...value };
             }
@@ -74,7 +85,7 @@ export const usePropertyStore = create<State>()(
           'property/setFavorites',
         ),
       // Function to manage subscription counts
-      subscribeToProperty: (name: string, throttleAmt: number = 200) =>
+      subscribeToProperty: (name: string, throttleAmt: number = 0) =>
         set(
           (state: any) => {
             if (!state.propertySubscriptions[name]) {
@@ -100,6 +111,7 @@ export const usePropertyStore = create<State>()(
                 for await (const data of subscription.iterator()) {
                   throttledHandleUpdates(
                     name,
+                    // data,
                     restrictNumbersToDecimalPlaces(data, 4),
                   );
                 }
@@ -128,23 +140,24 @@ export const usePropertyStore = create<State>()(
           false,
           'property/unsubscribe',
         ),
-      subscribeToTopic: (topicName: string, _throttleAmt: number = 200) =>
+      subscribeToTopic: (
+        topicName: string,
+        _throttleAmt: number = 200,
+        properties,
+      ) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
               const subscribeToTopic =
                 useOpenSpaceApiStore.getState().subscribeToTopic;
-              const topic = subscribeToTopic(topicName);
+              const topic = subscribeToTopic(topicName, properties);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
                 subscription: topic,
               };
               const testSetProperty = (propName: string, value: any) => {
-                // if (propName.includes('time')) console.log(propName, value);
                 usePropertyStore.getState().setProperty(propName, value);
-
-                // .setProperty(propName, normalizeKeys(value));
               };
               // const throttledHandleUpdates = throttle(
               //   testSetProperty,
@@ -165,6 +178,34 @@ export const usePropertyStore = create<State>()(
           },
           false,
           'topic/subscribe',
+        ),
+      refreshTopic: (topicName: string, properties) =>
+        set(
+          (state) => {
+            if (!state.topicSubscriptions[topicName]) {
+              const topic = useOpenSpaceApiStore
+                .getState()
+                .luaApi.startTopic('sessionRecording', {
+                  event: 'refresh',
+                  properties: properties,
+                });
+              (async () => {
+                if (topic) {
+                  // @ts-ignore eslint-disable-next-line no-restricted-syntax
+                  for await (const data of topic.iterator()) {
+                    usePropertyStore.getState().setProperty(topicName, data);
+                    topic?.cancel();
+                  }
+                }
+              })();
+            } else {
+              state.topicSubscriptions[topicName].subscription.talk({
+                event: 'refresh',
+              });
+            }
+          },
+          false,
+          'topic/refresh',
         ),
       connectToTopic: (topicName: string) =>
         set(
@@ -205,8 +246,8 @@ export const usePropertyStore = create<State>()(
             if (state.topicSubscriptions[topicName].count > 1) {
               state.topicSubscriptions[topicName].count -= 1;
             } else {
-              console.log(state.topicSubscriptions[topicName].subscription);
-              console.log(state.topicSubscriptions[topicName]);
+              // console.log(state.topicSubscriptions[topicName].subscription);
+              // console.log(state.topicSubscriptions[topicName]);
               const apiUnsubscribe =
                 useOpenSpaceApiStore.getState().unsubscribeFromTopic;
               apiUnsubscribe(state.topicSubscriptions[topicName].subscription);

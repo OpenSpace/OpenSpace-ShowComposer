@@ -11,7 +11,10 @@ export type ComponentType =
   | 'statuspanel'
   | 'timepanel'
   | 'navpanel'
+  | 'recordpanel'
+  | 'sessionplayback'
   | 'settime'
+  | 'setnavstate'
   | 'setfocus'
   | 'richtext'
   | 'title'
@@ -21,14 +24,17 @@ export type ComponentType =
   | 'boolean'
   | 'number'
   | 'trigger'
+  | 'page'
   | 'multi';
 
 export type Toggle = 'on' | 'off' | 'toggle';
 export type MultiState = 'false' | 'pendingDelete' | 'pendingSave' | 'true';
 
-type Page = {
+export type Page = {
   components: Array<ComponentBase['id']>;
   id: string;
+  x: number;
+  y: number;
 };
 
 interface ComponentBase {
@@ -36,6 +42,7 @@ interface ComponentBase {
   // page: string;
   isMulti: MultiState;
   type: ComponentType;
+  lockName?: boolean;
   gui_name: string;
   gui_description: string;
   x: number;
@@ -60,6 +67,11 @@ export interface StatusComponent extends ComponentBase {
   minimized: boolean;
 }
 
+export interface RecordComponent extends ComponentBase {
+  type: 'recordpanel';
+  minimized: boolean;
+}
+
 export interface RichTextComponent extends ComponentBase {
   type: 'richtext';
   text: string;
@@ -77,6 +89,15 @@ export interface VideoComponent extends ComponentBase {
 export interface ImageComponent extends ComponentBase {
   type: 'image';
   url: string;
+}
+
+export interface SessionPlaybackComponent extends ComponentBase {
+  type: 'sessionplayback';
+  file: string;
+  loop: boolean;
+  forceTime: boolean;
+  backgroundImage: string;
+  triggerAction: () => void;
 }
 
 export interface FlyToComponent extends ComponentBase {
@@ -110,6 +131,16 @@ export interface SetTimeComponent extends ComponentBase {
   triggerAction: () => void;
 }
 
+export interface SetNavComponent extends ComponentBase {
+  type: 'setnavstate';
+  navigationState: any;
+  time: Date | string;
+  setTime: boolean;
+  fadeScene: boolean;
+  backgroundImage: string;
+  intDuration: number;
+  triggerAction: () => void;
+}
 export interface SetFocusComponent extends ComponentBase {
   type: 'setfocus';
   property: string;
@@ -142,13 +173,22 @@ export interface TriggerComponent extends ComponentBase {
   triggerAction: () => void;
 }
 
+export interface PageComponent extends ComponentBase {
+  type: 'page';
+  page: number;
+  backgroundImage: string;
+  triggerAction: () => void;
+}
+
 export type MultiOption =
   | TriggerComponent
   | BooleanComponent
   | FadeComponent
   | SetFocusComponent
   | FlyToComponent
-  | SetTimeComponent;
+  | SetTimeComponent
+  | SessionPlaybackComponent
+  | PageComponent;
 
 export const staticComponents = [
   { value: 'richtext', label: 'Rich Text' },
@@ -159,9 +199,12 @@ export const staticComponents = [
 export const presetComponents = [
   { value: 'fade', label: 'Fade' },
   { value: 'setfocus', label: 'Set Focus' },
+  { value: 'setnavstate', label: 'Set Navigation' },
   { value: 'flyto', label: 'Fly To' },
   { value: 'settime', label: 'Set Time' },
   { value: 'multi', label: 'Multi' },
+  { value: 'sessionplayback', label: 'Session Playback' },
+  { value: 'page', label: 'Go To Page' },
 ];
 
 export const propertyComponents = [
@@ -183,6 +226,9 @@ export const multiOptions = [
   { value: 'setfocus', label: 'Set Focus' },
   { value: 'flyto', label: 'Fly To' },
   { value: 'settime', label: 'Set Time' },
+  { value: 'sessionplayback', label: 'Session Playback' },
+  { value: 'setnavstate', label: 'Set Navigation' },
+  { value: 'page', label: 'Go To Page' },
 ];
 
 //create typeguard to determing if opbject is of type MultiOption
@@ -193,7 +239,10 @@ export const isMultiOption = (option: any): option is MultiOption => {
     option.type === 'fade' ||
     option.type === 'setfocus' ||
     option.type === 'flyto' ||
-    option.type === 'settime'
+    option.type === 'settime' ||
+    option.type === 'sessionplayback' ||
+    option.type === 'setnavstate' ||
+    option.type === 'page'
   );
 };
 
@@ -219,6 +268,7 @@ export type Component =
   | SetFocusComponent
   | FlyToComponent
   | SetTimeComponent
+  | SetNavComponent
   | RichTextComponent
   | TitleComponent
   | VideoComponent
@@ -226,6 +276,8 @@ export type Component =
   | BooleanComponent
   | TriggerComponent
   | NumberComponent
+  | SessionPlaybackComponent
+  | PageComponent
   | MultiComponent;
 
 interface Position {
@@ -237,13 +289,28 @@ interface TempPositions {
   [key: string]: Position;
 }
 
+function addPage(state: State) {
+  const newId = uuidv4();
+  const newPage: Page = {
+    id: newId,
+    components: [],
+    x: 100,
+    y: 100,
+  };
+  state.pages.push(newPage);
+  state.currentPageIndex = state.pages.length - 1;
+  state.currentPage = newPage.id;
+}
+
 interface State {
   pages: Array<Page>;
+  updatePage: (id: Page['id'], data: Partial<Page>) => void;
   currentPage: Page['id'];
   currentPageIndex: number;
   timepanel: TimeComponent | null;
   navpanel: NavComponent | null;
   statuspanel: StatusComponent | null;
+  recordpanel: RecordComponent | null;
   tempPositions: TempPositions;
   setTempPositions: (newPositions: TempPositions) => void;
   setTempPosition: (id: string, x: number, y: number) => void;
@@ -261,7 +328,9 @@ interface State {
   getComponentById: (id: Component['id']) => Component;
   createPanels: () => void;
   updatePanel: (
-    updates: Partial<TimeComponent | NavComponent | StatusComponent>,
+    updates: Partial<
+      TimeComponent | NavComponent | StatusComponent | RecordComponent
+    >,
   ) => void;
   addPage: () => void;
   deletePage: (pageID: string) => void;
@@ -277,6 +346,7 @@ interface State {
   clearSelection: () => void;
   checkOverlap: (component: Component) => Component | null;
   asyncPreSubmitOperation: (() => any) | null;
+  resetAsyncPreSubmitOperation: () => void;
   setAsyncPreSubmitOperation: (operation: (() => any) | null) => void;
   executeAndResetAsyncPreSubmitOperation: () => void;
 }
@@ -290,6 +360,7 @@ export const useStore = create<State>()(
         navpanel: null,
         timepanel: null,
         statuspanel: null,
+        recordpanel: null,
         currentPage: '',
         components: {},
         tempPositions: {},
@@ -309,14 +380,20 @@ export const useStore = create<State>()(
           const state = get();
           return state.components[id];
         },
-        // state.components.find((comp) => comp.id === id),
+        updatePage: (id: Page['id'], data: Partial<Page>) =>
+          set(
+            (state) => {
+              const page = state.pages.find((page) => page.id === id);
+              if (page) {
+                Object.assign(page, data);
+              }
+            },
+            false,
+            'page/update',
+          ),
         addPage: () =>
           set((state) => {
-            const newId = uuidv4();
-            const newPage = { id: newId, components: [] };
-            state.pages.push(newPage);
-            state.currentPageIndex = state.pages.length - 1;
-            state.currentPage = newPage.id;
+            addPage(state);
           }),
         deletePage: (pageID: string) =>
           set((state) => {
@@ -332,12 +409,8 @@ export const useStore = create<State>()(
             );
             state.currentPageIndex = newIndex;
             if (state.pages.length === 0) {
-              const newId = uuidv4();
-              const newPage = { id: newId, components: [] };
-              state.pages.push(newPage);
-              state.currentPageIndex = 0;
+              addPage(state);
               newIndex = 0;
-              state.currentPage = newPage.id;
             } else {
               state.currentPage = state.pages[newIndex].id;
             }
@@ -352,7 +425,16 @@ export const useStore = create<State>()(
         getPageById: (id: string) => {
           const { pages } = get();
           return (
-            pages.find((page) => page.id === id) || { id: '', components: [] }
+            pages.find((page) => page.id === id) || {
+              id: '',
+              components: [],
+              x: 0,
+              y: 0,
+              width: 1920,
+              height: 1080,
+              minWidth: 400,
+              minHeight: 400,
+            }
           );
         },
         addComponentToPageById: (componentId, pageId) =>
@@ -412,26 +494,58 @@ export const useStore = create<State>()(
               gui_name: 'Status Panel',
               gui_description: '',
             };
+            state.recordpanel = {
+              id: uuidv4(),
+              type: 'recordpanel',
+              isMulti: 'false' as MultiState,
+              minimized: true,
+              x: 895,
+              y: 575,
+              minWidth: 275,
+              minHeight: 400,
+              width: 275,
+              height: 400,
+              gui_name: 'Record Panel',
+              gui_description: '',
+            };
           }),
         updatePanel: (
-          updates: Partial<TimeComponent | NavComponent | StatusComponent>,
+          updates: Partial<
+            TimeComponent | NavComponent | StatusComponent | RecordComponent
+          >,
         ) =>
           set((state) => {
-            if (updates.type === 'timepanel') {
-              const component = state.timepanel;
-              if (component) {
-                Object.assign(component, updates);
+            switch (updates.type) {
+              case 'timepanel': {
+                const timeComponent = state.timepanel;
+                if (timeComponent) {
+                  Object.assign(timeComponent, updates);
+                }
+                break;
               }
-            } else if (updates.type === 'navpanel') {
-              const component = state.navpanel;
-              if (component) {
-                Object.assign(component, updates);
+              case 'navpanel': {
+                const navComponent = state.navpanel;
+                if (navComponent) {
+                  Object.assign(navComponent, updates);
+                }
+                break;
               }
-            } else if (updates.type === 'statuspanel') {
-              const component = state.statuspanel;
-              if (component) {
-                Object.assign(component, updates);
+              case 'statuspanel': {
+                const statusComponent = state.statuspanel;
+                if (statusComponent) {
+                  Object.assign(statusComponent, updates);
+                }
+                break;
               }
+              case 'recordpanel': {
+                const recordComponent = state.recordpanel;
+                if (recordComponent) {
+                  Object.assign(recordComponent, updates);
+                }
+                break;
+              }
+              default:
+                break;
             }
           }),
         addComponent: (component: Component) =>
@@ -441,11 +555,7 @@ export const useStore = create<State>()(
                 ...component,
               };
               if (state.pages.length === 0) {
-                const newId = uuidv4();
-                const newPage = { id: newId, components: [component.id] };
-                state.pages.push(newPage);
-                state.currentPageIndex = 0;
-                state.currentPage = newPage.id;
+                addPage(state);
               } else {
                 state.pages
                   .find((page) => page.id === state.currentPage)
@@ -490,7 +600,6 @@ export const useStore = create<State>()(
               const component = state.getComponentById(id);
               if (component?.type == 'multi') {
                 (component as MultiComponent).components.forEach((c) => {
-                  console.log(c);
                   if (state.components[c.component].isMulti == 'true') {
                     state.updateComponent(c.component, { isMulti: 'false' });
                   }
@@ -513,12 +622,12 @@ export const useStore = create<State>()(
         removeAllComponents: () =>
           set(
             (state) => {
-              const newId = uuidv4();
+              // const newId = uuidv4();
               state.components = {};
               state.overlappedComponents = {};
               state.selectedComponents = [];
-              state.pages = [{ id: newId, components: [] }];
-              state.currentPage = newId;
+              state.pages = [];
+              addPage(state);
             },
             false,
             'component/removeAll',
@@ -591,14 +700,19 @@ export const useStore = create<State>()(
           return maxOverlapComponent;
         },
         asyncPreSubmitOperation: null, // Async operation placeholder, this is mainly used for saving photos to disk on component save
+        resetAsyncPreSubmitOperation: () =>
+          set({ asyncPreSubmitOperation: null }),
         setAsyncPreSubmitOperation: (operation: (() => any) | null) =>
-          set(() => ({
+          set({
             asyncPreSubmitOperation: operation,
-          })),
+          }),
         executeAndResetAsyncPreSubmitOperation: async () => {
           const state = get(); // Get the current state
           if (state.asyncPreSubmitOperation) {
+            // console.log('Executing asyncPreSubmitOperation');
+            // console.log(state.asyncPreSubmitOperation);
             await state.asyncPreSubmitOperation();
+            // console.log('Finished executing asyncPreSubmitOperation');
             set({ asyncPreSubmitOperation: null }); // Reset to null after execution
           }
         },
@@ -608,37 +722,3 @@ export const useStore = create<State>()(
     { name: 'components-storage' },
   ),
 );
-
-//save out the store to a json file that is saved to drive
-export const saveStore = () => {
-  const store = useStore.getState();
-  const storeString = JSON.stringify(store);
-  const blob = new Blob([storeString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'store.json';
-  a.click();
-};
-
-//open local json file and load store from a json file
-export const loadStore = async () => {
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = '.json';
-  fileInput.onchange = async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        if (e.target?.result) {
-          const store = JSON.parse(e.target.result as string);
-          console.log(store);
-          useStore.setState(store);
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
-  fileInput.click();
-};

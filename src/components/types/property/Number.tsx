@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
   useComponentStore,
@@ -14,11 +15,13 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { formatName } from '@/utils/apiHelpers';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
 
 interface NumberGUIProps {
   component: NumberComponent;
 }
-
 const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const connectionState = useOpenSpaceApiStore(
@@ -34,18 +37,14 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const property = usePropertyStore(
     (state) => state.properties[component.property],
   );
-
   const [tempValue, setTempValue] = useState(property?.value);
   const [triggeredByArrowKey, setTriggeredByArrowKey] = useState(false);
-
   useEffect(() => {
     setTempValue(property?.value);
   }, [property?.value]);
-
   const handleBlur = () => {
     component.triggerAction?.(parseFloat(tempValue));
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (triggeredByArrowKey) {
       component.triggerAction?.(parseFloat(e.target.value));
@@ -54,7 +53,6 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       setTempValue(e.target.value);
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       component.triggerAction?.(parseFloat(tempValue));
@@ -62,7 +60,6 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       setTriggeredByArrowKey(true); // Set the flag when arrow keys are pressed
     }
   };
-
   const handleMouseDown = (_e: React.MouseEvent) => {
     // e.stopPropagation();
     setTriggeredByArrowKey(true);
@@ -75,7 +72,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   };
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    console.log('Subscribing to property', component.property);
+    // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 50);
     return () => {
       unsubscribeFromProperty(component.property);
@@ -86,11 +83,9 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component);
+      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: (_value: number) => {
           triggerNumber(component.property, _value);
@@ -98,24 +93,8 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       });
     }
   }, [component.id, component.property, luaApi]);
-
   return (
-    <div
-      className="absolute right-0 top-0 flex h-full w-full flex-col items-center justify-center gap-8 hover:cursor-pointer"
-      style={{
-        //cover and center the background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
-      }}
-    >
-      {/* <ButtonLabel>
-        <>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </>
-      </ButtonLabel> */}
-
+    <ComponentContainer backgroundImage={component.backgroundImage}>
       <div className="grid w-[85%] gap-4 py-4">
         <div className="flex flex-row gap-2">
           <Label>{component.gui_name}</Label>
@@ -145,15 +124,13 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
           onKeyDown={handleKeyDown}
         />
       </div>
-    </div>
+    </ComponentContainer>
   );
 };
-
 interface NumberModalProps {
   component: NumberComponent | null;
   handleComponentData: (data: Partial<NumberComponent>) => void;
 }
-
 const NumberModal: React.FC<NumberModalProps> = ({
   component,
   handleComponentData,
@@ -161,13 +138,14 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
-
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
+  );
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
@@ -176,26 +154,17 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [max, setMax] = useState<number>(component?.max || 100);
   const [step, setStep] = useState<number>(component?.min || 0.1);
   const [exponent, setExponent] = useState<number>(component?.exponent || 1);
-
   useEffect(() => {
     const propertyData = usePropertyStore.getState().properties[property];
-    console.log(propertyData);
     if (!propertyData) return;
     setMax(parseFloat(propertyData.description.AdditionalData.MaximumValue));
     setMin(parseFloat(propertyData.description.AdditionalData.MinimumValue));
     setStep(propertyData.description.AdditionalData.SteppingValue);
     setExponent(propertyData.description.AdditionalData.Exponent);
-    const name = propertyData.uri
-      //only exacly '.Layers' should be removed
-      .replace(/Scene.|.Renderable|\.Layers/g, '')
-      .split('.')
-      .slice(0, -1)
-      .join('.')
-      .replace(/\./g, ' > ')
-      .trim();
-    // let name = propertyData.uri.split('.')[1];
-    setGuiName(`${name} > ${propertyData.description.Name}`);
-    setGuiDescription(propertyData.description.description);
+    if (!lockName) {
+      setGuiName(formatName(propertyData.uri));
+      setGuiDescription(propertyData.description.description);
+    }
   }, [property]);
 
   //   const [action, setAction] = useState<string>(component?.action || 'on');
@@ -209,6 +178,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       exponent,
       gui_name,
       gui_description,
+      lockName,
       backgroundImage,
     });
   }, [
@@ -219,41 +189,34 @@ const NumberModal: React.FC<NumberModalProps> = ({
     exponent,
     gui_name,
     gui_description,
+    lockName,
     backgroundImage,
     handleComponentData,
   ]);
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
-
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].type === 'Number')
+    .filter((a) => properties[a].type === 'Number' && !a.includes('.Fade'))
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
-
       if (periodCountA !== periodCountB) {
         return periodCountA - periodCountB;
       }
-
       return a.localeCompare(b);
     })
     .reduce((acc: Record<string, string>, key) => {
-      //   const newValue = key
-      // .replace(/Scene.|.Renderable|.Opacity/g, '')
-      // .replace(/\./g, ' > ')
-      // .trim();
-      const newValue = key;
+      const newValue = formatName(key);
+      // const newValue = key;
       acc[newValue] = key;
       return acc;
     }, {});
-
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="grid grid-cols-1 gap-4">
         <div className="grid gap-2">
-          <Label>Property</Label>
+          <Label>{getCopy('Number', 'property')}</Label>
           <VirtualizedCombobox
             options={Object.keys(sortedKeys)}
             selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -268,7 +231,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       </div>
       <div className="grid grid-cols-4 gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="min">Range Min</Label>
+          <Label htmlFor="min">{getCopy('Number', 'range_min')}</Label>
           <Input
             id="min"
             placeholder="Slider Min"
@@ -278,7 +241,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="max">Range Max</Label>
+          <Label htmlFor="max">{getCopy('Number', 'range_max')}</Label>
           <Input
             id="max"
             placeholder="Slider Max"
@@ -288,7 +251,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="step">Step</Label>
+          <Label htmlFor="step">{getCopy('Number', 'step')}</Label>
           <Input
             id="step"
             placeholder="Slider Step"
@@ -298,19 +261,19 @@ const NumberModal: React.FC<NumberModalProps> = ({
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="exp">Exponent</Label>
+          <Label htmlFor="exp">{getCopy('Number', 'exponent')}</Label>
           <Input
             id="exp"
-            placeholder="Exponent"
+            placeholder="getCopy('Number', 'exponent')"
             type="number"
             value={exponent || 0}
             onChange={(e) => setExponent(parseFloat(e.target.value))}
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="gioname">Component Name</Label>
+      <div className="grid grid-cols-4 gap-2">
+        <div className="col-span-3 grid gap-2">
+          <Label htmlFor="gioname">{getCopy('Number', 'component_name')}</Label>
           <Input
             id="guiname"
             placeholder="Name of Component"
@@ -321,17 +284,28 @@ const NumberModal: React.FC<NumberModalProps> = ({
             }
           />
         </div>
+        <div className="col-span-1 mt-6 grid gap-2">
+          <ToggleComponent
+            label="Lock Name"
+            value={lockName}
+            setValue={setLockName}
+          />
+        </div>
       </div>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="description"> Background Image</Label>
+          <Label htmlFor="description">
+            {getCopy('Number', 'background_image')}
+          </Label>
           <ImageUpload
             value={backgroundImage}
             onChange={(v) => setBackgroundImage(v)}
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="description"> Gui Description</Label>
+          <Label htmlFor="description">
+            {getCopy('Number', 'gui_description')}
+          </Label>
           <Textarea
             className="w-full"
             id="description"
@@ -346,5 +320,4 @@ const NumberModal: React.FC<NumberModalProps> = ({
     </div>
   );
 };
-
 export { NumberModal, NumberGUIComponent };

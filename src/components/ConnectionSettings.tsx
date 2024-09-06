@@ -1,5 +1,4 @@
 import React, { ReactElement, useState, useEffect, cloneElement } from 'react';
-
 import { useSettingsStore, useOpenSpaceApiStore } from '@/store'; // Adjust the import path accordingly
 import { ConnectionState } from '@/store';
 import { Button } from '@/components/ui/button';
@@ -7,17 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { CheckCircle, XCircle, HelpCircle, Radio } from 'lucide-react';
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
+import { getCopy } from '@/utils/copyHelpers';
 interface ConnectionSettingsProps {
   triggerButton?: ReactElement;
 }
-
 const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   triggerButton,
 }) => {
@@ -41,41 +38,64 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   const setConnectionSettings = useSettingsStore(
     (state) => state.setConnectionSettings,
   );
-
   const connect = useOpenSpaceApiStore((state) => state.connect);
+  const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
+  // const disconnect = useOpenSpaceApiStore((state) => state.disconnect);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
+  const [prevPort, setPrevPort] = useState<string>(port);
+  const [prevUrl, setPrevUrl] = useState<string>(url);
   const [open, setOpen] = useState<boolean>(false);
-
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
   useEffect(() => {
     if (connectionState === ConnectionState.UNCONNECTED) {
-      console.log('CONNECTING');
-      connect(url, parseInt(port));
+      connect();
     }
   }, []);
-
+  useEffect(() => {
+    if (prevPort !== initialState.port || prevUrl !== initialState.url) {
+      // disconnect();
+      // switch (connectionState) {
+      //   case ConnectionState.CONNECTED:
+      //     console.log('Connected to OpenSpace');
+      //     disconnect();
+      //     connect(url, parseInt(port));
+      //     break;
+      //   case ConnectionState.CONNECTING:
+      //     console.log('Connecting to OpenSpace');
+      //     disconnect();
+      //     connect(url, parseInt(port));
+      //     break;
+      //   case ConnectionState.UNCONNECTED:
+      //     console.log('Disconnected from OpenSpace');
+      //     connect(url, parseInt(port));
+      //     break;
+      //   default:
+      //     console.log('Unknown connection state');
+      // }
+      // connect();
+      forceRefresh();
+      setPrevPort(initialState.port);
+      setPrevUrl(initialState.url);
+    }
+  }, [initialState.url, initialState.port]);
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   };
-
   const handlePortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPort(e.target.value);
   };
-
   const handleSubmit = () => {
     // e.preventDefault();
     setConnectionSettings(url, port);
     setOpen(false);
   };
-
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <Tooltip>
@@ -83,22 +103,25 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
           <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent className="bg-white">
-          OpenSpace Connection Settings
+          {getCopy('ConnectionSettings', 'openspace_connection_settings')}
         </TooltipContent>
       </Tooltip>
 
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Openspace Connection</h4>
+            <h4 className="font-medium leading-none">
+              {getCopy('ConnectionSettings', 'openspace_connection')}
+            </h4>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Set the IP address and port of the OpenSpace instance you want to
-              connect to.
+              {getCopy('ConnectionSettings', 'address_copy')}
             </p>
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="IP">IP Address</Label>
+              <Label htmlFor="IP">
+                {getCopy('ConnectionSettings', 'ip_address')}
+              </Label>
               <Input
                 id="IP"
                 // defaultValue=""
@@ -112,7 +135,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="port">Port</Label>
+              <Label htmlFor="port">
+                {getCopy('ConnectionSettings', 'port')}
+              </Label>
               <Input
                 id="port"
                 className="col-span-2 h-8"
@@ -124,9 +149,11 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
             </div>
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleClose}>
-                Cancel
+                {getCopy('ConnectionSettings', 'cancel')}
               </Button>
-              <Button onClick={handleSubmit}> Apply Settings</Button>
+              <Button onClick={handleSubmit}>
+                {getCopy('ConnectionSettings', 'apply_settings')}
+              </Button>
             </div>
           </div>
         </div>
@@ -134,7 +161,6 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     </Popover>
   );
 };
-
 const ConnectionStatus = () => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -145,7 +171,9 @@ const ConnectionStatus = () => {
         return (
           <div className="flex items-center gap-1">
             <CheckCircle size={size} stroke="green" strokeWidth={2} />
-            <Label className="text-xs">connected</Label>
+            <Label className="text-xs">
+              {getCopy('ConnectionSettings', 'connected')}
+            </Label>
           </div>
         );
       case ConnectionState.CONNECTING:
@@ -157,14 +185,18 @@ const ConnectionStatus = () => {
               stroke="orange"
               strokeWidth={2}
             />
-            <Label className="animate-pulse text-xs">connecting</Label>
+            <Label className="animate-pulse text-xs">
+              {getCopy('ConnectionSettings', 'connecting')}
+            </Label>
           </div>
         );
       case ConnectionState.UNCONNECTED:
         return (
           <div className="flex items-center gap-1">
             <XCircle size={size} stroke="red" strokeWidth={2} />{' '}
-            <Label className="text-xs">disconnected</Label>
+            <Label className="text-xs">
+              {getCopy('ConnectionSettings', 'disconnected')}
+            </Label>
           </div>
         );
       default:
@@ -173,10 +205,9 @@ const ConnectionStatus = () => {
   }
   return (
     <div className="flex flex-row items-center gap-3">
-      <Label>OpenSpace Status:</Label>
+      <Label>{getCopy('ConnectionSettings', 'openspace_status:')}</Label>
       {renderConnectionState(20)}
     </div>
   );
 };
-
 export { ConnectionSettings, ConnectionStatus };

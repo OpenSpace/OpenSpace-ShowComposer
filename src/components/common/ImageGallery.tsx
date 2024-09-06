@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 // import { Button } from '../ui/button';
 import { Upload } from 'lucide-react';
 import {
@@ -14,6 +15,7 @@ import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import Pagination from '../Pagination';
 import { useRef } from 'react';
+import { useComponentStore } from '@/store';
 interface GalleryProps {
   images: Array<string>;
   selectedImage: string;
@@ -21,7 +23,6 @@ interface GalleryProps {
   handleClose: () => void;
   setUploadFile: (file: File | null) => void;
 }
-
 const ImageGallery: React.FC<GalleryProps> = ({
   images,
   selectedImage: initialImage,
@@ -31,18 +32,17 @@ const ImageGallery: React.FC<GalleryProps> = ({
 }) => {
   // State for modal visibility, pagination, and selected image
   // const [modalVisible, setModalVisible] = useState(false);
+  const resetAsyncPreSubmitOperation = useComponentStore(
+    (state) => state.resetAsyncPreSubmitOperation,
+  );
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 6; // Adjust based on your preference
   const totalPages = Math.ceil(images.length / itemsPerPage);
-
   const [selectedImage, setSelectedImage] = useState(initialImage);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     setSelectedImage(initialImage);
   }, [initialImage]);
-
   const handleButtonClick = () => {
     if (fileInputRef?.current)
       (fileInputRef.current as HTMLInputElement).click();
@@ -56,7 +56,6 @@ const ImageGallery: React.FC<GalleryProps> = ({
   function goToPage(pageNumber: number) {
     setCurrentPage(pageNumber);
   }
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile: File | null = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
@@ -76,17 +75,16 @@ const ImageGallery: React.FC<GalleryProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <Card className="w-[510px] bg-white">
           <CardHeader>
-            <CardTitle>Image Gallery</CardTitle>
+            <CardTitle>{getCopy('ImageGallery', 'image_gallery')}</CardTitle>
             <CardDescription>
-              Choose an image from your gallery or upload or link to a new
-              image.
+              {getCopy('ImageGallery', 'choose_an_image')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-2">
               <div className="grid grid-cols-3 gap-2">
                 <div className="grid grid-rows-1 gap-2">
-                  <Label>Seleted Image:</Label>
+                  <Label>{getCopy('ImageGallery', 'seleted_image:')}</Label>
                   <Image
                     alt="Selected image"
                     className="aspect-square w-full rounded-md border border-dashed  border-black object-cover"
@@ -97,7 +95,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
                 </div>
                 <div />
                 <div className="grid grid-rows-1 gap-2">
-                  <Label>Upload New Image:</Label>
+                  <Label>{getCopy('ImageGallery', 'upload_new_image:')}</Label>
                   <button
                     onClick={handleButtonClick}
                     className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed hover:border-black"
@@ -105,12 +103,15 @@ const ImageGallery: React.FC<GalleryProps> = ({
                     <input
                       type="file"
                       className="hidden"
+                      accept="image/*"
                       onChange={handleFileChange}
                       ref={fileInputRef}
                       // {...props}
                     />
                     <Upload className="text-muted-foreground h-8 w-8" />
-                    <span className="sr-only">Upload</span>
+                    <span className="sr-only">
+                      {getCopy('ImageGallery', 'upload')}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -130,7 +131,9 @@ const ImageGallery: React.FC<GalleryProps> = ({
                   </button>
                 ))}
                 {Array.from(
-                  { length: itemsPerPage - imagesToDisplay.length },
+                  {
+                    length: itemsPerPage - imagesToDisplay.length,
+                  },
                   (_, index) => (
                     <div
                       key={`placeholder-${index}`}
@@ -147,10 +150,11 @@ const ImageGallery: React.FC<GalleryProps> = ({
             <Button
               variant="outline"
               onClick={() => {
+                resetAsyncPreSubmitOperation();
                 handleClose();
               }}
             >
-              Cancel
+              {getCopy('ImageGallery', 'cancel')}
             </Button>
 
             <Button
@@ -160,7 +164,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
                 handleClose();
               }}
             >
-              Add Image
+              {getCopy('ImageGallery', 'add_image')}
             </Button>
           </CardFooter>
           <div className="relative flex h-24 w-full items-center justify-center ">
@@ -175,5 +179,4 @@ const ImageGallery: React.FC<GalleryProps> = ({
     </>
   );
 };
-
 export default ImageGallery;

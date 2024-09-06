@@ -17,9 +17,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey],
   );
-  const time = usePropertyStore(
-    (state) => state.properties['time']?.['timeCapped'],
-  );
+  const time = usePropertyStore((state) => state.time?.['timeCapped']);
   const camera = usePropertyStore((state) => state.properties['camera']);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,

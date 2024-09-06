@@ -1,6 +1,6 @@
 // DeleteConfirmationModal.tsx
 import React, { ReactElement, useState, cloneElement } from 'react';
-
+import { getCopy } from '@/utils/copyHelpers';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +23,6 @@ interface DeleteConfirmationModalProps {
   setOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
 }
-
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   onConfirm,
   message,
@@ -33,7 +32,6 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   onClose,
 }) => {
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
-
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setOpen = externalSetOpen || internalSetOpen;
   const enhancedTriggerButton = triggerButton
@@ -57,12 +55,14 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
         </AlertDialogTrigger>
 
         <TooltipContent className="bg-white">
-          Delete all components
+          {getCopy('DeleteConfirmationModal', 'delete_all_components')}
         </TooltipContent>
       </Tooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {getCopy('DeleteConfirmationModal', 'confirmation_text')}
+          </AlertDialogTitle>
           <AlertDialogDescription>{message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -72,7 +72,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
               onClose && onClose();
             }}
           >
-            Cancel
+            {getCopy('DeleteConfirmationModal', 'cancel')}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
@@ -80,12 +80,11 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
               setOpen(false);
             }}
           >
-            Delete
+            {getCopy('DeleteConfirmationModal', 'delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 };
-
 export default DeleteConfirmationModal;

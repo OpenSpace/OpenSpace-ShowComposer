@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import {
   ConnectionState,
   usePropertyStore,
   useOpenSpaceApiStore,
 } from '@/store';
-
 import DateComponent from '@/components/timepicker/DateComponent';
 import { Button } from '@/components/ui/button';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
@@ -14,9 +14,7 @@ import { FastForward, Pause, Rewind, Play } from 'lucide-react';
 import { throttle } from 'lodash';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import { formatDate } from '@/utils/time';
-
 const updateDelayMs = 1000;
-
 const updateDeltaTimeNow = (
   openspace: any,
   value: number,
@@ -34,7 +32,6 @@ const updateDeltaTimeNow = (
   openspace.time.interpolateDeltaTime(value);
 };
 const updateDeltaTime = throttle(updateDeltaTimeNow, updateDelayMs);
-
 const Steps = {
   seconds: 'Seconds',
   minutes: 'Minutes',
@@ -60,79 +57,81 @@ const StepPrecisions = {
   [Steps.years]: -10,
 };
 const Limits = {
-  [Steps.seconds]: { min: 0, max: 300, step: 1 },
-  [Steps.minutes]: { min: 0, max: 300, step: 0.001 },
-  [Steps.hours]: { min: 0, max: 300, step: 0.0001 },
-  [Steps.days]: { min: 0, max: 10, step: 0.000001 },
-  [Steps.months]: { min: 0, max: 10, step: 0.00000001 },
-  [Steps.years]: { min: 0, max: 1, step: 0.0000000001 },
+  [Steps.seconds]: {
+    min: 0,
+    max: 300,
+    step: 1,
+  },
+  [Steps.minutes]: {
+    min: 0,
+    max: 300,
+    step: 0.001,
+  },
+  [Steps.hours]: {
+    min: 0,
+    max: 300,
+    step: 0.0001,
+  },
+  [Steps.days]: {
+    min: 0,
+    max: 10,
+    step: 0.000001,
+  },
+  [Steps.months]: {
+    min: 0,
+    max: 10,
+    step: 0.00000001,
+  },
+  [Steps.years]: {
+    min: 0,
+    max: 1,
+    step: 0.0000000001,
+  },
 };
 Object.freeze(Steps);
 Object.freeze(StepSizes);
 Object.freeze(StepPrecisions);
 Object.freeze(Limits);
-
 const TimeDatePicker = () => {
   const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
-  const time = usePropertyStore(
-    (state) => state.properties['time']?.['timeCapped'],
-  );
-
-  // const timeAll = usePropertyStore((state) => state.properties['time']);
-  // useEffect(() => {
-  //   if (timeAll) console.log(timeAll?.nextStep);
-  // }, [timeAll]);
+  const time = usePropertyStore((state) => state.time?.['timeCapped']);
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );
-
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-
   const targetDeltaTime = usePropertyStore(
-    (state) => state.properties.time?.targetDeltaTime,
+    (state) => state.time?.targetDeltaTime,
   );
-  const isPaused = usePropertyStore((state) => state.properties.time?.isPaused);
-
+  const isPaused = usePropertyStore((state) => state.time?.isPaused);
   const [paused, setPaused] = useState<boolean>(isPaused);
-
   const hasNextDeltaTimeStep = usePropertyStore(
-    (state) => state.properties.time?.hasNextStep,
+    (state) => state.time?.hasNextStep,
   );
   const hasPrevDeltaTimeStep = usePropertyStore(
-    (state) => state.properties.time?.hasPrevStep,
+    (state) => state.time?.hasPrevStep,
   );
-  const nextDeltaTimeStep = usePropertyStore(
-    (state) => state.properties.time?.nextStep,
-  );
-  const prevDeltaTimeStep = usePropertyStore(
-    (state) => state.properties.time?.prevStep,
-  );
-
+  const nextDeltaTimeStep = usePropertyStore((state) => state.time?.nextStep);
+  const prevDeltaTimeStep = usePropertyStore((state) => state.time?.prevStep);
   function setNextDeltaTimeStep() {
     updateDeltaTime.cancel();
     luaApi.time.interpolateNextDeltaTimeStep();
   }
-
   function setPrevDeltaTimeStep() {
     updateDeltaTime.cancel();
     luaApi.time.interpolatePreviousDeltaTimeStep();
   }
-
   function togglePause() {
     setPaused((paused: boolean) => !paused);
     luaApi.time.togglePause();
   }
-
   useEffect(() => {
     setPaused(isPaused);
   }, [isPaused]);
-
   function setDate(newTime: Date) {
     // Spice, that is handling the time parsing in OpenSpace does not support
     // ISO 8601-style time zones (the Z). It does, however, always assume that UTC
@@ -144,7 +143,6 @@ const TimeDatePicker = () => {
       luaApi.time.setTime(time);
     }
   }
-
   function setDateRelative(delta: number) {
     try {
       const newTime = new Date(time);
@@ -158,25 +156,20 @@ const TimeDatePicker = () => {
       luaApi.time.setTime(time);
     }
   }
-
   function interpolateDate(newTime: Date) {
     const fixedTimeString = newTime.toJSON().replace('Z', '');
     luaApi.time.interpolateTime(fixedTimeString);
   }
-
   function interpolateDateRelative(delta: number) {
     luaApi.time.interpolateTimeRelative(delta);
   }
-
-  function changeDate(
-    event: {
-      time: Date;
-      interpolate: boolean;
-      delta: number;
-      relative: boolean;
-    },
-    // useLock: boolean,
-  ) {
+  function changeDate(event // useLock: boolean,
+  : {
+    time: Date;
+    interpolate: boolean;
+    delta: number;
+    relative: boolean;
+  }) {
     // if (useLock) {
     // setPendingTime(new Date(event.time));
     // } else
@@ -192,15 +185,12 @@ const TimeDatePicker = () => {
       setDate(event.time);
     }
   }
-
   function realtime() {
     luaApi.time.interpolateDeltaTime(1);
   }
-
   function now() {
     setDate(new Date());
   }
-
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
     subscribeToTopic('time', 1000);
@@ -208,7 +198,6 @@ const TimeDatePicker = () => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
-
   const timeLabel = useMemo(() => {
     if (time) {
       try {
@@ -219,7 +208,6 @@ const TimeDatePicker = () => {
     }
     return time;
   }, [time]);
-
   const round10 = (value: number, exp: number) => {
     const valueStr = value.toString();
     const [integer, decimal] = valueStr.split('.');
@@ -231,7 +219,6 @@ const TimeDatePicker = () => {
     }
     return value;
   };
-
   const adjustedDelta = round10(
     targetDeltaTime / StepSizes[stepSize],
     StepPrecisions[stepSize],
@@ -245,17 +232,14 @@ const TimeDatePicker = () => {
       updateDeltaTimeNow(luaApi, deltaTime);
     }
   }
-
   function setPositiveDeltaTime(value: number) {
     const dt = value;
     setDeltaTime(dt);
   }
-
   function setNegativeDeltaTime(value: number) {
     const dt = -value;
     setDeltaTime(dt);
   }
-
   function deltaTimeStepsContol() {
     const adjustedNextDelta = round10(
       nextDeltaTimeStep / StepSizes[stepSize],
@@ -265,7 +249,6 @@ const TimeDatePicker = () => {
       prevDeltaTimeStep / StepSizes[stepSize],
       StepPrecisions[stepSize],
     );
-
     const nextLabel = hasNextDeltaTimeStep
       ? `${adjustedNextDelta} ${stepSize} / second`
       : 'None';
@@ -307,11 +290,11 @@ const TimeDatePicker = () => {
     <div>
       <div className="grid gap-2 p-0">
         <div className="grid gap-2">
-          <Label>Select Date</Label>
+          <Label>{getCopy('TimeDatePicker', 'select_date')}</Label>
           <DateComponent date={time} onChange={changeDate} />
         </div>
         <div className="grid gap-2">
-          <Label>Simulation Speed</Label>
+          <Label>{getCopy('TimeDatePicker', 'simulation_speed')}</Label>
           {/* <Separator /> */}
           <SelectableDropdown
             placeholder="Select a Unit"
@@ -363,10 +346,10 @@ const TimeDatePicker = () => {
             onClick={realtime}
             className={`${targetDeltaTime == 1 ? 'opacity-100' : 'opacity-60'}`}
           >
-            Realtime
+            {getCopy('TimeDatePicker', 'realtime')}
           </Button>
           <Button variant="outline" size="sm" onClick={now}>
-            Now
+            {getCopy('TimeDatePicker', 'now')}
           </Button>
         </div>
         {/* </div> */}
@@ -376,5 +359,4 @@ const TimeDatePicker = () => {
     </div>
   );
 };
-
 export default TimeDatePicker;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
   useComponentStore,
@@ -16,12 +17,15 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonLabel from '@/components/common/ButtonLabel';
+import { formatName } from '@/utils/apiHelpers';
+import { capitalize } from 'lodash';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
 
 interface BoolGUIProps {
   component: BooleanComponent;
   shouldRender?: boolean;
 }
-
 const BoolGUIComponent: React.FC<BoolGUIProps> = ({
   component,
   shouldRender = true,
@@ -40,10 +44,9 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
   const property = usePropertyStore(
     (state) => state.properties[component.property],
   );
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    console.log('Subscribing to property', component.property);
+    // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 500);
     return () => {
       unsubscribeFromProperty(component.property);
@@ -54,11 +57,9 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component);
+      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           triggerBool(component.property, component.action);
@@ -72,18 +73,19 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
     component.property,
     luaApi,
   ]);
-
   return shouldRender ? (
-    <div
-      className={`absolute right-0 top-0 flex h-full w-full items-center justify-center rounded border-8 transition-colors  hover:cursor-pointer ${
-        property?.value ? 'border-green-500' : 'border-red-500'
-      }`}
-      style={{
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
+    <ComponentContainer
+      className={`${
+        property?.value == 1
+          ? 'outline-green-500'
+          : property?.value == 0
+            ? 'outline-red-500'
+            : 'outline-grey-500'
+      }   outline outline-4  outline-offset-2 transition-[outline-color] duration-300 `}
+      backgroundImage={component.backgroundImage}
+      onClick={() => {
+        component.triggerAction?.();
       }}
-      onClick={() => component.triggerAction?.()}
     >
       <ButtonLabel>
         <div className="flex gap-2">
@@ -91,15 +93,13 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
           <Information content={component.gui_description} />
         </div>
       </ButtonLabel>
-    </div>
+    </ComponentContainer>
   ) : null;
 };
-
 interface BoolModalProps {
   component: BooleanComponent | null;
   handleComponentData: (data: Partial<BooleanComponent>) => void;
 }
-
 const BoolModal: React.FC<BoolModalProps> = ({
   component,
   handleComponentData,
@@ -107,42 +107,33 @@ const BoolModal: React.FC<BoolModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
   const properties = usePropertyStore((state) => state.properties);
   const [property, setProperty] = useState<string>(component?.property || '');
-
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
+  );
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
   );
   const [action, setAction] = useState<string>(component?.action || 'toggle');
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-
   useEffect(() => {
     // console.log(properties);
     const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData) return;
-    const name = propertyData.uri
-      //only exacly '.Layers' should be removed
-      .replace(/Scene.|.Renderable|\.Layers/g, '')
-      .split('.')
-      .slice(0, -1)
-      .join('.')
-      .replace(/\./g, ' > ')
-      .trim();
-    // let name = propertyData.uri.split('.')[1];
-    setGuiName(`${name} > ${propertyData.description.Name} > ${action}`);
+    if (!propertyData || lockName) return;
+    setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
     setGuiDescription(propertyData.description.description);
   }, [property, action]);
-
   useEffect(() => {
     handleComponentData({
       property,
       action: action as Toggle,
       gui_name,
       gui_description,
+      lockName,
       backgroundImage,
     });
   }, [
@@ -150,42 +141,36 @@ const BoolModal: React.FC<BoolModalProps> = ({
     action,
     gui_name,
     gui_description,
+    lockName,
     handleComponentData,
     backgroundImage,
   ]);
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
-
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].type === 'Bool')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
-
       if (periodCountA !== periodCountB) {
         return periodCountA - periodCountB;
       }
-
       return a.localeCompare(b);
     })
     .reduce((acc: Record<string, string>, key) => {
-      //   const newValue = key
-      // .replace(/Scene.|.Renderable|.Opacity/g, '')
-      // .replace(/\./g, ' > ')
-      // .trim();
-      const newValue = key;
+      const newValue = formatName(key);
       acc[newValue] = key;
       return acc;
     }, {});
-
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <div className="text-sm font-medium text-black">Property</div>
+            <div className="text-sm font-medium text-black">
+              {getCopy('Boolean', 'property')}
+            </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -200,7 +185,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label>Action Type</Label>
+            <Label>{getCopy('Boolean', 'action_type')}</Label>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
@@ -208,9 +193,11 @@ const BoolModal: React.FC<BoolModalProps> = ({
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="gioname">Component Name</Label>
+        <div className="grid grid-cols-4 gap-2">
+          <div className="col-span-3 grid gap-2">
+            <Label htmlFor="gioname">
+              {getCopy('Boolean', 'component_name')}
+            </Label>
             <Input
               id="guiname"
               placeholder="Name of Component"
@@ -221,6 +208,13 @@ const BoolModal: React.FC<BoolModalProps> = ({
               }
             />
           </div>
+          <div className="col-span-1 mt-6 grid gap-2">
+            <ToggleComponent
+              label="Lock Name"
+              value={lockName}
+              setValue={setLockName}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <ImageUpload
@@ -228,7 +222,9 @@ const BoolModal: React.FC<BoolModalProps> = ({
             onChange={(v) => setBackgroundImage(v)}
           />
           <div className="grid gap-2">
-            <Label htmlFor="description"> Gui Description</Label>
+            <Label htmlFor="description">
+              {getCopy('Boolean', 'gui_description')}
+            </Label>
             <Textarea
               className="w-full"
               id="description"
@@ -244,5 +240,4 @@ const BoolModal: React.FC<BoolModalProps> = ({
     </>
   );
 };
-
 export { BoolModal, BoolGUIComponent };

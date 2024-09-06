@@ -20,6 +20,7 @@ import {
   getActionSceneNodes,
   getRenderables,
 } from '@/utils/apiHelpers';
+import { useSettingsStore } from './settingsStore';
 
 export const rootOwnerKey = '__rootOwner';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
@@ -34,34 +35,66 @@ export const ZoomFrictionKey =
 export const RollFrictionKey =
   'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
+// OpenSpace engine
+export const EngineModeSessionRecordingPlayback = 'session_recording_playback';
+export const EnginePropertyVisibilityKey = 'OpenSpaceEngine.PropertyVisibility';
+export const EngineFadeDurationKey = 'OpenSpaceEngine.FadeDuration';
+
 interface OpenSpaceApiState {
   apiInstance: null | OSApiClass; // Consider using a more specific type if possible
   luaApi: any; // Consider using a more specific type if possible
   error: string | null;
   connectionState: ConnectionState;
-  connect: (host: string, port: number) => void;
+  cancelReconnect: boolean;
+  // reconnectTimeout: NodeJS.Timeout | null;
+  connect: () => void;
   disconnect: () => void;
+  forceRefresh: () => void;
   setLuaApi: (luaApi: any) => void;
   setError: (error: string) => void;
   setConnectionState: (state: ConnectionState) => void;
   subscribeToProperty: (property: string) => Topic | null; // Define parameters as needed
   unsubscribeFromProperty: (topic: Topic) => void; // Define parameters as needed
-  subscribeToTopic: (topic: string) => Topic | null; // Define parameters as needed
+  subscribeToTopic: (topic: string, properties?: string[]) => Topic | null; // Define parameters as needed
   unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
   connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
+  // subscribeToSessionRecording: () => Topic | null;
+  // unsubscribeFromSessionRecording: (topic: Topic) => void;
 }
+
+let reconnectTimeout: NodeJS.Timeout | null;
 
 export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   apiInstance: null,
   luaApi: null,
   error: null,
+  cancelReconnect: false,
+  // reconnectTimeout: null,
   connectionState: ConnectionState.UNCONNECTED,
   setLuaApi: (luaApi) => set(() => ({ luaApi })),
   setError: (error) => set(() => ({ error })),
   setConnectionState: (connectionState) => set(() => ({ connectionState })),
-  connect: async (host: string, port: number) => {
-    const apiInstance = OpenSpaceApi(host, port);
-    set({ apiInstance, connectionState: ConnectionState.CONNECTING });
+  forceRefresh: () => {
+    const { apiInstance } = get();
+    if (apiInstance) {
+      set({ cancelReconnect: true });
+      apiInstance.disconnect();
+    }
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout as NodeJS.Timeout);
+    }
+    get().connect();
+  },
+  connect: async () => {
+    const host = useSettingsStore.getState().url;
+    const port = useSettingsStore.getState().port;
+
+    const apiInstance = OpenSpaceApi(host, parseInt(port));
+    set({
+      apiInstance,
+      connectionState: ConnectionState.CONNECTING,
+      cancelReconnect: false,
+    });
     apiInstance.onConnect(async () => {
       try {
         console.log('OpenSpace connected');
@@ -74,17 +107,36 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties,
         }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
           flattenPropertyTree(value as PropertyOwner);
-        // console.log(propertyOwners);
+        // console.log(properties);
         // console.log(
         //   properties.find((p) => p.uri === 'Scene.Earth.Renderable.Opacity'),
         // );
+
+        const Visibility = properties.find(
+          (p) => p.uri === EnginePropertyVisibilityKey,
+        );
+        const FadeDuration = properties.find(
+          (p) => p.uri === EngineFadeDurationKey,
+        );
+        // console.log(Visibility);
+        // console.log(FadeDuration);
+
+        let initData: Record<string, any> = {};
+        initData[EngineFadeDurationKey as string] = FadeDuration;
+        initData[EnginePropertyVisibilityKey as string] = Visibility;
+
+        // console.log(properties);
+        usePropertyStore.getState().setProperties(initData);
+
         const favorites = findFavorites(propertyOwners);
         usePropertyStore.getState().setFavorites(favorites);
         // // console.log(favorites);
+
         const fadeables: Record<string, any> = getRenderables(
           properties as Property[],
           'Fadable',
         );
+        // console.log(fadeables);
         usePropertyStore.getState().setProperties(fadeables);
 
         const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
@@ -100,17 +152,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties as Property[],
           'Number',
         );
-        console.log(numberProps);
+        // console.log(numberProps);
         usePropertyStore.getState().setProperties(numberProps);
-
-        // const renderables: Record<string, any> = getRenderables(
-        //   properties,
-        //   'Renderable',
-        // );
-        // console.log(renderables);
-        // renderables.forEach((property) => {
-        //   usePropertyStore.getState().setProperty(property.uri, property);
-        // });
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({
@@ -120,16 +163,24 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       }
     });
     apiInstance.onDisconnect(() => {
+      const { apiInstance } = get();
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        //   set({ reconnectTimeout: null });
+      }
+      let reconnectionInterval = 1000;
+      if (!get().cancelReconnect) {
+        reconnectTimeout = setTimeout(() => {
+          apiInstance?.connect();
+          reconnectionInterval += 1000;
+        }, reconnectionInterval);
+      }
+
       set({
-        // apiInstance: null,
+        // reconnectTimeout: newTimeout,
         luaApi: null,
         connectionState: ConnectionState.UNCONNECTED,
       });
-      let reconnectionInterval = 1000;
-      setTimeout(() => {
-        apiInstance.connect();
-        reconnectionInterval += 1000;
-      }, reconnectionInterval);
     });
     apiInstance.connect();
   },
@@ -158,13 +209,13 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     });
     subscription.cancel();
   },
-  subscribeToTopic: (topicName: string) => {
+  subscribeToTopic: (topicName: string, properties?: string[]) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
-    console.log(topicName);
     const topic = apiInstance.startTopic(topicName, {
       event: 'start_subscription',
+      properties,
     });
     return topic;
   },
@@ -181,7 +232,6 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   unsubscribeFromTopic: (topic: Topic) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
-    console.log(topic);
     topic.talk({
       event: 'stop_subscription',
     });

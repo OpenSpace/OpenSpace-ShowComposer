@@ -5,27 +5,30 @@ import {
   ConnectionState,
   useComponentStore,
 } from '@/store';
-import { useEffect, useState } from 'react';
+import { Toggle } from '@/store';
+import { getCopy } from '@/utils/copyHelpers';
+import { useEffect, useMemo, useState } from 'react';
 import { triggerFade } from '@/utils/triggerHelpers';
-import { Toggle } from '@/store/componentsStore';
-
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import ImageUpload from '@/components/common/ImageUpload';
 // import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { capitalize } from 'lodash';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBarControlled from '@/components/StatusBarControlled';
+import { EnginePropertyVisibilityKey } from '@/store/apiStore';
+import { formatName } from '@/utils/apiHelpers';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ToggleComponent from '@/components/common/Toggle';
+
 interface FadeGUIProps {
   component: FadeComponent;
   shouldRender?: boolean;
 }
-
 const FadeGUIComponent: React.FC<FadeGUIProps> = ({
   component,
   shouldRender = true,
@@ -44,10 +47,9 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
   const property = usePropertyStore(
     (state) => state.properties[component.property],
   );
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    console.log('Subscribing to property', component.property);
+    // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 1);
     return () => {
       unsubscribeFromProperty(component.property);
@@ -58,11 +60,8 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
-
   useEffect(() => {
     if (luaApi) {
-      console.log('Registering trigger action');
-      console.log(component);
       updateComponent(component.id, {
         triggerAction: () => {
           triggerFade(
@@ -81,44 +80,36 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
     component.property,
     luaApi,
   ]);
-
   return shouldRender ? (
-    <div
+    <ComponentContainer
       className={`${
         property?.value == 1
-          ? 'border-green-500'
+          ? 'outline-green-500'
           : property?.value == 0
-            ? 'border-red-500'
-            : 'border-grey-500'
-      } absolute right-0 top-0 flex h-full w-full items-center
-        justify-center rounded border-8 transition-colors hover:cursor-pointer`}
-      style={{
-        //cover and center the background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`,
-      }}
+            ? 'outline-red-500'
+            : 'outline-grey-500'
+      } outline outline-4 outline-offset-2 transition-[outline-color] duration-300 `}
+      backgroundImage={component.backgroundImage}
       onClick={() => {
         component.triggerAction?.();
       }}
     >
-      <StatusBarControlled progress={property?.value} debounceDuration={100} />
+      <StatusBarControlled progress={property?.value} debounceDuration={250} />
       <ButtonLabel>
         <div className="flex flex-row gap-2">
+          {/* {property?.value * 100} */}
           {component.gui_name}
           <Information content={component.gui_description} />
         </div>
       </ButtonLabel>
-    </div>
+    </ComponentContainer>
   ) : null;
 };
-
 interface FadeModalProps {
   component: FadeComponent | null;
   handleComponentData: (data: Partial<FadeComponent>) => void;
   //   isOpen: boolean;
 }
-
 const FadeModal: React.FC<FadeModalProps> = ({
   component,
   handleComponentData,
@@ -127,13 +118,25 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-
-  const properties = usePropertyStore((state) => state.properties);
+  const properties = usePropertyStore((state) =>
+    Object.keys(state.properties)
+      .filter((a) => a.endsWith('.Fade'))
+      .reduce((acc: Record<string, any>, key: string) => {
+        acc[key] = state.properties[key];
+        return acc;
+      }, {}),
+  );
+  const Visibility = usePropertyStore(
+    (state) => state.properties[EnginePropertyVisibilityKey],
+  );
   const [property, setProperty] = useState<string>(component?.property || '');
   const [intDuration, setIntDuration] = useState<number>(
-    component?.intDuration || 4,
+    component?.intDuration || 1,
   );
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
+  );
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
@@ -145,27 +148,30 @@ const FadeModal: React.FC<FadeModalProps> = ({
     component?.property || '',
   );
   useEffect(() => {
-    if (property !== lastProperty) {
-      console.log(properties[property]);
-      setGuiName(
-        `${capitalize(action)} Fade ${property
-          .replace(/Scene.|.Renderable|.Opacity/g, '')
-          .split('.')
-          .pop()}`,
-      );
-      setGuiDescription(
-        `Fade ${property
-          .replace(/Scene.|.Renderable|.Opacity/g, '')
-          .split('.')
-          .pop()} ${action === 'toggle' ? 'in and out' : action}`,
-      );
-      setLastProperty(property);
+    if (
+      (!lockName && property !== lastProperty) ||
+      (action !== component?.action && gui_name == component?.gui_name)
+    ) {
+      if (property) {
+        setGuiName(
+          `${formatName(
+            property
+              .replace(/Scene.|.Renderable|.Opacity/g, '')
+              .replace(/\./g, ' > '),
+          )} ${capitalize(action)}`,
+        );
+        setGuiDescription(
+          `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`,
+        );
+        setLastProperty(property);
+      }
     }
     handleComponentData({
       property,
       intDuration,
       action: action as Toggle,
       backgroundImage,
+      lockName,
       gui_name,
       gui_description,
     });
@@ -176,37 +182,46 @@ const FadeModal: React.FC<FadeModalProps> = ({
     backgroundImage,
     gui_name,
     gui_description,
+    lockName,
     handleComponentData,
   ]);
-
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
-
-  const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => a.includes('Opacity'))
-    .sort((a, b) => {
-      const periodCountA = (a.match(/\./g) || []).length;
-      const periodCountB = (b.match(/\./g) || []).length;
-      if (periodCountA !== periodCountB) {
-        return periodCountA - periodCountB;
-      }
-      return a.localeCompare(b);
-    })
-    .reduce((acc: Record<string, string>, key) => {
-      const newValue = key
-        .replace(/Scene.|.Renderable|.Opacity/g, '')
-        .replace(/\./g, ' > ')
-        .trim();
-      acc[newValue] = key;
-      return acc;
-    }, {});
+  const sortedKeys: Record<string, string> = useMemo(
+    () =>
+      Object.keys(properties)
+        .filter((a) => a.endsWith('.Fade') && !a.endsWith('.Appearance.Fade'))
+        .filter(
+          (a) =>
+            Visibility?.value + 2 >=
+            Visibility?.description.AdditionalData.Options.map(
+              (obj: Record<number, string>) => Object.values(obj)[0],
+            ).indexOf(properties[a].description?.MetaData.Visibility),
+        )
+        .sort((a, b) => {
+          const periodCountA = (a.match(/\./g) || []).length;
+          const periodCountB = (b.match(/\./g) || []).length;
+          if (periodCountA !== periodCountB) {
+            return periodCountA - periodCountB;
+          }
+          return a.localeCompare(b);
+        })
+        .reduce((acc: Record<string, string>, key) => {
+          const newValue = formatName(key);
+          acc[newValue] = key;
+          return acc;
+        }, {}),
+    [Visibility],
+  );
   return (
     <>
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <div className="text-sm font-medium text-black">Property</div>
+            <div className="text-sm font-medium text-black">
+              {getCopy('Fade', 'property')}
+            </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -221,7 +236,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label>Action Type</Label>
+            <Label>{getCopy('Fade', 'action_type')}</Label>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
@@ -230,7 +245,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="duration">Fade Duration</Label>
+            <Label htmlFor="duration">{getCopy('Fade', 'fade_duration')}</Label>
             <Input
               id="duration"
               placeholder="Duration to Fade"
@@ -244,9 +259,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="gioname">Component Name</Label>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <div className="col-span-3 grid gap-2">
+            <Label htmlFor="gioname">{getCopy('Fade', 'component_name')}</Label>
             <Input
               id="guiname"
               placeholder="Name of Component"
@@ -257,17 +272,28 @@ const FadeModal: React.FC<FadeModalProps> = ({
               }
             />
           </div>
+          <div className="col-span-1 mt-6 grid gap-2">
+            <ToggleComponent
+              label="Lock Name"
+              value={lockName}
+              setValue={setLockName}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="description"> Background Image</Label>
+            <Label htmlFor="description">
+              {getCopy('Fade', 'background_image')}
+            </Label>
             <ImageUpload
               value={backgroundImage}
               onChange={(v) => setBackgroundImage(v)}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="description"> Gui Description</Label>
+            <Label htmlFor="description">
+              {getCopy('Fade', 'gui_description')}
+            </Label>
             <Textarea
               className="w-full"
               id="description"
@@ -283,5 +309,4 @@ const FadeModal: React.FC<FadeModalProps> = ({
     </>
   );
 };
-
 export { FadeModal, FadeGUIComponent };

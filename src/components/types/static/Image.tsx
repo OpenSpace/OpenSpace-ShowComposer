@@ -1,12 +1,11 @@
 import ImageUpload from '@/components/common/ImageUpload';
+import { getCopy } from '@/utils/copyHelpers';
 import { Label } from '@/components/ui/label';
 import { ImageComponent } from '@/store';
 import React, { useEffect, useState } from 'react';
-
 interface ImageGUIProps {
   component: ImageComponent;
 }
-
 const ImageGUIComponent: React.FC<ImageGUIProps> = ({ component }) => {
   return (
     <div
@@ -20,28 +19,25 @@ const ImageGUIComponent: React.FC<ImageGUIProps> = ({ component }) => {
     />
   );
 };
-
 interface ImageModalProps {
   component: ImageComponent | null;
   handleComponentData: (data: Partial<ImageComponent>) => void;
 }
-
 const ImageModal: React.FC<ImageModalProps> = ({
   component,
   handleComponentData,
 }) => {
   const [url, setUrl] = useState(component?.url || '');
-
   useEffect(() => {
-    handleComponentData({ url });
+    handleComponentData({
+      url,
+    });
   }, [url, handleComponentData]);
-
   return (
     <div className="grid grid-cols-1 gap-4">
-      <Label>Image</Label>
+      <Label>{getCopy('Image', 'image')}</Label>
       <ImageUpload value={url} onChange={(v) => setUrl(v)} />
     </div>
   );
 };
-
 export { ImageModal, ImageGUIComponent };

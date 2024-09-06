@@ -1,16 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 import { useComponentStore } from '@/store';
 import ImageGallery from './ImageGallery';
 import Image from './Image';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
 }
-
 const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const setAsyncPreSubmitOperation = useComponentStore(
     (state) => state.setAsyncPreSubmitOperation,
@@ -19,27 +18,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const [file, setFile] = useState<File | null>(null); // State to hold the file object
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
-
   useEffect(() => {
     fetch('/uploads')
       .then((response) => response.json())
       .then((data) => setGalleryImages(data.images))
       .catch((error) => console.error('Error fetching gallery images:', error));
   }, []);
-
   const handleSelectImage = (imagePath: string) => {
     onChange(imagePath);
     setImage(imagePath);
     setGalleryVisible(false); // Optionally close the gallery
   };
-
   const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
     setImage(e.target.value); // Directly set the image to the entered URL
   };
-
   const onCloseGallery = () => {
-    setAsyncPreSubmitOperation(() => {});
     setGalleryVisible(false);
   };
   useEffect(() => {
@@ -48,8 +42,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
       setAsyncPreSubmitOperation(async () => await saveImageToServer());
     }
   }, [file]);
-
   const saveImageToServer = useCallback(async () => {
+    console.log('SAVEING IMAGE TO SEVER');
     if (file === null) {
       return;
     }
@@ -60,7 +54,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
       method: 'POST',
       body: formData, // Send formData
     });
-
     if (response.ok) {
       let data = await response.json();
       onChange(data.filePath);
@@ -70,7 +63,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
       console.error('Failed to save image');
     }
   }, [file]);
-
   return (
     <>
       <div className="grid gap-2">
@@ -85,7 +77,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
             alt="Loaded"
           />
         </div>
-        <Label>Set Image Url </Label>
+        <Label>{getCopy('ImageUpload', 'set_image_url')}</Label>
 
         <div className="flex flex-row ">
           <div className="w-[33%] ">
@@ -97,11 +89,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
               onChange={handleURLChange}
             />
           </div>
-          <div className="flex-1 flex-row items-center justify-center text-center text-2xl text-slate-900">
-            or
+          <div className="flex-1 flex-row items-center justify-center text-center text-2xl text-slate-900 dark:text-slate-200">
+            {getCopy('ImageUpload', 'or')}
           </div>
           <Button className="flex-1" onClick={() => setGalleryVisible(true)}>
-            Select Image
+            {getCopy('ImageUpload', 'select_image')}
           </Button>
           {galleryVisible && (
             <ImageGallery
@@ -117,5 +109,4 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     </>
   );
 };
-
 export default ImageUpload;
