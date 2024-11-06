@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
 interface RichTextEditorProps {
   content: string;
   setContent: (content: string) => void;
@@ -130,8 +131,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <span className="ql-formats">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              {/* <TooltipHolder content="Heading"> */}
-              <Button className="flex !w-auto" size={'lg'} variant={'ghost'}>
+              <Button
+                className={cn(
+                  'flex !w-auto',
+                  currentHeader === false && 'text-gray-500',
+                )}
+                size={'lg'}
+                variant={'ghost'}
+              >
                 {currentHeader
                   ? currentHeader == -1
                     ? 'Header'

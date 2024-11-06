@@ -349,7 +349,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               value={geo}
               disabled={!hasGeoOption}
               setValue={setGeo}
-              label="getCopy('FlyTo', 'set_coordinates/altitude')"
+              label={getCopy('FlyTo', 'set_coordinates/altitude')}
             />
           </div>
         </div>
@@ -371,7 +371,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
                   <Label htmlFor="lat">{getCopy('FlyTo', 'latitude')}</Label>
                   <Input
                     id="lat"
-                    placeholder="getCopy('FlyTo', 'latitude')"
+                    placeholder={getCopy('FlyTo', 'latitude')}
                     type="number"
                     value={lat}
                     onChange={(e) => setLat(parseFloat(e.target.value))}
@@ -381,7 +381,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
                   <Label htmlFor="long">{getCopy('FlyTo', 'longitude')}</Label>
                   <Input
                     id="long"
-                    placeholder="getCopy('FlyTo', 'longitude')"
+                    placeholder={getCopy('FlyTo', 'longitude')}
                     type="number"
                     value={long}
                     onChange={(e) => setLong(parseFloat(e.target.value))}

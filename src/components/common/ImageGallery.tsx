@@ -138,9 +138,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
                     <div
                       key={`placeholder-${index}`}
                       className="aspect-square w-full rounded-md border-[1.5px] border-dashed border-black/40 bg-white object-cover"
-                    >
-                      {/* Placeholder content can go here, if any */}
-                    </div>
+                    ></div>
                   ),
                 )}
               </div>

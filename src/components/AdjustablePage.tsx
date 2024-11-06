@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import ButtonLabel from './common/ButtonLabel';
 import { getCopy } from '@/utils/copyHelpers';
+import { cn } from '@/lib/utils';
 const AdjustablePage: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
@@ -31,7 +32,6 @@ const AdjustablePage: React.FC = () => {
     return () => clearTimeout(timeout);
   }, [pageWidth, pageHeight, locked]);
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
-    console.log(_e);
     setIsDragging(false);
     updatePage(page.id, {
       x: d.x,
@@ -80,34 +80,28 @@ const AdjustablePage: React.FC = () => {
       enableResizing={!locked && !isPresentMode} // Conditionally disable resizing
       style={{
         zIndex: 0,
-        // transformOrigin: '0px 0px',
       }}
-      //   data-state={page?.minimized ? 'closed' : 'open'}
-      // data-side="top"
-      className={`absolute cursor-move ${
-        isDragging ? 'z-50 border-blue-500 shadow-lg' : ''
-      } 
-      ${
+      className={cn(
+        'absolute cursor-move',
+        'group text-slate-950 outline-none dark:text-slate-50',
+        'shadow-slate-800 dark:shadow-slate-500/50',
+        'data=[state=open]:opacity-100',
+        isDragging && 'z-50 border-blue-500 shadow-lg',
         isPresentMode
           ? 'border-0 dark:bg-slate-200/0'
           : locked
-            ? 'pointer-events-none border-2  border-dashed border-slate-700/30 bg-slate-200/60 dark:border-slate-200/30 dark:bg-slate-200/5'
-            : 'pointer-events-auto  border-2  border-dashed border-slate-700/80 bg-slate-200/60 dark:border-slate-200 dark:bg-slate-200/10'
-      } }
-        data=[state=open]:opacity-100
-        group 
-        text-slate-950  
-        shadow-slate-800
-        outline-none dark:border-slate-50
-        dark:text-slate-50
-        dark:shadow-slate-500/50
-      `}
+            ? 'pointer-events-none border-2 border-dashed border-slate-700/30 bg-slate-200/60 dark:border-slate-200/30 dark:bg-slate-200/5'
+            : 'pointer-events-auto border-2 border-dashed border-slate-700/80 bg-slate-200/60 dark:border-slate-200 dark:bg-slate-200/10',
+      )}
     >
       <div className="drag-handle  absolute top-0 h-[30px] w-full cursor-move">
         {!isPresentMode && !locked && (
           <div className="absolute flex w-full flex-col items-center justify-center gap-1">
             <GripHorizontal
-              className={`stroke-slate-700/40 transition-colors  duration-300 group-hover:stroke-slate-800 dark:stroke-slate-500 dark:group-hover:stroke-white`}
+              className={cn(
+                'stroke-slate-700/40 transition-colors duration-300 dark:stroke-slate-500',
+                'group-hover:stroke-slate-800 dark:group-hover:stroke-white',
+              )}
             />
           </div>
         )}
@@ -116,9 +110,11 @@ const AdjustablePage: React.FC = () => {
             {!locked && (
               <div className="absolute right-14 top-3">
                 <ButtonLabel
-                  className={`${
-                    isVisible ? 'opacity-100' : 'opacity-0'
-                  } text-xs text-slate-700 transition-opacity duration-500 dark:text-slate-200`}
+                  className={cn(
+                    'text-xs text-slate-700 dark:text-slate-200',
+                    'transition-opacity duration-500',
+                    isVisible ? 'opacity-100' : 'opacity-0',
+                  )}
                 >
                   {pageWidth} x {pageHeight}
                 </ButtonLabel>
@@ -141,9 +137,10 @@ const AdjustablePage: React.FC = () => {
                     variant="outline"
                     // pressed={isPresentMode}
                     onClick={() => setLocked(!locked)}
-                    className={`z-50 p-1 transition-opacity duration-100 ${
-                      locked ? 'opacity-60' : 'opacity-100'
-                    }`}
+                    className={cn(
+                      'z-50 p-1 transition-opacity duration-100',
+                      locked ? 'opacity-60' : 'opacity-100',
+                    )}
                   >
                     {locked ? (
                       <Lock size="16" />

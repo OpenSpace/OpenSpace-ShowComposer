@@ -8,6 +8,7 @@ import ButtonLabel from './common/ButtonLabel';
 import { usePropertyStore, ConnectionState } from '@/store';
 import { NavigationAnchorKey, useOpenSpaceApiStore } from '@/store/apiStore';
 import { formatDate } from '@/utils/time';
+import { cn } from '@/lib/utils';
 
 type FeedbackPanelProps = {
   className?: string;
@@ -60,7 +61,12 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
   return (
     <div className={className}>
       <div className="grid-rows grid gap-2">
-        <div className={`grid  gap-2 ${time ? 'opacity-100' : 'opacity-50'}`}>
+        <div
+          className={cn('grid gap-2', {
+            'opacity-100': time,
+            'opacity-50': !time,
+          })}
+        >
           <Label className="flex items-center justify-start gap-2">
             <Clock size={14} /> Current Time
           </Label>
@@ -70,9 +76,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
         </div>
         <div />
         <div
-          className={`grid gap-2 ${
-            CurrentAnchor ? 'opacity-100' : 'opacity-50'
-          }`}
+          className={cn('grid gap-2', {
+            'opacity-100': CurrentAnchor,
+            'opacity-50': !CurrentAnchor,
+          })}
         >
           <Label className="flex items-center justify-start gap-2">
             <Telescope size={14} />
@@ -111,7 +118,6 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 {Math.round(camera.altitude * 1) / 1} {camera.altitudeUnit}
               </ButtonLabel>
             </div>
-            {/* <p>Lat: {camera.latitude}</p> */}
           </div>
         )}
       </div>

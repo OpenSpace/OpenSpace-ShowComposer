@@ -5,6 +5,7 @@ interface StatusBarControlledProps {
   debounceDuration: number; // Duration in milliseconds
 }
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 
 const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   progress,
@@ -49,9 +50,13 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
 
   return (
     <div
-      className={` duration-400 absolute left-0 top-0 flex h-full w-full  flex-col items-center justify-end rounded-lg bg-white/40 p-4 transition-opacity ease-linear
-      ${isFadingOut ? 'opacity-0 ' : 'opacity-100'}
-      `}
+      className={cn(
+        'duration-400 absolute left-0 top-0 flex h-full w-full flex-col items-center justify-end rounded-lg bg-white/40 p-4 transition-opacity ease-linear',
+        {
+          'opacity-0': isFadingOut,
+          'opacity-100': !isFadingOut,
+        },
+      )}
     >
       <Progress value={(Math.round(progressState * 1000) / 1000) * 100} />
     </div>

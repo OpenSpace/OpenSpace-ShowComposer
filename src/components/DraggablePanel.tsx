@@ -15,6 +15,7 @@ import { roundToNearest } from '@/utils/math';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import FeedbackPanel from './FeedbackPanel';
 import RecordPanel from './types/static/SessionPanel';
+import { cn } from '@/lib/utils';
 interface PanelProps {
   component: TimeComponent | NavComponent | StatusComponent | RecordComponent;
   originX?: number;
@@ -92,23 +93,15 @@ const DraggablePanel: React.FC<PanelProps> = ({
       }}
       data-state={component?.minimized ? 'closed' : 'open'}
       // data-side="top"
-      className={`absolute cursor-move ${
-        isDragging ? 'z-50 border-blue-500 shadow-lg' : ''
-      } 
-      data=[state=open]:opacity-100 rounded-md 
-
-      border-slate-200 
-      bg-gray-300
-      bg-opacity-75
-      text-slate-950
-      shadow-md 
-      outline-none
-      transition-opacity
-      duration-300
-      data-[state=closed]:pointer-events-none 
-      data-[state=open]:pointer-events-auto data-[state=closed]:opacity-0
-      dark:border dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50
-      `}
+      className={cn(
+        'absolute cursor-move',
+        'data=[state=open]:opacity-100 rounded-md border-slate-200',
+        'bg-gray-300 bg-opacity-75 text-slate-950 shadow-md outline-none',
+        'transition-opacity duration-300 data-[state=closed]:pointer-events-none',
+        'data-[state=open]:pointer-events-auto data-[state=closed]:opacity-0',
+        'dark:border dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50',
+        isDragging ? 'z-50 border-blue-500 shadow-lg' : '',
+      )}
     >
       <div className="drag-handle group absolute top-0 h-[30px] w-full cursor-move">
         <div className="absolute flex w-full flex-col items-center justify-center gap-1">

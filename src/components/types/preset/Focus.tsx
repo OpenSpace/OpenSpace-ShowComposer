@@ -80,7 +80,10 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
       });
     }
   }, [component.id, component.property, luaApi]);
-  return shouldRender ? (
+
+  if (!shouldRender) return null;
+
+  return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       onClick={() => {
@@ -97,8 +100,9 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
         </div>
       </ButtonLabel>
     </ComponentContainer>
-  ) : null;
+  );
 };
+
 interface FocusModalProps {
   component: SetFocusComponent | null;
   handleComponentData: (data: Partial<SetFocusComponent>) => void;

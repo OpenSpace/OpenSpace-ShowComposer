@@ -1,5 +1,5 @@
 export {
-  useStore as useComponentStore,
+  useComponentStore,
   // saveStore,
   // loadStore,
 } from './componentsStore';
@@ -25,4 +25,8 @@ export type {
   FlyToComponent,
   Toggle,
   MultiComponent,
+  LayoutType,
+  PageComponent,
+  SessionPlaybackComponent,
+  SetNavComponent,
 } from './componentsStore';

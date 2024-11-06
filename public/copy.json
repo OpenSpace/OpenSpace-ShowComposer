@@ -1,6 +1,6 @@
 {
   "Main": {
-    "interface_name": "Youth Learner Interface",
+    "interface_name": "OpenSpace Showbuilder",
     "static_components": "Static Components",
     "preset_components": "Preset Components",
     "multi": "Multi",

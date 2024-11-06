@@ -3,6 +3,7 @@ import { Pencil, TvMinimalPlay } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
 const useQuery = () => {
   // return new URLSearchParams(useLocation().search);
   return new URLSearchParams(window.location.search);
@@ -38,9 +39,10 @@ const PresentModeToggle = () => {
           variant={'outline'}
           // pressed={isPresentMode}
           onClick={togglePresentMode}
-          className={`z-50 p-1 transition-opacity duration-100 ${
-            isPresentMode ? 'opacity-60' : 'opacity-100'
-          }`}
+          className={cn('z-50 p-1 transition-opacity duration-100', {
+            'opacity-60': isPresentMode,
+            'opacity-100': !isPresentMode,
+          })}
         >
           {isPresentMode ? (
             <Pencil strokeWidth="1.5" size="32" />

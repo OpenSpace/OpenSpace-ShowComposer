@@ -1,5 +1,6 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 
 interface StatusBarProps {
   duration: number;
@@ -72,20 +73,17 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
 
     return (
       <div
-        className={`absolute left-0 top-0 flex  h-full w-full flex-col justify-end  p-4 ease-linear  ${
-          isAnimatingWidth ? 'pointer-events-none ' : 'pointer-events-auto '
-        } ${
-          isFadingOut
-            ? `duration-[${fadeOutDuration}ms] opacity-0 transition-opacity`
-            : 'opacity-100'
-        }`}
+        className={cn(
+          'absolute left-0 top-0 flex h-full w-full flex-col justify-end p-4 ease-linear',
+          {
+            'pointer-events-none': isAnimatingWidth,
+            'pointer-events-auto': !isAnimatingWidth,
+            'duration-[ms] opacity-0 transition-opacity': isFadingOut,
+            'opacity-100': !isFadingOut,
+          },
+        )}
         style={{
-          transitionDuration: isFadingOut
-            ? `${fadeOutDuration}ms`
-            : // :
-              // isAnimatingWidth
-              //   ? `${duration}s`
-              '0ms',
+          transitionDuration: isFadingOut ? `${fadeOutDuration}ms` : '0ms',
           opacity: !(isAnimatingWidth || isFadingOut) ? 0 : '',
         }}
       >

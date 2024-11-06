@@ -43,8 +43,7 @@ const triggerBool = async (
   if (!luaApi) {
     console.log('No Api Access');
     return;
-  } // const propertyValue = usePropertyStore.getState().properties[property];
-  // console.log('triggerBool', property, action);
+  }
   switch (action) {
     case 'on':
       luaApi.setPropertyValueSingle(property, true);
@@ -65,9 +64,7 @@ const triggerTrigger = async (property: string) => {
   if (!luaApi) {
     console.log('No Api Access');
     return;
-  } // const propertyValue = await usePropertyStore.getState().properties[property];
-  // const value = await luaApi.getPropertyValue(property);
-  // console.log('triggerBool', property, value);
+  }
   luaApi.setPropertyValueSingle(property, true);
 };
 

@@ -6,6 +6,7 @@ import Image from './Image';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { cn } from '@/lib/utils';
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
@@ -68,11 +69,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
       <div className="grid gap-2">
         <div className="flex items-center justify-center p-4">
           <Image
-            className={
+            className={cn(
               image.length > 0
                 ? 'h-32 w-32 object-cover'
-                : 'h-12 w-12  object-cover'
-            }
+                : 'h-12 w-12  object-cover',
+            )}
             src={image || ''}
             alt="Loaded"
           />

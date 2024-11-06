@@ -4,6 +4,13 @@ import { immer } from 'zustand/middleware/immer';
 import { persist, devtools } from 'zustand/middleware';
 import { roundToNearest } from '@/utils/math';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  calculateComponentDimensions,
+  calculateTotalLayoutWidth,
+  calculateLayoutDimensions,
+} from '@/utils/layoutCalculations';
+
+export type LayoutType = 'row' | 'column' | 'grid';
 
 export type ComponentType =
   | 'fade'
@@ -39,7 +46,6 @@ export type Page = {
 
 interface ComponentBase {
   id: string;
-  // page: string;
   isMulti: MultiState;
   type: ComponentType;
   lockName?: boolean;
@@ -51,7 +57,10 @@ interface ComponentBase {
   minHeight: number;
   width: number;
   height: number;
-  intDuration?: number;
+  originalX?: number;
+  originalY?: number;
+  // originalWidth?: number;
+  // originalHeight?: number;
 }
 
 export interface TimeComponent extends ComponentBase {
@@ -169,7 +178,6 @@ export interface TriggerComponent extends ComponentBase {
   type: 'trigger';
   property: string;
   backgroundImage: string;
-  // intDuration: number;
   triggerAction: () => void;
 }
 
@@ -178,6 +186,19 @@ export interface PageComponent extends ComponentBase {
   page: number;
   backgroundImage: string;
   triggerAction: () => void;
+}
+
+export interface LayoutBase {
+  id: string;
+  type: LayoutType;
+  children: string[]; // Array of component IDs
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  minWidth: number;
+  minHeight: number;
+  isCollapsed?: boolean;
 }
 
 export type MultiOption =
@@ -253,10 +274,7 @@ export interface MultiComponent extends ComponentBase {
     buffer: number;
     startTime: number;
     endTime: number;
-    // delay: number;
-    // buffer: number;
     chained: boolean;
-    // totalOffset: number;
   }[];
   backgroundImage: string;
   triggerAction: () => void;
@@ -349,9 +367,31 @@ interface State {
   resetAsyncPreSubmitOperation: () => void;
   setAsyncPreSubmitOperation: (operation: (() => any) | null) => void;
   executeAndResetAsyncPreSubmitOperation: () => void;
+  layouts: Record<string, LayoutBase>;
+  addLayout: (config: {
+    type: LayoutType;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => string;
+  addComponentToLayout: (layoutId: string, componentId: string) => void;
+  removeComponentFromLayout: (
+    layoutId: string,
+    componentId: string,
+    x: number,
+    y: number,
+  ) => void;
+  reorderLayoutComponents: (layoutId: string, newOrder: string[]) => void;
+  updateLayout: (layoutId: string, updates: Partial<LayoutBase>) => void;
 }
 
-export const useStore = create<State>()(
+// First, let's create a type guard to check if something is a Component
+function isComponent(item: Component | LayoutBase): item is Component {
+  return 'isMulti' in item;
+}
+
+export const useComponentStore = create<State>()(
   devtools(
     persist(
       immer((set, get) => ({
@@ -366,6 +406,154 @@ export const useStore = create<State>()(
         tempPositions: {},
         overlappedComponents: {},
         selectedComponents: [],
+        layouts: {},
+        addLayout: (config) => {
+          const id = uuidv4();
+
+          set((state) => {
+            // Create the layout
+            state.layouts[id] = {
+              id,
+              type: config.type,
+              children: [],
+              x: config.x,
+              y: config.y,
+              width: config.width,
+              height: config.height,
+              minWidth: 200,
+              minHeight: 100,
+              isCollapsed: false,
+            };
+
+            // Add layout to current page
+            const page = state.pages.find((p) => p.id === state.currentPage);
+            if (page) {
+              page.components.push(id);
+            }
+          });
+
+          return id;
+        },
+
+        addComponentToLayout: (layoutId, componentId) =>
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            const component = state.components[componentId];
+
+            if (layout && component && isComponent(component)) {
+              if (!layout.children.includes(componentId)) {
+                layout.children.push(componentId);
+
+                const dimensions = calculateComponentDimensions(
+                  layout,
+                  layout.children.length - 1,
+                  component,
+                  layout.children.length,
+                );
+
+                Object.assign(component, dimensions);
+              }
+
+              // Update layout dimensions based on type
+              const layoutDimensions = calculateLayoutDimensions(
+                layout,
+                state.components,
+              );
+              Object.assign(layout, layoutDimensions);
+            }
+          }),
+
+        removeComponentFromLayout: (layoutId, componentId, x, y) =>
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            const component = state.components[componentId];
+
+            if (layout && component && isComponent(component)) {
+              layout.children = layout.children.filter(
+                (id) => id !== componentId,
+              );
+              component.x = x + layout.x;
+              component.y = y + layout.y;
+
+              layout.children.forEach((childId, index) => {
+                const child = state.components[childId];
+                if (child && isComponent(child)) {
+                  const dimensions = calculateComponentDimensions(
+                    layout,
+                    index,
+                    child,
+                    layout.children.length,
+                  );
+                  Object.assign(child, dimensions);
+                }
+              });
+
+              layout.width = calculateTotalLayoutWidth(
+                state.components,
+                layout,
+              );
+            }
+          }),
+
+        reorderLayoutComponents: (layoutId, newOrder) =>
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            if (layout) {
+              layout.children = newOrder;
+              // Recalculate positions based on new order
+              newOrder.forEach((componentId, index) => {
+                const component = state.components[componentId];
+                if (component) {
+                  switch (layout.type) {
+                    case 'row':
+                      component.x =
+                        layout.x + index * (layout.width / newOrder.length);
+                      break;
+                    case 'column':
+                      component.y =
+                        layout.y + index * (layout.height / newOrder.length);
+                      break;
+                    case 'grid': {
+                      const cols = Math.ceil(Math.sqrt(newOrder.length));
+                      const row = Math.floor(index / cols);
+                      const col = index % cols;
+                      component.x = layout.x + col * (layout.width / cols);
+                      component.y = layout.y + row * (layout.height / cols);
+                      break;
+                    }
+                  }
+                }
+              });
+            }
+          }),
+
+        updateLayout: (layoutId, updates) =>
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            if (layout) {
+              Object.assign(layout, updates);
+
+              if (updates.width || updates.height) {
+                layout.children.forEach((childId, index) => {
+                  const component = state.components[childId];
+                  if (component && isComponent(component)) {
+                    const dimensions = calculateComponentDimensions(
+                      layout,
+                      index,
+                      component,
+                      layout.children.length,
+                    );
+                    Object.assign(component, dimensions);
+                  }
+                });
+
+                layout.width = calculateTotalLayoutWidth(
+                  state.components,
+                  layout,
+                );
+              }
+            }
+          }),
         setTempPosition(id, x, y) {
           set((state) => {
             state.tempPositions[id] = { x, y };
@@ -624,6 +812,7 @@ export const useStore = create<State>()(
             (state) => {
               // const newId = uuidv4();
               state.components = {};
+              state.layouts = {};
               state.overlappedComponents = {};
               state.selectedComponents = [];
               state.pages = [];
@@ -717,6 +906,7 @@ export const useStore = create<State>()(
           }
         },
       })),
+
       { name: 'components-storage' },
     ),
     { name: 'components-storage' },

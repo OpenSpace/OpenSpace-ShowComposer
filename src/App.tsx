@@ -67,6 +67,13 @@ import PageButtonMenu from './components/PageButtonMenu';
 import PresentModeToggle from './components/PresentModeToggle';
 import TooltipHolder from './components/common/TooltipHolder';
 import { getCopy } from './utils/copyHelpers';
+import { LayoutContainer } from './components/layouts/LayoutContainer';
+
+type ComponentTypeData = {
+  type: ComponentType;
+  name: string;
+  icon: JSX.Element;
+};
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,6 +102,8 @@ const App = () => {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const addPage = useComponentStore((state) => state.addPage);
   const getPageById = useComponentStore((state) => state.getPageById);
+  const layouts = useComponentStore((state) => state.layouts);
+
   const currentPage = useComponentStore((state) => state.currentPage);
   const currentPageIndex = useComponentStore((state) => state.currentPageIndex);
   const pagesLength = useComponentStore((state) => state.pages?.length); // Get the global state
@@ -108,12 +117,6 @@ const App = () => {
     if (!NavPanel || !TimePanel || !StatusPanel || !RecordPanel)
       createStaticPanels();
   }, []);
-
-  type ComponentTypeData = {
-    type: ComponentType;
-    name: string;
-    icon: JSX.Element;
-  };
 
   const presetComponentTypes: Array<ComponentTypeData> = [
     { type: 'multi', name: getCopy('Main', 'multi'), icon: <Group /> },
@@ -162,6 +165,7 @@ const App = () => {
     { type: 'video', name: getCopy('Main', 'video'), icon: <Video /> },
     { type: 'image', name: getCopy('Main', 'image'), icon: <Image /> },
   ];
+
   const timeType = {
     type: 'timepanel',
     name: getCopy('Main', 'timepanel'),
@@ -220,7 +224,6 @@ const App = () => {
     const componentToDelete = getComponentById(id);
     if (componentToDelete?.type == 'multi') {
       (componentToDelete as MultiComponent).components.forEach((c) => {
-        console.log(c);
         updateComponent(c.component, { isMulti: 'false' });
       });
     }
@@ -248,11 +251,6 @@ const App = () => {
       return updatedSizes;
     });
   };
-
-  // const triggerResize = () => {
-  //   // Example to trigger resizing: Setting panel 1 to 30% and panel 2 to 70%
-  //   setSizes([5, 95]);
-  // };
 
   const [_collapsing, setCollapsing] = useState(false);
   const collapsePanel = (perc: number) => {
@@ -288,8 +286,6 @@ const App = () => {
             defaultSize={sizes[0]}
             onResize={(size) => handleResize(0, size)}
             collapsedSize={0}
-            // minSize={}
-            // hidden={isPresentMode}
             maxSize={35}
             className="h-screen max-w-[320px]"
           >
@@ -365,12 +361,7 @@ const App = () => {
                           size={'sm'}
                           variant={'outline'}
                           className="flex flex-row items-center justify-between @container"
-                          onClick={() =>
-                            // v.type == 'timepanel' || v.type == 'navpanel'
-                            //   ? handleImmediateAddComponent(v.type)
-                            //   :
-                            handleAddComponent(v.type)
-                          }
+                          onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
                           <span className="hidden @[40px]:inline">
@@ -389,12 +380,7 @@ const App = () => {
                           size={'sm'}
                           variant={'secondary'}
                           className="flex flex-row items-center justify-between @container"
-                          onClick={() =>
-                            // v.type == 'timepanel' || v.type == 'navpanel'
-                            //   ? handleImmediateAddComponent(v.type)
-                            //   :
-                            handleAddComponent(v.type)
-                          }
+                          onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
                           <span className="hidden @[40px]:inline">
@@ -403,9 +389,6 @@ const App = () => {
                         </Button>
                       ))}
                     </div>
-                    {/* <h2 className="mt-4 text-xs font-bold ">
-                      Property Components
-                    </h2> */}
                     <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
                       {propertyComponentTypes.map((v, _i) => (
                         <Button
@@ -437,38 +420,64 @@ const App = () => {
           {!isPresentMode && <ResizableHandle withHandle />}
 
           <ResizablePanel
-            // defaultSize={85}
             defaultSize={sizes[1]}
             onResize={(size) => handleResize(1, size)}
           >
             <div
               className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
             >
-              {/* {!isPresentMode && (
-                <h2 className="scroll-m-20 p-4 text-xl font-semibold tracking-tight">
-                  Workspace
-                </h2>
-              )} */}
-              {/* <div className={`flex-1`}> */}
               <div
                 className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
                   isPresentMode ? 'p-0' : 't p-4 pl-2'
                 } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
               >
                 <DroppableWorkspace>
-                  {/* <AdjustablePage /> */}
+                  {/* Static Panels */}
                   {NavPanel && <DraggablePanel component={NavPanel} />}
                   {TimePanel && <DraggablePanel component={TimePanel} />}
                   {StatusPanel && <DraggablePanel component={StatusPanel} />}
                   {RecordPanel && <DraggablePanel component={RecordPanel} />}
-                  {getPageById(currentPage).components.map((component) => {
-                    const c = components[component];
+
+                  {/* Layouts */}
+                  {Object.entries(layouts).map(([layoutId, layout]) => {
+                    // console.log('Rendering layout:', layoutId, layout);
+                    return (
+                      <LayoutContainer key={layoutId} layout={layout}>
+                        {layout.children.map((childId) => {
+                          const component = components[childId];
+                          if (!component) return null;
+                          return (
+                            <DraggableComponent
+                              key={childId}
+                              component={component}
+                              layoutId={layoutId}
+                              onEdit={() => handleEditComponent(childId)}
+                              onDelete={() => handleDeleteComponent(childId)}
+                            />
+                          );
+                        })}
+                      </LayoutContainer>
+                    );
+                  })}
+
+                  {/* Regular Components - only render if not in a layout */}
+                  {getPageById(currentPage).components.map((componentId) => {
+                    const component = components[componentId];
+                    // Skip if component is in a layout
+                    if (
+                      !component ||
+                      Object.values(layouts).some((layout) =>
+                        layout.children.includes(componentId),
+                      )
+                    ) {
+                      return null;
+                    }
                     return (
                       <DraggableComponent
-                        key={component}
-                        component={c}
-                        onEdit={() => handleEditComponent(component)}
-                        onDelete={() => handleDeleteComponent(component)}
+                        key={componentId}
+                        component={component}
+                        onEdit={() => handleEditComponent(componentId)}
+                        onDelete={() => handleDeleteComponent(componentId)}
                       />
                     );
                   })}
