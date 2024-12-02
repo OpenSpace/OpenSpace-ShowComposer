@@ -4,7 +4,6 @@ import { ThemeProvider } from './components/ThemeProvider';
 import ComponentModal from './components/ComponentModal';
 import DraggableComponent from './components/DraggableComponent';
 import DroppableWorkspace from './components/DroppableWorkspace';
-import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import { Button } from '@/components/ui/button';
 import {
   ResizableHandle,
@@ -19,12 +18,7 @@ import {
 
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
-  Save,
-  Folder,
-  Trash2,
-  Settings,
   Group,
   Telescope,
   SunMoon,
@@ -46,28 +40,22 @@ import {
 import { ComponentType, useComponentStore, useSettingsStore } from './store';
 import { loadStore, saveStore } from './utils/saveProject';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  ConnectionSettings,
-  ConnectionStatus,
-} from './components/ConnectionSettings';
+import { ConnectionStatus } from './components/ConnectionSettings';
 import Pagination from './components/Pagination';
 import DraggablePanel from './components/DraggablePanel';
-import {
-  MultiComponent,
-  NavComponent,
-  TimeComponent,
-  StatusComponent,
-  RecordComponent,
-} from './store/componentsStore';
+import { MultiComponent } from './store/componentsStore';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import FeedbackPanel from './components/FeedbackPanel';
-import { DarkModeToggle } from './components/DarkModeToggle';
 import PageButtonMenu from './components/PageButtonMenu';
 import PresentModeToggle from './components/PresentModeToggle';
-import TooltipHolder from './components/common/TooltipHolder';
 import { getCopy } from './utils/copyHelpers';
+import { LayoutToolbar } from './components/layouts/LayoutToolbar';
+import Toolbar from './components/Toolbar';
+import { Position, usePositionStore } from './store/positionStore';
 import { LayoutContainer } from './components/layouts/LayoutContainer';
+import NewProjectModal from './components/NewProjectModal';
+import { Label } from './components/ui/label';
 
 type ComponentTypeData = {
   type: ComponentType;
@@ -93,12 +81,24 @@ const App = () => {
   const removeComponent = useComponentStore((state) => state.removeComponent);
   // const addComponent = useComponentStore((state) => state.addComponent);
   const createStaticPanels = useComponentStore((state) => state.createPanels);
-  const updatePanel = useComponentStore((state) => state.updatePanel);
   const NavPanel = useComponentStore((state) => state.navpanel);
+  const NavPosition = usePositionStore(
+    (state) => state.positions[NavPanel?.id || ''],
+  );
   const TimePanel = useComponentStore((state) => state.timepanel);
+  const TimePosition = usePositionStore(
+    (state) => state.positions[TimePanel?.id || ''],
+  );
   const StatusPanel = useComponentStore((state) => state.statuspanel);
+  const StatusPosition = usePositionStore(
+    (state) => state.positions[StatusPanel?.id || ''],
+  );
   const RecordPanel = useComponentStore((state) => state.recordpanel);
+  const RecordPosition = usePositionStore(
+    (state) => state.positions[RecordPanel?.id || ''],
+  );
   const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updatePosition = usePositionStore((state) => state.updatePosition);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const addPage = useComponentStore((state) => state.addPage);
   const getPageById = useComponentStore((state) => state.getPageById);
@@ -109,6 +109,7 @@ const App = () => {
   const pagesLength = useComponentStore((state) => state.pages?.length); // Get the global state
   const goToPage = useComponentStore((state) => state.goToPage); // Get the global state
 
+  const projectName = useSettingsStore((state) => state.projectName);
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {
       addPage();
@@ -201,17 +202,10 @@ const App = () => {
     setCurrentComponentId(newId);
     setIsModalOpen(true);
   };
-  const minimize = (
-    component:
-      | TimeComponent
-      | NavComponent
-      | StatusComponent
-      | RecordComponent
-      | null,
-  ) => {
-    updatePanel({
-      type: component?.type,
-      minimized: component ? !component.minimized : false,
+  const minimize = (position: Position | null) => {
+    console.log('minimizing', position);
+    updatePosition(position?.id || '', {
+      minimized: !position?.minimized,
     });
   };
 
@@ -297,56 +291,33 @@ const App = () => {
                   </h2>
                 </div>
                 <Separator />
-                <div className="flex  flex-col gap-4 px-4 py-1 @container">
-                  <div className="flex flex-wrap gap-2 ">
-                    <ToggleGroup type="single">
-                      <TooltipHolder content="Save to your computer">
-                        <ToggleGroupItem onClick={saveStore} value="a">
-                          <Save size={20} />
-                        </ToggleGroupItem>
-                      </TooltipHolder>
-                      <Separator orientation="vertical" />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <ToggleGroupItem onClick={loadStore} value="b">
-                            <Folder size={20} />
-                          </ToggleGroupItem>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-white">
-                          Load from your computer
-                        </TooltipContent>
-                      </Tooltip>
-                      <Separator orientation="vertical" />
-
-                      <DeleteConfirmationModal
-                        onConfirm={handleDeleteAllConfirm}
-                        message="This action cannot be undone. This will permanently delete the
-              components from the project."
-                        triggerButton={
-                          <ToggleGroupItem value="c">
-                            <Trash2 size={20} />
-                          </ToggleGroupItem>
-                        }
-                      />
-
-                      <Separator orientation="vertical" />
-                      <ConnectionSettings
-                        triggerButton={
-                          <ToggleGroupItem value="d">
-                            <Settings size={20} />
-                          </ToggleGroupItem>
-                        }
-                      />
-                      <Separator orientation="vertical" />
-                      <ToggleGroupItem value="lightdark">
-                        <DarkModeToggle />
-                      </ToggleGroupItem>
-                    </ToggleGroup>
-                    <Separator />
-                    <div className="py-2">
-                      <ConnectionStatus />
-                    </div>
+                <div className="flex flex-col gap-2 px-4 py-1">
+                  <div className="flex flex-row items-center gap-3">
+                    <Label>Current Project:</Label>
+                    <div className="text-sm">{projectName}</div>
                   </div>
+                  <div className="py-2">
+                    <NewProjectModal />
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex  flex-col gap-4 px-4 py-1 @container">
+                  {/* <div className="flex flex-wrap items-center gap-2"> */}
+                  <Toolbar
+                    onSave={saveStore}
+                    onLoad={loadStore}
+                    onDeleteAllConfirm={handleDeleteAllConfirm}
+                  />
+                  <div className="py-2">
+                    <ConnectionStatus />
+                  </div>
+                </div>
+                <Separator />
+                <div className="grid gap-2 p-2 @[167px]:gap-4">
+                  <h2 className="ml-2 text-xs font-bold ">
+                    {getCopy('Main', 'layout')}
+                  </h2>
+                  <LayoutToolbar />
                 </div>
                 <Separator />
                 <ScrollArea className="flex-0 @container">
@@ -396,12 +367,7 @@ const App = () => {
                           size={'sm'}
                           variant={'default'}
                           className="flex  flex-row items-center justify-between @container"
-                          onClick={() =>
-                            // v.type == 'timepanel' || v.type == 'navpanel'
-                            // ? handleImmediateAddComponent(v.type)
-                            // :
-                            handleAddComponent(v.type)
-                          }
+                          onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
                           <span className="hidden @[40px]:inline">
@@ -418,7 +384,6 @@ const App = () => {
             </div>
           </ResizablePanel>
           {!isPresentMode && <ResizableHandle withHandle />}
-
           <ResizablePanel
             defaultSize={sizes[1]}
             onResize={(size) => handleResize(1, size)}
@@ -430,6 +395,7 @@ const App = () => {
                 className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
                   isPresentMode ? 'p-0' : 't p-4 pl-2'
                 } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
+                id="workspace"
               >
                 <DroppableWorkspace>
                   {/* Static Panels */}
@@ -437,29 +403,32 @@ const App = () => {
                   {TimePanel && <DraggablePanel component={TimePanel} />}
                   {StatusPanel && <DraggablePanel component={StatusPanel} />}
                   {RecordPanel && <DraggablePanel component={RecordPanel} />}
-
+                  {/* <ErrorBoundary fallback={<div>Error rendering layouts</div>}> */}
                   {/* Layouts */}
-                  {Object.entries(layouts).map(([layoutId, layout]) => {
-                    // console.log('Rendering layout:', layoutId, layout);
-                    return (
-                      <LayoutContainer key={layoutId} layout={layout}>
-                        {layout.children.map((childId) => {
-                          const component = components[childId];
-                          if (!component) return null;
-                          return (
-                            <DraggableComponent
-                              key={childId}
-                              component={component}
-                              layoutId={layoutId}
-                              onEdit={() => handleEditComponent(childId)}
-                              onDelete={() => handleDeleteComponent(childId)}
-                            />
-                          );
-                        })}
-                      </LayoutContainer>
-                    );
-                  })}
-
+                  {getPageById(currentPage)
+                    .components.filter((id) => layouts[id])
+                    .map((layoutId) => {
+                      const layout = layouts[layoutId];
+                      return (
+                        <LayoutContainer key={layoutId} layout={layout}>
+                          {layout.children.map((childId) => {
+                            if (!childId) return null;
+                            const component = components[childId];
+                            if (!component) return null;
+                            return (
+                              <DraggableComponent
+                                key={childId}
+                                component={component}
+                                layoutId={layoutId}
+                                onEdit={() => handleEditComponent(childId)}
+                                onDelete={() => handleDeleteComponent(childId)}
+                              />
+                            );
+                          })}
+                        </LayoutContainer>
+                      );
+                    })}
+                  {/* </ErrorBoundary> */}
                   {/* Regular Components - only render if not in a layout */}
                   {getPageById(currentPage).components.map((componentId) => {
                     const component = components[componentId];
@@ -492,9 +461,9 @@ const App = () => {
                     <Button
                       size="icon"
                       variant={'outline'}
-                      onClick={() => minimize(NavPanel)}
+                      onClick={() => minimize(NavPosition)}
                       className={`z-40 ${
-                        !NavPanel?.minimized ? 'opacity-60' : 'opacity-100'
+                        !NavPosition?.minimized ? 'opacity-60' : 'opacity-100'
                       }`}
                     >
                       {navType.icon}
@@ -510,10 +479,10 @@ const App = () => {
                       size="icon"
                       variant={'outline'}
                       className={`z-40 ${
-                        !TimePanel?.minimized ? 'opacity-60' : 'opacity-100'
+                        !TimePosition?.minimized ? 'opacity-60' : 'opacity-100'
                       }`}
                       // pressed={!TimePanel?.minimized || false}
-                      onClick={() => minimize(TimePanel)}
+                      onClick={() => minimize(TimePosition)}
                     >
                       {timeType.icon}
                     </Button>
@@ -528,9 +497,11 @@ const App = () => {
                     <Button
                       size="icon"
                       variant={'outline'}
-                      onClick={() => minimize(StatusPanel)}
+                      onClick={() => minimize(StatusPosition)}
                       className={`z-40 ${
-                        !StatusPanel?.minimized ? 'opacity-60' : 'opacity-100'
+                        !StatusPosition?.minimized
+                          ? 'opacity-60'
+                          : 'opacity-100'
                       }`}
                     >
                       {statusType.icon}
@@ -545,9 +516,11 @@ const App = () => {
                     <Button
                       size="icon"
                       variant={'outline'}
-                      onClick={() => minimize(RecordPanel)}
+                      onClick={() => minimize(RecordPosition)}
                       className={`z-40 ${
-                        !RecordPanel?.minimized ? 'opacity-60' : 'opacity-100'
+                        !RecordPosition?.minimized
+                          ? 'opacity-60'
+                          : 'opacity-100'
                       }`}
                     >
                       {recordType.icon}

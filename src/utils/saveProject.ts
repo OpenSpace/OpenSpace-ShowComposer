@@ -1,10 +1,11 @@
-import { useComponentStore, useSettingsStore } from '@/store';
+import { useComponentStore, usePositionStore, useSettingsStore } from '@/store';
 
 //save out the store to a json file that is saved to drive
 export const saveStore = () => {
   const componentStore = useComponentStore.getState();
   const settingsStore = useSettingsStore.getState();
-  const store = { componentStore, settingsStore };
+  const positionStore = usePositionStore.getState();
+  const store = { componentStore, settingsStore, positionStore };
   const storeString = JSON.stringify(store);
   const blob = new Blob([storeString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -29,6 +30,7 @@ export const loadStore = async () => {
           //   console.log(store);
           useComponentStore.setState(store.componentStore);
           useSettingsStore.setState(store.settingsStore);
+          usePositionStore.setState(store.positionStore);
         }
       };
       reader.readAsText(file);

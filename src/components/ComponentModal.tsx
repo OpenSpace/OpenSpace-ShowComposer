@@ -50,6 +50,7 @@ import {
 import { SetNavModal } from './types/preset/SetNavigation';
 import { PageModal } from './types/preset/Page';
 import { getCopy } from '@/utils/copyHelpers';
+
 interface ComponentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -71,12 +72,10 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   onCancel,
   componentId,
   type,
-  // isMulti = false,
   initialData = {},
   icon,
 }) => {
   const addComponent = useComponentStore((state) => state.addComponent);
-  // const getComponentById = useComponentStore((state) => state.getComponentById);
   const updateComponent = useComponentStore((state) => state.updateComponent);
   const asyncPreSubmitOperation = useComponentStore(
     (state) => state.asyncPreSubmitOperation,
@@ -94,10 +93,10 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   });
   useEffect(() => {
     if (asyncOperationStatus == AsyncStatus.Pending && componentData) {
-      // handleSubmit();
       setAsyncOperationStatus(AsyncStatus.True);
     }
   }, [asyncOperationStatus, componentData]);
+
   const handleSubmit = useCallback(async () => {
     if (componentId) {
       if (useComponentStore.getState().asyncPreSubmitOperation) {
@@ -129,20 +128,26 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             ...componentData,
           });
         } else {
+          console.log(
+            'ADDING or UPDATING COMPONENT: ',
+            componentId,
+            componentData,
+          );
           addComponent({
             id: componentId,
             type: type || 'default',
             isMulti: initialData.isMulti || 'false',
-            x: 0,
-            y: 0,
-            minWidth: 50,
-            minHeight: 50,
-            width: 300,
-            height: 175,
+            // x: 0,
+            // y: 0,
+            // minWidth: 50,
+            // minHeight: 50,
+            // width: 300,
+            // height: 175,
             gui_description: '',
             gui_name: '',
             ...componentData,
           });
+
           if (type == 'multi') {
             Object.entries(components)
               .filter(

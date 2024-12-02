@@ -455,7 +455,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
         // triggerAnimation();
       }}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-center justify-center gap-2">
         <ButtonLabel>
           {gui_name}
           <Information content={gui_description} />

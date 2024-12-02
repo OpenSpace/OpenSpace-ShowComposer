@@ -24,6 +24,7 @@ import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useShallow } from 'zustand/react/shallow';
 
 interface FadeGUIProps {
   component: FadeComponent;
@@ -88,8 +89,14 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
           : property?.value == 0
             ? 'outline-red-500'
             : 'outline-grey-500'
-      } outline outline-4 outline-offset-2 transition-[outline-color] duration-300 `}
+      } flex items-center justify-center outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
       backgroundImage={component.backgroundImage}
+      style={{
+        top: '4px',
+        left: '4px',
+        width: 'calc(100% - 8px)', // Adjust width to account for outline width and offset
+        height: 'calc(100% - 8px)', // Adjust height to account for outline width and offset
+      }}
       onClick={() => {
         component.triggerAction?.();
       }}
@@ -97,7 +104,6 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
       <StatusBarControlled progress={property?.value} debounceDuration={250} />
       <ButtonLabel>
         <div className="flex flex-row gap-2">
-          {/* {property?.value * 100} */}
           {component.gui_name}
           <Information content={component.gui_description} />
         </div>
@@ -118,13 +124,15 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const properties = usePropertyStore((state) =>
-    Object.keys(state.properties)
-      .filter((a) => a.endsWith('.Fade'))
-      .reduce((acc: Record<string, any>, key: string) => {
-        acc[key] = state.properties[key];
-        return acc;
-      }, {}),
+  const properties = usePropertyStore(
+    useShallow((state) =>
+      Object.keys(state.properties)
+        .filter((a) => a.endsWith('.Fade'))
+        .reduce((acc: Record<string, any>, key: string) => {
+          acc[key] = state.properties[key];
+          return acc;
+        }, {}),
+    ),
   );
   const Visibility = usePropertyStore(
     (state) => state.properties[EnginePropertyVisibilityKey],

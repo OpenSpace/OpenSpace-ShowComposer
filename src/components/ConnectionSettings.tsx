@@ -19,7 +19,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   triggerButton,
 }) => {
   const initialState = useSettingsStore((state) => ({
-    url: state.url,
+    url: state.ip,
     port: state.port,
   }));
   const enhancedTriggerButton = triggerButton
@@ -60,26 +60,6 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   }, []);
   useEffect(() => {
     if (prevPort !== initialState.port || prevUrl !== initialState.url) {
-      // disconnect();
-      // switch (connectionState) {
-      //   case ConnectionState.CONNECTED:
-      //     console.log('Connected to OpenSpace');
-      //     disconnect();
-      //     connect(url, parseInt(port));
-      //     break;
-      //   case ConnectionState.CONNECTING:
-      //     console.log('Connecting to OpenSpace');
-      //     disconnect();
-      //     connect(url, parseInt(port));
-      //     break;
-      //   case ConnectionState.UNCONNECTED:
-      //     console.log('Disconnected from OpenSpace');
-      //     connect(url, parseInt(port));
-      //     break;
-      //   default:
-      //     console.log('Unknown connection state');
-      // }
-      // connect();
       forceRefresh();
       setPrevPort(initialState.port);
       setPrevUrl(initialState.url);
@@ -102,7 +82,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent className="bg-white">
+        <TooltipContent side="left" className="bg-white">
           {getCopy('ConnectionSettings', 'openspace_connection_settings')}
         </TooltipContent>
       </Tooltip>

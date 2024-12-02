@@ -10,12 +10,13 @@ import {
   StatusComponent,
   RecordComponent,
 } from '@/store/componentsStore';
-import { useComponentStore, useSettingsStore } from '@/store';
+import { useSettingsStore } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import FeedbackPanel from './FeedbackPanel';
 import RecordPanel from './types/static/SessionPanel';
 import { cn } from '@/lib/utils';
+import { usePositionStore } from '@/store/positionStore';
 interface PanelProps {
   component: TimeComponent | NavComponent | StatusComponent | RecordComponent;
   originX?: number;
@@ -27,14 +28,16 @@ const DraggablePanel: React.FC<PanelProps> = ({
   originX = 0,
   originY = 0,
 }) => {
-  const updatePanel = useComponentStore((state) => state.updatePanel);
+  const position = usePositionStore((state) => state.positions[component.id]);
+  const updatePosition = usePositionStore((state) => state.updatePosition);
   const [isDragging, setIsDragging] = useState(false);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
+  if (!position || !component) return null;
+
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
     setIsDragging(false);
-    updatePanel({
-      type: component.type,
+    updatePosition(component.id, {
       x: roundToNearest(d.x, 25),
       y: roundToNearest(d.y, 25),
     });
@@ -56,9 +59,8 @@ const DraggablePanel: React.FC<PanelProps> = ({
   };
 
   const minimize = () => {
-    updatePanel({
-      type: component.type,
-      minimized: !component.minimized,
+    updatePosition(component.id, {
+      minimized: !position.minimized,
     });
   };
 
@@ -66,17 +68,17 @@ const DraggablePanel: React.FC<PanelProps> = ({
     <Rnd
       dragHandleClassName={'drag-handle'}
       default={{
-        x: component?.x,
-        y: component?.y,
-        width: component?.width,
-        height: component?.height,
+        x: position?.x,
+        y: position?.y,
+        width: position?.width,
+        height: position?.height,
       }}
       position={{
-        x: Math.max(component?.x, 0),
-        y: Math.max(component?.y, 0),
+        x: Math.max(position?.x, 0),
+        y: Math.max(position?.y, 0),
       }}
       scale={isPresentMode ? 1.0 : scale}
-      size={{ width: component?.width, height: component?.height }}
+      size={{ width: position?.width, height: position?.height }}
       onDragStart={() => {
         setIsDragging(true);
       }}
@@ -85,13 +87,13 @@ const DraggablePanel: React.FC<PanelProps> = ({
       // disableDragging={isPresentMode} // Conditionally disable dragging
       enableResizing={false} // Conditionally disable resizing
       resizeGrid={[25, 25]}
-      minHeight={component?.minHeight || 100}
-      minWidth={component?.minWidth || 100}
+      minHeight={position?.minHeight || 100}
+      minWidth={position.minWidth || 100}
       style={{
         zIndex: 50,
         transformOrigin: `${originX}px ${originY}px`,
       }}
-      data-state={component?.minimized ? 'closed' : 'open'}
+      data-state={position?.minimized ? 'closed' : 'open'}
       // data-side="top"
       className={cn(
         'absolute cursor-move',

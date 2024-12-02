@@ -22,6 +22,7 @@ import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useShallow } from 'zustand/react/shallow';
 
 interface FocusGUIProps {
   component: SetFocusComponent;
@@ -116,7 +117,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const properties = usePropertyStore((state) => state.properties);
+  const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(

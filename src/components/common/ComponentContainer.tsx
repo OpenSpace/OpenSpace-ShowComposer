@@ -5,6 +5,7 @@ interface ComponentContainerProps {
   onClick?: () => void;
   backgroundImage?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const ComponentContainer: React.FC<ComponentContainerProps> = ({
@@ -12,6 +13,7 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
   onClick,
   backgroundImage,
   className,
+  style,
 }) => {
   return (
     <div
@@ -24,6 +26,7 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${backgroundImage})`,
+        ...style,
       }}
       onClick={onClick}
     >

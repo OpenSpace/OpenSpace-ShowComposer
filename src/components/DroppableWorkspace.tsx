@@ -1,6 +1,6 @@
 // DroppableWorkspace.tsx
 import React, { useState, useEffect } from 'react';
-import { useComponentStore, useSettingsStore, LayoutType } from '@/store';
+import { useComponentStore, useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import SelectionTool from '@/components/SelectionTool';
 import { Badge } from './ui/badge';
@@ -9,7 +9,6 @@ import AdjustablePage from './AdjustablePage';
 import ScaleGUI from './ScaleGUI';
 import { ConnectionStatus } from './ConnectionSettings';
 import { cn } from '@/lib/utils';
-import { LayoutToolbar } from './layouts/DraggableLayouts';
 
 const DroppableWorkspace: React.FC<{
   children: React.ReactNode;
@@ -26,36 +25,6 @@ const DroppableWorkspace: React.FC<{
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
-
-  // Handle layout creation from toolbar
-  const handleLayoutCreate = (type: LayoutType) => {
-    const store = useComponentStore.getState();
-    const defaultSizes = {
-      row: { width: 400, height: 200 },
-      column: { width: 200, height: 400 },
-      grid: { width: 600, height: 600 },
-    } as const;
-
-    // Calculate center of visible area
-    const workspace = document.getElementById('innerContainer');
-    if (!workspace) return;
-
-    const rect = workspace.getBoundingClientRect();
-    const currentScale = useSettingsStore.getState().pageScale;
-
-    // Center the layout in the visible area
-    const centerX =
-      (rect.width / 2 - defaultSizes[type].width / 2) / currentScale;
-    const centerY =
-      (rect.height / 2 - defaultSizes[type].height / 2) / currentScale;
-
-    return store.addLayout({
-      type,
-      x: Math.round(centerX / 25),
-      y: Math.round(centerY / 25),
-      ...defaultSizes[type],
-    });
-  };
 
   // Wheel and mouse handlers remain the same
   const handleWheel = (event: React.WheelEvent) => {
@@ -126,7 +95,7 @@ const DroppableWorkspace: React.FC<{
   return (
     <>
       <div
-        id="workspace"
+        // id="workspace"
         className={cn(
           'relative h-full w-full rounded-lg border border-slate-200 bg-white text-slate-950',
           'dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500',
@@ -149,7 +118,7 @@ const DroppableWorkspace: React.FC<{
             <ConnectionStatus />
           </div>
         )}
-        {/* {!isPresentMode && <SelectionTool />} */}
+        {!isPresentMode && <SelectionTool />}
 
         <div
           onWheel={handleWheel}
@@ -185,11 +154,11 @@ const DroppableWorkspace: React.FC<{
       <div className="absolute right-5 top-7 flex flex-col items-center justify-center gap-2">
         {!isPresentMode && <ScaleGUI />}
       </div>
-      <div className="absolute left-5 top-12 flex flex-col items-center justify-center gap-2">
+      {/* <div className="absolute left-5 top-12 flex flex-col items-center justify-center gap-2">
         {!isPresentMode && (
           <LayoutToolbar onLayoutCreate={handleLayoutCreate} />
         )}
-      </div>
+      </div> */}
     </>
   );
 };

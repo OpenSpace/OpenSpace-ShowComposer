@@ -110,6 +110,7 @@ const AdjustablePage: React.FC = () => {
             {!locked && (
               <div className="absolute right-14 top-3">
                 <ButtonLabel
+                  resize={false}
                   className={cn(
                     'text-xs text-slate-700 dark:text-slate-200',
                     'transition-opacity duration-500',
@@ -121,7 +122,10 @@ const AdjustablePage: React.FC = () => {
               </div>
             )}
             <div className="absolute left-3 top-3">
-              <ButtonLabel className="text-xs text-slate-700 dark:text-slate-200">
+              <ButtonLabel
+                resize={false}
+                className="text-xs text-slate-700 dark:text-slate-200"
+              >
                 {getCopy('AdjustablePage', 'page')} {currentPageIndex + 1}
               </ButtonLabel>
             </div>

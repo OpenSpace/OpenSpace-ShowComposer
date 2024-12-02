@@ -5,10 +5,12 @@ import { persist, devtools } from 'zustand/middleware';
 import { roundToNearest } from '@/utils/math';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  calculateComponentDimensions,
+  calculateTotalLayoutHeight,
   calculateTotalLayoutWidth,
-  calculateLayoutDimensions,
+  calculateGridIndex,
 } from '@/utils/layoutCalculations';
+import { usePositionStore } from './positionStore';
+// import { usePropertyStore } from './propertyStore';
 
 export type LayoutType = 'row' | 'column' | 'grid';
 
@@ -51,34 +53,20 @@ interface ComponentBase {
   lockName?: boolean;
   gui_name: string;
   gui_description: string;
-  x: number;
-  y: number;
-  minWidth: number;
-  minHeight: number;
-  width: number;
-  height: number;
-  originalX?: number;
-  originalY?: number;
-  // originalWidth?: number;
-  // originalHeight?: number;
 }
 
 export interface TimeComponent extends ComponentBase {
   type: 'timepanel';
-  minimized: boolean;
 }
 export interface NavComponent extends ComponentBase {
   type: 'navpanel';
-  minimized: boolean;
 }
 export interface StatusComponent extends ComponentBase {
   type: 'statuspanel';
-  minimized: boolean;
 }
 
 export interface RecordComponent extends ComponentBase {
   type: 'recordpanel';
-  minimized: boolean;
 }
 
 export interface RichTextComponent extends ComponentBase {
@@ -191,14 +179,12 @@ export interface PageComponent extends ComponentBase {
 export interface LayoutBase {
   id: string;
   type: LayoutType;
-  children: string[]; // Array of component IDs
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  minWidth: number;
-  minHeight: number;
-  isCollapsed?: boolean;
+  rows: number;
+  columns: number;
+  children: (string | null)[]; // Array of component IDs
+  padding: number;
+  childWidth: number;
+  childHeight: number;
 }
 
 export type MultiOption =
@@ -303,11 +289,7 @@ interface Position {
   y: number;
 }
 
-interface TempPositions {
-  [key: string]: Position;
-}
-
-function addPage(state: State) {
+function addPage(state: ComponentState) {
   const newId = uuidv4();
   const newPage: Page = {
     id: newId,
@@ -320,7 +302,7 @@ function addPage(state: State) {
   state.currentPage = newPage.id;
 }
 
-interface State {
+export interface ComponentState {
   pages: Array<Page>;
   updatePage: (id: Page['id'], data: Partial<Page>) => void;
   currentPage: Page['id'];
@@ -329,12 +311,7 @@ interface State {
   navpanel: NavComponent | null;
   statuspanel: StatusComponent | null;
   recordpanel: RecordComponent | null;
-  tempPositions: TempPositions;
-  setTempPositions: (newPositions: TempPositions) => void;
-  setTempPosition: (id: string, x: number, y: number) => void;
   components: Record<string, Component>;
-  overlappedComponents: { [key: Component['id']]: Component['id'][] }; // Map component ID to list of overlapping component IDs
-  selectedComponents: Component['id'][];
   addComponentToPageById: (
     componentId: Component['id'],
     pageId: Page['id'],
@@ -356,42 +333,50 @@ interface State {
   getPageById: (id: string) => Page;
   addComponent: (component: Component) => void;
   updateComponent: (id: Component['id'], updates: Partial<Component>) => void;
-  updateComponentPosition: (id: Component['id'], x: number, y: number) => void;
   removeComponent: (id: Component['id']) => void;
   removeAllComponents: () => void;
-  selectComponent: (id: Component['id']) => void;
-  deselectComponent: (id: Component['id']) => void;
-  clearSelection: () => void;
-  checkOverlap: (component: Component) => Component | null;
   asyncPreSubmitOperation: (() => any) | null;
   resetAsyncPreSubmitOperation: () => void;
   setAsyncPreSubmitOperation: (operation: (() => any) | null) => void;
   executeAndResetAsyncPreSubmitOperation: () => void;
   layouts: Record<string, LayoutBase>;
+  updateLayout: (id: string, updates: Partial<LayoutBase>) => void;
   addLayout: (config: {
     type: LayoutType;
     x: number;
     y: number;
-    width: number;
-    height: number;
+    rows?: number;
+    columns?: number;
   }) => string;
-  addComponentToLayout: (layoutId: string, componentId: string) => void;
+  reorderComponentInLayout: (
+    layoutId: string,
+    componentId: string,
+    x: number,
+    y: number,
+  ) => void;
+  resizeComponentsInLayout: (layoutId: string) => void;
+  handleComponentDrop: (componentId: string, x: number, y: number) => void;
+  addComponentToLayout: (
+    layoutId: string,
+    componentId: string,
+    x: number,
+    y: number,
+  ) => void;
+  getGridPosition: (layoutId: string, gridIndex: number) => Position;
   removeComponentFromLayout: (
     layoutId: string,
     componentId: string,
     x: number,
     y: number,
   ) => void;
-  reorderLayoutComponents: (layoutId: string, newOrder: string[]) => void;
-  updateLayout: (layoutId: string, updates: Partial<LayoutBase>) => void;
+  deleteLayout: (layoutId: string) => void;
 }
 
-// First, let's create a type guard to check if something is a Component
-function isComponent(item: Component | LayoutBase): item is Component {
+export function isComponent(item: Component | LayoutBase): item is Component {
   return 'isMulti' in item;
 }
 
-export const useComponentStore = create<State>()(
+export const useComponentStore = create<ComponentState>()(
   devtools(
     persist(
       immer((set, get) => ({
@@ -403,27 +388,52 @@ export const useComponentStore = create<State>()(
         recordpanel: null,
         currentPage: '',
         components: {},
-        tempPositions: {},
-        overlappedComponents: {},
-        selectedComponents: [],
+        // tempPositions: {},
+        // overlappedComponents: {},
+        // selectedComponents: [],
         layouts: {},
+        updateLayout: (id, updates) => {
+          set((state) => {
+            state.layouts[id] = { ...state.layouts[id], ...updates };
+          });
+          get().resizeComponentsInLayout(id);
+        },
         addLayout: (config) => {
           const id = uuidv4();
 
           set((state) => {
+            const rows = config.rows || 1;
+            const columns = config.columns || 1;
+
             // Create the layout
             state.layouts[id] = {
               id,
               type: config.type,
-              children: [],
+              children:
+                config.type === 'grid'
+                  ? new Array(rows * columns).fill(null)
+                  : [],
+              rows,
+              columns,
+              padding: 25,
+              childWidth: 200,
+              childHeight: 200,
+            };
+            console.log('new layout', state.layouts[id]);
+            usePositionStore.getState().addPosition(id, {
               x: config.x,
               y: config.y,
-              width: config.width,
-              height: config.height,
-              minWidth: 200,
-              minHeight: 100,
-              isCollapsed: false,
-            };
+              minWidth: 50,
+              minHeight: 50,
+              width:
+                (state.layouts[id].childWidth + state.layouts[id].padding) *
+                  state.layouts[id].columns +
+                state.layouts[id].padding,
+              height:
+                (state.layouts[id].childHeight + state.layouts[id].padding) *
+                  state.layouts[id].rows +
+                state.layouts[id].padding,
+            });
 
             // Add layout to current page
             const page = state.pages.find((p) => p.id === state.currentPage);
@@ -434,134 +444,345 @@ export const useComponentStore = create<State>()(
 
           return id;
         },
+        handleComponentDrop: (componentId: string, x: number, y: number) => {
+          const layouts = get().layouts;
+          let targetLayout: LayoutBase | null = null;
+          const currentLayoutId = Object.keys(layouts).find((id) =>
+            layouts[id].children.includes(componentId),
+          );
 
-        addComponentToLayout: (layoutId, componentId) =>
-          set((state) => {
-            const layout = state.layouts[layoutId];
-            const component = state.components[componentId];
+          const { width, height } =
+            usePositionStore.getState().positions[componentId];
 
-            if (layout && component && isComponent(component)) {
-              if (!layout.children.includes(componentId)) {
-                layout.children.push(componentId);
+          const adjustedPosition = currentLayoutId
+            ? usePositionStore
+                .getState()
+                .adjustPositionForParent(currentLayoutId, x, y)
+            : { x, y };
 
-                const dimensions = calculateComponentDimensions(
-                  layout,
-                  layout.children.length - 1,
-                  component,
-                  layout.children.length,
+          // Find the layout the component is over
+          Object.entries(layouts).forEach(([_id, layout]) => {
+            console.log('layout', layout);
+
+            if (
+              usePositionStore
+                .getState()
+                .isOverLayout(
+                  adjustedPosition.x + width / 2.0,
+                  adjustedPosition.y + height / 2.0,
+                  layout.id,
+                )
+            ) {
+              targetLayout = layout;
+            }
+          });
+
+          if (currentLayoutId) {
+            // Component belongs to a layout
+            if (targetLayout) {
+              if ((targetLayout as LayoutBase).id === currentLayoutId) {
+                // Over the same layout, reorder if needed
+                get().reorderComponentInLayout(
+                  currentLayoutId,
+                  componentId,
+                  x,
+                  y,
                 );
-
-                Object.assign(component, dimensions);
+                get().resizeComponentsInLayout(currentLayoutId);
+              } else {
+                // Over a different layout, move to new layout
+                console.log('MOVING TO NEW LAYOUT');
+                get().removeComponentFromLayout(
+                  currentLayoutId,
+                  componentId,
+                  x,
+                  y,
+                );
+                get().addComponentToLayout(
+                  (targetLayout as LayoutBase).id,
+                  componentId,
+                  adjustedPosition.x,
+                  adjustedPosition.y,
+                );
+                // get().reorderComponentInLayout(
+                //   (targetLayout as LayoutBase).id,
+                //   componentId,
+                //   adjustedPosition.x,
+                //   adjustedPosition.y,
+                // );
+                get().resizeComponentsInLayout((targetLayout as LayoutBase).id);
+                get().resizeComponentsInLayout(currentLayoutId);
               }
-
-              // Update layout dimensions based on type
-              const layoutDimensions = calculateLayoutDimensions(
-                layout,
-                state.components,
+            } else {
+              // Not over any layout, remove from current layout
+              get().removeComponentFromLayout(
+                currentLayoutId,
+                componentId,
+                x,
+                y,
               );
-              Object.assign(layout, layoutDimensions);
+              get().resizeComponentsInLayout(currentLayoutId);
             }
-          }),
-
-        removeComponentFromLayout: (layoutId, componentId, x, y) =>
-          set((state) => {
-            const layout = state.layouts[layoutId];
-            const component = state.components[componentId];
-
-            if (layout && component && isComponent(component)) {
-              layout.children = layout.children.filter(
-                (id) => id !== componentId,
+          } else {
+            // Component does not belong to a layout
+            if (targetLayout) {
+              //add to new layout
+              get().addComponentToLayout(
+                (targetLayout as LayoutBase).id,
+                componentId,
+                x,
+                y,
               );
-              component.x = x + layout.x;
-              component.y = y + layout.y;
-
-              layout.children.forEach((childId, index) => {
-                const child = state.components[childId];
-                if (child && isComponent(child)) {
-                  const dimensions = calculateComponentDimensions(
-                    layout,
-                    index,
-                    child,
-                    layout.children.length,
-                  );
-                  Object.assign(child, dimensions);
-                }
+              get().reorderComponentInLayout(
+                (targetLayout as LayoutBase).id,
+                componentId,
+                x,
+                y,
+              );
+              get().resizeComponentsInLayout((targetLayout as LayoutBase).id);
+            } else {
+              // Update position normally
+              usePositionStore.getState().updatePosition(componentId, {
+                isDragging: false,
+                x: roundToNearest(x, 25),
+                y: roundToNearest(y, 25),
               });
-
-              layout.width = calculateTotalLayoutWidth(
-                state.components,
-                layout,
-              );
             }
-          }),
-
-        reorderLayoutComponents: (layoutId, newOrder) =>
+          }
+        },
+        addComponentToLayout: (
+          layoutId: string,
+          componentId: string,
+          x: number,
+          y: number,
+        ) => {
           set((state) => {
             const layout = state.layouts[layoutId];
             if (layout) {
-              layout.children = newOrder;
-              // Recalculate positions based on new order
-              newOrder.forEach((componentId, index) => {
-                const component = state.components[componentId];
-                if (component) {
-                  switch (layout.type) {
-                    case 'row':
-                      component.x =
-                        layout.x + index * (layout.width / newOrder.length);
-                      break;
-                    case 'column':
-                      component.y =
-                        layout.y + index * (layout.height / newOrder.length);
-                      break;
-                    case 'grid': {
-                      const cols = Math.ceil(Math.sqrt(newOrder.length));
-                      const row = Math.floor(index / cols);
-                      const col = index % cols;
-                      component.x = layout.x + col * (layout.width / cols);
-                      component.y = layout.y + row * (layout.height / cols);
-                      break;
-                    }
-                  }
+              const adjustedPosition = usePositionStore
+                .getState()
+                .adjustPositionForLayout(layoutId, x, y);
+
+              if (layout.type === 'grid') {
+                const { gridIndex, gridPosition } = calculateGridIndex(
+                  adjustedPosition.x,
+                  adjustedPosition.y,
+                  layout,
+                );
+                if (layout.children[gridIndex] === null) {
+                  usePositionStore.getState().updatePosition(componentId, {
+                    x: gridPosition.x,
+                    y: gridPosition.y,
+                    width: layout.childWidth,
+                    height: layout.childHeight,
+                  });
+                  layout.children[gridIndex] = componentId;
                 }
-              });
-            }
-          }),
-
-        updateLayout: (layoutId, updates) =>
-          set((state) => {
-            const layout = state.layouts[layoutId];
-            if (layout) {
-              Object.assign(layout, updates);
-
-              if (updates.width || updates.height) {
-                layout.children.forEach((childId, index) => {
-                  const component = state.components[childId];
-                  if (component && isComponent(component)) {
-                    const dimensions = calculateComponentDimensions(
-                      layout,
-                      index,
-                      component,
-                      layout.children.length,
-                    );
-                    Object.assign(component, dimensions);
-                  }
+              } else {
+                usePositionStore.getState().updatePosition(componentId, {
+                  x: adjustedPosition.x,
+                  y: adjustedPosition.y,
+                  width: layout.childWidth,
+                  height: layout.childHeight,
                 });
-
-                layout.width = calculateTotalLayoutWidth(
-                  state.components,
-                  layout,
-                );
+                layout.children.push(componentId);
               }
             }
-          }),
-        setTempPosition(id, x, y) {
-          set((state) => {
-            state.tempPositions[id] = { x, y };
           });
         },
-        setTempPositions(newPositions: TempPositions) {
+
+        getGridPosition: (layoutId: string, gridIndex: number) => {
+          const layout = get().layouts[layoutId];
+          const { columns, childWidth, childHeight, padding } = layout;
+          return {
+            x: padding + (gridIndex % columns) * (childWidth + padding),
+            y:
+              padding +
+              Math.floor(gridIndex / columns) * (childHeight + padding),
+          };
+        },
+        removeComponentFromLayout: (
+          layoutId: string,
+          componentId: string,
+          x: number,
+          y: number,
+        ) => {
           set((state) => {
-            state.tempPositions = newPositions;
+            const layout = state.layouts[layoutId];
+            if (layout) {
+              if (layout.type === 'grid') {
+                const gridIndex = layout.children.findIndex(
+                  (id) => id === componentId,
+                );
+                if (gridIndex !== -1) {
+                  layout.children[gridIndex] = null;
+                }
+              } else {
+                layout.children = layout.children.filter(
+                  (id) => id !== componentId,
+                );
+              }
+              //
+              const position =
+                usePositionStore.getState().positions[componentId];
+              const layoutPosition =
+                usePositionStore.getState().positions[layoutId];
+              if (position) {
+                usePositionStore.getState().updatePosition(componentId, {
+                  x: x + layoutPosition.x,
+                  y: y + layoutPosition.y,
+                });
+              }
+            }
+          });
+        },
+
+        resizeComponentsInLayout: (layoutId: string) => {
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            if (!layout) {
+              console.error(`Layout with ID ${layoutId} not found.`);
+              return;
+            }
+            console.log('RESIZING COMPONENTS IN LAYOUT');
+            if (layout.type === 'row') {
+              const totalLayoutWidth = calculateTotalLayoutWidth(
+                layout,
+                layout.children.length,
+              );
+              usePositionStore.getState().updatePosition(layoutId, {
+                width: totalLayoutWidth,
+              });
+            } else if (layout.type === 'column') {
+              const totalLayoutHeight = calculateTotalLayoutHeight(
+                layout,
+                layout.children.length,
+              );
+
+              usePositionStore.getState().updatePosition(layoutId, {
+                height: totalLayoutHeight,
+              });
+            }
+
+            layout.children.forEach((childId, index) => {
+              if (layout.type === 'row') {
+                const child =
+                  usePositionStore.getState().positions[childId as string];
+                if (child) {
+                  usePositionStore
+                    .getState()
+                    .updatePosition(childId as string, {
+                      x:
+                        index * (layout.childWidth + layout.padding) +
+                        layout.padding,
+                      y: layout.padding,
+                      width: layout.childWidth,
+                      height: layout.childHeight,
+                    });
+                }
+              } else if (layout.type === 'column') {
+                const child =
+                  usePositionStore.getState().positions[childId as string];
+                if (child) {
+                  usePositionStore
+                    .getState()
+                    .updatePosition(childId as string, {
+                      x: layout.padding,
+                      y:
+                        index * (layout.childHeight + layout.padding) +
+                        layout.padding,
+                      width: layout.childWidth,
+                      height: layout.childHeight,
+                    });
+                }
+              } else {
+                const position = get().getGridPosition(layoutId, index);
+                usePositionStore.getState().updatePosition(childId as string, {
+                  x: position.x,
+                  y: position.y,
+                  width: layout.childWidth,
+                  height: layout.childHeight,
+                });
+              }
+            });
+          });
+        },
+        reorderComponentInLayout(
+          layoutId: string,
+          componentId: string,
+          x: number,
+          y: number,
+        ) {
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            if (!layout) {
+              console.error(`Layout with ID ${layoutId} not found.`);
+              return;
+            }
+
+            const components = layout.children
+              .filter((id) => id !== null)
+              .map((id) => {
+                return usePositionStore.getState().positions[id as string];
+              });
+
+            let newIndex: number | null = null;
+            const currentIndex = layout.children.indexOf(componentId);
+
+            if (layout.type === 'row') {
+              components.forEach((component, index) => {
+                if (componentId !== layout.children[index]) {
+                  if (
+                    x + layout.childWidth / 2.0 > component.x &&
+                    x + layout.childWidth / 2.0 < component.x + component.width
+                  ) {
+                    newIndex = index;
+                  }
+                }
+              });
+
+              if (newIndex !== null && newIndex !== currentIndex) {
+                layout.children = layout.children.filter(
+                  (id) => id !== componentId,
+                );
+                layout.children.splice(newIndex, 0, componentId);
+              }
+            } else if (layout.type === 'column') {
+              components.forEach((component, index) => {
+                if (componentId !== layout.children[index]) {
+                  if (
+                    y + layout.childHeight / 2.0 > component.y &&
+                    y + layout.childHeight / 2.0 <
+                      component.y + component.height
+                  ) {
+                    newIndex = index;
+                  }
+                }
+              });
+
+              if (newIndex !== null && newIndex !== currentIndex) {
+                layout.children = layout.children.filter(
+                  (id) => id !== componentId,
+                );
+                layout.children.splice(newIndex, 0, componentId);
+              }
+            } else if (layout.type === 'grid') {
+              const { gridIndex, gridPosition } = calculateGridIndex(
+                x,
+                y,
+                layout,
+              );
+              if (layout.children[gridIndex] === null) {
+                usePositionStore.getState().updatePosition(componentId, {
+                  x: gridPosition.x,
+                  y: gridPosition.y,
+                  width: layout.childWidth,
+                  height: layout.childHeight,
+                });
+                layout.children[currentIndex] = null;
+                layout.children[gridIndex] = componentId;
+              }
+            }
           });
         },
         getComponentById: (id: Component['id']) => {
@@ -644,58 +865,66 @@ export const useComponentStore = create<State>()(
               id: uuidv4(),
               type: 'timepanel',
               isMulti: 'false' as MultiState,
-              minimized: true,
+              gui_name: 'Time Panel',
+              gui_description: '',
+            };
+            usePositionStore.getState().addPosition(state.timepanel.id, {
               x: 250,
               y: 500,
               minWidth: 325,
               minHeight: 425,
               width: 325,
               height: 425,
-              gui_name: 'Time Panel',
-              gui_description: '',
-            };
+              minimized: true,
+            });
             state.navpanel = {
               id: uuidv4(),
               type: 'navpanel',
               isMulti: 'false' as MultiState,
-              minimized: true,
+              gui_name: 'Nav Panel',
+              gui_description: '',
+            };
+            usePositionStore.getState().addPosition(state.navpanel.id, {
               x: 0,
               y: 600,
               minWidth: 225,
               minHeight: 325,
               width: 225,
               height: 325,
-              gui_name: 'Nav Panel',
-              gui_description: '',
-            };
+              minimized: true,
+            });
             state.statuspanel = {
               id: uuidv4(),
               type: 'statuspanel',
               isMulti: 'false' as MultiState,
-              minimized: true,
+              gui_name: 'Status Panel',
+              gui_description: '',
+            };
+            usePositionStore.getState().addPosition(state.statuspanel.id, {
               x: 600,
               y: 675,
               minWidth: 275,
               minHeight: 250,
               width: 275,
               height: 250,
-              gui_name: 'Status Panel',
-              gui_description: '',
-            };
+              minimized: true,
+            });
             state.recordpanel = {
               id: uuidv4(),
               type: 'recordpanel',
               isMulti: 'false' as MultiState,
-              minimized: true,
+              gui_name: 'Record Panel',
+              gui_description: '',
+            };
+            usePositionStore.getState().addPosition(state.recordpanel.id, {
               x: 895,
               y: 575,
               minWidth: 275,
               minHeight: 400,
               width: 275,
               height: 400,
-              gui_name: 'Record Panel',
-              gui_description: '',
-            };
+              minimized: true,
+            });
           }),
         updatePanel: (
           updates: Partial<
@@ -742,6 +971,14 @@ export const useComponentStore = create<State>()(
               state.components[component.id] = {
                 ...component,
               };
+              usePositionStore.getState().addPosition(component.id, {
+                x: 0,
+                y: 0,
+                minWidth: 50,
+                minHeight: 50,
+                width: 300,
+                height: 175,
+              });
               if (state.pages.length === 0) {
                 addPage(state);
               } else {
@@ -764,28 +1001,18 @@ export const useComponentStore = create<State>()(
             false,
             'component/update',
           ),
-        updateComponentPosition: (id, x, y) =>
-          set(
-            (state) => {
-              const component = state.getComponentById(id);
-              if (component) {
-                component.x = roundToNearest(Math.max(component.x + x, 0), 40);
-                component.y = roundToNearest(Math.max(component.y + y, 0), 40);
-              }
-            },
-            false,
-            'component/updatePosition',
-          ),
         removeComponent: (id) =>
           set(
             (state) => {
+              delete state.components[id];
+              usePositionStore.getState().deletePosition(id);
               // state.components = state.componentsfilter(
               //   (comp) => comp.id !== id,
               // );.
-              delete state.components[id];
               // release multi
               // const component = state.components.find((v) => v.id == id);
               const component = state.getComponentById(id);
+              console.log('component', component);
               if (component?.type == 'multi') {
                 (component as MultiComponent).components.forEach((c) => {
                   if (state.components[c.component].isMulti == 'true') {
@@ -793,16 +1020,24 @@ export const useComponentStore = create<State>()(
                   }
                 });
               }
+
+              //if component is in a layout, remove from layout
+              // Object.keys(state.layouts).forEach((layoutId) => {
+              //   if (state.layouts[layoutId].children.includes(id)) {
+              //     state.removeComponentFromLayout(layoutId, id, 0, 0);
+              //   }
+              // });
+              // updateLayoutAndChildrenDimensions
               state.pages = state.pages.map((page) => ({
                 ...page,
                 components: page.components.filter((compId) => compId !== id),
               }));
-              delete state.overlappedComponents[id];
-              for (const key in state.overlappedComponents) {
-                state.overlappedComponents[key] = state.overlappedComponents[
-                  key
-                ].filter((overlapId) => overlapId !== id);
-              }
+              // delete state.overlappedComponents[id];
+              // for (const key in state.overlappedComponents) {
+              //   state.overlappedComponents[key] = state.overlappedComponents[
+              //     key
+              //   ].filter((overlapId) => overlapId !== id);
+              // }
             },
             false,
             'component/remove',
@@ -811,83 +1046,18 @@ export const useComponentStore = create<State>()(
           set(
             (state) => {
               // const newId = uuidv4();
+              usePositionStore.getState().deleteAllPosition();
               state.components = {};
               state.layouts = {};
-              state.overlappedComponents = {};
-              state.selectedComponents = [];
+              // state.overlappedComponents = {};
+              // state.selectedComponents = [];
               state.pages = [];
               addPage(state);
             },
             false,
             'component/removeAll',
           ),
-        selectComponent: (id) =>
-          set(
-            (state) => {
-              if (!state.selectedComponents.includes(id)) {
-                state.selectedComponents.push(id);
-              }
-            },
-            false,
-            'component/select',
-          ),
-        deselectComponent: (id) =>
-          set(
-            (state) => {
-              state.selectedComponents = state.selectedComponents.filter(
-                (compId) => compId !== id,
-              );
-            },
-            false,
-            'component/deselect',
-          ),
-        clearSelection: () =>
-          set(
-            (state) => {
-              state.selectedComponents = [];
-            },
-            false,
-            'component/clearSelections',
-          ),
-        checkOverlap: (component) => {
-          const state = get();
-          let maxOverlapComponent: Component | null = null;
-          let maxOverlapArea = 0;
-          const overlappingComponents: string[] = [];
-          //find which page Index contains component.id
 
-          for (const c of state.getPageById(state.currentPage).components) {
-            const comp = state.components[c];
-            if (comp.id !== component.id) {
-              const overlapX = Math.max(
-                0,
-                Math.min(component.x + component.width, comp.x + comp.width) -
-                  Math.max(component.x, comp.x),
-              );
-              const overlapY = Math.max(
-                0,
-                Math.min(component.y + component.height, comp.y + comp.height) -
-                  Math.max(component.y, comp.y),
-              );
-              const overlapArea = overlapX * overlapY;
-              if (overlapArea > 0) {
-                overlappingComponents.push(comp.id);
-              }
-              if (overlapArea > maxOverlapArea) {
-                maxOverlapArea = overlapArea;
-                maxOverlapComponent = comp;
-              }
-            }
-          }
-          set((state) => {
-            state.overlappedComponents[component.id] = overlappingComponents;
-            //hacky way of doing this for now
-            overlappingComponents.forEach((overlapId) => {
-              state.overlappedComponents[overlapId] = [component.id];
-            });
-          });
-          return maxOverlapComponent;
-        },
         asyncPreSubmitOperation: null, // Async operation placeholder, this is mainly used for saving photos to disk on component save
         resetAsyncPreSubmitOperation: () =>
           set({ asyncPreSubmitOperation: null }),
@@ -905,6 +1075,35 @@ export const useComponentStore = create<State>()(
             set({ asyncPreSubmitOperation: null }); // Reset to null after execution
           }
         },
+
+        deleteLayout: (layoutId: string) =>
+          set((state) => {
+            const layout = state.layouts[layoutId];
+            // Remove the layout ID from any pages that contain it
+            state.pages.forEach((page) => {
+              page.components = page.components.filter((id) => id !== layoutId);
+            });
+
+            // Offset Component positions from Layout position
+            const layoutPosition =
+              usePositionStore.getState().positions[layoutId];
+            layout.children.forEach((componentId) => {
+              if (componentId) {
+                const position =
+                  usePositionStore.getState().positions[componentId];
+                if (position && layoutPosition) {
+                  usePositionStore.getState().updatePosition(componentId, {
+                    x: position.x + layoutPosition.x,
+                    y: position.y + layoutPosition.y,
+                  });
+                }
+              }
+            });
+            // Delete Layout Position
+            usePositionStore.getState().deletePosition(layoutId);
+            // Remove the layout from the state
+            delete state.layouts[layoutId];
+          }),
       })),
 
       { name: 'components-storage' },

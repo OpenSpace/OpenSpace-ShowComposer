@@ -281,12 +281,12 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
           fadeOutDuration={fadeOutDuration}
         />
       )}
-      <div className="flex flex-col gap-2">
-        <ButtonLabel>
-          {gui_name}
-          <Information content={gui_description} />
-        </ButtonLabel>
-      </div>
+      {/* <div className="flex flex-col gap-2"> */}
+      <ButtonLabel>
+        {gui_name}
+        <Information content={gui_description} />
+      </ButtonLabel>
+      {/* </div> */}
     </ComponentContainer>
   ) : null;
 };

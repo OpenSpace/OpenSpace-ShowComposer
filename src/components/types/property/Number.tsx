@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { formatName } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useShallow } from 'zustand/react/shallow';
 
 interface NumberGUIProps {
   component: NumberComponent;
@@ -138,7 +139,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const properties = usePropertyStore((state) => state.properties);
+  const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(

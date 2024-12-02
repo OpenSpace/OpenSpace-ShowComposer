@@ -96,7 +96,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 <Globe size={14} />
                 Lat
               </Label>
-              <ButtonLabel className="border bg-transparent px-2 text-xs">
+              <ButtonLabel
+                resize={false}
+                className="border bg-transparent px-2 text-xs"
+              >
                 {Math.round(camera.latitude * 100) / 100}&deg;
               </ButtonLabel>
             </div>
@@ -105,7 +108,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 <Globe size={14} />
                 Long
               </Label>
-              <ButtonLabel className="border bg-transparent px-2 text-xs">
+              <ButtonLabel
+                resize={false}
+                className="border bg-transparent px-2 text-xs"
+              >
                 {Math.round(camera.longitude * 100) / 100}&deg;
               </ButtonLabel>
             </div>
@@ -114,7 +120,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 <ArrowUpFromDot size={14} />
                 Alt
               </Label>
-              <ButtonLabel className="text-nowrap border bg-transparent px-2 text-xs">
+              <ButtonLabel
+                resize={false}
+                className="text-nowrap border bg-transparent px-2 text-xs"
+              >
                 {Math.round(camera.altitude * 1) / 1} {camera.altitudeUnit}
               </ButtonLabel>
             </div>
