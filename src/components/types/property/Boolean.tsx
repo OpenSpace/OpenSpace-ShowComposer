@@ -21,6 +21,7 @@ import { formatName } from '@/utils/apiHelpers';
 import { capitalize } from 'lodash';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useShallow } from 'zustand/react/shallow';
 
 interface BoolGUIProps {
   component: BooleanComponent;
@@ -81,8 +82,14 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
           : property?.value == 0
             ? 'outline-red-500'
             : 'outline-grey-500'
-      }   outline outline-4  outline-offset-2 transition-[outline-color] duration-300 `}
+      } outline  outline-4 outline-offset-2 transition-[outline-color] duration-300 `}
       backgroundImage={component.backgroundImage}
+      style={{
+        top: '4px',
+        left: '4px',
+        width: 'calc(100% - 8px)', // Adjust width to account for outline width and offset
+        height: 'calc(100% - 8px)', // Adjust height to account for outline width and offset
+      }}
       onClick={() => {
         component.triggerAction?.();
       }}
@@ -107,7 +114,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const properties = usePropertyStore((state) => state.properties);
+  const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(

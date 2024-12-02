@@ -54,7 +54,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           <TooltipTrigger asChild>{enhancedTriggerButton}</TooltipTrigger>
         </AlertDialogTrigger>
 
-        <TooltipContent className="bg-white">
+        <TooltipContent side="left" className="bg-white">
           {getCopy('DeleteConfirmationModal', 'delete_all_components')}
         </TooltipContent>
       </Tooltip>

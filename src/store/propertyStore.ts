@@ -261,3 +261,12 @@ export const usePropertyStore = create<State>()(
     })),
   ),
 );
+
+export const selectFilteredProperties = (state: State) => {
+  console.log(state);
+  return Object.keys(state.properties).filter((a) => a.includes('.Renderable'));
+  // .reduce((acc: Record<string, any>, key: string) => {
+  //   acc[key] = state.properties[key];
+  //   return acc;
+  // }, {});
+};

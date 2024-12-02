@@ -237,6 +237,7 @@ export function getStringBetween(
 }
 
 export function formatName(name: string) {
+  if (!name) return '';
   return name
     .replace(/Scene.|.Renderable|.Opacity/g, '')
     .replace(/.Fade/g, '')

@@ -5,8 +5,10 @@ export {
 } from './componentsStore';
 
 export { useSettingsStore } from './settingsStore';
-export { usePropertyStore } from './propertyStore';
+export { usePropertyStore, selectFilteredProperties } from './propertyStore';
 export { useOpenSpaceApiStore, ConnectionState } from './apiStore';
+export { usePositionStore } from './positionStore';
+export type { Position } from './positionStore';
 export type {
   ComponentType,
   NavComponent,

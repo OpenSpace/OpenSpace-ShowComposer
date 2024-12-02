@@ -8,10 +8,12 @@ import {
   useOpenSpaceApiStore,
   usePropertyStore,
   useComponentStore,
+  selectFilteredProperties,
 } from '@/store';
 import { FlyToComponent } from '@/store/componentsStore';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { useShallow } from 'zustand/react/shallow';
 
 // import { }
 // react-icon for flight
@@ -29,6 +31,7 @@ import {
 import ButtonLabel from '@/components/common/ButtonLabel';
 import Toggle from '@/components/common/Toggle';
 import ComponentContainer from '@/components/common/ComponentContainer';
+
 interface FlyToGUIProps {
   component: FlyToComponent;
   shouldRender?: boolean;
@@ -103,6 +106,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   handleComponentData,
   //   isOpen,
 }) => {
+  // const throttledHandleComponentData = throttle(handleComponentData, 3000);
+
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
@@ -119,17 +124,21 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [options, setOptions] = useState<Option[]>();
   const favorites = usePropertyStore((state) => state.favorites);
   // const properties = usePropertyStore((state) => state.properties);
-  const properties = usePropertyStore((state) =>
-    Object.keys(state.properties)
-      .filter((a) => a.includes('.Renderable'))
-      .reduce((acc: Record<string, any>, key: string) => {
-        acc[key] = state.properties[key];
-        return acc;
-      }, {}),
+  const properties = usePropertyStore(
+    useShallow((state) =>
+      Object.keys(state.properties)
+        .filter((a) => a.includes('.Renderable'))
+        .reduce((acc: Record<string, any>, key: string) => {
+          acc[key] = state.properties[key];
+          return acc;
+        }, {}),
+    ),
   );
+
   const Visibility = usePropertyStore(
     (state) => state.properties[EnginePropertyVisibilityKey],
   );
+
   useEffect(() => {
     setOptions(
       favorites.map((favorite) => {
@@ -212,6 +221,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         return 1;
     }
   };
+
   const setFromOpenspace = () => {
     const shouldGeo = options?.find(
       (option) => option.name === CurrentAnchor.value,
@@ -227,12 +237,15 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     }
   };
   useEffect(() => {
+    console.log(target, lastTarget, lockName);
     if (target !== lastTarget && !lockName) {
+      console.log('setting name');
       setGuiName(`Fly To ${formatName(target)}`);
       setGuiDescription(`Fly to ${formatName(target)}`);
-      setLastTarget(target);
     }
-  }, [target]);
+    setLastTarget(target);
+  }, [target, lockName]);
+
   useEffect(() => {
     handleComponentData({
       geo,
@@ -253,12 +266,13 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     long,
     alt,
     target,
-    handleComponentData,
     lockName,
     gui_name,
     gui_description,
     backgroundImage,
+    handleComponentData,
   ]);
+
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)

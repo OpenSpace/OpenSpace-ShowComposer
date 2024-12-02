@@ -10,7 +10,7 @@ import DropdownMenuComponent from './DropdownMenu';
 import { Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 import { ComponentContent } from './ComponentContent';
 import { cn } from '@/lib/utils';
-import { LayoutBase } from '@/store/componentsStore';
+import { usePositionStore } from '@/store/positionStore';
 
 interface DraggableComponentProps {
   component: Component;
@@ -25,31 +25,31 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   onEdit,
   onDelete,
 }) => {
-  if (!component || !component.id) {
-    return null;
-  }
+  const position = usePositionStore(
+    (state) => state.positions[component?.id || ''],
+  );
+
+  const updatePosition = usePositionStore((state) => state.updatePosition);
+  const handleComponentDrop = useComponentStore(
+    (state) => state.handleComponentDrop,
+  );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const tempPosition = useComponentStore(
-    (state) => state.tempPositions[component.id],
-  );
-  const setTempPosition = useComponentStore((state) => state.setTempPosition);
-  const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const scale = useSettingsStore((state) => state.pageScaleThrottled);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
-  const getComponentById = useComponentStore((state) => state.getComponentById);
-  const selectedComponents = useComponentStore(
-    (state) => state.selectedComponents,
-  );
-  const selectComponent = useComponentStore((state) => state.selectComponent);
-  const deselectComponent = useComponentStore(
-    (state) => state.deselectComponent,
-  );
-  const removeComponentFromLayout = useComponentStore(
-    (state) => state.removeComponentFromLayout,
+  const isDragging = usePositionStore(
+    (state) => state.positions[component.id]?.isDragging,
   );
 
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
+  const scale = useSettingsStore((state) => state.pageScaleThrottled);
+  const selectedComponents = usePositionStore(
+    (state) => state.selectedComponents,
+  );
+  const isSelected = usePositionStore(
+    (state) => state.positions[component.id].selected,
+  );
+  if (!component || !component.id || !position) {
+    return null;
+  }
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
   };
@@ -63,90 +63,23 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     setIsDeleteModalOpen(false);
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (e.shiftKey) {
-      if (selectedComponents.includes(component.id)) {
-        deselectComponent(component.id);
-      } else {
-        selectComponent(component.id);
-      }
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
-    setIsDragging(false);
-
-    // Check for overlap with layouts
-    const layouts = useComponentStore.getState().layouts;
-    let targetLayout: LayoutBase | null = null;
-
-    // Helper function to check if a point is inside a layout
-    const isInsideLayout = (x: number, y: number, layout: any) => {
-      return (
-        x >= layout.x &&
-        x <= layout.x + layout.width &&
-        y >= layout.y &&
-        y <= layout.y + layout.height
-      );
-    };
-
-    // Find layout we're dropping onto
-    Object.entries(layouts).forEach(([_id, layout]) => {
-      if (isInsideLayout(d.x, d.y, layout)) {
-        targetLayout = layout;
-      }
+    console.log('IN DDAGGABLE: ', d.x, d.y);
+    handleComponentDrop(component.id, d.x, d.y);
+    updatePosition(component.id, {
+      isDragging: false,
     });
-
-    if (targetLayout && !layoutId) {
-      // Add component to layout and let addComponentToLayout handle positioning
-      useComponentStore
-        .getState()
-        .addComponentToLayout((targetLayout as LayoutBase).id, component.id);
-      return; // Exit early to prevent the position update below
-    } else if (layoutId) {
-      // Remove from current layout if dragged outside
-      if (!targetLayout || (targetLayout as LayoutBase).id !== layoutId) {
-        removeComponentFromLayout(layoutId, component.id, d.x, d.y);
-        // updateComponent(component.id, {
-        //   x: roundToNearest(d.x , 25),
-        //   y: roundToNearest(d.y, 25),
-        // });
-      }
-    }
-
-    // Only update positions if not being added to a layout
-    if (layoutId) return;
-    if (selectedComponents.includes(component.id)) {
-      const deltaX = d.x - component.x;
-      const deltaY = d.y - component.y;
-      selectedComponents.forEach((id) => {
-        const comp = getComponentById(id);
-        if (comp) {
-          updateComponent(id, {
-            x: roundToNearest(comp.x + deltaX, 25),
-            y: roundToNearest(comp.y + deltaY, 25),
-          });
-        }
-      });
-    } else {
-      updateComponent(component.id, {
-        x: roundToNearest(d.x, 25),
-        y: roundToNearest(d.y, 25),
-      });
-    }
   };
 
-  const isSelected = selectedComponents.includes(component.id);
   const isMultiLoading = component.isMulti?.includes('pending');
   const isHidden = component.isMulti?.includes('true');
 
   const getComponentPosition = () => {
     return (
-      tempPosition || {
-        x: component.x,
-        y: component.y,
+      // tempPosition ||
+      {
+        x: position.x,
+        y: position.y,
       }
     );
   };
@@ -157,41 +90,65 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         dragHandleClassName={isSelected ? '' : 'drag-handle'}
         scale={isPresentMode ? 1.0 : scale}
         default={{
-          x: component.x,
-          y: component.y,
-          width: component.width,
-          height: component.height,
+          x: position.x,
+          y: position.y,
+          width: position.width || position.minWidth,
+          height: position.height || position.minHeight,
         }}
         position={getComponentPosition()}
         size={{
-          width: component.width,
-          height: component.height,
+          width: position.width,
+          height: position.height,
         }}
-        minWidth={component.minWidth || 100}
-        minHeight={component.minHeight || 100}
+        minWidth={position.minWidth || 100}
+        minHeight={position.minHeight || 100}
         // dragGrid={[25, 25]}
         resizeGrid={[25, 25]}
         onDragStart={(e: DraggableEvent) => {
           e.stopPropagation();
-          setIsDragging(true);
+          updatePosition(component.id, {
+            isDragging: true,
+          });
+          // setIsDragging(true);
         }}
         onDrag={(_e: DraggableEvent, d: DraggableData) => {
-          if (layoutId) return;
+          // console.log('dragging');
+          // console.log(d);
+          // handleDrag(_e, d);
+          // if (layoutId) {
+          //   //   handleDrag(_e, d);
+          //   //   return;
+          //   reorderComponentInLayout(layoutId, component.id, d.x, d.y, false);
+          // }
+          // updatePosition(component.id, {
+          //   // isDragging: true,
+          //   x: d.x,
+          //   y: d.y,
+          // });
           if (selectedComponents.includes(component.id)) {
-            const deltaX = d.x - component.x;
-            const deltaY = d.y - component.y;
+            const deltaX = d.x - position.x;
+            const deltaY = d.y - position.y;
             selectedComponents.forEach((id) => {
-              const comp = getComponentById(id);
-              if (comp) {
-                setTempPosition(id, comp.x + deltaX, comp.y + deltaY);
+              const pos = usePositionStore.getState().positions[id];
+              if (pos) {
+                updatePosition(id, {
+                  x: pos.x + deltaX,
+                  y: pos.y + deltaY,
+                });
               }
+            });
+          } else {
+            updatePosition(component.id, {
+              isDragging: true,
+              x: d.x,
+              y: d.y,
             });
           }
         }}
         onDragStop={handleDragStop}
         onResizeStop={(_e, _direction, ref, _delta, position) => {
           if (layoutId) return;
-          updateComponent(component.id, {
+          updatePosition(component.id, {
             width: roundToNearest(parseInt(ref.style.width), 25),
             height: roundToNearest(parseInt(ref.style.height), 25),
             x: roundToNearest(position.x, 25),
@@ -201,17 +158,21 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         disableDragging={isPresentMode}
         enableResizing={!isPresentMode}
         className={cn(
-          'pointer-events-auto absolute cursor-move rounded-lg',
+          'pointer-events-auto absolute cursor-move rounded-lg ',
           isHidden && '!hidden',
           isPresentMode
-            ? 'border-none bg-opacity-0'
+            ? 'border bg-opacity-0'
             : 'border-0 bg-gray-300 bg-opacity-25',
           (isDragging || isSelected) &&
             !isPresentMode &&
-            'z-50 border-blue-500 shadow-md dark:shadow-slate-500/50',
+            'z-[999] border-blue-500 shadow-lg shadow-blue-500/50 dark:shadow-slate-100/50',
           isMultiLoading ? 'opacity-25' : 'opacity-100',
-          layoutId && 'border border-blue-200 !bg-white dark:border-blue-800',
+          // layoutId && 'border border-blue-200  dark:border-blue-800',
         )}
+        style={{
+          transition:
+            !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none',
+        }}
       >
         {!isPresentMode && (
           <div

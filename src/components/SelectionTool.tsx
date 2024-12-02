@@ -1,6 +1,6 @@
 // SelectionTool.tsx
 import React, { useRef, useState } from 'react';
-import { useComponentStore } from '@/store';
+import { useComponentStore, usePositionStore } from '@/store';
 
 const SelectionTool: React.FC = () => {
   const [isSelecting, setIsSelecting] = useState(false);
@@ -8,20 +8,18 @@ const SelectionTool: React.FC = () => {
   const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const currentPage = useComponentStore((state) => state.currentPage);
-  const selectComponent = useComponentStore((state) => state.selectComponent);
-  const clearSelection = useComponentStore((state) => state.clearSelection);
-  const getComponentById = useComponentStore((state) => state.getComponentById);
+
   const getPageById = useComponentStore((state) => state.getPageById);
+  const positions = usePositionStore((state) => state.positions);
+  const selectComponent = usePositionStore((state) => state.selectComponent);
+  const clearSelection = usePositionStore((state) => state.clearSelection);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    // e.preventDefault();
     clearSelection();
     setIsSelecting(true);
     const containerRect = containerRef.current!.getBoundingClientRect();
     const offsetX = e.clientX - containerRect.left;
     const offsetY = e.clientY - containerRect.top;
-    // const { offsetX, offsetY } = e.nativeEvent;
-    // console.log('offsetX', offsetX, 'offsetY', offsetY);
     setStartPos({ x: offsetX, y: offsetY });
     setRect({ x: offsetX, y: offsetY, width: 0, height: 0 });
   };
@@ -31,8 +29,7 @@ const SelectionTool: React.FC = () => {
     const containerRect = containerRef.current!.getBoundingClientRect();
     const offsetX = e.clientX - containerRect.left;
     const offsetY = e.clientY - containerRect.top;
-    // const { offsetX, offsetY } = e.nativeEvent;
-    // console.log('offsetX', offsetX, 'offsetY', offsetY);
+
     const newRect = {
       x: Math.min(startPos.x, offsetX),
       y: Math.min(startPos.y, offsetY),
@@ -45,23 +42,26 @@ const SelectionTool: React.FC = () => {
   const handleMouseUp = () => {
     setIsSelecting(false);
     getPageById(currentPage).components.forEach((c) => {
-      // console.log(c);
-      // dont select multi state components
-      if (!(getComponentById(c).isMulti == 'true')) {
-        const compRect = {
-          x: getComponentById(c)?.x,
-          y: getComponentById(c)?.y,
-          width: getComponentById(c)?.width,
-          height: getComponentById(c)?.height,
-        };
-        if (
-          rect.x < compRect.x + compRect.width &&
-          rect.x + rect.width > compRect.x &&
-          rect.y < compRect.y + compRect.height &&
-          rect.y + rect.height > compRect.y
-        ) {
-          selectComponent(c);
-        }
+      // Ensure the component has valid position data
+      const compPos = positions[c];
+      if (!compPos) return;
+
+      const compRect = {
+        x: compPos.x,
+        y: compPos.y,
+        width: compPos.width,
+        height: compPos.height,
+      };
+
+      // Check if the component is within the selection rectangle
+      if (
+        rect.x < compRect.x + compRect.width &&
+        rect.x + rect.width > compRect.x &&
+        rect.y < compRect.y + compRect.height &&
+        rect.y + rect.height > compRect.y
+      ) {
+        console.log('selecting', c);
+        selectComponent(c);
       }
     });
   };

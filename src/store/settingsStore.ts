@@ -7,17 +7,36 @@ import { immer } from 'zustand/middleware/immer';
 interface State {
   presentMode: boolean;
   togglePresentMode: () => void;
-  url: string; // New property for URL
+  ip: string; // New property for URL
   port: string; // New property for Port
   pageWidth: number;
   pageHeight: number;
   pageScale: number;
   pageScaleThrottled: number;
   presentLocked: boolean;
+  gridSize: { rows: number; columns: number };
+  projectName: string;
+  projectDescription: string;
+  setGridSize: (size: { rows: number; columns: number }) => void;
   setPresentLocked: (locked: boolean) => void;
   setScale: (scaleFunc: (prevScale: any) => number) => void;
   updatePageSize(width: number, height: number): void;
   setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
+  setProjectSettings: ({
+    projectName,
+    projectDescription,
+    ip,
+    port,
+    pageWidth,
+    pageHeight,
+  }: {
+    projectName: string;
+    projectDescription: string;
+    ip: string;
+    port: string;
+    pageWidth: number;
+    pageHeight: number;
+  }) => void;
 }
 
 export const useSettingsStore = create<State>()(
@@ -41,6 +60,8 @@ export const useSettingsStore = create<State>()(
           // Existing store properties and actions
           presentMode: false, // New property to control drag and resize
           presentLocked: false,
+          projectName: '',
+          projectDescription: '',
           setPresentLocked: (locked: boolean) =>
             set(
               (_state) => ({ presentLocked: locked }),
@@ -68,7 +89,7 @@ export const useSettingsStore = create<State>()(
               'settings/setScale',
             );
           },
-          url: '', // Initial URL state
+          ip: '', // Initial URL state
           port: '', // Initial Port state
           updatePageSize: (width: number, height: number) =>
             set(
@@ -86,6 +107,29 @@ export const useSettingsStore = create<State>()(
               },
               false,
               'settings/setConnectionSettings',
+            ),
+          gridSize: { rows: 3, columns: 3 },
+          setGridSize: (size: { rows: number; columns: number }) =>
+            set(() => ({ gridSize: size }), false, 'settings/setGridSize'),
+          setProjectSettings: ({
+            projectName,
+            projectDescription,
+            ip,
+            port,
+            pageWidth,
+            pageHeight,
+          }) =>
+            set(
+              () => ({
+                projectName,
+                projectDescription,
+                ip,
+                port,
+                pageWidth,
+                pageHeight,
+              }),
+              false,
+              'settings/setProjectSettings',
             ),
         };
       }),

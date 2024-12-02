@@ -21,7 +21,8 @@
     "timepanel": "Time Panel",
     "navpanel": "Nav Panel",
     "statuspanel": "Status Panel",
-    "recordpanel": "Record Panel"
+    "recordpanel": "Record Panel",
+    "layout": "Layout Components"
   },
   "AdjustablePage": {
     "page": "Page"
@@ -275,5 +276,21 @@
   },
   "sheet": {
     "close": "Close"
+  },
+  "NewProjectModal": {
+    "new_project": "Create a New Project",
+    "project_details": "Some Preliminary Settings for your new project.",
+    "project_name": "Project Name",
+    "project_name_copy": "Enter the name of the project you want to create.",
+    "project_description": "Project Description",
+    "ip_address": "IP Address",
+    "port": "Port",
+    "cancel": "Cancel",
+    "default_page_size": "Default Page Size",
+    "default_page_size_copy": "The default page size for the presented project.",
+    "page_width": "Page Width",
+    "page_height": "Page Height",
+    "create_project": "Create Project",
+    "default_screen_space_position": "Default Screen Space Position"
   }
 }
