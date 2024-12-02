@@ -80,13 +80,13 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       set({ cancelReconnect: true });
       apiInstance.disconnect();
     }
-    if (reconnectTimeout) {
+    if (reconnectTimeout || get().cancelReconnect) {
       clearTimeout(reconnectTimeout as NodeJS.Timeout);
     }
     get().connect();
   },
   connect: async () => {
-    const host = useSettingsStore.getState().url;
+    const host = useSettingsStore.getState().ip;
     const port = useSettingsStore.getState().port;
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
@@ -164,8 +164,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     });
     apiInstance.onDisconnect(() => {
       const { apiInstance } = get();
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
+      if (reconnectTimeout || get().cancelReconnect) {
+        clearTimeout(reconnectTimeout as NodeJS.Timeout);
         //   set({ reconnectTimeout: null });
       }
       let reconnectionInterval = 1000;

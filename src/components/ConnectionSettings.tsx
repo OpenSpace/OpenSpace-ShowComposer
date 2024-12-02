@@ -22,6 +22,11 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     url: state.ip,
     port: state.port,
   }));
+  useEffect(() => {
+    console.log('initialState', initialState);
+    setUrl(initialState.url);
+    setPort(initialState.port);
+  }, [initialState]);
   const enhancedTriggerButton = triggerButton
     ? cloneElement(triggerButton, {
         onClick: (...args: any[]) => {

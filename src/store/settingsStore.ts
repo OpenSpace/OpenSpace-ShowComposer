@@ -99,11 +99,11 @@ export const useSettingsStore = create<State>()(
               false,
               'settings/updatePageSize',
             ),
-          setConnectionSettings: (url: string, port: string) =>
+          setConnectionSettings: (ip: string, port: string) =>
             set(
               () => {
                 //need to trigger openspace reconnect here
-                return { url, port };
+                return { ip, port };
               },
               false,
               'settings/setConnectionSettings',
