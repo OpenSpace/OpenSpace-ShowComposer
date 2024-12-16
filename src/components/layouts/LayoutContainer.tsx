@@ -1,21 +1,24 @@
 import React from 'react';
 import { Rnd } from 'react-rnd';
 import { DraggableEvent, DraggableData } from 'react-draggable';
-import { useComponentStore, usePositionStore, useSettingsStore } from '@/store';
+import { useSettingsStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { roundToNearest } from '@/utils/math';
-import { Edit2, GripHorizontal, Trash2, LayoutGrid } from 'lucide-react';
+import { Edit2, GripHorizontal, Trash2, LayoutGrid, Copy } from 'lucide-react';
 // import { createIcon } from 'lucide-react';
 
-import { LayoutBase } from '@/store/componentsStore';
+import { LayoutBase } from '@/store/ComponentTypes';
 import Placeholder from './Placeholder';
 import DropdownMenuComponent from '../DropdownMenu';
 import { getCopy } from '@/utils/copyHelpers';
 import { ColumnIcon, RowIcon } from './LayoutToolbar';
+import { useShallow } from 'zustand/react/shallow';
+import { useBoundStore } from '@/store/boundStore';
 
 interface LayoutContainerProps {
   layout: LayoutBase;
   children?: React.ReactNode;
+  handleOpenEditModal: () => void;
 }
 
 const typeIcons = {
@@ -27,15 +30,20 @@ const typeIcons = {
 export const LayoutContainer: React.FC<LayoutContainerProps> = ({
   layout,
   children,
+  handleOpenEditModal,
 }) => {
-  const layoutPosition = usePositionStore(
+  const layoutPosition = useBoundStore(
     (state) => state.positions[layout?.id || ''],
   );
-  if (!layout || !layout.id || !layoutPosition) {
-    return null;
-  }
 
-  const { x, y, width, height } = layoutPosition;
+  const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);
+
+  const { x, y, width, height } = layoutPosition || {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  };
   const {
     id,
     type,
@@ -45,16 +53,25 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
     columns,
     padding,
   } = layout;
-  const deleteLayout = useComponentStore((state) => state.deleteLayout);
-  const updateLayout = useComponentStore((state) => state.updateLayout);
-  const updatePosition = usePositionStore((state) => state.updatePosition);
+
+  const updatePosition = useBoundStore((state) => state.updatePosition);
+  const updateLayout = useBoundStore((state) => state.updateLayout);
+  const deleteLayout = useBoundStore((state) => state.deleteLayout);
+  const copyLayout = useBoundStore((state) => state.copyLayout);
+
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
+  const isOnPage = useBoundStore(
+    useShallow((state) => {
+      return state.getPageById(state.currentPage)?.components.includes(id);
+    }),
+  );
+  if (!layout || !layout.id || !layoutPosition) {
+    return null;
+  }
+
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
-    updatePosition(id, {
-      x: roundToNearest(d.x, 25 / 2),
-      y: roundToNearest(d.y, 25 / 2),
-    });
+    handleLayoutDrop(id, d.x, d.y);
   };
 
   const handleResize = (
@@ -64,17 +81,21 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
     _delta: any,
     position: { x: number; y: number },
   ) => {
-    let newWidth = roundToNearest(parseInt(ref.style.width), 25 / 2);
-    let newHeight = roundToNearest(parseInt(ref.style.height), 25 / 2);
+    let newWidth = roundToNearest(parseInt(ref.style.width), 25);
+    let newHeight = roundToNearest(parseInt(ref.style.height), 25);
     let childWidth = layout.childWidth;
     let childHeight = layout.childHeight;
     if (type === 'row') {
-      newWidth = newHeight * (layoutChildren.length + 1);
+      newWidth =
+        newHeight * (layoutChildren.length + 1) -
+        layoutChildren.length * layout.padding;
       childWidth = newHeight - layout.padding * 2;
       childHeight = newHeight - layout.padding * 2;
       // childWidth = newWidth;
     } else if (type === 'column') {
-      newHeight = newWidth * (layoutChildren.length + 1);
+      newHeight =
+        newWidth * (layoutChildren.length + 1) -
+        layoutChildren.length * layout.padding;
       childWidth = newWidth - layout.padding * 2;
       childHeight = newWidth - layout.padding * 2;
     } else if (type === 'grid') {
@@ -83,126 +104,136 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
       childWidth = (newWidth - layout.padding) / columns - layout.padding;
       childHeight = (newHeight - layout.padding) / numRows - layout.padding;
     }
-    //update new childWidth and Height
 
-    updatePosition(id, {
-      width: newWidth,
-      height: newHeight,
-      x: roundToNearest(position.x, 25 / 2),
-      y: roundToNearest(position.y, 25 / 2),
-    });
     updateLayout(id, {
       childWidth: childWidth,
       childHeight: childHeight,
     });
+    updatePosition(id, {
+      width: newWidth,
+      height: newHeight,
+      x: roundToNearest(position.x, 25),
+      y: roundToNearest(position.y, 25),
+    });
   };
 
-  // const layoutClasses = {
-  //   row: 'flex flex-row items-center',
-  //   column: 'flex flex-col items-center',
-  //   grid: 'grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]',
-  // };
+  const isGrid = type === 'grid';
 
   return (
-    <Rnd
-      default={{
-        x,
-        y,
-        width,
-        height,
-      }}
-      position={{ x, y }}
-      dragHandleClassName={'drag-handle'}
-      size={{ width, height }}
-      minWidth={100}
-      minHeight={100}
-      scale={isPresentMode ? 1.0 : scale}
-      onDragStop={handleDragStop}
-      onResizeStop={handleResize}
-      bounds="parent"
-      enableResizing={true}
-      className={cn(
-        'items-center',
-        'pointer-events-auto',
-        isPresentMode ? '' : 'rounded-lg outline-dashed outline-2',
-        'transition-colors duration-200',
-        isPresentMode ? '' : 'outline-gray-300 dark:outline-gray-600',
-        'hover:outline-blue-500 dark:hover:outline-blue-400',
-        isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
-        'z-[9999]', // Ensure it's above other components
-      )}
-    >
-      {!isPresentMode && (
-        <div
-          className={cn(
-            'drag-handle transition-color group absolute top-0 z-[99] flex w-full cursor-move justify-end rounded-t-lg bg-slate-500/0 duration-300 hover:bg-slate-900/0',
-          )}
-        >
-          <div className="absolute flex w-full flex-col items-center justify-center gap-1">
-            <GripHorizontal
-              className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
-            />
-          </div>
-          <div className="relative z-[99] flex items-start justify-end gap-2 px-2 py-1">
-            <DropdownMenuComponent
-              items={[
-                <div
-                  key="edit"
-                  className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-                  // onClick={onEdit}
-                >
-                  <span>{getCopy('DraggableComponent', 'edit')}</span>
-                  <Edit2 className="h-4 w-4" />
-                </div>,
-                <div
-                  key="delete"
-                  className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100"
-                  onClick={() => deleteLayout(id)}
-                >
-                  <span>{getCopy('DraggableComponent', 'delete')}</span>
-                  <Trash2 className="h-4 w-4" />
-                </div>,
-              ]}
-            />
-          </div>
-          <div className="absolute left-2 top-1 text-xs text-white">
-            {typeIcons[type]}
-          </div>
-        </div>
-      )}
-      <div
+    <>
+      <Rnd
+        default={{
+          x,
+          y,
+          width,
+          height,
+        }}
+        position={{ x, y }}
+        dragHandleClassName={'drag-handle'}
+        size={{ width, height }}
+        minWidth={100}
+        minHeight={100}
+        scale={isPresentMode ? 1.0 : scale}
+        onDragStop={handleDragStop}
+        onResizeStop={handleResize}
+        bounds="parent"
+        enableResizing={true}
         className={cn(
-          'h-full w-full ',
-          'cursor-move', // Add cursor indicator
+          'items-center',
+          'pointer-events-auto',
+          isPresentMode ? '' : 'rounded-lg outline-dashed outline-2',
+          'transition-colors duration-200',
+          isPresentMode ? '' : 'outline-gray-300 dark:outline-gray-600',
+          'hover:outline-blue-500 dark:hover:outline-blue-400',
+          isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
+          'z-[9999]', // Ensure it's above other components
+          isOnPage
+            ? 'outline outline-offset-4 outline-blue-500'
+            : 'outline outline-offset-4 outline-red-500',
         )}
       >
-        {children}
-        {!isPresentMode && layout.type !== 'grid' && (
-          <Placeholder
-            type={type}
-            childWidth={childWidth}
-            childHeight={childHeight}
-            padding={layout.padding}
-            columns={layout.columns}
-          />
-        )}
-        {!isPresentMode &&
-          layout.type === 'grid' &&
-          layout.children.map((_childId, index) => {
-            return (
-              <Placeholder
-                type={type}
-                hidden={_childId != null}
-                index={index}
-                childWidth={childWidth}
-                childHeight={childHeight}
-                padding={padding}
-                columns={columns}
-                key={index}
+        {!isPresentMode && (
+          <div
+            className={cn(
+              'drag-handle transition-color group absolute top-0 z-[99] flex w-full cursor-move justify-end rounded-t-lg bg-slate-500/0 duration-300 hover:bg-slate-900/0',
+            )}
+          >
+            <div className="absolute flex w-full flex-col items-center justify-center gap-1">
+              <GripHorizontal
+                className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
               />
-            );
-          })}
-      </div>
-    </Rnd>
+            </div>
+            <div className="relative z-[99] flex items-start justify-end gap-2 px-2 py-1">
+              <DropdownMenuComponent
+                items={[
+                  isGrid && (
+                    <div
+                      key="edit"
+                      className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                      onClick={handleOpenEditModal}
+                    >
+                      <span>{getCopy('DraggableComponent', 'edit')}</span>
+                      <Edit2 className="h-4 w-4" />
+                    </div>
+                  ),
+                  <div
+                    key="copy"
+                    className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    onClick={() => copyLayout(id)}
+                  >
+                    <span>{getCopy('DraggableComponent', 'copy')}</span>
+                    <Copy className="h-4 w-4" />
+                  </div>,
+                  <div
+                    key="delete"
+                    className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100"
+                    onClick={() => deleteLayout(id)}
+                  >
+                    <span>{getCopy('DraggableComponent', 'delete')}</span>
+                    <Trash2 className="h-4 w-4" />
+                  </div>,
+                ]}
+              />
+            </div>
+            <div className="absolute left-2 top-1 text-xs text-white">
+              {typeIcons[type]}
+            </div>
+          </div>
+        )}
+        <div
+          className={cn(
+            'h-full w-full ',
+            'cursor-move', // Add cursor indicator
+          )}
+        >
+          {children}
+          {!isPresentMode && !isGrid && (
+            <Placeholder
+              type={type}
+              childWidth={childWidth}
+              childHeight={childHeight}
+              padding={layout.padding}
+              columns={layout.columns}
+            />
+          )}
+          {!isPresentMode &&
+            isGrid &&
+            layout.children.map((_childId, index) => {
+              return (
+                <Placeholder
+                  type={type}
+                  hidden={_childId != null}
+                  index={index}
+                  childWidth={childWidth}
+                  childHeight={childHeight}
+                  padding={padding}
+                  columns={columns}
+                  key={index}
+                />
+              );
+            })}
+        </div>
+      </Rnd>
+    </>
   );
 };

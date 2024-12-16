@@ -37,13 +37,13 @@ import {
   BookOpenCheck,
 } from 'lucide-react';
 
-import { ComponentType, useComponentStore, useSettingsStore } from './store';
+import { ComponentType, useSettingsStore } from './store';
 import { loadStore, saveStore } from './utils/saveProject';
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectionStatus } from './components/ConnectionSettings';
 import Pagination from './components/Pagination';
 import DraggablePanel from './components/DraggablePanel';
-import { MultiComponent } from './store/componentsStore';
+import { MultiComponent } from './store/ComponentTypes';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import FeedbackPanel from './components/FeedbackPanel';
@@ -52,10 +52,13 @@ import PresentModeToggle from './components/PresentModeToggle';
 import { getCopy } from './utils/copyHelpers';
 import { LayoutToolbar } from './components/layouts/LayoutToolbar';
 import Toolbar from './components/Toolbar';
-import { Position, usePositionStore } from './store/positionStore';
+import { Position } from './store/positionSlice';
 import { LayoutContainer } from './components/layouts/LayoutContainer';
 import NewProjectModal from './components/NewProjectModal';
 import { Label } from './components/ui/label';
+import LayoutEditModal from './components/layouts/LayoutEditModal';
+import { useBoundStore } from './store/boundStore';
+import Undo from './components/Undo';
 
 type ComponentTypeData = {
   type: ComponentType;
@@ -65,49 +68,55 @@ type ComponentTypeData = {
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [_isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState<string | null>(
     null,
   );
+  const [currentLayoutId, setCurrentLayoutId] = useState<string | null>(null);
   const [currentComponentType, setCurrentComponentType] = useState<
     ComponentType | ''
   >('');
 
-  const components = useComponentStore((state) => state.components);
-  const getComponentById = useComponentStore((state) => state.getComponentById);
-  const removeAllComponents = useComponentStore(
+  const components = useBoundStore((state) => {
+    return state.components;
+  });
+
+  const getComponentById = useBoundStore((state) => state.getComponentById);
+  const removeAllComponents = useBoundStore(
     (state) => state.removeAllComponents,
   );
-  const removeComponent = useComponentStore((state) => state.removeComponent);
-  // const addComponent = useComponentStore((state) => state.addComponent);
-  const createStaticPanels = useComponentStore((state) => state.createPanels);
-  const NavPanel = useComponentStore((state) => state.navpanel);
-  const NavPosition = usePositionStore(
+
+  const removeComponent = useBoundStore((state) => state.removeComponent);
+  const createStaticPanels = useBoundStore((state) => state.createPanels);
+  const NavPanel = useBoundStore((state) => state.navpanel);
+  const NavPosition = useBoundStore(
     (state) => state.positions[NavPanel?.id || ''],
   );
-  const TimePanel = useComponentStore((state) => state.timepanel);
-  const TimePosition = usePositionStore(
+  const TimePanel = useBoundStore((state) => state.timepanel);
+  const TimePosition = useBoundStore(
     (state) => state.positions[TimePanel?.id || ''],
   );
-  const StatusPanel = useComponentStore((state) => state.statuspanel);
-  const StatusPosition = usePositionStore(
+  const StatusPanel = useBoundStore((state) => state.statuspanel);
+  const StatusPosition = useBoundStore(
     (state) => state.positions[StatusPanel?.id || ''],
   );
-  const RecordPanel = useComponentStore((state) => state.recordpanel);
-  const RecordPosition = usePositionStore(
+  const RecordPanel = useBoundStore((state) => state.recordpanel);
+  const RecordPosition = useBoundStore(
     (state) => state.positions[RecordPanel?.id || ''],
   );
-  const updateComponent = useComponentStore((state) => state.updateComponent);
-  const updatePosition = usePositionStore((state) => state.updatePosition);
-  const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const addPage = useComponentStore((state) => state.addPage);
-  const getPageById = useComponentStore((state) => state.getPageById);
-  const layouts = useComponentStore((state) => state.layouts);
 
-  const currentPage = useComponentStore((state) => state.currentPage);
-  const currentPageIndex = useComponentStore((state) => state.currentPageIndex);
-  const pagesLength = useComponentStore((state) => state.pages?.length); // Get the global state
-  const goToPage = useComponentStore((state) => state.goToPage); // Get the global state
+  const updateComponent = useBoundStore((state) => state.updateComponent);
+  const copyComponent = useBoundStore((state) => state.copyComponent);
+  const updatePosition = useBoundStore((state) => state.updatePosition);
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
+  const addPage = useBoundStore((state) => state.addPage);
+  const layouts = useBoundStore((state) => state.layouts);
+
+  const currentPage = useBoundStore((state) => state.currentPage);
+  const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
+  const pagesLength = useBoundStore((state) => state.pages?.length); // Get the global state
+  const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
 
   const projectName = useSettingsStore((state) => state.projectName);
   useEffect(() => {
@@ -203,7 +212,6 @@ const App = () => {
     setIsModalOpen(true);
   };
   const minimize = (position: Position | null) => {
-    console.log('minimizing', position);
     updatePosition(position?.id || '', {
       minimized: !position?.minimized,
     });
@@ -212,6 +220,14 @@ const App = () => {
   const handleEditComponent = (id: string) => {
     setCurrentComponentId(id);
     setIsModalOpen(true);
+  };
+  const handleEditLayout = (id: string) => {
+    setCurrentLayoutId(id);
+    setShowEditModal(true);
+  };
+
+  const handleCopyComponent = (id: string) => {
+    copyComponent(id);
   };
 
   const handleDeleteComponent = (id: string) => {
@@ -291,9 +307,11 @@ const App = () => {
                   </h2>
                 </div>
                 <Separator />
+                <Undo />
+                {/* </div> */}
                 <div className="flex flex-col gap-2 px-4 py-1">
                   <div className="flex flex-row items-center gap-3">
-                    <Label>Current Project:</Label>
+                    <Label>{getCopy('Main', 'current_show')}:</Label>
                     <div className="text-sm">{projectName}</div>
                   </div>
                   <div className="py-2">
@@ -405,48 +423,76 @@ const App = () => {
                   {RecordPanel && <DraggablePanel component={RecordPanel} />}
                   {/* <ErrorBoundary fallback={<div>Error rendering layouts</div>}> */}
                   {/* Layouts */}
-                  {getPageById(currentPage)
-                    .components.filter((id) => layouts[id])
-                    .map((layoutId) => {
-                      const layout = layouts[layoutId];
-                      return (
-                        <LayoutContainer key={layoutId} layout={layout}>
-                          {layout.children.map((childId) => {
-                            if (!childId) return null;
-                            const component = components[childId];
-                            if (!component) return null;
-                            return (
-                              <DraggableComponent
-                                key={childId}
-                                component={component}
-                                layoutId={layoutId}
-                                onEdit={() => handleEditComponent(childId)}
-                                onDelete={() => handleDeleteComponent(childId)}
-                              />
-                            );
-                          })}
-                        </LayoutContainer>
-                      );
-                    })}
-                  {/* </ErrorBoundary> */}
-                  {/* Regular Components - only render if not in a layout */}
-                  {getPageById(currentPage).components.map((componentId) => {
+                  {/* <div className="top-0 z-[9999] w-[400px] bg-black pl-[200px] text-white">
+                    {JSON.stringify(layouts, null, 2)}
+                  </div> */}
+                  {Object.keys(layouts).map((layoutId) => {
+                    const layout = layouts[layoutId];
+                    if (
+                      !layout ||
+                      (layout.parentPage && layout.parentPage != currentPage)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <LayoutContainer
+                        key={layoutId}
+                        layout={layout}
+                        handleOpenEditModal={() => handleEditLayout(layoutId)}
+                      >
+                        {layout.children.map((childId) => {
+                          // console.log(
+                          //   'childId in layout render loop ',
+                          //   childId,
+                          // );
+                          if (!childId) return null;
+                          const component = components[childId];
+                          // console.log(
+                          //   'component in layout render loop ',
+                          //   components,
+                          // );
+                          if (!component) return null;
+                          return (
+                            <DraggableComponent
+                              key={childId}
+                              component={component}
+                              layoutId={layoutId}
+                              onEdit={() => handleEditComponent(childId)}
+                              onDelete={() => handleDeleteComponent(childId)}
+                              onCopy={() => handleCopyComponent(childId)}
+                            />
+                          );
+                        })}
+                      </LayoutContainer>
+                    );
+                  })}
+
+                  {Object.keys(components).map((componentId) => {
                     const component = components[componentId];
+                    // console.log(
+                    //   'component in workspace render loop ',
+                    //   component,
+                    // );
                     // Skip if component is in a layout
                     if (
                       !component ||
                       Object.values(layouts).some((layout) =>
                         layout.children.includes(componentId),
-                      )
+                      ) ||
+                      (component.parentPage &&
+                        component.parentPage != currentPage)
                     ) {
                       return null;
                     }
+                    //skip it it belongs to a page that is not current page
+
                     return (
                       <DraggableComponent
                         key={componentId}
                         component={component}
                         onEdit={() => handleEditComponent(componentId)}
                         onDelete={() => handleDeleteComponent(componentId)}
+                        onCopy={() => handleCopyComponent(componentId)}
                       />
                     );
                   })}
@@ -548,6 +594,11 @@ const App = () => {
                 allComponentTypes.find((v) => v.type == currentComponentType)
                   ?.icon
               }
+            />
+            <LayoutEditModal
+              isOpen={showEditModal}
+              layoutId={currentLayoutId}
+              onClose={() => setShowEditModal(false)}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

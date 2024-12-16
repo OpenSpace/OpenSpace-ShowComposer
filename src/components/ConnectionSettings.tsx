@@ -18,15 +18,17 @@ interface ConnectionSettingsProps {
 const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   triggerButton,
 }) => {
-  const initialState = useSettingsStore((state) => ({
-    url: state.ip,
-    port: state.port,
-  }));
+  const { ip: initialUrl, port: initialPort } = useSettingsStore();
+
+  // const initialState = useMemo(() => useSettingsStore((state) => ({
+  //   url: state.ip,
+  //   port: state.port,
+  // })), []);
   useEffect(() => {
-    console.log('initialState', initialState);
-    setUrl(initialState.url);
-    setPort(initialState.port);
-  }, [initialState]);
+    // console.log('initialState', initialState);
+    setUrl(initialUrl);
+    setPort(initialPort);
+  }, [initialUrl, initialPort]);
   const enhancedTriggerButton = triggerButton
     ? cloneElement(triggerButton, {
         onClick: (...args: any[]) => {
@@ -38,8 +40,8 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
         },
       })
     : null;
-  const [url, setUrl] = useState(initialState.url);
-  const [port, setPort] = useState(initialState.port);
+  const [url, setUrl] = useState(initialUrl);
+  const [port, setPort] = useState(initialPort);
   const setConnectionSettings = useSettingsStore(
     (state) => state.setConnectionSettings,
   );
@@ -64,12 +66,12 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     }
   }, []);
   useEffect(() => {
-    if (prevPort !== initialState.port || prevUrl !== initialState.url) {
+    if (prevPort !== initialPort || prevUrl !== initialUrl) {
       forceRefresh();
-      setPrevPort(initialState.port);
-      setPrevUrl(initialState.url);
+      setPrevPort(initialPort);
+      setPrevUrl(initialUrl);
     }
-  }, [initialState.url, initialState.port]);
+  }, [initialUrl, initialPort]);
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   };
@@ -78,7 +80,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   };
   const handleSubmit = () => {
     // e.preventDefault();
+    // console.log('handleSubmit', url, port);
     setConnectionSettings(url, port);
+    forceRefresh();
     setOpen(false);
   };
   return (

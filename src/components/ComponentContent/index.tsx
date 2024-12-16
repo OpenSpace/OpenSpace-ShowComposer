@@ -16,8 +16,6 @@ import {
   PageComponent,
   SessionPlaybackComponent,
   SetNavComponent,
-  LayoutType,
-  useComponentStore,
 } from '@/store';
 
 import { TitleGUIComponent } from '../types/static/Title';
@@ -45,31 +43,6 @@ interface ComponentContentProps {
 export const ComponentContent: React.FC<ComponentContentProps> = ({
   component,
 }) => {
-  // Handle layout components
-  //   if (component?.type === 'layout') {
-  //     return (
-  //       <LayoutContainer
-  //         id={component.id}
-  //         type={component.layoutType as LayoutType}
-  //         x={component.x}
-  //         y={component.y}
-  //         width={component.width}
-  //         height={component.height}
-  //       >
-  //         <SortableLayout
-  //           layoutId={component.id}
-  //           type={component.layoutType as LayoutType}
-  //         >
-  //           {component.children?.map((childId) => {
-  //             const childComponent = useComponentStore.getState().components[childId];
-  //             if (!childComponent) return null;
-  //             return <ComponentContent key={childId} component={childComponent} />;
-  //           })}
-  //         </SortableLayout>
-  //       </LayoutContainer>
-  //     );
-  //   }
-
   // Handle other component types
   switch (component?.type) {
     case 'title':

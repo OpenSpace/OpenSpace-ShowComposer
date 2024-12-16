@@ -19,6 +19,7 @@ import { formatName } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
+import { useBoundStore } from '@/store/boundStore';
 interface TriggerGUIProps {
   component: TriggerComponent;
   shouldRender?: boolean;
@@ -31,7 +32,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToProperty = usePropertyStore(
     (state) => state.subscribeToProperty,
   );

@@ -4,18 +4,20 @@ import { getCopy } from '@/utils/copyHelpers';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { Rnd } from 'react-rnd';
 import { DraggableEvent, DraggableData } from 'react-draggable';
-import { useComponentStore, Component, useSettingsStore } from '@/store';
+import { Component, useSettingsStore } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import DropdownMenuComponent from './DropdownMenu';
-import { Edit2, GripHorizontal, Trash2 } from 'lucide-react';
+import { Copy, Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 import { ComponentContent } from './ComponentContent';
 import { cn } from '@/lib/utils';
-import { usePositionStore } from '@/store/positionStore';
+import { useShallow } from 'zustand/react/shallow';
+import { useBoundStore } from '@/store/boundStore';
 
 interface DraggableComponentProps {
   component: Component;
   layoutId?: string;
   onEdit: () => void;
+  onCopy?: () => void;
   onDelete: () => void;
 }
 
@@ -23,29 +25,40 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   component,
   layoutId,
   onEdit,
+  onCopy = () => {},
   onDelete,
 }) => {
-  const position = usePositionStore(
+  const position = useBoundStore(
     (state) => state.positions[component?.id || ''],
   );
 
-  const updatePosition = usePositionStore((state) => state.updatePosition);
-  const handleComponentDrop = useComponentStore(
+  const updatePosition = useBoundStore((state) => state.updatePosition);
+
+  const tempPosition = useBoundStore(
+    (state) => state.tempPositions[component.id],
+  );
+  const handleComponentDrop = useBoundStore(
     (state) => state.handleComponentDrop,
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const isDragging = usePositionStore(
+  const isDragging = useBoundStore(
     (state) => state.positions[component.id]?.isDragging,
+  );
+
+  const isOnPage = useBoundStore(
+    useShallow((state) => {
+      return state
+        .getPageById(state.currentPage)
+        ?.components.includes(component.id);
+    }),
   );
 
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
-  const selectedComponents = usePositionStore(
-    (state) => state.selectedComponents,
-  );
-  const isSelected = usePositionStore(
-    (state) => state.positions[component.id].selected,
+  const selectedComponents = useBoundStore((state) => state.selectedComponents);
+  const isSelected = useBoundStore(
+    (state) => state.positions[component.id]?.selected,
   );
   if (!component || !component.id || !position) {
     return null;
@@ -64,8 +77,15 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   };
 
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
-    console.log('IN DDAGGABLE: ', d.x, d.y);
-    handleComponentDrop(component.id, d.x, d.y);
+    let newDropPos = { x: d.x, y: d.y };
+    if (layoutId) {
+      const parentPos = useBoundStore.getState().positions[layoutId];
+      newDropPos = {
+        x: d.x + parentPos.x,
+        y: d.y + parentPos.y,
+      };
+    }
+    handleComponentDrop(component.id, newDropPos.x, newDropPos.y);
     updatePosition(component.id, {
       isDragging: false,
     });
@@ -76,8 +96,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
   const getComponentPosition = () => {
     return (
-      // tempPosition ||
-      {
+      tempPosition || {
         x: position.x,
         y: position.y,
       }
@@ -112,24 +131,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           // setIsDragging(true);
         }}
         onDrag={(_e: DraggableEvent, d: DraggableData) => {
-          // console.log('dragging');
-          // console.log(d);
-          // handleDrag(_e, d);
-          // if (layoutId) {
-          //   //   handleDrag(_e, d);
-          //   //   return;
-          //   reorderComponentInLayout(layoutId, component.id, d.x, d.y, false);
-          // }
-          // updatePosition(component.id, {
-          //   // isDragging: true,
-          //   x: d.x,
-          //   y: d.y,
-          // });
           if (selectedComponents.includes(component.id)) {
             const deltaX = d.x - position.x;
             const deltaY = d.y - position.y;
             selectedComponents.forEach((id) => {
-              const pos = usePositionStore.getState().positions[id];
+              const pos = useBoundStore.getState().positions[id];
               if (pos) {
                 updatePosition(id, {
                   x: pos.x + deltaX,
@@ -138,11 +144,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
               }
             });
           } else {
-            updatePosition(component.id, {
-              isDragging: true,
-              x: d.x,
-              y: d.y,
-            });
+            // updatePosition(component.id, {
+            //   isDragging: true,
+            //   x: d.x,
+            //   y: d.y,
+            // });
           }
         }}
         onDragStop={handleDragStop}
@@ -160,8 +166,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         className={cn(
           'pointer-events-auto absolute cursor-move rounded-lg ',
           isHidden && '!hidden',
+          isOnPage
+            ? 'outline outline-offset-4 outline-blue-500'
+            : 'outline outline-offset-4 outline-red-500',
           isPresentMode
-            ? 'border bg-opacity-0'
+            ? 'border bg-opacity-0 !outline-none'
             : 'border-0 bg-gray-300 bg-opacity-25',
           (isDragging || isSelected) &&
             !isPresentMode &&
@@ -197,6 +206,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
                   >
                     <span>{getCopy('DraggableComponent', 'edit')}</span>
                     <Edit2 className="h-4 w-4" />
+                  </div>,
+                  <div
+                    key="edit"
+                    className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    onClick={onCopy}
+                  >
+                    <span>{getCopy('DraggableComponent', 'copy')}</span>
+                    <Copy className="h-4 w-4" />
                   </div>,
                   <div
                     key="delete"

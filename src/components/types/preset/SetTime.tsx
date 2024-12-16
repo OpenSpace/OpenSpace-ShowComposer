@@ -20,6 +20,7 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useBoundStore } from '@/store/boundStore';
 
 interface SetTimeComponentProps {
   component: SetTimeType;
@@ -40,7 +41,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
   useEffect(() => {
     if (luaApi) {
       // console.log('Registering trigger action');

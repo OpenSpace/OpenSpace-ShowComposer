@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import TooltipHolder from '@/components/common/TooltipHolder';
 import { Separator } from '@/components/ui/separator';
+import { useBoundStore } from '@/store/boundStore';
 
 // interface LayoutToolbarProps {
 //   onLayoutCreate: (type: LayoutType) => void;
@@ -45,10 +46,7 @@ export const LayoutToolbar: React.FC = () => {
   // Handle layout creation from toolbar
 
   const gridSize = useSettingsStore((state) => state.gridSize);
-  const setGridSize = useSettingsStore((state) => state.setGridSize);
-  const addLayout = useComponentStore((state) => state.addLayout);
-  const [rows, setRows] = useState(gridSize.rows.toString());
-  const [columns, setColumns] = useState(gridSize.columns.toString());
+  const addLayout = useBoundStore((state) => state.addLayout);
 
   const handleLayoutCreate = (type: LayoutType) => {
     return addLayout({
@@ -98,7 +96,6 @@ export const LayoutToolbar: React.FC = () => {
         </Button>
       </TooltipHolder>
       <Separator orientation="vertical" />
-
       <Popover open={open} onOpenChange={handleOpenChange}>
         <TooltipHolder content="Grid Settings">
           <PopoverTrigger asChild>
@@ -109,57 +106,68 @@ export const LayoutToolbar: React.FC = () => {
         </TooltipHolder>
 
         <PopoverContent className="w-80">
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="rows"># of Rows</Label>
-                <Input
-                  id="rows"
-                  className="col-span-2 h-8"
-                  type="text"
-                  value={rows}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setRows(e.target.value)
-                  }
-                  placeholder="# of Rows"
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="columns"># of Columns</Label>
-                <Input
-                  id="columns"
-                  className="col-span-2 h-8"
-                  type="text"
-                  value={columns}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setColumns(e.target.value)
-                  }
-                  placeholder="# of Columns"
-                />
-              </div>
-              <div className="flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => handleOpenChange(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    setGridSize({
-                      rows: parseInt(rows),
-                      columns: parseInt(columns),
-                    });
-                    handleOpenChange(false);
-                  }}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
+          <GridSettings onClose={() => handleOpenChange(false)} />
         </PopoverContent>
       </Popover>
+    </div>
+  );
+};
+
+export const GridSettings = ({ onClose }: { onClose: () => void }) => {
+  const gridSize = useSettingsStore((state) => state.gridSize);
+  const setGridSize = useSettingsStore((state) => state.setGridSize);
+  const [rows, setRows] = useState(gridSize.rows);
+  const [columns, setColumns] = useState(gridSize.columns);
+  return (
+    <div className="grid gap-4">
+      <div className="grid gap-2">
+        <div className="grid grid-cols-3 items-center gap-4">
+          <Label htmlFor="rows"># of Rows</Label>
+          <Input
+            id="rows"
+            className="col-span-2 h-8"
+            type="number"
+            min={1}
+            max={10}
+            value={rows}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setRows(parseInt(e.target.value))
+            }
+            placeholder="# of Rows"
+          />
+        </div>
+        <div className="grid grid-cols-3 items-center gap-4">
+          <Label htmlFor="columns"># of Columns</Label>
+          <Input
+            id="columns"
+            className="col-span-2 h-8"
+            type="number"
+            min={1}
+            max={10}
+            value={columns}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setColumns(parseInt(e.target.value))
+            }
+            placeholder="# of Columns"
+          />
+        </div>
+        <div className="flex justify-between">
+          <Button variant="outline" onClick={() => onClose()}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              setGridSize({
+                rows: rows,
+                columns: columns,
+              });
+              onClose();
+            }}
+          >
+            Save
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

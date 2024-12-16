@@ -1,18 +1,19 @@
 // SelectionTool.tsx
 import React, { useRef, useState } from 'react';
 import { useComponentStore, usePositionStore } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
 
 const SelectionTool: React.FC = () => {
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const currentPage = useComponentStore((state) => state.currentPage);
+  const currentPage = useBoundStore((state) => state.currentPage);
 
-  const getPageById = useComponentStore((state) => state.getPageById);
-  const positions = usePositionStore((state) => state.positions);
-  const selectComponent = usePositionStore((state) => state.selectComponent);
-  const clearSelection = usePositionStore((state) => state.clearSelection);
+  const getPageById = useBoundStore((state) => state.getPageById);
+  const positions = useBoundStore((state) => state.positions);
+  const selectComponent = useBoundStore((state) => state.selectComponent);
+  const clearSelection = useBoundStore((state) => state.clearSelection);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     clearSelection();

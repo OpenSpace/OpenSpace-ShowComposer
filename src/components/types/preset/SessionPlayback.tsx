@@ -20,6 +20,7 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import Information from '@/components/common/Information';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useBoundStore } from '@/store/boundStore';
 
 //set up recording state
 export const SessionStateIdle = 'idle';
@@ -324,7 +325,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     (state) => state.connectionState,
   );
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   // const refreshTopic = usePropertyStore((state) => state.refreshTopic);
   const unsubscribeFromTopic = usePropertyStore(

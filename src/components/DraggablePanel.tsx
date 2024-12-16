@@ -9,14 +9,14 @@ import {
   NavComponent,
   StatusComponent,
   RecordComponent,
-} from '@/store/componentsStore';
+} from '@/store/ComponentTypes';
 import { useSettingsStore } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import FeedbackPanel from './FeedbackPanel';
 import RecordPanel from './types/static/SessionPanel';
 import { cn } from '@/lib/utils';
-import { usePositionStore } from '@/store/positionStore';
+import { useBoundStore } from '@/store/boundStore';
 interface PanelProps {
   component: TimeComponent | NavComponent | StatusComponent | RecordComponent;
   originX?: number;
@@ -28,8 +28,9 @@ const DraggablePanel: React.FC<PanelProps> = ({
   originX = 0,
   originY = 0,
 }) => {
-  const position = usePositionStore((state) => state.positions[component.id]);
-  const updatePosition = usePositionStore((state) => state.updatePosition);
+  const position = useBoundStore((state) => state.positions[component.id]);
+  const updatePosition = useBoundStore((state) => state.updatePosition);
+
   const [isDragging, setIsDragging] = useState(false);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode);

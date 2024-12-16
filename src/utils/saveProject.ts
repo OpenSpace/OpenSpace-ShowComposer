@@ -1,11 +1,13 @@
 import { useComponentStore, usePositionStore, useSettingsStore } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
 
 //save out the store to a json file that is saved to drive
 export const saveStore = () => {
-  const componentStore = useComponentStore.getState();
+  // const componentStore = useComponentStore.getState();
   const settingsStore = useSettingsStore.getState();
-  const positionStore = usePositionStore.getState();
-  const store = { componentStore, settingsStore, positionStore };
+  // const positionStore = usePositionStore.getState();
+  const componentStore = useBoundStore.getState();
+  const store = { componentStore, settingsStore };
   const storeString = JSON.stringify(store);
   const blob = new Blob([storeString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -28,9 +30,10 @@ export const loadStore = async () => {
         if (e.target?.result) {
           const store = JSON.parse(e.target.result as string);
           //   console.log(store);
-          useComponentStore.setState(store.componentStore);
+          useBoundStore.setState(store.componentStore);
+          // useComponentStore.setState(store.componentStore);
           useSettingsStore.setState(store.settingsStore);
-          usePositionStore.setState(store.positionStore);
+          // usePositionStore.setState(store.positionStore);
         }
       };
       reader.readAsText(file);

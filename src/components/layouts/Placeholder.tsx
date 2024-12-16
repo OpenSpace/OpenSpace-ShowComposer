@@ -47,7 +47,15 @@ const Placeholder = ({
         visibility: hidden ? 'hidden' : 'visible',
       }}
     >
-      <Plus className="text-gray-400" size={64} />
+      <Plus
+        className="text-gray-400"
+        style={{
+          width: '100%',
+          height: '100%',
+          maxWidth: '64px',
+          maxHeight: '64px',
+        }}
+      />
     </div>
   );
 };

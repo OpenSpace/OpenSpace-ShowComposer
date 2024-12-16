@@ -11,19 +11,19 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { useComponentStore, useSettingsStore } from '@/store';
+import { useSettingsStore } from '@/store';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { useBoundStore } from '@/store/boundStore';
 
 const PageButtonMenu = () => {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const addPage = useComponentStore((state) => state.addPage);
-  const deletePage = useComponentStore((state) => state.deletePage);
-  const currentPage = useComponentStore((state) => state.currentPage);
+  const addPage = useBoundStore((state) => state.addPage);
+  const deletePage = useBoundStore((state) => state.deletePage);
+  const currentPage = useBoundStore((state) => state.currentPage);
 
-  //   const updatePage = useComponentStore((state) => state.updatePage);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
   const pageSizes = [
@@ -43,17 +43,7 @@ const PageButtonMenu = () => {
       height: 1366,
     },
   ];
-  //   useEffect(() => {
-  //     console.log(pageHeight);
-  //     console.log(pageWidth);
-  //   }, [pageHeight, pageWidth]);
-  //   const page: Page = useComponentStore((state) =>
-  //     state.getPageById(state.currentPage),
-  //   );
 
-  //   const
-  //   const [width, setWidth] = useState(1920);
-  //   const [height, setHeight] = useSt ate(1080);
   return (
     <>
       {!isPresentMode && (

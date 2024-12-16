@@ -19,6 +19,7 @@ import { formatDate } from '@/utils/time';
 import { Clock } from 'lucide-react';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { useBoundStore } from '@/store/boundStore';
 
 interface SetNavModalProps {
   component: SetNavComponent | null;
@@ -224,7 +225,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   shouldRender = true,
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
   const {
     navigationState,
     intDuration,

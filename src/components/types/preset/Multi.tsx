@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
 import ComponentModal from '@/components/ComponentModal';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { useComponentStore } from '@/store';
 import {
   MultiOption,
   isMultiOption,
@@ -15,7 +14,7 @@ import {
   FadeComponent,
   SetFocusComponent,
   BooleanComponent,
-} from '@/store/componentsStore';
+} from '@/store/ComponentTypes';
 import {
   DragDropContext,
   Droppable,
@@ -44,6 +43,7 @@ import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Information from '@/components/common/Information';
 import ComponentContainer from '@/components/common/ComponentContainer';
+import { useBoundStore } from '@/store/boundStore';
 
 // // Define the type for list items
 // set up chained v paralell data handling
@@ -78,11 +78,11 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const [availableOptions, setAvailableOptions] = useState<Component['id'][]>(
     [],
   );
-  const updateComponent = useComponentStore((state) => state.updateComponent);
-  const getComponentById = useComponentStore((state) => state.getComponentById);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
+  const getComponentById = useBoundStore((state) => state.getComponentById);
 
   // only return components that can be type MultiOption
-  const multiOptions: Component['id'][] = useComponentStore((state) =>
+  const multiOptions: Component['id'][] = useBoundStore((state) =>
     Object.keys(state.components).filter((c: Component['id']) =>
       isMultiOption(getComponentById(c)),
     ),
@@ -143,8 +143,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
         const componentB = getComponentById(b.component) ?? {
           intDuration: 0,
         };
-        const durationA = componentA.intDuration || 0 + a.buffer;
-        const durationB = componentB.intDuration || 0 + b.buffer;
+        //@ts-ignore
+        const durationA = (componentA.intDuration || 0) + a.buffer;
+        //@ts-ignore
+        const durationB = (componentB.intDuration || 0) + b.buffer;
         return durationA - durationB;
       });
     });
@@ -181,6 +183,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
       }
       tempItems[i].endTime =
         tempItems[i].startTime +
+        //@ts-ignore
         (getComponentById(tempItems[i].component)?.intDuration || 1.0);
       lastEndTime = tempItems[i].endTime;
     }
@@ -570,7 +573,7 @@ interface MultiGUIComponentProps {
 // MultiGUIComponent
 const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   // const items = component.components;
-  const getComponentById = useComponentStore((state) => state.getComponentById);
+  const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
   const triggerAnimation = () => {

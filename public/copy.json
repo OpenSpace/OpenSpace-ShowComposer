@@ -22,7 +22,8 @@
     "navpanel": "Nav Panel",
     "statuspanel": "Status Panel",
     "recordpanel": "Record Panel",
-    "layout": "Layout Components"
+    "layout": "Layout Components",
+    "current_show": "Current Show"
   },
   "AdjustablePage": {
     "page": "Page"
@@ -61,7 +62,8 @@
   "DraggableComponent": {
     "unknown_component_type": "Unknown component type",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "copy": "Copy"
   },
   "DropdownMenu": {
     "more": "More"
@@ -278,19 +280,19 @@
     "close": "Close"
   },
   "NewProjectModal": {
-    "new_project": "Create a New Project",
-    "project_details": "Some Preliminary Settings for your new project.",
-    "project_name": "Project Name",
-    "project_name_copy": "Enter the name of the project you want to create.",
-    "project_description": "Project Description",
+    "new_project": "Create a New Show",
+    "project_details": "Some Preliminary Settings for your new show.",
+    "project_name": "Show Name",
+    "project_name_copy": "Enter the name of the show you want to create.",
+    "project_description": "Show Description",
     "ip_address": "IP Address",
     "port": "Port",
     "cancel": "Cancel",
     "default_page_size": "Default Page Size",
-    "default_page_size_copy": "The default page size for the presented project.",
+    "default_page_size_copy": "The default page size for the presented show.",
     "page_width": "Page Width",
     "page_height": "Page Height",
-    "create_project": "Create Project",
+    "create_project": "Create Show",
     "default_screen_space_position": "Default Screen Space Position"
   }
 }

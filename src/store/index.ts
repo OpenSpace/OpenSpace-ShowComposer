@@ -1,14 +1,7 @@
-export {
-  useComponentStore,
-  // saveStore,
-  // loadStore,
-} from './componentsStore';
-
 export { useSettingsStore } from './settingsStore';
 export { usePropertyStore, selectFilteredProperties } from './propertyStore';
 export { useOpenSpaceApiStore, ConnectionState } from './apiStore';
-export { usePositionStore } from './positionStore';
-export type { Position } from './positionStore';
+export type { Position } from './positionSlice';
 export type {
   ComponentType,
   NavComponent,
@@ -31,4 +24,4 @@ export type {
   PageComponent,
   SessionPlaybackComponent,
   SetNavComponent,
-} from './componentsStore';
+} from './ComponentTypes';

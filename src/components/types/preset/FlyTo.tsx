@@ -7,10 +7,8 @@ import {
   ConnectionState,
   useOpenSpaceApiStore,
   usePropertyStore,
-  useComponentStore,
-  selectFilteredProperties,
 } from '@/store';
-import { FlyToComponent } from '@/store/componentsStore';
+import { FlyToComponent } from '@/store/ComponentTypes';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useShallow } from 'zustand/react/shallow';
@@ -31,6 +29,7 @@ import {
 import ButtonLabel from '@/components/common/ButtonLabel';
 import Toggle from '@/components/common/Toggle';
 import ComponentContainer from '@/components/common/ComponentContainer';
+import { useBoundStore } from '@/store/boundStore';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -41,7 +40,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   shouldRender = true,
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
   const triggerAnimation = () => {
@@ -237,9 +236,9 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     }
   };
   useEffect(() => {
-    console.log(target, lastTarget, lockName);
+    // console.log(target, lastTarget, lockName);
     if (target !== lastTarget && !lockName) {
-      console.log('setting name');
+      // console.log('setting name');
       setGuiName(`Fly To ${formatName(target)}`);
       setGuiDescription(`Fly to ${formatName(target)}`);
     }

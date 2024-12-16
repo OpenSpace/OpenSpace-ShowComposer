@@ -3,22 +3,26 @@ import { Rnd } from 'react-rnd';
 import { DraggableEvent, DraggableData } from 'react-draggable';
 // import { Button } from '@/pages/ui/button';
 import { GripHorizontal, LockOpen, Lock } from 'lucide-react';
-import { Page } from '@/store/componentsStore';
-import { useComponentStore, useSettingsStore } from '@/store';
+import { Page } from '@/store/ComponentTypes';
+import { useSettingsStore } from '@/store';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import ButtonLabel from './common/ButtonLabel';
 import { getCopy } from '@/utils/copyHelpers';
 import { cn } from '@/lib/utils';
+import { useBoundStore } from '@/store/boundStore';
 const AdjustablePage: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
-  const updatePage = useComponentStore((state) => state.updatePage);
-  const page: Page = useComponentStore((state) =>
+  const updatePage = useBoundStore((state) => state.updatePage);
+  const page: Page = useBoundStore((state) =>
     state.getPageById(state.currentPage),
   );
-  const currentPageIndex = useComponentStore((state) => state.currentPageIndex);
+  const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
+  useEffect(() => {
+    console.log('currentPageIndex', currentPageIndex);
+  }, [currentPageIndex]);
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
   const [isDragging, setIsDragging] = useState(false);
   const [locked, setLocked] = useState(true);

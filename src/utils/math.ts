@@ -42,6 +42,6 @@ export function restrictNumbersToDecimalPlaces<T>(
   // Clone the object to avoid mutating the original
   const clonedObj: T = JSON.parse(JSON.stringify(obj));
   processObject(clonedObj);
-  //@ts-ignore
+
   return clonedObj;
 }

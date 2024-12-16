@@ -14,13 +14,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Textarea } from './ui/textarea';
-import {
-  useComponentStore,
-  useOpenSpaceApiStore,
-  useSettingsStore,
-} from '@/store';
+import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { PlusIcon } from 'lucide-react';
 import { Button } from './ui/button';
+import { useBoundStore } from '@/store/boundStore';
 
 const NewProjectModal: React.FC = () => {
   const setProjectSettings = useSettingsStore(
@@ -42,7 +39,7 @@ const NewProjectModal: React.FC = () => {
     // screenSpacePosition: state.screenSpacePosition,
   }));
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
-  const removeAllComponents = useComponentStore(
+  const removeAllComponents = useBoundStore(
     (state) => state.removeAllComponents,
   );
   const [projectName, setProjectName] = useState(initialState.projectName);
@@ -74,16 +71,16 @@ const NewProjectModal: React.FC = () => {
   //     : null;
 
   const handleSubmit = () => {
-    console.log('handleSubmit');
-    console.log(
-      projectName,
-      projectDescription,
-      ip,
-      port,
-      pageWidth,
-      pageHeight,
-      //   defaultScreenSpacePosition,
-    );
+    // console.log('handleSubmit');
+    // console.log(
+    //   projectName,
+    //   projectDescription,
+    //   ip,
+    //   port,
+    //   pageWidth,
+    //   pageHeight,
+    //   //   defaultScreenSpacePosition,
+    // );
     setProjectSettings({
       projectName,
       projectDescription,

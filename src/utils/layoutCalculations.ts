@@ -24,6 +24,7 @@ export function calculateGridIndex(
   layout: LayoutBase,
 ): { gridIndex: number; gridPosition: { x: number; y: number } } {
   const { rows, columns, childWidth, childHeight, padding } = layout;
+
   // Calculate the effective position within the grid, accounting for padding
   const effectiveX = x - padding + childWidth / 2.0;
   const effectiveY = y - padding + childHeight / 2.0;

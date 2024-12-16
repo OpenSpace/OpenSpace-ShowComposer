@@ -16,6 +16,7 @@ import { Label } from '../ui/label';
 import Pagination from '../Pagination';
 import { useRef } from 'react';
 import { useComponentStore } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
 interface GalleryProps {
   images: Array<string>;
   selectedImage: string;
@@ -32,7 +33,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
 }) => {
   // State for modal visibility, pagination, and selected image
   // const [modalVisible, setModalVisible] = useState(false);
-  const resetAsyncPreSubmitOperation = useComponentStore(
+  const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation,
   );
   const [currentPage, setCurrentPage] = useState(0);

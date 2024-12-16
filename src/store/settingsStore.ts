@@ -3,6 +3,7 @@ import { throttle } from 'lodash';
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { useOpenSpaceApiStore } from './apiStore';
 
 interface State {
   presentMode: boolean;
@@ -102,7 +103,6 @@ export const useSettingsStore = create<State>()(
           setConnectionSettings: (ip: string, port: string) =>
             set(
               () => {
-                //need to trigger openspace reconnect here
                 return { ip, port };
               },
               false,

@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ComponentType,
-  useComponentStore,
+  // useComponentStore,
   TitleComponent,
   Component,
   SetTimeComponent,
@@ -38,7 +38,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-// import Button from './common/Button';
 import {
   ImageComponent,
   MultiComponent,
@@ -46,10 +45,12 @@ import {
   SessionPlaybackComponent,
   SetNavComponent,
   allComponentLabels,
-} from '@/store/componentsStore';
+} from '@/store/ComponentTypes';
+
 import { SetNavModal } from './types/preset/SetNavigation';
 import { PageModal } from './types/preset/Page';
 import { getCopy } from '@/utils/copyHelpers';
+import { useBoundStore } from '@/store/boundStore';
 
 interface ComponentModalProps {
   isOpen: boolean;
@@ -75,18 +76,18 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   initialData = {},
   icon,
 }) => {
-  const addComponent = useComponentStore((state) => state.addComponent);
-  const updateComponent = useComponentStore((state) => state.updateComponent);
-  const asyncPreSubmitOperation = useComponentStore(
+  const addComponent = useBoundStore((state) => state.addComponent);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
+  const asyncPreSubmitOperation = useBoundStore(
     (state) => state.asyncPreSubmitOperation,
   );
-  const resetAsyncPreSubmitOperation = useComponentStore(
+  const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation,
   );
   const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
     AsyncStatus.False,
   );
-  const components = useComponentStore((state) => state.components);
+  const components = useBoundStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
   const [componentData, setComponentData] = useState<Partial<Component>>({
     ...initialData,
@@ -99,10 +100,8 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
   const handleSubmit = useCallback(async () => {
     if (componentId) {
-      if (useComponentStore.getState().asyncPreSubmitOperation) {
-        await useComponentStore
-          .getState()
-          .executeAndResetAsyncPreSubmitOperation();
+      if (useBoundStore.getState().asyncPreSubmitOperation) {
+        await useBoundStore.getState().executeAndResetAsyncPreSubmitOperation();
         setAsyncOperationStatus(AsyncStatus.Pending);
       } else {
         if (component) {
@@ -137,12 +136,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             id: componentId,
             type: type || 'default',
             isMulti: initialData.isMulti || 'false',
-            // x: 0,
-            // y: 0,
-            // minWidth: 50,
-            // minHeight: 50,
-            // width: 300,
-            // height: 175,
             gui_description: '',
             gui_name: '',
             ...componentData,

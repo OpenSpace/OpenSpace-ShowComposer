@@ -7,12 +7,13 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
+import { useBoundStore } from '@/store/boundStore';
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
 }
 const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
-  const setAsyncPreSubmitOperation = useComponentStore(
+  const setAsyncPreSubmitOperation = useBoundStore(
     (state) => state.setAsyncPreSubmitOperation,
   );
   const [image, setImage] = useState<string>(value || '');

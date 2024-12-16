@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
+import { useBoundStore } from '@/store/boundStore';
 
 interface PageGUIProps {
   component: PageComponent;
@@ -21,8 +22,8 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({
   component,
   shouldRender = true,
 }) => {
-  const updateComponent = useComponentStore((state) => state.updateComponent);
-  const goToPage = useComponentStore((state) => state.goToPage);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
+  const goToPage = useBoundStore((state) => state.goToPage);
   useEffect(() => {
     // console.log('Registering trigger action');
     updateComponent(component.id, {
@@ -58,7 +59,7 @@ const PageModal: React.FC<PageModalProps> = ({
   handleComponentData,
   //   isOpen,
 }) => {
-  const pages = useComponentStore((state) => state.pages);
+  const pages = useBoundStore((state) => state.pages);
   const [page, setPage] = useState<number>(component?.page || 1);
   const [gui_name, setGuiName] = useState<string>(
     component?.gui_name || 'Go to Page 1',

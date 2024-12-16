@@ -1,6 +1,6 @@
 // DroppableWorkspace.tsx
 import React, { useState, useEffect } from 'react';
-import { useComponentStore, useSettingsStore } from '@/store';
+import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import SelectionTool from '@/components/SelectionTool';
 import { Badge } from './ui/badge';
@@ -9,14 +9,15 @@ import AdjustablePage from './AdjustablePage';
 import ScaleGUI from './ScaleGUI';
 import { ConnectionStatus } from './ConnectionSettings';
 import { cn } from '@/lib/utils';
+import { useBoundStore } from '@/store/boundStore';
 
 const DroppableWorkspace: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { theme } = useTheme();
   const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const currentPage = useComponentStore((state) => state.currentPage);
-  const { x: pageX, y: pageY } = useComponentStore((state) =>
+  const currentPage = useBoundStore((state) => state.currentPage);
+  const { x: pageX, y: pageY } = useBoundStore((state) =>
     state.getPageById(currentPage),
   );
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
@@ -113,6 +114,7 @@ const DroppableWorkspace: React.FC<{
             {getCopy('DroppableWorkspace', 'edit_mode')}
           </Badge>
         )}
+
         {isPresentMode && (
           <div className="absolute left-3 top-3">
             <ConnectionStatus />
@@ -154,11 +156,7 @@ const DroppableWorkspace: React.FC<{
       <div className="absolute right-5 top-7 flex flex-col items-center justify-center gap-2">
         {!isPresentMode && <ScaleGUI />}
       </div>
-      {/* <div className="absolute left-5 top-12 flex flex-col items-center justify-center gap-2">
-        {!isPresentMode && (
-          <LayoutToolbar onLayoutCreate={handleLayoutCreate} />
-        )}
-      </div> */}
+      f
     </>
   );
 };

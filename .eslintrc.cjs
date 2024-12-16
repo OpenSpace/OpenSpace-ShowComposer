@@ -39,6 +39,7 @@ module.exports = {
     'prefer-const': 0,
     '@typescript-eslint/no-unused-vars': 0,
     '@typescript-eslint/no-explicit-any': 'off',
+    'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {
