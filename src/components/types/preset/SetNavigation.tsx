@@ -3,12 +3,8 @@ import { getCopy } from '@/utils/copyHelpers';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  useComponentStore,
-  useOpenSpaceApiStore,
-  usePropertyStore,
-} from '@/store';
-import { SetNavComponent } from '@/store/componentsStore';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { SetNavComponent } from '@/store/ComponentTypes';
 import Toggle from '@/components/common/Toggle';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
@@ -64,10 +60,8 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
       setFadeScene(component.fadeScene);
       setSetTime(component.setTime);
     }
-    // console.log(component);
-    // console.log(setTime);
-    // console.log(fadeScene);
   }, [component]);
+
   useEffect(() => {
     handleComponentData({
       time: componentTime,
@@ -90,30 +84,6 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
     intDuration,
     handleComponentData,
   ]);
-  //     const connectionState = useOpenSpaceApiStore(
-  //       (state) => state.connectionState,
-  //     );
-  //     const updateComponent = useComponentStore((state) => state.updateComponent);
-  //     const subscribeToProperty = usePropertyStore(
-  //       (state) => state.subscribeToProperty,
-  //     );
-  //     const unsubscribeFromProperty = usePropertyStore(
-  //       (state) => state.unsubscribeFromProperty,
-  //     );
-
-  //   useEffect(() => {
-  //       if (connectionState !== ConnectionState.CONNECTED) return;
-  //       console.log('Subscribing to property', component.property);
-  //       subscribeToProperty(component.property, 500);
-  //       return () => {
-  //           unsubscribeFromProperty(component.property);
-  //       };
-  //   }, [
-  //       component.property,
-  //       connectionState,
-  //       subscribeToProperty,
-  //       unsubscribeFromProperty,
-  //   ]);
 
   const getNavigationState = async () => {
     if (!luaApi) return;
@@ -236,6 +206,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     gui_name,
     backgroundImage,
   } = component;
+
   useEffect(() => {
     if (luaApi) {
       //   console.log('Registering trigger action');
@@ -249,6 +220,11 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
             intDuration,
           );
         },
+        isDisabled: false,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [
@@ -283,10 +259,12 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
         />
       )}
       {/* <div className="flex flex-col gap-2"> */}
-      <ButtonLabel>
-        {gui_name}
-        <Information content={gui_description} />
-      </ButtonLabel>
+      {gui_name || gui_description ? (
+        <ButtonLabel>
+          {gui_name}
+          <Information content={gui_description} />
+        </ButtonLabel>
+      ) : null}
       {/* </div> */}
     </ComponentContainer>
   ) : null;

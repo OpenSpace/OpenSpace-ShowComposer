@@ -36,6 +36,8 @@ import { SessionPlaybackGUIComponent } from '../types/preset/SessionPlayback';
 import { SetNavGUIComponent } from '../types/preset/SetNavigation';
 import { PageGUIComponent } from '../types/preset/Page';
 import { getCopy } from '@/utils/copyHelpers';
+import { ActionTriggerGUIComponent } from '../types/preset/ActionTrigger';
+import { ActionTriggerComponent } from '@/store/ComponentTypes';
 interface ComponentContentProps {
   component: Component;
 }
@@ -43,7 +45,6 @@ interface ComponentContentProps {
 export const ComponentContent: React.FC<ComponentContentProps> = ({
   component,
 }) => {
-  // Handle other component types
   switch (component?.type) {
     case 'title':
       return <TitleGUIComponent component={component as TitleComponent} />;
@@ -85,6 +86,12 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({
       return <MultiGUIComponent component={component as MultiComponent} />;
     case 'page':
       return <PageGUIComponent component={component as PageComponent} />;
+    case 'action':
+      return (
+        <ActionTriggerGUIComponent
+          component={component as ActionTriggerComponent}
+        />
+      );
     default:
       return (
         <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>

@@ -14,6 +14,7 @@
     "boolean": "Boolean",
     "number": "Number",
     "trigger": "Trigger",
+    "action": "Play Action",
     "image": "Image",
     "video": "Video",
     "title": "Title",

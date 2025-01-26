@@ -1,10 +1,9 @@
-import { SetFocusComponent } from '@/store/componentsStore';
+import { SetFocusComponent } from '@/store/ComponentTypes';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   ConnectionState,
   useOpenSpaceApiStore,
   usePropertyStore,
-  useComponentStore,
 } from '@/store';
 import { useEffect, useState } from 'react';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
@@ -44,19 +43,22 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-  // const property = usePropertyStore(
-  //   (state) => state.properties[component.property],
-  // );
+  const property = usePropertyStore((state) => {
+    //using this to check if the property exists
+    return state.properties[`Scene.${component.property}.Renderable.Enabled`];
+  });
+
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey],
   );
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    // console.log('Subscribing to property', component.property);
+    console.log('Subscribing to property', component.property);
     subscribeToProperty(NavigationAnchorKey, 1000);
-    // subscribeToProperty(`Scene.${component.property}`, 1000);
+    //using this to check if the property exists
+    subscribeToProperty(`Scene.${component.property}.Renderable.Enabled`, 1000);
     return () => {
-      // unsubscribeFromProperty(`Scene.${component.property}`);
+      unsubscribeFromProperty(`Scene.${component.property}.Renderable.Enabled`);
       unsubscribeFromProperty(NavigationAnchorKey);
     };
   }, [
@@ -65,13 +67,11 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
+
   useEffect(() => {
     if (luaApi) {
-      // console.log('Registering trigger action');
-      // console.log(component);
       updateComponent(component.id, {
         triggerAction: () => {
-          // console.log('Triggering action', component.property);
           luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
           luaApi.setPropertyValueSingle(
             NavigationAnchorKey,
@@ -79,9 +79,14 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
           );
           luaApi.setPropertyValueSingle(NavigationAimKey, '');
         },
+        isDisabled: property ? false : true,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
-  }, [component.id, component.property, luaApi]);
+  }, [component.id, component.property, luaApi, property]);
 
   if (!shouldRender) return null;
 
@@ -92,15 +97,17 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
         component.triggerAction?.();
       }}
     >
-      <ButtonLabel>
-        <div className="flex flex-col gap-2">
-          {component.gui_name}
-          {CurrentAnchor?.value && (
-            <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
-          )}
-          <Information content={component.gui_description} />
-        </div>
-      </ButtonLabel>
+      {component.gui_name || component.gui_description ? (
+        <ButtonLabel>
+          <div className="flex flex-row gap-2">
+            {component.gui_name}
+            {/* {CurrentAnchor?.value && (
+              <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
+            )} */}
+            <Information content={component.gui_description} />
+          </div>
+        </ButtonLabel>
+      ) : null}
     </ComponentContainer>
   );
 };
@@ -150,21 +157,16 @@ const FocusModal: React.FC<FocusModalProps> = ({
     };
   }, [connectionState, subscribeToProperty, unsubscribeFromProperty]);
 
-  // useEffect(() => {
-  //   if (CurrentAnchor === undefined) return;
-  //   setGuiDescription(CurrentAnchor?.description?.description);
-  // }, [CurrentAnchor.description.description]);
-
-  useEffect(() => {
-    if (property !== lastProperty && !lockName) {
-      // console.log(CurrentAnchor);
+  const handlePropertyChange = (property: string) => {
+    setProperty(property);
+    if (!lockName) {
       setGuiName(`Focus on ${property}`);
       setGuiDescription(
         `Focus on ${property}. ${CurrentAnchor?.description.description}`,
       );
-      setLastProperty(property);
     }
-  }, [property, CurrentAnchor]);
+  };
+
   useEffect(() => {
     handleComponentData({
       property,
@@ -209,7 +211,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
             </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => setProperty(sortedKeys[v])}
+              selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
               selectedOption={
                 (Object.keys(sortedKeys).find(
                   (key) => key === property,

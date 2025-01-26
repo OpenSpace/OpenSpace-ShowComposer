@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
-  useComponentStore,
   usePropertyStore,
   NumberComponent,
   ConnectionState,
@@ -62,19 +61,17 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       setTriggeredByArrowKey(true); // Set the flag when arrow keys are pressed
     }
   };
+
   const handleMouseDown = (_e: React.MouseEvent) => {
-    // e.stopPropagation();
     setTriggeredByArrowKey(true);
-    // component.triggerAction?.(parseFloat(e.target.value));
   };
+
   const handleMouseUp = (_e: React.MouseEvent) => {
-    // e.stopPropagation();
-    // setTriggeredByArrowKey(true);
     component.triggerAction?.(parseFloat(tempValue));
   };
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 50);
     return () => {
       unsubscribeFromProperty(component.property);
@@ -85,6 +82,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
+
   useEffect(() => {
     if (luaApi) {
       // console.log('Registering trigger action');
@@ -92,9 +90,14 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         triggerAction: (_value: number) => {
           triggerNumber(component.property, _value);
         },
+        isDisabled: property ? false : true,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
-  }, [component.id, component.property, luaApi]);
+  }, [component.id, component.property, luaApi, property]);
   return (
     <ComponentContainer backgroundImage={component.backgroundImage}>
       <div className="grid w-[85%] gap-4 py-4">

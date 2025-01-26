@@ -27,6 +27,7 @@ export interface LayoutSlice {
     rows?: number;
     columns?: number;
   }) => string;
+  addLayouts: (layouts: LayoutBase[]) => void;
   updateLayout: (id: string, updates: Partial<LayoutBase>) => void;
   deleteLayout: (layoutId: string) => void;
   copyLayout: (id: LayoutBase['id']) => LayoutBase['id'] | null;
@@ -90,6 +91,13 @@ export const createLayoutSlice: ImmerStateCreator<
       height,
     });
     return id;
+  },
+  addLayouts: (layouts) => {
+    set((state) => {
+      layouts.forEach((layout) => {
+        state.layouts[layout.id] = { ...layout };
+      });
+    });
   },
   updateLayout: (id, updates) => {
     set((state) => {
@@ -158,7 +166,9 @@ export const createLayoutSlice: ImmerStateCreator<
                 )
               ) {
                 get().addComponentToPageById(componentId, currentPage.id);
-                state.components[componentId].parentPage = currentPage.id;
+                if (state.components[componentId]) {
+                  state.components[componentId].parentPage = currentPage.id;
+                }
               } else {
                 get().removeComponentToPageById(componentId, currentPage.id);
                 state.components[componentId].parentPage = undefined;

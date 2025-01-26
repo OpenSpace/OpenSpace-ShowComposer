@@ -156,7 +156,6 @@ const DroppableWorkspace: React.FC<{
       <div className="absolute right-5 top-7 flex flex-col items-center justify-center gap-2">
         {!isPresentMode && <ScaleGUI />}
       </div>
-      f
     </>
   );
 };

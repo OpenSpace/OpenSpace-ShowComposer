@@ -19,6 +19,7 @@ import {
   flattenPropertyTree,
   getActionSceneNodes,
   getRenderables,
+  isPropertyVisible,
 } from '@/utils/apiHelpers';
 import { useSettingsStore } from './settingsStore';
 
@@ -101,58 +102,63 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         const luaApi = await apiInstance.library();
         set({ luaApi, connectionState: ConnectionState.CONNECTED });
         const value = await apiInstance.getProperty(rootOwnerKey);
-
         const {
           propertyOwners,
           properties,
         }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
           flattenPropertyTree(value as PropertyOwner);
-        // console.log(properties);
-        // console.log(
-        //   properties.find((p) => p.uri === 'Scene.Earth.Renderable.Opacity'),
-        // );
 
+        usePropertyStore.getState().getActions();
         const Visibility = properties.find(
           (p) => p.uri === EnginePropertyVisibilityKey,
         );
         const FadeDuration = properties.find(
           (p) => p.uri === EngineFadeDurationKey,
         );
-        // console.log(Visibility);
-        // console.log(FadeDuration);
 
+        // Set the inital properties to the store
         let initData: Record<string, any> = {};
         initData[EngineFadeDurationKey as string] = FadeDuration;
         initData[EnginePropertyVisibilityKey as string] = Visibility;
-
-        // console.log(properties);
         usePropertyStore.getState().setProperties(initData);
 
-        const favorites = findFavorites(propertyOwners);
-        usePropertyStore.getState().setFavorites(favorites);
-        // // console.log(favorites);
+        // Filter the properties based on the visibility
+        const filtredProperties = properties.filter((p) =>
+          isPropertyVisible(p, Visibility as PropertyOwner),
+        );
+        const filteredPropertyOwners = propertyOwners.filter((p) =>
+          isPropertyVisible(p, Visibility as PropertyOwner),
+        );
 
+        // Find the favorites
+        const favorites = findFavorites(filteredPropertyOwners);
+        usePropertyStore.getState().setFavorites(favorites);
+
+        // Get the renderables
         const fadeables: Record<string, any> = getRenderables(
-          properties as Property[],
+          filtredProperties as Property[],
           'Fadable',
         );
-        // console.log(fadeables);
+
         usePropertyStore.getState().setProperties(fadeables);
 
-        const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
-        // console.log(boolProps);
+        const boolProps = getActionSceneNodes(
+          filtredProperties as Property[],
+          'Bool',
+        );
+
         usePropertyStore.getState().setProperties(boolProps);
         const triggerProps = getActionSceneNodes(
-          properties as Property[],
+          filtredProperties as Property[],
           'Trigger',
         );
-        // console.log(triggerProps);
+
         usePropertyStore.getState().setProperties(triggerProps);
         const numberProps = getActionSceneNodes(
-          properties as Property[],
+          filtredProperties as Property[],
           'Number',
         );
-        // console.log(numberProps);
+
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);

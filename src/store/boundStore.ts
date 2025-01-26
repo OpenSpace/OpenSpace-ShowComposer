@@ -40,6 +40,10 @@ export const useBoundStore = create<BoundStoreState>()(
                 addLayout,
                 handleLayoutDrop,
                 handleComponentDrop,
+                addPages,
+                addComponents,
+                addPositions,
+                addLayouts,
                 ...rest
               } = state;
 

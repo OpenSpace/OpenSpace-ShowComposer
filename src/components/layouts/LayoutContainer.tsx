@@ -137,19 +137,20 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
         onDragStop={handleDragStop}
         onResizeStop={handleResize}
         bounds="parent"
-        enableResizing={true}
+        enableResizing={!isPresentMode}
+        disableDragging={isPresentMode}
         className={cn(
           'items-center',
-          'pointer-events-auto',
-          isPresentMode ? '' : 'rounded-lg outline-dashed outline-2',
-          'transition-colors duration-200',
-          isPresentMode ? '' : 'outline-gray-300 dark:outline-gray-600',
-          'hover:outline-blue-500 dark:hover:outline-blue-400',
-          isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
-          'z-[9999]', // Ensure it's above other components
           isOnPage
             ? 'outline outline-offset-4 outline-blue-500'
             : 'outline outline-offset-4 outline-red-500',
+          isPresentMode
+            ? '!outline-none'
+            : 'pointer-events-auto rounded-lg outline-dashed outline-2 outline-gray-300 dark:outline-gray-600',
+          'transition-colors duration-200',
+          'hover:outline-blue-500 dark:hover:outline-blue-400',
+          isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
+          'z-[9999]', // Ensure it's above other components
         )}
       >
         {!isPresentMode && (

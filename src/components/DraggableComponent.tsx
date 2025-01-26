@@ -93,7 +93,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
   const isMultiLoading = component.isMulti?.includes('pending');
   const isHidden = component.isMulti?.includes('true');
-
+  const hideOnPresent = component.isDisabled && isPresentMode;
   const getComponentPosition = () => {
     return (
       tempPosition || {
@@ -166,12 +166,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         className={cn(
           'pointer-events-auto absolute cursor-move rounded-lg ',
           isHidden && '!hidden',
-          isOnPage
-            ? 'outline outline-offset-4 outline-blue-500'
-            : 'outline outline-offset-4 outline-red-500',
-          isPresentMode
-            ? 'border bg-opacity-0 !outline-none'
-            : 'border-0 bg-gray-300 bg-opacity-25',
+          hideOnPresent && '!hidden',
+          isPresentMode ? '' : 'border-0 bg-gray-300 bg-opacity-25',
           (isDragging || isSelected) &&
             !isPresentMode &&
             'z-[999] border-blue-500 shadow-lg shadow-blue-500/50 dark:shadow-slate-100/50',
@@ -232,6 +228,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           className={cn(
             'relative top-0 z-0 flex h-full flex-col items-center justify-center rounded-lg p-4 py-2',
             layoutId && 'p-2',
+            component.isDisabled && 'pointer-events-none opacity-25',
           )}
         >
           <ComponentContent component={component} />

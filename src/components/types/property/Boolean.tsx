@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
-  useComponentStore,
   usePropertyStore,
   BooleanComponent,
   Toggle,
@@ -46,6 +45,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
   const property = usePropertyStore(
     (state) => state.properties[component.property],
   );
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     // console.log('Subscribing to property', component.property);
@@ -59,6 +59,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
+
   useEffect(() => {
     if (luaApi) {
       // console.log('Registering trigger action');
@@ -66,6 +67,11 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
         triggerAction: () => {
           triggerBool(component.property, component.action);
         },
+        isDisabled: property ? false : true,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [
@@ -73,8 +79,10 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
     component.action,
     component.action,
     component.property,
+    property,
     luaApi,
   ]);
+
   return shouldRender ? (
     <ComponentContainer
       className={`${
@@ -135,6 +143,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
     setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
     setGuiDescription(propertyData.description.description);
   }, [property, action]);
+
   useEffect(() => {
     handleComponentData({
       property,

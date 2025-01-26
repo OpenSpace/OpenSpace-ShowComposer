@@ -29,6 +29,7 @@ interface VirtualizedCommandProps {
   selectedOption: string;
   onSelectOption?: (option: string) => void;
   presets?: Option[] | null;
+  delimiter?: string;
 }
 const breakAndColorString = (str: string, delimiter: string) => {
   const values = [
@@ -62,6 +63,7 @@ const VirtualizedCommand = ({
   selectedOption = '',
   onSelectOption,
   presets = [],
+  delimiter = '>',
 }: VirtualizedCommandProps) => {
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
   const parentRef = useRef(null);
@@ -239,7 +241,7 @@ const VirtualizedCommand = ({
                   <span>
                     {breakAndColorString(
                       filteredOptions[virtualOption.index].label,
-                      '>',
+                      delimiter,
                     )}
                   </span>
                 </CommandItem>
@@ -260,6 +262,7 @@ interface VirtualizedComboboxProps {
   width?: string;
   height?: string;
   presets?: Option[] | null;
+  delimiter?: string;
 }
 export function VirtualizedCombobox({
   options,
@@ -267,7 +270,9 @@ export function VirtualizedCombobox({
   selectOption,
   searchPlaceholder = 'Search items...',
   width = '460px',
+  delimiter = '>',
   // height = '300px',
+
   presets = null,
 }: VirtualizedComboboxProps) {
   const [open, setOpen] = useState<boolean>(false);
@@ -288,7 +293,7 @@ export function VirtualizedCombobox({
               selectedOption
                 ? options.find((option) => option === selectedOption) ?? ''
                 : searchPlaceholder,
-              '>',
+              delimiter,
             )}
           </span>
           <ChevronsUpDown
@@ -315,6 +320,7 @@ export function VirtualizedCombobox({
             setOpen(false);
           }}
           presets={presets}
+          delimiter={delimiter}
         />
       </PopoverContent>
     </Popover>

@@ -7,7 +7,6 @@ import {
   usePropertyStore,
   useOpenSpaceApiStore,
   ConnectionState,
-  useComponentStore,
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { formatDate, jumpToTime } from '@/utils/time';
@@ -54,6 +53,11 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
             component.fadeScene,
           );
         },
+        isDisabled: false,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [
@@ -131,6 +135,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     }
     return time;
   }, [componentTime]);
+
   useEffect(() => {
     if (timeLabel && !lockName) {
       setGuiName(`Go to ${timeLabel}`);
@@ -143,6 +148,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       }
     }
   }, [timeLabel, intDuration, interpolate]);
+
   useEffect(() => {
     handleComponentData({
       time: componentTime,

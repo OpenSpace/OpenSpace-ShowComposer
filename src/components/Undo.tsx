@@ -7,8 +7,8 @@ const Undo = () => {
   );
   return (
     <div>
-      <div className="flex w-full flex-row items-center justify-start gap-2 p-2">
-        <p className="text-xs">History:</p>
+      <div className="flex w-full flex-row items-center justify-start gap-2">
+        <h2 className=" text-xs font-bold">History:</h2>
         <Button
           size="icon"
           variant="default"

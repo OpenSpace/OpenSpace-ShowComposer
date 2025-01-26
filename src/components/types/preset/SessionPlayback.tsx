@@ -1,6 +1,5 @@
 import {
   ConnectionState,
-  useComponentStore,
   useOpenSpaceApiStore,
   usePropertyStore,
 } from '@/store';
@@ -13,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Pause, Play, Square } from 'lucide-react';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 // import { Separator } from '@/components/ui/separator';
-import { SessionPlaybackComponent } from '@/store/componentsStore';
+import { SessionPlaybackComponent } from '@/store/ComponentTypes';
 import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
@@ -75,12 +74,14 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  useEffect(() => {
-    if (file !== lastFile && !lockName) {
+
+  const handleFileChange = (file: string) => {
+    setFile(file);
+    if (!lockName) {
       setGuiName(`Playback ${file.split('.')[0]}`);
-      setLastFile(file);
     }
-  }, [file]);
+  };
+
   useEffect(() => {
     handleComponentData({
       file,
@@ -105,6 +106,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     () => recordingState === SessionStateIdle,
     [recordingState],
   );
+  useEffect(() => {
+    console.log('fileList', fileList);
+  }, [fileList]);
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
       setLoop(true);
@@ -250,7 +254,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
               <SelectableDropdown
                 placeholder="Select playback file..."
                 options={fileList}
-                setSelected={(value: string) => setFile(value)}
+                setSelected={(value: string) => handleFileChange(value)}
                 selected={file}
               />
               {playbackSwitch()}
@@ -372,17 +376,21 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
         triggerAction: () => {
           togglePlayback();
         },
+        isDisabled: false,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [luaApi, file, loop, forceTime, isIdle]);
+
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
       case SessionStateIdle:
         return file ? (
           <Button
             variant="outline"
-            //   size={'sm'}
-            //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
             className="gap-2"
             onClick={() => togglePlayback()}
           >
@@ -397,8 +405,6 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
-              //   size={'sm'}
-              // disabled={!filenamePlayback}
               className="gap-2"
               onClick={togglePlaybackPaused}
             >
@@ -407,8 +413,6 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
             </Button>
             <Button
               variant="outline"
-              //   size={'sm'}
-              // disabled={(isIdle && nameIsTaken) || !filenameRecording}
               className="gap-2"
               onClick={() => togglePlayback()}
             >
@@ -422,8 +426,6 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
-              //   size={'sm'}
-              // disabled={!filenamePlayback}
               className="gap-2"
               onClick={togglePlaybackPaused}
             >
@@ -432,8 +434,6 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
             </Button>
             <Button
               variant="outline"
-              //   size={'sm'}
-              // disabled={(isIdle && nameIsTaken) || !filenameRecording}
               className="gap-2"
               onClick={() => togglePlayback()}
             >
@@ -447,20 +447,14 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     }
   }, [file, recordingState]);
   return shouldRender ? (
-    <ComponentContainer
-      backgroundImage={component.backgroundImage}
-      onClick={() => {
-        // if (isIdle) {
-        //   component.triggerAction?.();
-        // }
-        // triggerAnimation();
-      }}
-    >
+    <ComponentContainer backgroundImage={component.backgroundImage}>
       <div className="flex flex-col items-center justify-center gap-2">
-        <ButtonLabel>
-          {gui_name}
-          <Information content={gui_description} />
-        </ButtonLabel>
+        {gui_name || gui_description ? (
+          <ButtonLabel>
+            {gui_name}
+            <Information content={gui_description} />
+          </ButtonLabel>
+        ) : null}
         {playbackSwitch()}
       </div>
     </ComponentContainer>

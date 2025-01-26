@@ -29,6 +29,8 @@ const SessionPanel = () => {
   const [shouldOutputFrames, setShouldOutputFrames] = useState(false);
   const [outputFramerate, _setOutputFramerate] = useState(60);
   const [loopPlayback, setLoopPlayback] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false); // State to track input focus
+
   //   const [nameIsTaken, setNameIsTaken] = useState(false);
   const fileList = usePropertyStore(
     (state) => state.sessionRecording.files || [],
@@ -43,9 +45,6 @@ const SessionPanel = () => {
       .includes(filenameRecording);
   }, [fileList, filenameRecording]);
 
-  //   const engineMode =  usePropertyStore(
-  //     (state) => state.engineMode.mode || EngineModeUserControl,
-  //   );
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
@@ -242,6 +241,8 @@ const SessionPanel = () => {
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
                     updateRecordingFilename(evt)
                   }
+                  onFocus={() => setIsInputFocused(true)} // Set focus state to true
+                  onBlur={() => setIsInputFocused(false)} // Set focus state to false
                 />
                 <Button
                   variant="outline"
@@ -253,7 +254,7 @@ const SessionPanel = () => {
                   {getCopy('SessionPanel', 'record')}
                 </Button>
               </div>
-              {nameIsTaken && (
+              {nameIsTaken && isInputFocused && (
                 <Label className="text-red-500">
                   {getCopy('SessionPanel', 'name_is_already_taken.')}
                 </Label>

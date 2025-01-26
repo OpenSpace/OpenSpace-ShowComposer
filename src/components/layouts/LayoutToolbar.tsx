@@ -1,4 +1,4 @@
-import { LayoutType, useComponentStore, useSettingsStore } from '@/store';
+import { LayoutType, useSettingsStore } from '@/store';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';

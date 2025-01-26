@@ -23,6 +23,7 @@ export interface ComponentSlice {
   statuspanel: StatusComponent | null;
   recordpanel: RecordComponent | null;
   addComponent: (component: Component) => void;
+  addComponents: (components: Component[]) => void;
   getComponentById: (id: Component['id']) => Component;
   addComponentToPageById: (
     componentId: Component['id'],
@@ -104,6 +105,13 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 50,
       width: 300,
       height: 175,
+    });
+  },
+  addComponents: (components: Component[]) => {
+    set((state) => {
+      components.forEach((component) => {
+        state.components[component.id] = { ...component };
+      });
     });
   },
   getComponentById: (id: Component['id']) => {
@@ -327,6 +335,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Time Panel',
         gui_description: '',
+        isDisabled: false,
       };
 
       state.navpanel = {
@@ -335,6 +344,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Nav Panel',
         gui_description: '',
+        isDisabled: false,
       };
       state.statuspanel = {
         id: statuspanelId,
@@ -342,6 +352,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Status Panel',
         gui_description: '',
+        isDisabled: false,
       };
       state.recordpanel = {
         id: recordpanelId,
@@ -349,6 +360,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Record Panel',
         gui_description: '',
+        isDisabled: false,
       };
     });
     get().addPosition(navpanelId, {

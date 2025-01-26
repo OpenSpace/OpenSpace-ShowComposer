@@ -23,7 +23,9 @@ const triggerFade = async (
       // luaApi.setPropertyValueSingle(property, 0.0, intDuration);
       break;
     case 'toggle':
-      luaApi.toggleFade(property.replace('.Fade', ''), intDuration);
+      console.log('toggle', property);
+      console.log('intDuration', intDuration);
+      luaApi.toggleFade(property.replace('.Fade', ''), intDuration / 2.0);
       // const value = await luaApi.getPropertyValue(property);
       // console.log('toggle', value[1] < 0.5 ? 1.0 : 0.0);
       // luaApi.setPropertyValueSingle(
@@ -120,10 +122,15 @@ async function jumpToNavState(
   }
 }
 
+const triggerAction = (actionName: string) => {
+  useOpenSpaceApiStore.getState().luaApi.action.triggerAction(actionName);
+};
+
 export {
   triggerFade,
   triggerBool,
   triggerTrigger,
+  triggerAction,
   triggerNumber,
   jumpToNavState,
 };

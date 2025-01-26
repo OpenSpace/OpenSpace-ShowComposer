@@ -19,7 +19,15 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { useBoundStore } from '@/store/boundStore';
 
-const NewProjectModal: React.FC = () => {
+interface NewProjectModalProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const NewProjectModal: React.FC<NewProjectModalProps> = ({
+  isOpen,
+  setIsOpen,
+}) => {
   const setProjectSettings = useSettingsStore(
     (state) => state.setProjectSettings,
   );
@@ -34,9 +42,6 @@ const NewProjectModal: React.FC = () => {
     pageWidth: state.pageWidth || 1080,
     projectName: '',
     projectDescription: '',
-    // projectName: state.projectName || '',
-    // projectDescription: state.projectDescription || '',
-    // screenSpacePosition: state.screenSpacePosition,
   }));
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   const removeAllComponents = useBoundStore(
@@ -52,35 +57,9 @@ const NewProjectModal: React.FC = () => {
   const [pageHeight, setPageHeight] = useState(initialState.pageHeight);
   //   const [defaultScreenSpacePosition, setDefaultScreenSpacePosition] =
   //     useState(initialState.pageWidth);
-  const [isOpen, setIsOpen] = useState<boolean>(triggerProjectName);
-
-  //   const setProjectSettings = useProjectStore(
-  //     (state) => state.setProjectSettings,
-  //   );
-  //   const clearCache = useProjectStore((state) => state.clearCache);
-
-  //   const enhancedTriggerButton = triggerButton
-  //     ? cloneElement(triggerButton, {
-  //         onClick: (...args: any[]) => {
-  //           setIsOpen(true);
-  //           if (triggerButton.props.onClick) {
-  //             triggerButton.props.onClick(...args);
-  //           }
-  //         },
-  //       })
-  //     : null;
+  // const [isOpen, setIsOpen] = useState<boolean>(triggerProjectName);
 
   const handleSubmit = () => {
-    // console.log('handleSubmit');
-    // console.log(
-    //   projectName,
-    //   projectDescription,
-    //   ip,
-    //   port,
-    //   pageWidth,
-    //   pageHeight,
-    //   //   defaultScreenSpacePosition,
-    // );
     setProjectSettings({
       projectName,
       projectDescription,
@@ -96,14 +75,14 @@ const NewProjectModal: React.FC = () => {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
+      {/* <AlertDialogTrigger asChild>
         <Button variant="secondary" className="justify-start gap-2">
           <PlusIcon />
           <div className="ml-2 text-xs font-bold ">
             {getCopy('NewProjectModal', 'new_project')}
           </div>
         </Button>
-      </AlertDialogTrigger>
+      </AlertDialogTrigger> */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -113,6 +92,9 @@ const NewProjectModal: React.FC = () => {
             {getCopy('NewProjectModal', 'project_details')}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <h4 className="my-2 text-xl font-semibold dark:text-slate-200">
+          Show Settings
+        </h4>
         <div className="grid gap-2">
           <div className="grid grid-cols-3 items-center gap-4 text-white">
             <Label htmlFor="projectName">
@@ -141,6 +123,9 @@ const NewProjectModal: React.FC = () => {
               placeholder="Type your description here."
             />
           </div>
+          <h4 className="my-2 text-xl font-semibold dark:text-slate-200">
+            Workspace Settings
+          </h4>
           <h4 className="text-sm font-semibold dark:text-slate-200">
             {getCopy('ConnectionSettings', 'openspace_connection')}
           </h4>

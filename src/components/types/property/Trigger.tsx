@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   useOpenSpaceApiStore,
-  useComponentStore,
   usePropertyStore,
   TriggerComponent,
   ConnectionState,
@@ -39,6 +38,9 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
+  const property = usePropertyStore(
+    (state) => state.properties[component.property],
+  );
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     // console.log('Subscribing to property', component.property);
@@ -52,6 +54,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
     subscribeToProperty,
     unsubscribeFromProperty,
   ]);
+
   useEffect(() => {
     if (luaApi) {
       // console.log('Registering trigger action');
@@ -59,9 +62,15 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
         triggerAction: () => {
           triggerTrigger(component.property);
         },
+        isDisabled: property ? false : true,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
-  }, [component.id, component.property, luaApi]);
+  }, [component.id, component.property, luaApi, property]);
+
   return shouldRender ? (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
@@ -103,16 +112,15 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   );
 
   useEffect(() => {
-    // console.log(properties);
     const propertyData = usePropertyStore.getState().properties[property];
     if (!propertyData || lockName) return;
     setGuiName(formatName(propertyData.uri));
     setGuiDescription(propertyData.description.description);
   }, [property]);
+
   useEffect(() => {
     handleComponentData({
       property,
-      //   action: action as Toggle,
       gui_name,
       gui_description,
       lockName,

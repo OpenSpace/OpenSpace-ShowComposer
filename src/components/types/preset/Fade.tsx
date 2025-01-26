@@ -3,6 +3,7 @@ import {
   usePropertyStore,
   useOpenSpaceApiStore,
   ConnectionState,
+  useSettingsStore,
 } from '@/store';
 import { Toggle } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
@@ -44,13 +45,27 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty,
   );
-  const property = usePropertyStore(
-    (state) => state.properties[component.property],
-  );
+  const property = usePropertyStore((state) => {
+    return state.properties[component.property];
+  });
+  //makesure property exists in property store
+  // useEffect(() => {
+  //   console.log('property', property?.value);
+  //   if (!property) {
+  //     updateComponent(component.id, {
+  //       isDisabled: true,
+  //     });
+  //   } else {
+  //     updateComponent(component.id, {
+  //       isDisabled: false,
+  //     });
+  //   }
+  // }, [property]);
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
-    // console.log('Subscribing to property', component.property);
-    subscribeToProperty(component.property, 1);
+    console.log('Subscribing to property', component.property);
+    subscribeToProperty(component.property, 0);
     return () => {
       unsubscribeFromProperty(component.property);
     };
@@ -70,6 +85,11 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
             component.action,
           );
         },
+        isDisabled: property ? false : true,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [
@@ -78,38 +98,48 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
     component.intDuration,
     component.action,
     component.property,
+    property,
     luaApi,
   ]);
   return shouldRender ? (
     <ComponentContainer
       className={`${
-        property?.value == 1
-          ? 'outline-green-500'
-          : property?.value == 0
-            ? 'outline-red-500'
-            : 'outline-grey-500'
-      } flex items-center justify-center outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
+        property
+          ? property?.value == 1
+            ? 'outline-green-500'
+            : property?.value == 0
+              ? 'outline-red-500'
+              : 'outline-grey-500'
+          : '!outline-none !outline-0'
+      }
+      outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
       backgroundImage={component.backgroundImage}
       style={{
         top: '4px',
         left: '4px',
         width: 'calc(100% - 8px)', // Adjust width to account for outline width and offset
         height: 'calc(100% - 8px)', // Adjust height to account for outline width and offset
+        // opacity: property ? 1.0 : 0.15,
       }}
       onClick={() => {
         component.triggerAction?.();
       }}
     >
-      <StatusBarControlled progress={property?.value} debounceDuration={250} />
-      <ButtonLabel>
-        <div className="flex flex-row gap-2">
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </div>
-      </ButtonLabel>
+      {property ? (
+        <StatusBarControlled progress={property?.value} debounceDuration={0} />
+      ) : null}
+      {component.gui_name || component.gui_description ? (
+        <ButtonLabel>
+          <div className="flex flex-row gap-2">
+            {component.gui_name}
+            <Information content={component.gui_description} />
+          </div>
+        </ButtonLabel>
+      ) : null}
     </ComponentContainer>
   ) : null;
 };
+
 interface FadeModalProps {
   component: FadeComponent | null;
   handleComponentData: (data: Partial<FadeComponent>) => void;
@@ -151,28 +181,40 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  const [lastProperty, setLastProperty] = useState<string>(
-    component?.property || '',
-  );
-  useEffect(() => {
-    if (
-      (!lockName && property !== lastProperty) ||
-      (action !== component?.action && gui_name == component?.gui_name)
-    ) {
-      if (property) {
-        setGuiName(
-          `${formatName(
-            property
-              .replace(/Scene.|.Renderable|.Opacity/g, '')
-              .replace(/\./g, ' > '),
-          )} ${capitalize(action)}`,
-        );
-        setGuiDescription(
-          `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`,
-        );
-        setLastProperty(property);
-      }
+
+  const handlePropertyChange = (property: string) => {
+    setProperty(property);
+    if (!lockName) {
+      setGuiName(
+        `${formatName(
+          property
+            .replace(/Scene.|.Renderable|.Opacity/g, '')
+            .replace(/\./g, ' > '),
+        )} ${capitalize(action)}`,
+      );
+      setGuiDescription(
+        `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`,
+      );
     }
+  };
+
+  const handleActionChange = (action: string) => {
+    setAction(action);
+    if (!lockName) {
+      setGuiName(
+        `${formatName(
+          property
+            .replace(/Scene.|.Renderable|.Opacity/g, '')
+            .replace(/\./g, ' > '),
+        )} ${capitalize(action)}`,
+      );
+      setGuiDescription(
+        `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`,
+      );
+    }
+  };
+
+  useEffect(() => {
     handleComponentData({
       property,
       intDuration,
@@ -192,20 +234,15 @@ const FadeModal: React.FC<FadeModalProps> = ({
     lockName,
     handleComponentData,
   ]);
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
+
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
         .filter((a) => a.endsWith('.Fade') && !a.endsWith('.Appearance.Fade'))
-        .filter(
-          (a) =>
-            Visibility?.value + 2 >=
-            Visibility?.description.AdditionalData.Options.map(
-              (obj: Record<number, string>) => Object.values(obj)[0],
-            ).indexOf(properties[a].description?.MetaData.Visibility),
-        )
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;
@@ -231,7 +268,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
             </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => setProperty(sortedKeys[v])}
+              selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
               selectedOption={
                 Object.keys(sortedKeys).find(
                   (key) => sortedKeys[key] === property,
@@ -247,7 +284,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
-              setSelected={setAction}
+              setSelected={handleActionChange}
             />
           </div>
 

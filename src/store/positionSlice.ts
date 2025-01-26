@@ -32,6 +32,7 @@ export interface PositionSlice {
   debouncePositions: Record<string, Position>;
   debouncedUpdate: (id: string, position: Partial<Position>) => void;
   addPosition: (id: string, position: Partial<Position>) => void;
+  addPositions: (positions: Position[]) => void;
   updatePosition: (id: string, position: Partial<Position>) => void;
   deletePosition: (id: string) => void;
   deleteAllPosition: () => void;
@@ -94,6 +95,13 @@ export const createPositionSlice: ImmerStateCreator<
         },
       }));
       debouncedUpdate(id, { ...get().positions[id] });
+    },
+    addPositions: (positions) => {
+      set((state) => {
+        positions.forEach((position) => {
+          state.positions[position.id] = { ...position };
+        });
+      });
     },
     updatePosition: (id, position) => {
       set((state) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Folder, Trash2, Settings } from 'lucide-react';
+import { Upload, FolderUp, FolderDown, Trash2, Settings } from 'lucide-react';
 import TooltipHolder from './common/TooltipHolder';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { ConnectionSettings } from '@/components/ConnectionSettings';
@@ -19,26 +19,27 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onDeleteAllConfirm,
 }) => {
   return (
-    <div className=" relative flex flex-wrap items-center gap-2">
-      <TooltipHolder side="left" content="Save to your computer">
+    <div className="flex flex-wrap items-center gap-2 ">
+      <TooltipHolder content="Export Show" side="bottom">
         <Button
           size={'icon'}
           variant={'ghost'}
           className="h-10 w-10 p-2"
           onClick={onSave}
         >
-          <Save size={20} />
+          <Upload size={20} />
         </Button>
       </TooltipHolder>
-      <Separator orientation="vertical" />
-      <TooltipHolder side="left" content="Load from your computer">
+      <Separator orientation="vertical" className="w-[px]" />
+
+      <TooltipHolder side="bottom" content="Import Show from your computer">
         <Button
           size={'icon'}
           variant={'ghost'}
           className="h-10 w-10 p-2"
           onClick={onLoad}
         >
-          <Folder size={20} />
+          <FolderDown size={20} />
         </Button>
       </TooltipHolder>
       <Separator orientation="vertical" />
@@ -61,7 +62,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
       />
       <Separator orientation="vertical" />
       <DarkModeToggle />
-      <Separator />
+      <Separator orientation="vertical" />
     </div>
   );
 };

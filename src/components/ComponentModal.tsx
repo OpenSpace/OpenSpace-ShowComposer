@@ -39,6 +39,7 @@ import {
 } from '@/components/ui/card';
 
 import {
+  ActionTriggerComponent,
   ImageComponent,
   MultiComponent,
   PageComponent,
@@ -50,6 +51,7 @@ import {
 import { SetNavModal } from './types/preset/SetNavigation';
 import { PageModal } from './types/preset/Page';
 import { getCopy } from '@/utils/copyHelpers';
+import { ActionTriggerModal } from './types/preset/ActionTrigger';
 import { useBoundStore } from '@/store/boundStore';
 
 interface ComponentModalProps {
@@ -122,18 +124,19 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
                 }
               });
           }
-          console.log('UPDATING COMPONENT: ', componentId, componentData);
+          // console.log('UPDATING COMPONENT: ', componentId, componentData);
           updateComponent(componentId, {
             ...componentData,
           });
         } else {
-          console.log(
-            'ADDING or UPDATING COMPONENT: ',
-            componentId,
-            componentData,
-          );
+          // console.log(
+          //   'ADDING or UPDATING COMPONENT: ',
+          //   componentId,
+          //   componentData,
+          // );
           addComponent({
             id: componentId,
+            isDisabled: false,
             type: type || 'default',
             isMulti: initialData.isMulti || 'false',
             gui_description: '',
@@ -312,6 +315,14 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <PageModal
           component={component as PageComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'action':
+      content = (
+        <ActionTriggerModal
+          component={component as ActionTriggerComponent}
           handleComponentData={setComponentData}
         />
       );

@@ -85,7 +85,6 @@ const DraggablePanel: React.FC<PanelProps> = ({
       }}
       onDragStop={(e: DraggableEvent, d: DraggableData) => handleDragStop(e, d)}
       onResizeStop={(_e, _direction, _ref, _delta, _position) => {}}
-      // disableDragging={isPresentMode} // Conditionally disable dragging
       enableResizing={false} // Conditionally disable resizing
       resizeGrid={[25, 25]}
       minHeight={position?.minHeight || 100}
@@ -95,7 +94,6 @@ const DraggablePanel: React.FC<PanelProps> = ({
         transformOrigin: `${originX}px ${originY}px`,
       }}
       data-state={position?.minimized ? 'closed' : 'open'}
-      // data-side="top"
       className={cn(
         'absolute cursor-move',
         'data=[state=open]:opacity-100 rounded-md border-slate-200',

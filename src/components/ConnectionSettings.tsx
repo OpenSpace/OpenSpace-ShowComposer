@@ -91,7 +91,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent side="left" className="bg-white">
+        <TooltipContent side="bottom" className="bg-white">
           {getCopy('ConnectionSettings', 'openspace_connection_settings')}
         </TooltipContent>
       </Tooltip>
@@ -194,7 +194,9 @@ const ConnectionStatus = () => {
   }
   return (
     <div className="flex flex-row items-center gap-3">
-      <Label>{getCopy('ConnectionSettings', 'openspace_status:')}</Label>
+      <h2 className=" text-xs font-bold">
+        {getCopy('ConnectionSettings', 'openspace_status:')}
+      </h2>
       {renderConnectionState(20)}
     </div>
   );

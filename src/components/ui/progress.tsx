@@ -21,7 +21,7 @@ const Progress = React.forwardRef<
         // transition: 'transform 0.25s ease-linear',
 
         transform: `translateX(-${100 - (value || 0)}%)`,
-        transition: 'transform 0.25s',
+        // transition: 'transform 0.25s',
       }}
     />
   </ProgressPrimitive.Root>

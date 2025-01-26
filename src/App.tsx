@@ -10,11 +10,11 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+// import {
+//   Tooltip,
+//   TooltipContent,
+//   TooltipTrigger,
+// } from '@/components/ui/tooltip';
 
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -37,7 +37,12 @@ import {
   BookOpenCheck,
 } from 'lucide-react';
 
-import { ComponentType, useSettingsStore } from './store';
+import {
+  ComponentType,
+  ConnectionState,
+  useOpenSpaceApiStore,
+  useSettingsStore,
+} from './store';
 import { loadStore, saveStore } from './utils/saveProject';
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectionStatus } from './components/ConnectionSettings';
@@ -56,9 +61,13 @@ import { Position } from './store/positionSlice';
 import { LayoutContainer } from './components/layouts/LayoutContainer';
 import NewProjectModal from './components/NewProjectModal';
 import { Label } from './components/ui/label';
+import ImportShowModal from './components/ImportShowModal'; // Import the new modal
 import LayoutEditModal from './components/layouts/LayoutEditModal';
 import { useBoundStore } from './store/boundStore';
 import Undo from './components/Undo';
+import ToggleButton from './components/ToggleButton';
+import GlobalMenuBar from './components/GlobalMenuBar';
+// import TooltipHolder from './components/common/TooltipHolder';
 
 type ComponentTypeData = {
   type: ComponentType;
@@ -69,6 +78,7 @@ type ComponentTypeData = {
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
   const [_isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState<string | null>(
     null,
@@ -112,13 +122,16 @@ const App = () => {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const addPage = useBoundStore((state) => state.addPage);
   const layouts = useBoundStore((state) => state.layouts);
-
   const currentPage = useBoundStore((state) => state.currentPage);
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
   const pagesLength = useBoundStore((state) => state.pages?.length); // Get the global state
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
-
   const projectName = useSettingsStore((state) => state.projectName);
+
+  const connectionState = useOpenSpaceApiStore(
+    (state) => state.connectionState,
+  );
+
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {
       addPage();
@@ -147,6 +160,11 @@ const App = () => {
       type: 'sessionplayback',
       name: getCopy('Main', 'playback'),
       icon: <Video />,
+    },
+    {
+      type: 'action',
+      name: getCopy('Main', 'action'),
+      icon: <CirclePlay className="h-5 w-5" />,
     },
     { type: 'page', name: getCopy('Main', 'page'), icon: <BookOpenCheck /> },
   ];
@@ -240,11 +258,6 @@ const App = () => {
     removeComponent(id);
   };
 
-  const handleDeleteAllConfirm = () => {
-    removeAllComponents();
-    setIsDeleteAllModalOpen(false);
-  };
-
   const handleModalClose = () => {
     setIsModalOpen(false);
     setCurrentComponentId(null);
@@ -301,15 +314,43 @@ const App = () => {
           >
             <div className="h-full w-full  p-4 pr-2 ">
               <div className="flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800">
-                <div className=" flex-0 p-4">
-                  <h2 className="scroll-m-20 text-xl tracking-tight">
+                <div className=" flex-0 felx flex flex-row items-center gap-2 p-2 px-3">
+                  <img
+                    src="/src/assets/images/favicon.png"
+                    width={20}
+                    className="p-0"
+                  />
+                  <h2 className=" scroll-m-20 text-xs font-bold tracking-tight">
                     {getCopy('Main', 'interface_name')}
                   </h2>
                 </div>
-                <Separator />
-                <Undo />
+                {/* <Separator /> */}
+                {/* <div className="p-2">
+                  <Toolbar
+                    onSave={saveStore}
+                    onLoad={handleLoadStore}
+                    onDeleteAllConfirm={handleDeleteAllConfirm}
+                  />
+                </div> */}
+                {/* <Separator /> */}
+
+                {/* <div className="flex items-center"> */}
+
                 {/* </div> */}
-                <div className="flex flex-col gap-2 px-4 py-1">
+
+                <Separator />
+                {/* <div className=" p-2">
+                  <Undo />
+                </div> */}
+
+                <GlobalMenuBar />
+                <Separator />
+
+                {/* <div className="p-2">
+                  <ConnectionStatus />
+                </div> */}
+                {/* </div> */}
+                {/* <div className="flex flex-col gap-2 px-4 py-1">
                   <div className="flex flex-row items-center gap-3">
                     <Label>{getCopy('Main', 'current_show')}:</Label>
                     <div className="text-sm">{projectName}</div>
@@ -317,28 +358,34 @@ const App = () => {
                   <div className="py-2">
                     <NewProjectModal />
                   </div>
+                </div> */}
+                {/* <Separator /> */}
+
+                <div className="flex  flex-col gap-4 px-4 py-4 @container">
+                  {/* <div className="flex flex-wrap items-center gap-2">
+                    <div className="py-2"> */}
+                  <ConnectionStatus />
+
+                  {/* </div>
+                  </div> */}
+                  <Separator />
+                  <Undo />
+                  <Separator />
+                  {/* <div className="flex flex-row items-center  gap-2"> */}
+
+                  {/* </div> */}
+                  {/* <Separator /> */}
                 </div>
-                <Separator />
-                <div className="flex  flex-col gap-4 px-4 py-1 @container">
-                  {/* <div className="flex flex-wrap items-center gap-2"> */}
-                  <Toolbar
-                    onSave={saveStore}
-                    onLoad={loadStore}
-                    onDeleteAllConfirm={handleDeleteAllConfirm}
-                  />
-                  <div className="py-2">
-                    <ConnectionStatus />
-                  </div>
-                </div>
-                <Separator />
+
                 <div className="grid gap-2 p-2 @[167px]:gap-4">
                   <h2 className="ml-2 text-xs font-bold ">
                     {getCopy('Main', 'layout')}
                   </h2>
                   <LayoutToolbar />
+                  <Separator />
                 </div>
-                <Separator />
-                <ScrollArea className="flex-0 @container">
+                {/* <Separator /> */}
+                <ScrollArea className="flex-0 @container" type="always">
                   <div className="grid gap-2 p-4 @[167px]:gap-4">
                     <h2 className="text-xs font-bold ">
                       {getCopy('Main', 'static_components')}
@@ -421,11 +468,6 @@ const App = () => {
                   {TimePanel && <DraggablePanel component={TimePanel} />}
                   {StatusPanel && <DraggablePanel component={StatusPanel} />}
                   {RecordPanel && <DraggablePanel component={RecordPanel} />}
-                  {/* <ErrorBoundary fallback={<div>Error rendering layouts</div>}> */}
-                  {/* Layouts */}
-                  {/* <div className="top-0 z-[9999] w-[400px] bg-black pl-[200px] text-white">
-                    {JSON.stringify(layouts, null, 2)}
-                  </div> */}
                   {Object.keys(layouts).map((layoutId) => {
                     const layout = layouts[layoutId];
                     if (
@@ -441,16 +483,8 @@ const App = () => {
                         handleOpenEditModal={() => handleEditLayout(layoutId)}
                       >
                         {layout.children.map((childId) => {
-                          // console.log(
-                          //   'childId in layout render loop ',
-                          //   childId,
-                          // );
                           if (!childId) return null;
                           const component = components[childId];
-                          // console.log(
-                          //   'component in layout render loop ',
-                          //   components,
-                          // );
                           if (!component) return null;
                           return (
                             <DraggableComponent
@@ -499,80 +533,34 @@ const App = () => {
                 </DroppableWorkspace>
               </div>
               <div className="absolute bottom-7 left-6 flex flex-row gap-2">
-                <Tooltip>
-                  <TooltipContent>
-                    Toggle {getCopy('Main', 'navpanel')}
-                  </TooltipContent>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant={'outline'}
-                      onClick={() => minimize(NavPosition)}
-                      className={`z-40 ${
-                        !NavPosition?.minimized ? 'opacity-60' : 'opacity-100'
-                      }`}
-                    >
-                      {navType.icon}
-                    </Button>
-                  </TooltipTrigger>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipContent>
-                    Toggle {getCopy('Main', 'timepanel')}
-                  </TooltipContent>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant={'outline'}
-                      className={`z-40 ${
-                        !TimePosition?.minimized ? 'opacity-60' : 'opacity-100'
-                      }`}
-                      // pressed={!TimePanel?.minimized || false}
-                      onClick={() => minimize(TimePosition)}
-                    >
-                      {timeType.icon}
-                    </Button>
-                  </TooltipTrigger>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipContent>
-                    {' '}
-                    Toggle {getCopy('Main', 'statuspanel')}
-                  </TooltipContent>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant={'outline'}
-                      onClick={() => minimize(StatusPosition)}
-                      className={`z-40 ${
-                        !StatusPosition?.minimized
-                          ? 'opacity-60'
-                          : 'opacity-100'
-                      }`}
-                    >
-                      {statusType.icon}
-                    </Button>
-                  </TooltipTrigger>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipContent>
-                    Toggle {getCopy('Main', 'recordpanel')}
-                  </TooltipContent>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant={'outline'}
-                      onClick={() => minimize(RecordPosition)}
-                      className={`z-40 ${
-                        !RecordPosition?.minimized
-                          ? 'opacity-60'
-                          : 'opacity-100'
-                      }`}
-                    >
-                      {recordType.icon}
-                    </Button>
-                  </TooltipTrigger>
-                </Tooltip>
+                <ToggleButton
+                  tooltipText={getCopy('Main', 'navpanel')}
+                  icon={navType.icon}
+                  selected={NavPosition?.minimized}
+                  onClick={() => minimize(NavPosition)}
+                  disabled={connectionState != ConnectionState.CONNECTED}
+                />
+                <ToggleButton
+                  tooltipText={getCopy('Main', 'timepanel')}
+                  icon={timeType.icon}
+                  selected={TimePosition?.minimized}
+                  onClick={() => minimize(TimePosition)}
+                  disabled={connectionState != ConnectionState.CONNECTED}
+                />
+                <ToggleButton
+                  tooltipText={getCopy('Main', 'statuspanel')}
+                  icon={statusType.icon}
+                  selected={StatusPosition?.minimized}
+                  onClick={() => minimize(StatusPosition)}
+                  disabled={connectionState != ConnectionState.CONNECTED}
+                />
+                <ToggleButton
+                  tooltipText={getCopy('Main', 'recordpanel')}
+                  icon={recordType.icon}
+                  selected={RecordPosition?.minimized}
+                  onClick={() => minimize(RecordPosition)}
+                  disabled={connectionState != ConnectionState.CONNECTED}
+                />
               </div>
 
               <Pagination

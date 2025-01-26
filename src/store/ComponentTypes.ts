@@ -22,7 +22,8 @@ export type ComponentType =
   | 'number'
   | 'trigger'
   | 'page'
-  | 'multi';
+  | 'multi'
+  | 'action';
 
 export type Toggle = 'on' | 'off' | 'toggle';
 export type MultiState = 'false' | 'pendingDelete' | 'pendingSave' | 'true';
@@ -43,6 +44,7 @@ export interface ComponentBase {
   lockName?: boolean;
   gui_name: string;
   gui_description: string;
+  isDisabled: boolean;
 }
 
 export interface TimeComponent extends ComponentBase {
@@ -135,6 +137,13 @@ export interface SetFocusComponent extends ComponentBase {
   triggerAction: () => void;
 }
 
+export interface ActionTriggerComponent extends ComponentBase {
+  type: 'action';
+  action: string;
+  backgroundImage: string;
+  triggerAction: () => void;
+}
+
 export interface BooleanComponent extends ComponentBase {
   type: 'boolean';
   property: string;
@@ -203,6 +212,7 @@ export const presetComponents = [
   { value: 'multi', label: 'Multi' },
   { value: 'sessionplayback', label: 'Session Playback' },
   { value: 'page', label: 'Go To Page' },
+  { value: 'action', label: 'Trigger Action' },
 ];
 
 export const propertyComponents = [
@@ -226,6 +236,7 @@ export const multiOptions = [
   { value: 'settime', label: 'Set Time' },
   { value: 'sessionplayback', label: 'Session Playback' },
   { value: 'setnavstate', label: 'Set Navigation' },
+  { value: 'action', label: 'Trigger Action' },
   { value: 'page', label: 'Go To Page' },
 ];
 
@@ -240,6 +251,7 @@ export const isMultiOption = (option: any): option is MultiOption => {
     option.type === 'settime' ||
     option.type === 'sessionplayback' ||
     option.type === 'setnavstate' ||
+    option.type === 'action' ||
     option.type === 'page'
   );
 };
@@ -273,6 +285,7 @@ export type Component =
   | NumberComponent
   | SessionPlaybackComponent
   | PageComponent
+  | ActionTriggerComponent
   | MultiComponent;
 
 export type ImmerStateCreator<T, TBase> = StateCreator<

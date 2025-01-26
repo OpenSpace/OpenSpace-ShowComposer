@@ -25,7 +25,7 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   );
   useEffect(() => {
     // this isnt throttleing correct
-
+    console.log('progress', progress);
     // setThrottleProgress(progress);
     setProgress(progress);
     if (debounceTimeoutRef.current) {
@@ -51,14 +51,14 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   return (
     <div
       className={cn(
-        'duration-400 absolute left-0 top-0 flex h-full w-full flex-col items-center justify-end rounded-lg bg-white/40 p-4 transition-opacity ease-linear',
+        'duration-400 absolute left-0 top-0 flex h-full w-full flex-col items-center justify-end rounded-lg bg-white/0 p-4 transition-opacity ease-linear',
         {
-          'opacity-0': isFadingOut,
-          'opacity-100': !isFadingOut,
+          // 'opacity-0': isFadingOut,
+          // 'opacity-100': !isFadingOut,
         },
       )}
     >
-      <Progress value={(Math.round(progressState * 1000) / 1000) * 100} />
+      <Progress value={(Math.round(progress * 1000) / 1000) * 100} />
     </div>
   );
 };

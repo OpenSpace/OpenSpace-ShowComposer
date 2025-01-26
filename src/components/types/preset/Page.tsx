@@ -1,7 +1,6 @@
-import { useComponentStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import { useEffect, useState } from 'react';
-import { PageComponent } from '@/store/componentsStore';
+import { PageComponent } from '@/store/ComponentTypes';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import ImageUpload from '@/components/common/ImageUpload';
@@ -25,7 +24,6 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const goToPage = useBoundStore((state) => state.goToPage);
   useEffect(() => {
-    // console.log('Registering trigger action');
     updateComponent(component.id, {
       triggerAction: () => {
         goToPage(component.page - 1);
@@ -73,15 +71,14 @@ const PageModal: React.FC<PageModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  const [lastPage, setLastPage] = useState<number>(component?.page || 1);
 
-  useEffect(() => {
-    if (page !== lastPage && !lockName) {
-      if (page) {
-        setGuiName(`Go to Page ${page}`);
-        setLastPage(page);
-      }
+  const handlePageChange = (page: number) => {
+    setPage(page);
+    if (!lockName) {
+      setGuiName(`Go to Page ${page}`);
     }
+  };
+  useEffect(() => {
     handleComponentData({
       page,
       backgroundImage,
@@ -105,7 +102,7 @@ const PageModal: React.FC<PageModalProps> = ({
           <SelectableDropdown
             options={pages.map((_v, i) => (i + 1).toString())}
             selected={page.toString()}
-            setSelected={(v: string) => setPage(parseInt(v))}
+            setSelected={(v: string) => handlePageChange(parseInt(v))}
           />
         </div>
         <div className="grid grid-cols-4 gap-2">

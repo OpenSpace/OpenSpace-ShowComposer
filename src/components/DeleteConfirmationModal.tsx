@@ -26,7 +26,6 @@ interface DeleteConfirmationModalProps {
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   onConfirm,
   message,
-  triggerButton,
   isOpen: externalIsOpen,
   setOpen: externalSetOpen,
   onClose,
@@ -34,30 +33,18 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setOpen = externalSetOpen || internalSetOpen;
-  const enhancedTriggerButton = triggerButton
-    ? cloneElement(triggerButton, {
-        onClick: (...args: any[]) => {
-          setOpen(true); // Open the dialog
-          // If the triggerButton had its own onClick handler, call it
-          if (triggerButton.props.onClick) {
-            triggerButton.props.onClick(...args);
-          }
-        },
-      })
-    : null;
-  // if (!isOpen) return null;
-  //
+
   return (
     <AlertDialog open={isOpen} onOpenChange={setOpen}>
-      <Tooltip>
+      {/* <Tooltip>
         <AlertDialogTrigger asChild>
           <TooltipTrigger asChild>{enhancedTriggerButton}</TooltipTrigger>
         </AlertDialogTrigger>
 
-        <TooltipContent side="left" className="bg-white">
+        <TooltipContent side="bottom" className="bg-white">
           {getCopy('DeleteConfirmationModal', 'delete_all_components')}
         </TooltipContent>
-      </Tooltip>
+      </Tooltip> */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

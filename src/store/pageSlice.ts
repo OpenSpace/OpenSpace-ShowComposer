@@ -17,6 +17,7 @@ export interface PageSlice {
   currentPageIndex: number;
   currentPage: string;
   addPage: (id?: string) => void;
+  addPages: (pages: Page[]) => void;
   updatePage: (id: Page['id'], data: Partial<Page>) => void;
   deletePage: (pageID: string) => void;
   goToPage: (page: number) => void;
@@ -45,6 +46,11 @@ export const createPageSlice: ImmerStateCreator<
       state.currentPage = newPage.id;
     });
   },
+  addPages: (pages: Page[]) => {
+    set((state) => {
+      state.pages.push(...pages);
+    });
+  },
   updatePage: (id: Page['id'], data: Partial<Page>) => {
     set((state) => {
       const page = state.pages.find((page) => page.id === id);
@@ -58,7 +64,9 @@ export const createPageSlice: ImmerStateCreator<
       state.pages
         .find((page) => page.id === pageID)
         ?.components.forEach((compId) => {
+          // state.
           delete state.components[compId];
+          delete state.positions[compId];
         });
       state.pages = state.pages.filter((page) => page.id !== pageID);
       let newIndex = Math.min(

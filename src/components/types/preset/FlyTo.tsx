@@ -46,6 +46,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   const triggerAnimation = () => {
     statusBarRef.current?.triggerAnimation();
   };
+
   useEffect(() => {
     if (luaApi) {
       updateComponent(component.id, {
@@ -63,6 +64,11 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
                 component.intDuration,
               );
         },
+        isDisabled: false,
+      });
+    } else {
+      updateComponent(component.id, {
+        isDisabled: true,
       });
     }
   }, [
@@ -88,10 +94,14 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
           fadeOutDuration={fadeOutDuration}
         />
       )}
-      <ButtonLabel>
-        {component.gui_name}
-        <Information content={component.gui_description} />
-      </ButtonLabel>
+      {component.gui_name || component.gui_description ? (
+        <ButtonLabel>
+          <div className="flex flex-row gap-2">
+            {component.gui_name}
+            <Information content={component.gui_description} />
+          </div>
+        </ButtonLabel>
+      ) : null}
     </ComponentContainer>
   ) : null;
 };
@@ -193,7 +203,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  const [lastTarget, setLastTarget] = useState<string>(component?.target || '');
   const hasGeoOption: boolean = useMemo(() => {
     const shouldGeo =
       options &&
@@ -235,15 +244,14 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       setGeo(true);
     }
   };
-  useEffect(() => {
-    // console.log(target, lastTarget, lockName);
-    if (target !== lastTarget && !lockName) {
-      // console.log('setting name');
+
+  const handleTargetChange = (target: string) => {
+    setTarget(target);
+    if (!lockName) {
       setGuiName(`Fly To ${formatName(target)}`);
       setGuiDescription(`Fly to ${formatName(target)}`);
     }
-    setLastTarget(target);
-  }, [target, lockName]);
+  };
 
   useEffect(() => {
     handleComponentData({
@@ -275,14 +283,14 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        // .filter((a) => a.includes('.Renderable'))
-        .filter(
-          (a) =>
-            Visibility?.value + 2 >=
-            Visibility?.description.AdditionalData.Options.map(
-              (obj: Record<number, string>) => Object.values(obj)[0],
-            ).indexOf(a),
-        )
+        // // .filter((a) => a.includes('.Renderable'))
+        // .filter(
+        //   (a) =>
+        //     Visibility?.value + 2 >=
+        //     Visibility?.description.AdditionalData.Options.map(
+        //       (obj: Record<number, string>) => Object.values(obj)[0],
+        //     ).indexOf(a),
+        // )
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;
@@ -311,7 +319,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             <Label>{getCopy('FlyTo', 'target')}</Label>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => setTarget(sortedKeys[v])}
+              selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
               selectedOption={
                 Object.keys(sortedKeys).find(
                   (key) => sortedKeys[key] === target,
@@ -325,11 +333,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
                 })) || null
               }
             />
-            {/* <SelectableDropdown
-              options={options?.map((v) => v.name) || []}
-              selected={target}
-              setSelected={setTarget}
-             /> */}
           </div>
         </div>
         <div className="my-4 grid grid-cols-3 justify-start gap-4">

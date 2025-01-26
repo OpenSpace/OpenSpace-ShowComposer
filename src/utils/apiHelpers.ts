@@ -1,7 +1,7 @@
 //ignore ts errors for this file as well es lint typescript errors
 // @ts-ignore
 
-import { get } from 'http';
+import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 
 export const InterestingTag = 'GUI.Interesting';
 
@@ -31,7 +31,7 @@ export interface PropertyOwner {
   description?: {
     Identifier?: string;
     Type?: ActionType;
-    MetaData?: { IsReadOnly: boolean };
+    MetaData?: { IsReadOnly: boolean; Visibility: string };
   };
   value?: string | number | boolean;
   uri?: string;
@@ -87,7 +87,6 @@ export const flattenPropertyTree: (
       value: property.Value,
     });
   });
-
   return {
     // favorites,
     propertyOwners,
@@ -244,4 +243,38 @@ export function formatName(name: string) {
     .replace(/\./g, ' > ')
     .replace(/(?<=[a-z])([A-Z])/g, ' $1')
     .trim();
+}
+
+// Returns whether a property should be visible in the gui
+export function isPropertyVisible(
+  property: PropertyOwner,
+  visibility: PropertyOwner,
+) {
+  if (!visibility || visibility.value === undefined) return false;
+
+  let propertyVisibility: number = 0;
+  switch (property.description?.MetaData?.Visibility) {
+    case 'Hidden':
+      propertyVisibility = 5;
+      break;
+    case 'Developer':
+      propertyVisibility = 4;
+      break;
+    case 'AdvancedUser':
+      propertyVisibility = 3;
+      break;
+    case 'User':
+      propertyVisibility = 2;
+      break;
+    case 'NoviceUser':
+      propertyVisibility = 1;
+      break;
+    case 'Always':
+      propertyVisibility = 0;
+      break;
+    default:
+      propertyVisibility = 0;
+      break;
+  }
+  return (visibility.value as number) >= propertyVisibility;
 }
