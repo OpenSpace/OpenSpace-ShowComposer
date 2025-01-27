@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
-import { useComponentStore } from '@/store';
 import ImageGallery from './ImageGallery';
 import Image from './Image';
 import { Button } from '../ui/button';

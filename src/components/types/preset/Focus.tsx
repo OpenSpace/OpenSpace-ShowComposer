@@ -48,9 +48,6 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
     return state.properties[`Scene.${component.property}.Renderable.Enabled`];
   });
 
-  const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey],
-  );
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
@@ -137,9 +134,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-  const [lastProperty, setLastProperty] = useState<string>(
-    component?.property || '',
-  );
+
   const subscribeToProperty = usePropertyStore(
     (state) => state.subscribeToProperty,
   );

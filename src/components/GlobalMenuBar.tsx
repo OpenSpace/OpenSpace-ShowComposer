@@ -1,11 +1,8 @@
 import {
   Menubar,
-  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
   MenubarSeparator,
   MenubarShortcut,
   MenubarSub,
@@ -13,8 +10,6 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from '@/components/ui/menubar';
-import { Plus, PlusCircleIcon, Redo, Trash2, Undo } from 'lucide-react';
-import { PlusCircle } from 'lucide-react';
 import { Label } from './ui/label';
 import { getCopy } from '@/utils/copyHelpers';
 import { Input } from './ui/input';
@@ -22,27 +17,9 @@ import ImportShowModal from './ImportShowModal';
 import { loadStore, saveStore } from '@/utils/saveProject';
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { Button } from './ui/button';
 import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
 import NewProjectModal from './NewProjectModal';
 import { useSettingsStore } from '@/store/settingsStore';
-
-interface GlobalMenuBarProps {
-  onDeleteShow: () => void;
-  onNewShow: () => void;
-  onImport: () => void;
-  onExport: () => void;
-  onSettings: () => void;
-}
-
-//new show modal
-// delete show modal
-// import modal
-//export command
-//workspace setttigns
-// show settings
-// page settings
-// undo/redo/clear history
 
 export function GlobalMenuBar() {
   const [loadedStore, setLoadedStore] = useState<any>(null);

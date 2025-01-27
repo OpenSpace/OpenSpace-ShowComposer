@@ -22,10 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import ToggleComponent from '@/components/common/Toggle';
 
-import {
-  EnginePropertyVisibilityKey,
-  NavigationAnchorKey,
-} from '@/store/apiStore';
+import { NavigationAnchorKey } from '@/store/apiStore';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import Toggle from '@/components/common/Toggle';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -142,10 +139,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           return acc;
         }, {}),
     ),
-  );
-
-  const Visibility = usePropertyStore(
-    (state) => state.properties[EnginePropertyVisibilityKey],
   );
 
   useEffect(() => {

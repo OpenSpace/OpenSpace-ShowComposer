@@ -12,9 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 // import { GridSettings } from './LayoutToolbar';
-import { useComponentStore, useSettingsStore } from '@/store';
+import { useSettingsStore } from '@/store';
 import { useState } from 'react';
-import { LayoutGridIcon } from 'lucide-react';
 import { useBoundStore } from '@/store/boundStore';
 
 interface LayoutEditModalProps {

@@ -1,4 +1,4 @@
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { createPageSlice, PageSlice } from './pageSlice';
@@ -54,7 +54,7 @@ export const useBoundStore = create<BoundStoreState>()(
               //   let accumulatedState: Partial<BoundStoreState> = {};
               let firstState: Partial<BoundStoreState> | null = null; // To store the first state
               const myDebouncedFunction = debounce<typeof handleSet>(
-                (s) => {
+                (_s) => {
                   if (firstState) {
                     handleSet(firstState);
                   }

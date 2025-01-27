@@ -43,7 +43,6 @@ import {
   useOpenSpaceApiStore,
   useSettingsStore,
 } from './store';
-import { loadStore, saveStore } from './utils/saveProject';
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectionStatus } from './components/ConnectionSettings';
 import Pagination from './components/Pagination';
@@ -56,12 +55,8 @@ import PageButtonMenu from './components/PageButtonMenu';
 import PresentModeToggle from './components/PresentModeToggle';
 import { getCopy } from './utils/copyHelpers';
 import { LayoutToolbar } from './components/layouts/LayoutToolbar';
-import Toolbar from './components/Toolbar';
 import { Position } from './store/positionSlice';
 import { LayoutContainer } from './components/layouts/LayoutContainer';
-import NewProjectModal from './components/NewProjectModal';
-import { Label } from './components/ui/label';
-import ImportShowModal from './components/ImportShowModal'; // Import the new modal
 import LayoutEditModal from './components/layouts/LayoutEditModal';
 import { useBoundStore } from './store/boundStore';
 import Undo from './components/Undo';
@@ -79,7 +74,6 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const [_isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState<string | null>(
     null,
   );
@@ -93,9 +87,6 @@ const App = () => {
   });
 
   const getComponentById = useBoundStore((state) => state.getComponentById);
-  const removeAllComponents = useBoundStore(
-    (state) => state.removeAllComponents,
-  );
 
   const removeComponent = useBoundStore((state) => state.removeComponent);
   const createStaticPanels = useBoundStore((state) => state.createPanels);
@@ -126,7 +117,6 @@ const App = () => {
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
   const pagesLength = useBoundStore((state) => state.pages?.length); // Get the global state
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
-  const projectName = useSettingsStore((state) => state.projectName);
 
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -324,57 +314,14 @@ const App = () => {
                     {getCopy('Main', 'interface_name')}
                   </h2>
                 </div>
-                {/* <Separator /> */}
-                {/* <div className="p-2">
-                  <Toolbar
-                    onSave={saveStore}
-                    onLoad={handleLoadStore}
-                    onDeleteAllConfirm={handleDeleteAllConfirm}
-                  />
-                </div> */}
-                {/* <Separator /> */}
-
-                {/* <div className="flex items-center"> */}
-
-                {/* </div> */}
-
                 <Separator />
-                {/* <div className=" p-2">
-                  <Undo />
-                </div> */}
-
                 <GlobalMenuBar />
                 <Separator />
-
-                {/* <div className="p-2">
-                  <ConnectionStatus />
-                </div> */}
-                {/* </div> */}
-                {/* <div className="flex flex-col gap-2 px-4 py-1">
-                  <div className="flex flex-row items-center gap-3">
-                    <Label>{getCopy('Main', 'current_show')}:</Label>
-                    <div className="text-sm">{projectName}</div>
-                  </div>
-                  <div className="py-2">
-                    <NewProjectModal />
-                  </div>
-                </div> */}
-                {/* <Separator /> */}
-
                 <div className="flex  flex-col gap-4 px-4 py-4 @container">
-                  {/* <div className="flex flex-wrap items-center gap-2">
-                    <div className="py-2"> */}
                   <ConnectionStatus />
-
-                  {/* </div>
-                  </div> */}
                   <Separator />
                   <Undo />
                   <Separator />
-                  {/* <div className="flex flex-row items-center  gap-2"> */}
-
-                  {/* </div> */}
-                  {/* <Separator /> */}
                 </div>
 
                 <div className="grid gap-2 p-2 @[167px]:gap-4">
@@ -384,7 +331,6 @@ const App = () => {
                   <LayoutToolbar />
                   <Separator />
                 </div>
-                {/* <Separator /> */}
                 <ScrollArea className="flex-0 @container" type="always">
                   <div className="grid gap-2 p-4 @[167px]:gap-4">
                     <h2 className="text-xs font-bold ">

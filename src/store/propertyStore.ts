@@ -88,7 +88,7 @@ export const usePropertyStore = create<State>()(
           'property/setFavorites',
         ),
       // Function to manage subscription counts
-      subscribeToProperty: (name: string, throttleAmt: number = 0) =>
+      subscribeToProperty: (name: string, _throttleAmt: number = 0) =>
         set(
           (state: any) => {
             if (!state.propertySubscriptions[name]) {
@@ -269,26 +269,9 @@ export const usePropertyStore = create<State>()(
           const actions = await useOpenSpaceApiStore
             .getState()
             .luaApi.action.actions();
-          console.log('ACTIONS: ', actions['1']);
-          // i want to rduce actions to a keybalue pari where the key is action.Name, but if there are more than one action.Name. it should action.Name.concat(action.GuiPath)
-          const actionCounts: Record<string, number> = {};
-          // First pass to count occurrences of each action name
-          // Object.values(actions['1']).forEach((action: any) => {
-          //   actionCounts[action.Name.toUpperCase()] =
-          //     (actionCounts[action.Name.toUpperCase()] || 0) + 1;
-          // });
 
           const reducedActions = Object.values(actions['1']).reduce(
             (acc: Record<string, any>, action: any) => {
-              // Check if the action name has duplicates
-              // if (actionCounts[action.Name.toUpperCase()] > 1) {
-              //   // const newKey = action.GuiPath.concat(`/${action.Name}`);
-              //   const newKey = action.Name.concat(` ${action.GuiPath}`);
-              //   acc[newKey] = action;
-              // } else {
-              //   acc[action.Name] = action;
-              // }
-
               const newKey = action.Name.concat(` ${action.GuiPath}`);
               acc[newKey] = action;
               return acc;

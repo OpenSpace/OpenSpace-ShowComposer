@@ -1,6 +1,5 @@
 // SelectionTool.tsx
 import React, { useRef, useState } from 'react';
-import { useComponentStore, usePositionStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
 const SelectionTool: React.FC = () => {

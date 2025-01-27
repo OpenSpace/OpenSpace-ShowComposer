@@ -3,7 +3,6 @@ import {
   usePropertyStore,
   useOpenSpaceApiStore,
   ConnectionState,
-  useSettingsStore,
 } from '@/store';
 import { Toggle } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';

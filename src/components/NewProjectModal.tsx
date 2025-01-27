@@ -11,12 +11,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Textarea } from './ui/textarea';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
-import { PlusIcon } from 'lucide-react';
-import { Button } from './ui/button';
 import { useBoundStore } from '@/store/boundStore';
 
 interface NewProjectModalProps {
@@ -32,9 +29,6 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
     (state) => state.setProjectSettings,
   );
 
-  const triggerProjectName = useSettingsStore(
-    (state) => state.projectName.length === 0,
-  );
   const initialState = useSettingsStore((state) => ({
     ip: state.ip || '',
     port: state.port || '',

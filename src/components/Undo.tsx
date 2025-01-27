@@ -1,6 +1,6 @@
 import { useBoundStoreTemporal } from '@/store/boundStore';
 import { Button } from './ui/button';
-import { Undo as UndoIcon, Redo as RedoIcon, Trash2 } from 'lucide-react';
+import { Undo as UndoIcon, Redo as RedoIcon } from 'lucide-react';
 const Undo = () => {
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state,

@@ -15,7 +15,6 @@ import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import Pagination from '../Pagination';
 import { useRef } from 'react';
-import { useComponentStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 interface GalleryProps {
   images: Array<string>;

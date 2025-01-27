@@ -1,5 +1,5 @@
 // DeleteConfirmationModal.tsx
-import React, { ReactElement, useState, cloneElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   AlertDialog,
@@ -10,11 +10,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
-// import { Button } from '@/components/ui/button';
-
 interface DeleteConfirmationModalProps {
   onConfirm: () => void;
   message: string;

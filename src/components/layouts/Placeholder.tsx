@@ -1,4 +1,4 @@
-import { LayoutType } from '@/store/componentsStore';
+import { LayoutType } from '@/store/ComponentTypes';
 import { Plus } from 'lucide-react';
 
 const Placeholder = ({

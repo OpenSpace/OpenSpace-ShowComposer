@@ -2,6 +2,7 @@ import RichTextEditor from '@/components/inputs/RichTextEditor';
 import { RichTextComponent } from '@/store';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import { useBoundStore } from '@/store/boundStore';
 
 interface RichTextGUIProps {
   component: RichTextComponent;
@@ -30,9 +31,13 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
   handleComponentData,
   //   isOpen,
 }) => {
+  const position = useBoundStore(
+    (state) => state.positions[component?.id || ''],
+  );
+  const updatePosition = useBoundStore((state) => state.updatePosition);
   const [text, setText] = useState(component?.text || '');
-  const [height, setHeight] = useState(component?.height || 100);
-  const [width, setWidth] = useState(component?.width || 100);
+  const [height, setHeight] = useState(position.height || 100);
+  const [width, setWidth] = useState(position.width || 100);
 
   const measureAndUpdateSize = (text: string) => {
     const measureDiv = document.createElement('div');
@@ -60,7 +65,11 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
   }, [text]);
 
   useEffect(() => {
-    handleComponentData({ text, width, height });
+    handleComponentData({ text });
+    updatePosition(component?.id || '', {
+      height,
+      width,
+    });
   }, [text, width, height, handleComponentData]);
 
   return (

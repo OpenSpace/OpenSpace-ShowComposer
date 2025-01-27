@@ -59,7 +59,6 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     };
   }, [connectionState]);
   const [file, setFile] = useState<string>(component?.file || '');
-  const [lastFile, setLastFile] = useState<string>('');
   const [loop, setLoop] = useState<boolean>(component?.loop || false);
   const [forceTime, setForceTime] = useState<boolean>(
     component?.forceTime || false,

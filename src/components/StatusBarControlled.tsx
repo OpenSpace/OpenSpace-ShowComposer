@@ -12,9 +12,9 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   debounceDuration,
 }) => {
   // const [_width, _setWidth] = useState(0);
-  const [progressState, setProgress] = useState(progress);
+  const [_progressState, setProgress] = useState(progress);
 
-  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [_isFadingOut, setIsFadingOut] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setThrottleProgress = useCallback(

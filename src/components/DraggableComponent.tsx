@@ -10,7 +10,7 @@ import DropdownMenuComponent from './DropdownMenu';
 import { Copy, Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 import { ComponentContent } from './ComponentContent';
 import { cn } from '@/lib/utils';
-import { useShallow } from 'zustand/react/shallow';
+// import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
 
 interface DraggableComponentProps {
@@ -46,13 +46,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     (state) => state.positions[component.id]?.isDragging,
   );
 
-  const isOnPage = useBoundStore(
-    useShallow((state) => {
-      return state
-        .getPageById(state.currentPage)
-        ?.components.includes(component.id);
-    }),
-  );
+  // const isOnPage = useBoundStore(
+  //   useShallow((state) => {
+  //     return state
+  //       .getPageById(state.currentPage)
+  //       ?.components.includes(component.id);
+  //   }),
+  // );
 
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, FolderUp, FolderDown, Trash2, Settings } from 'lucide-react';
+import { Upload, FolderDown, Trash2, Settings } from 'lucide-react';
 import TooltipHolder from './common/TooltipHolder';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { ConnectionSettings } from '@/components/ConnectionSettings';

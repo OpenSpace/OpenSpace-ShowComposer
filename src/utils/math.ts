@@ -43,5 +43,5 @@ export function restrictNumbersToDecimalPlaces<T>(
   const clonedObj: T = JSON.parse(JSON.stringify(obj));
   processObject(clonedObj);
 
-  return clonedObj;
+  return clonedObj as RecursivePartial<T>;
 }

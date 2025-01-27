@@ -3,7 +3,6 @@ import { throttle } from 'lodash';
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { useOpenSpaceApiStore } from './apiStore';
 
 interface State {
   presentMode: boolean;
