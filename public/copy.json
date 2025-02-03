@@ -183,7 +183,7 @@
     "gui_description": "Gui Description"
   },
   "SetNavigation": {
-    "save_current_navigation_state": "Save Current Navigation State",
+    "save_current_navigation_state": "Set from Current Navigation State",
     "navigation_state_time": "Navigation State Time",
     "fade_duration": "Fade Duration",
     "component_name": "Component Name",

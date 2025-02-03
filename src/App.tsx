@@ -127,9 +127,32 @@ const App = () => {
       addPage();
     }
 
-    if (!NavPanel || !TimePanel || !StatusPanel || !RecordPanel)
-      createStaticPanels();
+    // if (
+    //   !NavPanel ||
+    //   !TimePanel ||
+    //   !StatusPanel ||
+    //   !RecordPanel ||
+    //   !NavPosition ||
+    //   !TimePosition ||
+    //   !StatusPosition ||
+    //   !RecordPosition
+    // )
+    //   createStaticPanels();
   }, []);
+
+  useEffect(() => {
+    if (
+      !NavPanel ||
+      !TimePanel ||
+      !StatusPanel ||
+      !RecordPanel ||
+      !NavPosition ||
+      !TimePosition ||
+      !StatusPosition ||
+      !RecordPosition
+    )
+      createStaticPanels();
+  }, [components]);
 
   const presetComponentTypes: Array<ComponentTypeData> = [
     { type: 'multi', name: getCopy('Main', 'multi'), icon: <Group /> },
