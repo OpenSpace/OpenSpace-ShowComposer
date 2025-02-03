@@ -18,7 +18,7 @@ import { loadStore, saveStore } from '@/utils/saveProject';
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
-import NewProjectModal from './NewProjectModal';
+import { NewProjectModal, WorkspaceSettingsModal } from './NewProjectModal';
 import { useSettingsStore } from '@/store/settingsStore';
 
 export function GlobalMenuBar() {
@@ -26,6 +26,8 @@ export function GlobalMenuBar() {
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+  const [isConnectionSettingsModalOpen, setIsConnectionSettingsModalOpen] =
+    useState(false);
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state,
   );
@@ -99,9 +101,9 @@ export function GlobalMenuBar() {
           <MenubarTrigger>Settings</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
-              Show Settings <MenubarShortcut>⌘Z</MenubarShortcut>
+              Presentation Settings <MenubarShortcut>⌘Z</MenubarShortcut>
             </MenubarItem>
-            <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
+            <MenubarItem onClick={() => setIsConnectionSettingsModalOpen(true)}>
               Workspace Settings <MenubarShortcut>⇧⌘Z</MenubarShortcut>
             </MenubarItem>
           </MenubarContent>
@@ -193,6 +195,10 @@ export function GlobalMenuBar() {
       <NewProjectModal
         isOpen={isNewProjectModalOpen}
         setIsOpen={setIsNewProjectModalOpen}
+      />
+      <WorkspaceSettingsModal
+        isOpen={isConnectionSettingsModalOpen}
+        setIsOpen={setIsConnectionSettingsModalOpen}
       />
     </>
   );

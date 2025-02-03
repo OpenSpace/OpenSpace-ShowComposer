@@ -84,7 +84,7 @@ export const useBoundStore = create<BoundStoreState>()(
               return myCustomSetter;
             },
             // equality: isDeepEqual,
-            onSave: (state) => console.log('saved', state),
+            // onSave: (state) => console.log('saved', state),
             // diff: (pastState, currentState) => {
             //   const myDiff = diff(currentState, pastState);
 

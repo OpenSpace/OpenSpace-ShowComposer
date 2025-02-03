@@ -25,7 +25,7 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   );
   useEffect(() => {
     // this isnt throttleing correct
-    console.log('progress', progress);
+    // console.log('progress', progress);
     // setThrottleProgress(progress);
     setProgress(progress);
     if (debounceTimeoutRef.current) {

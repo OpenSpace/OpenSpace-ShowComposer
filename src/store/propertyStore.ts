@@ -278,7 +278,6 @@ export const usePropertyStore = create<State>()(
             },
             {},
           );
-          console.log('REDUCED ACTIONS: ', reducedActions);
           set((state) => {
             state.actions = reducedActions;
           });

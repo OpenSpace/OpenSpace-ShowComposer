@@ -4,6 +4,15 @@ import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+interface ProjectSettings {
+  projectName: string;
+  projectDescription: string;
+  ip: string;
+  port: string;
+  pageWidth: number;
+  pageHeight: number;
+}
+
 interface State {
   presentMode: boolean;
   togglePresentMode: () => void;
@@ -22,21 +31,7 @@ interface State {
   setScale: (scaleFunc: (prevScale: any) => number) => void;
   updatePageSize(width: number, height: number): void;
   setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
-  setProjectSettings: ({
-    projectName,
-    projectDescription,
-    ip,
-    port,
-    pageWidth,
-    pageHeight,
-  }: {
-    projectName: string;
-    projectDescription: string;
-    ip: string;
-    port: string;
-    pageWidth: number;
-    pageHeight: number;
-  }) => void;
+  setProjectSettings: (settings: Partial<ProjectSettings>) => void;
 }
 
 export const useSettingsStore = create<State>()(
@@ -110,22 +105,10 @@ export const useSettingsStore = create<State>()(
           gridSize: { rows: 3, columns: 3 },
           setGridSize: (size: { rows: number; columns: number }) =>
             set(() => ({ gridSize: size }), false, 'settings/setGridSize'),
-          setProjectSettings: ({
-            projectName,
-            projectDescription,
-            ip,
-            port,
-            pageWidth,
-            pageHeight,
-          }) =>
+          setProjectSettings: (settings: Partial<ProjectSettings>) =>
             set(
               () => ({
-                projectName,
-                projectDescription,
-                ip,
-                port,
-                pageWidth,
-                pageHeight,
+                ...settings,
               }),
               false,
               'settings/setProjectSettings',

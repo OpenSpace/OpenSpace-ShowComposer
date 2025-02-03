@@ -123,7 +123,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         usePropertyStore.getState().setProperties(initData);
 
         // Filter the properties based on the visibility
-        const filtredProperties = properties.filter((p) =>
+        const filteredProperties = properties.filter((p) =>
           isPropertyVisible(p, Visibility as PropertyOwner),
         );
         const filteredPropertyOwners = propertyOwners.filter((p) =>
@@ -136,26 +136,26 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
 
         // Get the renderables
         const fadeables: Record<string, any> = getRenderables(
-          filtredProperties as Property[],
-          'Fadable',
+          filteredProperties as Property[],
+          'Opacity',
         );
 
         usePropertyStore.getState().setProperties(fadeables);
 
         const boolProps = getActionSceneNodes(
-          filtredProperties as Property[],
+          filteredProperties as Property[],
           'Bool',
         );
 
         usePropertyStore.getState().setProperties(boolProps);
         const triggerProps = getActionSceneNodes(
-          filtredProperties as Property[],
+          filteredProperties as Property[],
           'Trigger',
         );
 
         usePropertyStore.getState().setProperties(triggerProps);
         const numberProps = getActionSceneNodes(
-          filtredProperties as Property[],
+          filteredProperties as Property[],
           'Number',
         );
 
@@ -195,6 +195,11 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     if (apiInstance) {
       apiInstance.disconnect();
     }
+    set({
+      // // reconnectTimeout: newTimeout,
+      // luaApi: null,
+      connectionState: ConnectionState.UNCONNECTED,
+    });
   },
   subscribeToProperty: (propertyName: string) => {
     const { connectionState, apiInstance } = get();
@@ -202,10 +207,16 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     // console.log('API Instance: ', apiInstance);
     if (!apiInstance || connectionState != ConnectionState.CONNECTED)
       return null;
-    // console.log(propertyName);
-    const subscription = apiInstance.subscribeToProperty(propertyName);
-    // console.log(subscription);
-    return subscription;
+    try {
+      const subscription = apiInstance.subscribeToProperty(propertyName);
+      // console.log(subscription);
+      return subscription;
+    } catch (e) {
+      console.error(
+        'Cannot subscribe to property, API instance is not connected.',
+      );
+      return null;
+    }
   },
   unsubscribeFromProperty: (subscription: Topic) => {
     const { connectionState, apiInstance } = get();
@@ -217,23 +228,47 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   },
   subscribeToTopic: (topicName: string, properties?: string[]) => {
     const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED)
+
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
+      console.error(
+        'Cannot subscribe to topic, API instance is not connected.',
+      );
+
       return null;
-    const topic = apiInstance.startTopic(topicName, {
-      event: 'start_subscription',
-      properties,
-    });
-    return topic;
+    }
+    try {
+      const topic = apiInstance.startTopic(topicName, {
+        event: 'start_subscription',
+        properties,
+      });
+      return topic;
+    } catch (e) {
+      console.error(
+        'Cannot subscribe to topic, API instance is not connected.',
+      );
+      return null;
+    }
   },
   connectToTopic: (topicName: string) => {
     const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED)
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
+      console.error(
+        'Cannot subscribe to topic, API instance is not connected.',
+      );
+
       return null;
-    // console.log(topicName);
-    const topic = apiInstance.startTopic(topicName, {
-      type: 'connect',
-    });
-    return topic;
+    }
+    try {
+      const topic = apiInstance.startTopic(topicName, {
+        type: 'connect',
+      });
+      return topic;
+    } catch (e) {
+      console.error(
+        'Cannot subscribe to topic, API instance is not connected.',
+      );
+      return null;
+    }
   },
   unsubscribeFromTopic: (topic: Topic) => {
     const { connectionState, apiInstance } = get();

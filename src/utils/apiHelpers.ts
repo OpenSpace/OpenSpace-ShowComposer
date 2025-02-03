@@ -136,6 +136,9 @@ const RegexLibrary = {
   Fadable: {
     regex: /Scene\.(.*?)\.Fade/,
   },
+  Opacity: {
+    regex: /Scene\.(.*?)\.Opacity/,
+  },
   TriggerProperty: {
     regex: /Scene\.(.*?)\.Renderable.Color/,
   },
@@ -147,11 +150,8 @@ export const getRenderables: (
   properties: Property[],
   propertyType: PropertyType,
 ) => Record<string, any> = (properties, propertyType) => {
-  // console.log(propertyType);
-  // console.log(RegexLibrary);
   let regex = RegexLibrary[propertyType].regex;
   let values = Object.values(properties);
-  // console.log(values);
   let renderables: Record<string, any> = values
     .filter(
       (p: Property) =>

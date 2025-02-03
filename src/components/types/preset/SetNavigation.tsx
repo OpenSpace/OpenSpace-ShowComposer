@@ -12,10 +12,11 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import Information from '@/components/common/Information';
 import { jumpToNavState } from '@/utils/triggerHelpers';
 import { formatDate } from '@/utils/time';
-import { Clock } from 'lucide-react';
+import { Anchor, Clock } from 'lucide-react';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useBoundStore } from '@/store/boundStore';
+// import { restrictNumbersToDecimalPlaces } from '@/utils/math';
 
 interface SetNavModalProps {
   component: SetNavComponent | null;
@@ -45,6 +46,13 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+
+  useEffect(() => {
+    if (!component?.navigationState) {
+      getNavigationState();
+    }
+  }, [component?.navigationState]);
+
   const timeLabel = useMemo(() => {
     if (componentTime) {
       try {
@@ -93,10 +101,31 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   };
   return (
     <div className="grid grid-cols-1 gap-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <Button onClick={getNavigationState}>
           {getCopy('SetNavigation', 'save_current_navigation_state')}
         </Button>
+        <div className={`grid  gap-2 opacity-100`}>
+          <Label className="flex items-center justify-start gap-2">
+            <Anchor size={14} />
+            Navigation State Anchor
+          </Label>
+          <ButtonLabel className="border bg-transparent">
+            {navigationState.Anchor}
+          </ButtonLabel>
+        </div>
+        {/* 
+        <div className={`grid  gap-2 opacity-100`}>
+          <Label className="flex items-center justify-start gap-2">
+            <Anchor size={14} />
+            Navigation State Position
+          </Label>
+          <ButtonLabel className="border bg-transparent">
+            {navigationState.Position.map((p: number) => p.toFixed(1)).join(
+              ', ',
+            )}
+          </ButtonLabel>
+        </div> */}
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div

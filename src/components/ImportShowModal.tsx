@@ -23,7 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Position, useSettingsStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { ComponentBase, LayoutBase, Page } from '@/store/ComponentTypes';
-
+import { v4 as uuidv4 } from 'uuid';
 interface ImportShowModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -99,6 +99,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
   const handleImport = () => {
     // Logic to import selected pages/components
     console.log('Importing pages:', Array.from(selectedPages));
+
     useBoundStore.setState(store.componentStore);
     useSettingsStore.setState(store.settingsStore);
     onClose();
@@ -110,11 +111,14 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     const selectedPositions = new Set<Position>();
     const selectedLayouts = new Set<LayoutBase>();
     const selectedFullPages = new Set<Page>();
+    const idMap: Record<string, string> = {};
 
     selectedPages.forEach((selectedPage) => {
       const page: Page = store.componentStore.pages.find(
         (p: Page) => p.id === selectedPage.id,
       );
+      idMap[page.id] = uuidv4();
+      console.log('idMap', idMap);
       console.log('page', page);
       selectedFullPages.add(page);
       if (page) {
@@ -123,12 +127,14 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
           const component = store.componentStore.components[componentId];
           const layout = store.componentStore.layouts[componentId];
           if (component) {
+            idMap[componentId] = uuidv4();
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
               component.components.forEach((childId: string) => {
                 const component = store.componentStore.components[childId];
                 if (component) {
+                  idMap[childId] = uuidv4();
                   selectedComponents.add(component);
                 }
                 //   selectedComponents.add(childId);
@@ -136,6 +142,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
             }
           }
           if (layout) {
+            idMap[componentId] = uuidv4();
             selectedLayouts.add(layout);
           }
           // Add positions for the components in the page
@@ -149,14 +156,37 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       }
     });
 
-    // Add pages, components, and positions to the store
+    console.log('idMap', idMap);
+    // Function to replace old IDs with new IDs based on the idMap
+    const replaceIdsInString = (items: any[]) => {
+      const jsonString = JSON.stringify(items);
+      let updatedString = jsonString;
 
-    addPages(Array.from(selectedFullPages));
-    addComponents(Array.from(selectedComponents));
-    addPositions(Array.from(selectedPositions));
-    addLayouts(Array.from(selectedLayouts)); // Assuming you have a method to add layouts
+      // Replace old IDs with new IDs in the string
+      Object.keys(idMap).forEach((oldId) => {
+        const newId = idMap[oldId];
+        const regex = new RegExp(`"${oldId}"`, 'g'); // Create a regex to match the old ID
+        updatedString = updatedString.replace(regex, `"${newId}"`); // Replace with new ID
+      });
+
+      return JSON.parse(updatedString); // Parse the updated string back to an object/array
+    };
+
+    // Replace IDs in the arrays before adding to the store
+    const updatedFullPages = replaceIdsInString(Array.from(selectedFullPages));
+    const updatedComponents = replaceIdsInString(
+      Array.from(selectedComponents),
+    );
+    const updatedPositions = replaceIdsInString(Array.from(selectedPositions));
+    const updatedLayouts = replaceIdsInString(Array.from(selectedLayouts));
+
+    addPages(updatedFullPages);
+    addComponents(updatedComponents);
+    addPositions(updatedPositions);
+    addLayouts(updatedLayouts);
     onClose();
   };
+
   const initialState = useSettingsStore((state) => ({
     ip: state.ip || '',
     port: state.port || '',

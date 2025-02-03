@@ -18,7 +18,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { capitalize } from 'lodash';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import StatusBarControlled from '@/components/StatusBarControlled';
-import { EnginePropertyVisibilityKey } from '@/store/apiStore';
+// import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
@@ -47,26 +47,16 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
   const property = usePropertyStore((state) => {
     return state.properties[component.property];
   });
-  //makesure property exists in property store
-  // useEffect(() => {
-  //   console.log('property', property?.value);
-  //   if (!property) {
-  //     updateComponent(component.id, {
-  //       isDisabled: true,
-  //     });
-  //   } else {
-  //     updateComponent(component.id, {
-  //       isDisabled: false,
-  //     });
-  //   }
-  // }, [property]);
+  const fadeProperty = usePropertyStore((state) => {
+    return state.properties[component.property.replace('.Opacity', '.Fade')];
+  });
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
-    subscribeToProperty(component.property, 0);
+    subscribeToProperty(component.property.replace('.Opacity', '.Fade'), 0);
     return () => {
-      unsubscribeFromProperty(component.property);
+      unsubscribeFromProperty(component.property.replace('.Opacity', '.Fade'));
     };
   }, [
     component.property,
@@ -124,8 +114,11 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
         component.triggerAction?.();
       }}
     >
-      {property ? (
-        <StatusBarControlled progress={property?.value} debounceDuration={0} />
+      {fadeProperty ? (
+        <StatusBarControlled
+          progress={fadeProperty?.value}
+          debounceDuration={0}
+        />
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
@@ -155,16 +148,18 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
-        .filter((a) => a.endsWith('.Fade'))
+        .filter((a) => a.endsWith('.Opacity'))
         .reduce((acc: Record<string, any>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
         }, {}),
     ),
   );
-  const Visibility = usePropertyStore(
-    (state) => state.properties[EnginePropertyVisibilityKey],
-  );
+  // const properties = usePropertyStore((state) => state.properties);
+
+  // const Visibility = usePropertyStore(
+  //   (state) => state.properties[EnginePropertyVisibilityKey],
+  // );
   const [property, setProperty] = useState<string>(component?.property || '');
   const [intDuration, setIntDuration] = useState<number>(
     component?.intDuration || 1,
@@ -238,10 +233,13 @@ const FadeModal: React.FC<FadeModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
 
+  useEffect(() => {
+    console.log('properties', properties);
+  }, [properties]);
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        .filter((a) => a.endsWith('.Fade') && !a.endsWith('.Appearance.Fade'))
+        // .filter((a) => a.endsWith('.Fade') && !a.endsWith('.Appearance.Fade'))
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;
@@ -255,7 +253,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
           acc[newValue] = key;
           return acc;
         }, {}),
-    [Visibility],
+    [properties],
   );
   return (
     <>

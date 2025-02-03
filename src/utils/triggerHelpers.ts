@@ -14,18 +14,18 @@ const triggerFade = async (
   // console.log('triggerFade', property, intDuration, action);
   switch (action) {
     case 'on':
-      luaApi.fadeIn(property.replace('.Fade', ''), intDuration);
+      luaApi.fadeIn(property.replace('.Opacity', ''), intDuration);
 
       // luaApi.setPropertyValueSingle(property, 1.0, intDuration);
       break;
     case 'off':
-      luaApi.fadeOut(property.replace('.Fade', ''), intDuration);
+      luaApi.fadeOut(property.replace('.Opacity', ''), intDuration);
       // luaApi.setPropertyValueSingle(property, 0.0, intDuration);
       break;
     case 'toggle':
       console.log('toggle', property);
       console.log('intDuration', intDuration);
-      luaApi.toggleFade(property.replace('.Fade', ''), intDuration / 2.0);
+      luaApi.toggleFade(property.replace('.Opacity', ''), intDuration / 2.0);
       // const value = await luaApi.getPropertyValue(property);
       // console.log('toggle', value[1] < 0.5 ? 1.0 : 0.0);
       // luaApi.setPropertyValueSingle(

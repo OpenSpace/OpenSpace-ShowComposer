@@ -306,6 +306,7 @@ export const createComponentSlice: ImmerStateCreator<
     });
     get().addPage();
     get().deleteAllPosition();
+    get().createPanels();
   },
   asyncPreSubmitOperation: null, // Async operation placeholder, this is mainly used for saving photos to disk on component save
   resetAsyncPreSubmitOperation: () => set({ asyncPreSubmitOperation: null }),
@@ -407,7 +408,7 @@ export const createComponentSlice: ImmerStateCreator<
     updates: Partial<
       TimeComponent | NavComponent | StatusComponent | RecordComponent
     >,
-  ) =>
+  ) => {
     set((state) => {
       switch (updates.type) {
         case 'timepanel': {
@@ -441,7 +442,8 @@ export const createComponentSlice: ImmerStateCreator<
         default:
           break;
       }
-    }),
+    });
+  },
 
   // Other component-related methods...
 });

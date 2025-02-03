@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
 import { getCopy } from '@/utils/copyHelpers';
 interface ConnectionSettingsProps {
   triggerButton?: ReactElement;
@@ -154,6 +155,14 @@ const ConnectionStatus = () => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
+  const connect = useOpenSpaceApiStore((state) => state.connect);
+
+  useEffect(() => {
+    if (connectionState === ConnectionState.UNCONNECTED) {
+      connect();
+    }
+  }, [connectionState]);
+
   function renderConnectionState(size: number) {
     switch (connectionState) {
       case ConnectionState.CONNECTED:
@@ -201,4 +210,5 @@ const ConnectionStatus = () => {
     </div>
   );
 };
+
 export { ConnectionSettings, ConnectionStatus };

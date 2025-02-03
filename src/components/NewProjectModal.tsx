@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getCopy } from '@/utils/copyHelpers';
@@ -37,6 +37,17 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
     projectName: '',
     projectDescription: '',
   }));
+
+  useEffect(() => {
+    if (isOpen) {
+      setProjectName(initialState.projectName);
+      setProjectDescription(initialState.projectDescription);
+      setIp(initialState.ip);
+      setPort(initialState.port);
+      setPageWidth(initialState.pageWidth);
+      setPageHeight(initialState.pageHeight);
+    }
+  }, [isOpen]);
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   const removeAllComponents = useBoundStore(
     (state) => state.removeAllComponents,
@@ -210,4 +221,131 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
   );
 };
 
-export default NewProjectModal;
+interface WorkspaceSettingsModalProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
+  isOpen,
+  setIsOpen,
+}) => {
+  const setProjectSettings = useSettingsStore(
+    (state) => state.setProjectSettings,
+  );
+
+  const initialState = useSettingsStore((state) => ({
+    ip: state.ip || '',
+    port: state.port || '',
+    pageHeight: state.pageHeight || 1920,
+    pageWidth: state.pageWidth || 1080,
+  }));
+
+  const [ip, setIp] = useState(initialState.ip);
+  const [port, setPort] = useState(initialState.port);
+  const [pageWidth, setPageWidth] = useState(initialState.pageWidth);
+  const [pageHeight, setPageHeight] = useState(initialState.pageHeight);
+  //   const [defaultScreenSpacePosition, setDefaultScreenSpacePosition] =
+  //     useState(initialState.pageWidth);
+  // const [isOpen, setIsOpen] = useState<boolean>(triggerProjectName);
+
+  const handleSubmit = () => {
+    setProjectSettings({
+      ip,
+      port,
+      pageWidth,
+      pageHeight,
+    });
+    // removeAllComponents();
+    // forceRefresh();
+    setIsOpen(false);
+  };
+
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Workspace Settings</AlertDialogTitle>
+          <AlertDialogDescription>
+            Update your workspace settings here
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <div className="grid gap-2">
+          <h4 className="text-sm font-semibold dark:text-slate-200">
+            {getCopy('ConnectionSettings', 'openspace_connection')}
+          </h4>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {getCopy('ConnectionSettings', 'address_copy')}
+          </p>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="ip">
+              {getCopy('NewProjectModal', 'ip_address')}
+            </Label>
+            <Input
+              id="ip"
+              className="col-span-2 h-8"
+              type="text"
+              value={ip}
+              onChange={(e) => setIp(e.target.value)}
+              placeholder="Enter IP"
+            />
+          </div>
+
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="port">{getCopy('NewProjectModal', 'port')}</Label>
+            <Input
+              id="port"
+              className="col-span-2 h-8"
+              type="text"
+              value={port}
+              onChange={(e) => setPort(e.target.value)}
+              placeholder="Enter Port"
+            />
+          </div>
+          <h4 className="text-sm font-semibold dark:text-slate-200">
+            {getCopy('NewProjectModal', 'default_page_size')}
+          </h4>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {getCopy('NewProjectModal', 'default_page_size_copy')}
+          </p>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="defaultPageSize">
+              {getCopy('NewProjectModal', 'page_width')}
+            </Label>
+            <Input
+              id="defaultPageSize"
+              className="col-span-2 h-8"
+              type="number"
+              value={pageWidth}
+              onChange={(e) => setPageWidth(parseInt(e.target.value))}
+              placeholder="Enter Default Page Width"
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="defaultPageSize">
+              {getCopy('NewProjectModal', 'page_height')}
+            </Label>
+            <Input
+              id="defaultPageSize"
+              className="col-span-2 h-8"
+              type="number"
+              value={pageHeight}
+              onChange={(e) => setPageHeight(parseInt(e.target.value))}
+              placeholder="Enter Default Page Height"
+            />
+          </div>
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>
+            {getCopy('NewProjectModal', 'cancel')}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleSubmit}>
+            Save Settings
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+export { NewProjectModal, WorkspaceSettingsModal };
