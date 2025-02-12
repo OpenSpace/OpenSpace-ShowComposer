@@ -10,6 +10,7 @@ export type ComponentType =
   | 'timepanel'
   | 'navpanel'
   | 'recordpanel'
+  | 'logpanel'
   | 'sessionplayback'
   | 'settime'
   | 'setnavstate'
@@ -85,7 +86,9 @@ export interface StatusComponent extends ComponentBase {
 export interface RecordComponent extends ComponentBase {
   type: 'recordpanel';
 }
-
+export interface LogComponent extends ComponentBase {
+  type: 'logpanel';
+}
 export interface RichTextComponent extends ComponentBase {
   type: 'richtext';
   text: string;

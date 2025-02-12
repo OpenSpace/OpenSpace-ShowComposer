@@ -10,11 +10,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-// import {
-//   Tooltip,
-//   TooltipContent,
-//   TooltipTrigger,
-// } from '@/components/ui/tooltip';
 
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -36,7 +31,6 @@ import {
   View,
   BookOpenCheck,
   Code,
-  AlertCircle,
   MessageSquareWarning,
 } from 'lucide-react';
 

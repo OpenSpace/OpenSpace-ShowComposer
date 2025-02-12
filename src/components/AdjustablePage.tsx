@@ -8,7 +8,6 @@ import { useSettingsStore } from '@/store';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import ButtonLabel from './common/ButtonLabel';
-import { getCopy } from '@/utils/copyHelpers';
 import { cn } from '@/lib/utils';
 import { useBoundStore } from '@/store/boundStore';
 const AdjustablePage: React.FC = () => {
