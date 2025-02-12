@@ -14,6 +14,8 @@ import { useBoundStore } from '@/store/boundStore';
 import { triggerAction } from '@/utils/triggerHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ButtonLabel from '@/components/common/ButtonLabel';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 
 interface ActionTriggerModalProps {
   component: ActionTriggerComponent | null;
@@ -36,6 +38,10 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
     component?.backgroundImage || '',
   );
 
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.action,
+  );
+
   const actions = usePropertyStore((state) => state.actions);
 
   const handleActionChange = (action: Record<string, any>) => {
@@ -54,6 +60,7 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
       lockName,
       gui_name,
       gui_description,
+      color,
     });
   }, [
     action,
@@ -61,6 +68,7 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
     gui_name,
     gui_description,
     lockName,
+    color,
     handleComponentData,
   ]);
 
@@ -107,6 +115,12 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Focus', 'background_image')}
@@ -169,6 +183,7 @@ const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         component.triggerAction?.();
       }}

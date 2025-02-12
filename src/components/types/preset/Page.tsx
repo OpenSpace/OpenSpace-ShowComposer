@@ -12,7 +12,8 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
-
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 interface PageGUIProps {
   component: PageComponent;
   shouldRender?: boolean;
@@ -33,6 +34,7 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({
   return shouldRender ? (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         component.triggerAction?.();
       }}
@@ -71,11 +73,17 @@ const PageModal: React.FC<PageModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.page,
+  );
 
   const handlePageChange = (page: number) => {
     setPage(page);
     if (!lockName) {
-      setGuiName(`Go to Page ${page}`);
+      const pageData = pages[page - 1];
+      setGuiName(
+        `Go to ${pageData.name ? pageData.name : 'Go to Page ' + page}`,
+      );
     }
   };
   useEffect(() => {
@@ -85,6 +93,7 @@ const PageModal: React.FC<PageModalProps> = ({
       gui_name,
       lockName,
       gui_description,
+      color,
     });
   }, [
     page,
@@ -92,6 +101,7 @@ const PageModal: React.FC<PageModalProps> = ({
     gui_name,
     lockName,
     gui_description,
+    color,
     handleComponentData,
   ]);
   return (
@@ -100,7 +110,10 @@ const PageModal: React.FC<PageModalProps> = ({
         <div className="grid grid-cols-1 gap-4">
           <Label htmlFor="page">{getCopy('Page', 'page_number')}</Label>
           <SelectableDropdown
-            options={pages.map((_v, i) => (i + 1).toString())}
+            options={pages.map((v, i) => ({
+              value: (i + 1).toString(),
+              label: v.name ? v.name : 'Page ' + (i + 1).toString(),
+            }))}
             selected={page.toString()}
             setSelected={(v: string) => handlePageChange(parseInt(v))}
           />
@@ -127,6 +140,12 @@ const PageModal: React.FC<PageModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Page', 'background_image')}

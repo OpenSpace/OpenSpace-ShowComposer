@@ -20,7 +20,8 @@ import Information from '@/components/common/Information';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
-
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
 //set up recording state
 export const SessionStateIdle = 'idle';
 export const SessionStateRecording = 'recording';
@@ -73,7 +74,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
-
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.sessionplayback,
+  );
   const handleFileChange = (file: string) => {
     setFile(file);
     if (!lockName) {
@@ -90,6 +93,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
       gui_name,
       gui_description,
       backgroundImage,
+      color,
     });
   }, [
     file,
@@ -99,6 +103,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     gui_name,
     gui_description,
     backgroundImage,
+    color,
     handleComponentData,
   ]);
   const isIdle = useMemo(
@@ -285,6 +290,12 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
+          <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('SessionPlayback', 'background_image')}
             </Label>
@@ -446,7 +457,10 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     }
   }, [file, recordingState]);
   return shouldRender ? (
-    <ComponentContainer backgroundImage={component.backgroundImage}>
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
+    >
       <div className="flex flex-col items-center justify-center gap-2">
         {gui_name || gui_description ? (
           <ButtonLabel>

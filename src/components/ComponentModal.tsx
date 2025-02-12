@@ -27,6 +27,7 @@ import { NumberModal } from './types/property/Number';
 import { VideoModal } from './types/static/Video';
 import { MultiModal } from './types/preset/Multi';
 import { ImageModal } from './types/static/Image';
+import { ScriptModal } from './types/preset/Script';
 import { SessionPlaybackModal } from './types/preset/SessionPlayback';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +44,7 @@ import {
   ImageComponent,
   MultiComponent,
   PageComponent,
+  ScriptComponent,
   SessionPlaybackComponent,
   SetNavComponent,
   allComponentLabels,
@@ -323,6 +325,14 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <ActionTriggerModal
           component={component as ActionTriggerComponent}
+          handleComponentData={setComponentData}
+        />
+      );
+      break;
+    case 'script':
+      content = (
+        <ScriptModal
+          component={component as ScriptComponent}
           handleComponentData={setComponentData}
         />
       );

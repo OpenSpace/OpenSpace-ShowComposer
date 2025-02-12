@@ -44,7 +44,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Information from '@/components/common/Information';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import { useBoundStore } from '@/store/boundStore';
-
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 // // Define the type for list items
 // set up chained v paralell data handling
 interface MultiType {
@@ -90,6 +91,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
+  );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.multi,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState('');
@@ -216,8 +220,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
       backgroundImage,
       gui_description,
       gui_name,
+      color,
     });
-  }, [items, backgroundImage, gui_name, gui_description]);
+  }, [items, backgroundImage, gui_name, gui_description, color]);
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const newList = Array.from(items);
@@ -469,6 +474,12 @@ const MultiModal: React.FC<MultiModalProps> = ({
           </div>
           <div className="grid grid-cols-1 gap-4">
             <div className="grid gap-2">
+              <Label htmlFor="description">Background Color</Label>
+              <div className="flex flex-row gap-2">
+                <ColorPickerComponent color={color} setColor={setColor} />
+              </div>
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="description">
                 {getCopy('Multi', 'background_image')}
               </Label>
@@ -648,6 +659,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         // component.triggerAction?.();
         triggerComponents();

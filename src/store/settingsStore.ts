@@ -11,6 +11,7 @@ interface ProjectSettings {
   port: string;
   pageWidth: number;
   pageHeight: number;
+  showPagination: boolean;
 }
 
 interface State {
@@ -26,6 +27,8 @@ interface State {
   gridSize: { rows: number; columns: number };
   projectName: string;
   projectDescription: string;
+  showPagination: boolean;
+  setShowPagination: (show: boolean) => void;
   setGridSize: (size: { rows: number; columns: number }) => void;
   setPresentLocked: (locked: boolean) => void;
   setScale: (scaleFunc: (prevScale: any) => number) => void;
@@ -57,6 +60,13 @@ export const useSettingsStore = create<State>()(
           presentLocked: false,
           projectName: '',
           projectDescription: '',
+          showPagination: true,
+          setShowPagination: (show: boolean) =>
+            set(
+              (_state) => ({ showPagination: show }),
+              false,
+              'settings/setShowPagination',
+            ),
           setPresentLocked: (locked: boolean) =>
             set(
               (_state) => ({ presentLocked: locked }),

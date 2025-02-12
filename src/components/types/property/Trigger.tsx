@@ -19,6 +19,9 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+
 interface TriggerGUIProps {
   component: TriggerComponent;
   shouldRender?: boolean;
@@ -74,6 +77,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   return shouldRender ? (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => component.triggerAction?.()}
     >
       <ButtonLabel>
@@ -110,6 +114,9 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.trigger,
+  );
 
   useEffect(() => {
     const propertyData = usePropertyStore.getState().properties[property];
@@ -125,6 +132,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
       gui_description,
       lockName,
       backgroundImage,
+      color,
     });
   }, [
     property,
@@ -132,6 +140,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
     gui_description,
     lockName,
     backgroundImage,
+    color,
     handleComponentData,
   ]);
   useEffect(() => {
@@ -196,10 +205,21 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <ImageUpload
-            value={backgroundImage}
-            onChange={(v) => setBackgroundImage(v)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">
+              {getCopy('Trigger', 'background_image')}
+            </Label>
+            <ImageUpload
+              value={backgroundImage}
+              onChange={(v) => setBackgroundImage(v)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Trigger', 'gui_description')}

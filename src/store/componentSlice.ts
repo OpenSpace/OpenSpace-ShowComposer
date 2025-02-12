@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Component, LayoutBase, Page } from './ComponentTypes';
+import { Component, LayoutBase, LogComponent, Page } from './ComponentTypes';
 import { PageSlice } from './pageSlice';
 import { LayoutSlice } from './layoutSlice';
 import { Position, PositionSlice } from './positionSlice';
@@ -22,6 +22,7 @@ export interface ComponentSlice {
   navpanel: NavComponent | null;
   statuspanel: StatusComponent | null;
   recordpanel: RecordComponent | null;
+  logpanel: LogComponent | null;
   addComponent: (component: Component) => void;
   addComponents: (components: Component[]) => void;
   getComponentById: (id: Component['id']) => Component;
@@ -70,6 +71,7 @@ export const createComponentSlice: ImmerStateCreator<
   timepanel: null,
   statuspanel: null,
   recordpanel: null,
+  logpanel: null,
   addComponent: (component) => {
     // console.log('component in addComponent', component);
 
@@ -322,11 +324,18 @@ export const createComponentSlice: ImmerStateCreator<
     }
   },
   createPanels: () => {
-    const { timepanelId, navpanelId, statuspanelId, recordpanelId } = {
+    const {
+      timepanelId,
+      navpanelId,
+      statuspanelId,
+      recordpanelId,
+      logpanelId,
+    } = {
       timepanelId: uuidv4(),
       navpanelId: uuidv4(),
       statuspanelId: uuidv4(),
       recordpanelId: uuidv4(),
+      logpanelId: uuidv4(),
     };
 
     set((state) => {
@@ -360,6 +369,14 @@ export const createComponentSlice: ImmerStateCreator<
         type: 'recordpanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Record Panel',
+        gui_description: '',
+        isDisabled: false,
+      };
+      state.logpanel = {
+        id: logpanelId,
+        type: 'logpanel',
+        isMulti: 'false' as MultiState,
+        gui_name: 'Error Log Panel',
         gui_description: '',
         isDisabled: false,
       };
@@ -403,10 +420,23 @@ export const createComponentSlice: ImmerStateCreator<
       height: 425,
       minimized: true,
     });
+    get().addPosition(logpanelId, {
+      x: 250,
+      y: 500,
+      minWidth: 325,
+      minHeight: 425,
+      width: 325,
+      height: 425,
+      minimized: true,
+    });
   },
   updatePanel: (
     updates: Partial<
-      TimeComponent | NavComponent | StatusComponent | RecordComponent
+      | TimeComponent
+      | NavComponent
+      | StatusComponent
+      | RecordComponent
+      | LogComponent
     >,
   ) => {
     set((state) => {
@@ -436,6 +466,13 @@ export const createComponentSlice: ImmerStateCreator<
           const recordComponent = state.recordpanel;
           if (recordComponent) {
             Object.assign(recordComponent, updates);
+          }
+          break;
+        }
+        case 'logpanel': {
+          const logComponent = state.logpanel;
+          if (logComponent) {
+            Object.assign(logComponent, updates);
           }
           break;
         }

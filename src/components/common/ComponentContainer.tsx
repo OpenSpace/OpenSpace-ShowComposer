@@ -4,6 +4,7 @@ interface ComponentContainerProps {
   children: React.ReactNode;
   onClick?: () => void;
   backgroundImage?: string;
+  backgroundColor?: string;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -12,6 +13,7 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
   children,
   onClick,
   backgroundImage,
+  backgroundColor,
   className,
   style,
 }) => {
@@ -26,6 +28,7 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${backgroundImage})`,
+        backgroundColor: backgroundColor,
         ...style,
       }}
       onClick={onClick}

@@ -35,6 +35,9 @@ import {
   Hash,
   View,
   BookOpenCheck,
+  Code,
+  AlertCircle,
+  MessageSquareWarning,
 } from 'lucide-react';
 
 import {
@@ -51,7 +54,7 @@ import { MultiComponent } from './store/ComponentTypes';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import FeedbackPanel from './components/FeedbackPanel';
-import PageButtonMenu from './components/PageButtonMenu';
+// import PageButtonMenu from './components/PageButtonMenu';
 import PresentModeToggle from './components/PresentModeToggle';
 import { getCopy } from './utils/copyHelpers';
 import { LayoutToolbar } from './components/layouts/LayoutToolbar';
@@ -106,11 +109,16 @@ const App = () => {
   const RecordPosition = useBoundStore(
     (state) => state.positions[RecordPanel?.id || ''],
   );
+  const LogPanel = useBoundStore((state) => state.logpanel);
+  const LogPosition = useBoundStore(
+    (state) => state.positions[LogPanel?.id || ''],
+  );
 
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const copyComponent = useBoundStore((state) => state.copyComponent);
   const updatePosition = useBoundStore((state) => state.updatePosition);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
+  const showPagination = useSettingsStore((state) => state.showPagination);
   const addPage = useBoundStore((state) => state.addPage);
   const layouts = useBoundStore((state) => state.layouts);
   const currentPage = useBoundStore((state) => state.currentPage);
@@ -141,15 +149,22 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    console.log('isPresentMode', isPresentMode);
+    console.log('showPagination', showPagination);
+  }, [isPresentMode, showPagination]);
+
+  useEffect(() => {
     if (
       !NavPanel ||
       !TimePanel ||
       !StatusPanel ||
       !RecordPanel ||
+      !LogPanel ||
       !NavPosition ||
       !TimePosition ||
       !StatusPosition ||
-      !RecordPosition
+      !RecordPosition ||
+      !LogPosition
     )
       createStaticPanels();
   }, [components]);
@@ -180,6 +195,7 @@ const App = () => {
       icon: <CirclePlay className="h-5 w-5" />,
     },
     { type: 'page', name: getCopy('Main', 'page'), icon: <BookOpenCheck /> },
+    { type: 'script', name: getCopy('Main', 'script'), icon: <Code /> },
   ];
 
   const propertyComponentTypes: Array<ComponentTypeData> = [
@@ -230,6 +246,13 @@ const App = () => {
     name: getCopy('Main', 'recordpanel'),
     icon: <Video className="h-5 w-5" />,
   };
+
+  const logType = {
+    type: 'logpanel',
+    name: getCopy('Main', 'logpanel'),
+    icon: <MessageSquareWarning className="h-5 w-5" />,
+  };
+
   const allComponentTypes = [
     ...presetComponentTypes,
     ...propertyComponentTypes,
@@ -437,6 +460,7 @@ const App = () => {
                   {TimePanel && <DraggablePanel component={TimePanel} />}
                   {StatusPanel && <DraggablePanel component={StatusPanel} />}
                   {RecordPanel && <DraggablePanel component={RecordPanel} />}
+                  {LogPanel && <DraggablePanel component={LogPanel} />}
                   {Object.keys(layouts).map((layoutId) => {
                     const layout = layouts[layoutId];
                     if (
@@ -530,15 +554,23 @@ const App = () => {
                   onClick={() => minimize(RecordPosition)}
                   disabled={connectionState != ConnectionState.CONNECTED}
                 />
+                <ToggleButton
+                  tooltipText={getCopy('Main', 'logpanel')}
+                  icon={logType.icon}
+                  selected={LogPosition?.minimized}
+                  onClick={() => minimize(LogPosition)}
+                  disabled={connectionState != ConnectionState.CONNECTED}
+                />
               </div>
-
-              <Pagination
-                currentIndex={currentPageIndex}
-                length={pagesLength}
-                setIndex={goToPage}
-              />
+              {(!isPresentMode || (showPagination && isPresentMode)) && (
+                <Pagination
+                  currentIndex={currentPageIndex}
+                  length={pagesLength}
+                  setIndex={goToPage}
+                />
+              )}
               <div className="absolute bottom-7 right-6 flex flex-row gap-2">
-                <PageButtonMenu />
+                {/* <PageButtonMenu /> */}
                 <PresentModeToggle />
               </div>
             </div>

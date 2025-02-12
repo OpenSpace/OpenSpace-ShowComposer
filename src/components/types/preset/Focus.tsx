@@ -23,6 +23,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 
 interface FocusGUIProps {
   component: SetFocusComponent;
@@ -90,6 +92,7 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         component.triggerAction?.();
       }}
@@ -134,6 +137,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.setfocus,
+  );
 
   const subscribeToProperty = usePropertyStore(
     (state) => state.subscribeToProperty,
@@ -169,6 +175,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
       lockName,
       gui_name,
       gui_description,
+      color,
     });
   }, [
     property,
@@ -176,6 +183,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     gui_name,
     gui_description,
     lockName,
+    color,
     handleComponentData,
   ]);
   useEffect(() => {
@@ -240,6 +248,12 @@ const FocusModal: React.FC<FocusModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Focus', 'background_image')}

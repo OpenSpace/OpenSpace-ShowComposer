@@ -37,7 +37,11 @@ import { SetNavGUIComponent } from '../types/preset/SetNavigation';
 import { PageGUIComponent } from '../types/preset/Page';
 import { getCopy } from '@/utils/copyHelpers';
 import { ActionTriggerGUIComponent } from '../types/preset/ActionTrigger';
-import { ActionTriggerComponent } from '@/store/ComponentTypes';
+import {
+  ActionTriggerComponent,
+  ScriptComponent,
+} from '@/store/ComponentTypes';
+import { ScriptGUIComponent } from '../types/preset/Script';
 interface ComponentContentProps {
   component: Component;
 }
@@ -92,6 +96,8 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({
           component={component as ActionTriggerComponent}
         />
       );
+    case 'script':
+      return <ScriptGUIComponent component={component as ScriptComponent} />;
     default:
       return (
         <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>

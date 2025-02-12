@@ -59,7 +59,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       const parsedPages = store.componentStore.pages.map(
         (page: any, index: number) => {
           return {
-            name: `${index + 1}`,
+            name: page.name ? page.name : `${index + 1}`,
             components: page.components,
             id: page.id,
           };

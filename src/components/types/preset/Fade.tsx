@@ -24,6 +24,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 
 interface FadeGUIProps {
   component: FadeComponent;
@@ -103,6 +105,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
       }
       outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       style={{
         top: '4px',
         left: '4px',
@@ -175,6 +178,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.fade,
+  );
 
   const handlePropertyChange = (property: string) => {
     setProperty(property);
@@ -217,6 +223,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
       lockName,
       gui_name,
       gui_description,
+      color,
     });
   }, [
     property,
@@ -226,6 +233,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
     gui_name,
     gui_description,
     lockName,
+    color,
     handleComponentData,
   ]);
 
@@ -322,6 +330,12 @@ const FadeModal: React.FC<FadeModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Fade', 'background_image')}

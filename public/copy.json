@@ -15,6 +15,7 @@
     "number": "Number",
     "trigger": "Trigger",
     "action": "Play Action",
+    "script": "Script",
     "image": "Image",
     "video": "Video",
     "title": "Title",
@@ -23,6 +24,7 @@
     "navpanel": "Nav Panel",
     "statuspanel": "Status Panel",
     "recordpanel": "Record Panel",
+    "logpanel": "Log Panel",
     "layout": "Layout Components",
     "current_show": "Current Show"
   },
@@ -31,7 +33,7 @@
   },
   "ComponentModal": {
     "unknown_component_type": "Unknown component type",
-    "configure_copy": "Configure you component and add it to the workspace.",
+    "configure_copy": "Configure your component and add it to the workspace.",
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create"
@@ -127,6 +129,9 @@
     "component_name": "Component Name",
     "background_image": "Background Image",
     "gui_description": "Gui Description"
+  },
+  "Script": {
+    "script": "Lua Script"
   },
   "FlyTo": {
     "target": "Target",
@@ -282,6 +287,7 @@
   },
   "NewProjectModal": {
     "new_project": "Create a New Show",
+    "update_project_header": "Update Show",
     "project_details": "Some Preliminary Settings for your new show.",
     "project_name": "Show Name",
     "project_name_copy": "Enter the name of the show you want to create.",
@@ -294,6 +300,7 @@
     "page_width": "Page Width",
     "page_height": "Page Height",
     "create_project": "Create Show",
+    "update_project": "Update Show",
     "default_screen_space_position": "Default Screen Space Position"
   }
 }

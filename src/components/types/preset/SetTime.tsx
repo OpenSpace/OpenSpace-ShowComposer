@@ -20,6 +20,8 @@ import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 
 interface SetTimeComponentProps {
   component: SetTimeType;
@@ -77,6 +79,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         component.triggerAction?.();
         triggerAnimation();
@@ -125,6 +128,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.settime,
+  );
   const timeLabel = useMemo(() => {
     if (componentTime) {
       try {
@@ -159,6 +165,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       lockName,
       gui_description,
       backgroundImage,
+      color,
     });
   }, [
     componentTime,
@@ -170,6 +177,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     lockName,
     gui_description,
     backgroundImage,
+    color,
   ]);
   return (
     <>
@@ -252,6 +260,12 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="description">Background Color</Label>
+              <div className="flex flex-row gap-2">
+                <ColorPickerComponent color={color} setColor={setColor} />
+              </div>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="description">
                 {getCopy('SetTime', 'background_image')}

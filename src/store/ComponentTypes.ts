@@ -3,6 +3,7 @@ import { StateCreator } from 'zustand';
 export type LayoutType = 'row' | 'column' | 'grid';
 
 export type ComponentType =
+  | 'script'
   | 'fade'
   | 'flyto'
   | 'statuspanel'
@@ -33,6 +34,8 @@ export type Page = {
   id: string;
   x: number;
   y: number;
+  name?: string;
+  color?: string;
 };
 
 export interface ComponentBase {
@@ -45,7 +48,29 @@ export interface ComponentBase {
   gui_name: string;
   gui_description: string;
   isDisabled: boolean;
+  color?: string;
 }
+
+export const ComponentBaseColors = {
+  multi: '#6366f1',
+  action: '#737373',
+  page: '#64748b37',
+  default: '#64748b',
+  boolean: '#f43f5e',
+  number: '#ec4899',
+  trigger: '#a855f7',
+  richtext: '#3b82f6',
+  title: '#0ea5e9',
+  video: '#06b6d4',
+  image: '#14b8a6',
+  fade: '#10b981',
+  setfocus: '#22c55e',
+  setnavstate: '#84cc16',
+  flyto: '#f59e0b',
+  settime: '#f97316',
+  sessionplayback: '#ef4444',
+  script: '#0ea5e9',
+};
 
 export interface TimeComponent extends ComponentBase {
   type: 'timepanel';
@@ -167,6 +192,12 @@ export interface TriggerComponent extends ComponentBase {
   backgroundImage: string;
   triggerAction: () => void;
 }
+export interface ScriptComponent extends ComponentBase {
+  type: 'script';
+  script: string;
+  backgroundImage: string;
+  triggerAction: () => void;
+}
 
 export interface PageComponent extends ComponentBase {
   type: 'page';
@@ -213,6 +244,7 @@ export const presetComponents = [
   { value: 'sessionplayback', label: 'Session Playback' },
   { value: 'page', label: 'Go To Page' },
   { value: 'action', label: 'Trigger Action' },
+  { value: 'script', label: 'Lua Script' },
 ];
 
 export const propertyComponents = [
@@ -286,7 +318,8 @@ export type Component =
   | SessionPlaybackComponent
   | PageComponent
   | ActionTriggerComponent
-  | MultiComponent;
+  | MultiComponent
+  | ScriptComponent;
 
 export type ImmerStateCreator<T, TBase> = StateCreator<
   T,

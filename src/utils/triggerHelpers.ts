@@ -126,6 +126,12 @@ const triggerAction = (actionName: string) => {
   useOpenSpaceApiStore.getState().luaApi.action.triggerAction(actionName);
 };
 
+const sendLuaScript = (script: string) => {
+  useOpenSpaceApiStore
+    .getState()
+    .apiInstance?.executeLuaScript(script, false, false);
+};
+
 export {
   triggerFade,
   triggerBool,
@@ -133,4 +139,5 @@ export {
   triggerAction,
   triggerNumber,
   jumpToNavState,
+  sendLuaScript,
 };

@@ -9,16 +9,23 @@ import {
   NavComponent,
   StatusComponent,
   RecordComponent,
+  LogComponent,
 } from '@/store/ComponentTypes';
 import { useSettingsStore } from '@/store';
 import { roundToNearest } from '@/utils/math';
 import FlightControlPanel from './types/static/FlightControlPanel';
 import FeedbackPanel from './FeedbackPanel';
 import RecordPanel from './types/static/SessionPanel';
+import LogPanel from './types/static/LogPanel';
 import { cn } from '@/lib/utils';
 import { useBoundStore } from '@/store/boundStore';
 interface PanelProps {
-  component: TimeComponent | NavComponent | StatusComponent | RecordComponent;
+  component:
+    | TimeComponent
+    | NavComponent
+    | StatusComponent
+    | RecordComponent
+    | LogComponent;
   originX?: number;
   originY?: number;
 }
@@ -54,6 +61,8 @@ const DraggablePanel: React.FC<PanelProps> = ({
         return <FeedbackPanel />;
       case 'recordpanel':
         return <RecordPanel />;
+      case 'logpanel':
+        return <LogPanel />;
       default:
         return <div>Unknown type</div>;
     }

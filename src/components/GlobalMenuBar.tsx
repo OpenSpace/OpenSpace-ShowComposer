@@ -18,20 +18,28 @@ import { loadStore, saveStore } from '@/utils/saveProject';
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
-import { NewProjectModal, WorkspaceSettingsModal } from './NewProjectModal';
+import {
+  NewProjectModal,
+  ProjectSettingsModal,
+  WorkspaceSettingsModal,
+} from './NewProjectModal';
 import { useSettingsStore } from '@/store/settingsStore';
+import NewPageModal from './NewPageModal';
 
 export function GlobalMenuBar() {
   const [loadedStore, setLoadedStore] = useState<any>(null);
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+  const [isNewPageModalOpen, setIsNewPageModalOpen] = useState(false);
+  const [isNewPage, setIsNewPage] = useState(false);
+  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
+    useState(false);
   const [isConnectionSettingsModalOpen, setIsConnectionSettingsModalOpen] =
     useState(false);
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state,
   );
-  const addPage = useBoundStore((state) => state.addPage);
   const deletePage = useBoundStore((state) => state.deletePage);
   const currentPage = useBoundStore((state) => state.currentPage);
 
@@ -100,7 +108,7 @@ export function GlobalMenuBar() {
         <MenubarMenu>
           <MenubarTrigger>Settings</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
+            <MenubarItem onClick={() => setIsProjectSettingsModalOpen(true)}>
               Presentation Settings <MenubarShortcut>⌘Z</MenubarShortcut>
             </MenubarItem>
             <MenubarItem onClick={() => setIsConnectionSettingsModalOpen(true)}>
@@ -111,7 +119,22 @@ export function GlobalMenuBar() {
         <MenubarMenu>
           <MenubarTrigger>Page</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={() => addPage()}>Add Page</MenubarItem>
+            <MenubarItem
+              onClick={() => {
+                setIsNewPage(true);
+                setIsNewPageModalOpen(true);
+              }}
+            >
+              Add Page
+            </MenubarItem>
+            <MenubarItem
+              onClick={() => {
+                setIsNewPage(false);
+                setIsNewPageModalOpen(true);
+              }}
+            >
+              Edit Page
+            </MenubarItem>
             <MenubarItem onClick={() => deletePage(currentPage)}>
               Delete Page
             </MenubarItem>
@@ -196,9 +219,18 @@ export function GlobalMenuBar() {
         isOpen={isNewProjectModalOpen}
         setIsOpen={setIsNewProjectModalOpen}
       />
+      <ProjectSettingsModal
+        isOpen={isProjectSettingsModalOpen}
+        setIsOpen={setIsProjectSettingsModalOpen}
+      />
       <WorkspaceSettingsModal
         isOpen={isConnectionSettingsModalOpen}
         setIsOpen={setIsConnectionSettingsModalOpen}
+      />
+      <NewPageModal
+        isOpen={isNewPageModalOpen}
+        setIsOpen={setIsNewPageModalOpen}
+        newPage={isNewPage}
       />
     </>
   );

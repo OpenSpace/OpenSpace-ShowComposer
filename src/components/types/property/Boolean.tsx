@@ -22,6 +22,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
 
 interface BoolGUIProps {
   component: BooleanComponent;
@@ -93,6 +95,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({
             : 'outline-grey-500'
       } outline  outline-4 outline-offset-2 transition-[outline-color] duration-300 `}
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       style={{
         top: '4px',
         left: '4px',
@@ -136,6 +139,9 @@ const BoolModal: React.FC<BoolModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.boolean,
+  );
   useEffect(() => {
     // console.log(properties);
     const propertyData = usePropertyStore.getState().properties[property];
@@ -152,6 +158,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
       gui_description,
       lockName,
       backgroundImage,
+      color,
     });
   }, [
     property,
@@ -161,6 +168,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
     lockName,
     handleComponentData,
     backgroundImage,
+    color,
   ]);
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -234,10 +242,21 @@ const BoolModal: React.FC<BoolModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <ImageUpload
-            value={backgroundImage}
-            onChange={(v) => setBackgroundImage(v)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">
+              {getCopy('SetTime', 'background_image')}
+            </Label>
+            <ImageUpload
+              value={backgroundImage}
+              onChange={(v) => setBackgroundImage(v)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Boolean', 'gui_description')}

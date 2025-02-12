@@ -160,6 +160,26 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         );
 
         usePropertyStore.getState().setProperties(numberProps);
+        // const topic = apiInstance.startTopic('sessionRecord', {});
+
+        // const topic = apiInstance.startTopic('errorLog', {
+        //   event: 'start_subscription',
+        //   // settings: {
+        //   //   timeStamping: true,
+        //   //   dateStaming: true,
+        //   //   categoryStamping: true,
+        //   //   logLevelStamping: true,
+        //   //   logLevel: 'ALL',
+        //   //   // | `dateStamping`: [True, False] - Whether the error messages should be datestamped.
+        //   //   // | `categoryStamping`: [True, False] - Whether the error messages should be category stamped.
+        //   //   // | `logLevelStamping`: [True, False] - Whether the error messages should be log level stamped.
+        //   //   // | `logLevel`: [All, Trace, Debug, Info, Warning, Error
+        //   // },
+        // });
+        // // @ts-ignore eslint-disable-next-line no-restricted-syntax
+        // for await (const data of topic.iterator()) {
+        //   console.log('data', data);
+        // }
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({

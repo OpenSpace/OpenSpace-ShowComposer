@@ -19,6 +19,7 @@ const AdjustablePage: React.FC = () => {
   const page: Page = useBoundStore((state) =>
     state.getPageById(state.currentPage),
   );
+
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
   useEffect(() => {
     console.log('currentPageIndex', currentPageIndex);
@@ -84,6 +85,7 @@ const AdjustablePage: React.FC = () => {
       enableResizing={!locked && !isPresentMode} // Conditionally disable resizing
       style={{
         zIndex: 0,
+        backgroundColor: page.color,
       }}
       className={cn(
         'absolute cursor-move',
@@ -92,10 +94,10 @@ const AdjustablePage: React.FC = () => {
         'data=[state=open]:opacity-100',
         isDragging && 'z-50 border-blue-500 shadow-lg',
         isPresentMode
-          ? 'border-0 dark:bg-slate-200/0'
+          ? 'border-0 '
           : locked
-            ? 'pointer-events-none border-2 border-dashed border-slate-700/30 bg-slate-200/60 dark:border-slate-200/30 dark:bg-slate-200/5'
-            : 'pointer-events-auto border-2 border-dashed border-slate-700/80 bg-slate-200/60 dark:border-slate-200 dark:bg-slate-200/10',
+            ? 'pointer-events-none border-2 border-dashed border-slate-700/30 dark:border-slate-200/30 '
+            : 'border-slate-700/80dark:border-slate-200 pointer-events-auto border-2 border-dashed ',
       )}
     >
       <div className="drag-handle  absolute top-0 h-[30px] w-full cursor-move">
@@ -125,12 +127,9 @@ const AdjustablePage: React.FC = () => {
                 </ButtonLabel>
               </div>
             )}
-            <div className="absolute left-3 top-3">
-              <ButtonLabel
-                resize={false}
-                className="text-xs text-slate-700 dark:text-slate-200"
-              >
-                {getCopy('AdjustablePage', 'page')} {currentPageIndex + 1}
+            <div className="p-3">
+              <ButtonLabel className="w-auto text-xs text-slate-700 dark:text-slate-200">
+                {page.name ? page.name : `Page ${currentPageIndex + 1}`}
               </ButtonLabel>
             </div>
             <div className="pointer-events-auto absolute right-3 top-3 z-[999]">

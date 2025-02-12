@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { getCopy } from '@/utils/copyHelpers';
-// import { Button } from '../ui/button';
 import { Upload } from 'lucide-react';
 import {
   Card,

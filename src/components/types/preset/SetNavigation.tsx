@@ -16,8 +16,8 @@ import { Anchor, Clock } from 'lucide-react';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useBoundStore } from '@/store/boundStore';
-// import { restrictNumbersToDecimalPlaces } from '@/utils/math';
-
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 interface SetNavModalProps {
   component: SetNavComponent | null;
   handleComponentData: (data: Partial<SetNavComponent>) => void;
@@ -45,6 +45,9 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
+  );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.setnavstate,
   );
 
   useEffect(() => {
@@ -80,6 +83,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
       backgroundImage,
       navigationState,
       intDuration,
+      color,
     });
   }, [
     navigationState,
@@ -90,6 +94,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
     gui_description,
     backgroundImage,
     intDuration,
+    color,
     handleComponentData,
   ]);
 
@@ -188,6 +193,12 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
+          <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('SetNavigation', 'background_image')}
             </Label>
@@ -234,6 +245,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     gui_description,
     gui_name,
     backgroundImage,
+    color,
   } = component;
 
   useEffect(() => {
@@ -275,6 +287,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   return shouldRender ? (
     <ComponentContainer
       backgroundImage={backgroundImage}
+      backgroundColor={color}
       onClick={() => {
         component.triggerAction?.();
         triggerAnimation();

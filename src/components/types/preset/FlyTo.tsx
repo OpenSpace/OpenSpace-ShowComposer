@@ -27,6 +27,8 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import Toggle from '@/components/common/Toggle';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import { useBoundStore } from '@/store/boundStore';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -79,6 +81,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   return shouldRender ? (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
       onClick={() => {
         component.triggerAction?.();
         triggerAnimation();
@@ -196,6 +199,9 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.flyto,
+  );
   const hasGeoOption: boolean = useMemo(() => {
     const shouldGeo =
       options &&
@@ -258,6 +264,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       gui_name,
       gui_description,
       backgroundImage,
+      color,
     });
   }, [
     geo,
@@ -270,6 +277,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     gui_name,
     gui_description,
     backgroundImage,
+    color,
     handleComponentData,
   ]);
 
@@ -424,6 +432,12 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Background Color</Label>
+            <div className="flex flex-row gap-2">
+              <ColorPickerComponent color={color} setColor={setColor} />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('FlyTo', 'background_image')}

@@ -15,6 +15,7 @@ import {
 import { Textarea } from './ui/textarea';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
+import Toggle from './common/Toggle';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
     pageWidth: state.pageWidth || 1080,
     projectName: '',
     projectDescription: '',
+    showPagination: state.showPagination || true,
   }));
 
   useEffect(() => {
@@ -46,6 +48,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
       setPort(initialState.port);
       setPageWidth(initialState.pageWidth);
       setPageHeight(initialState.pageHeight);
+      setShowPagination(initialState.showPagination);
     }
   }, [isOpen]);
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
@@ -60,9 +63,12 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
   const [port, setPort] = useState(initialState.port);
   const [pageWidth, setPageWidth] = useState(initialState.pageWidth);
   const [pageHeight, setPageHeight] = useState(initialState.pageHeight);
-  //   const [defaultScreenSpacePosition, setDefaultScreenSpacePosition] =
-  //     useState(initialState.pageWidth);
-  // const [isOpen, setIsOpen] = useState<boolean>(triggerProjectName);
+  const [showPagination, setShowPagination] = useState<boolean>(
+    initialState.showPagination,
+  );
+  const handleShowPagination = (value: boolean) => {
+    setShowPagination(value);
+  };
 
   const handleSubmit = () => {
     setProjectSettings({
@@ -72,6 +78,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
       port,
       pageWidth,
       pageHeight,
+      showPagination,
     });
     removeAllComponents();
     forceRefresh();
@@ -126,6 +133,14 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
                 setProjectDescription(e.target.value)
               }
               placeholder="Type your description here."
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="showPagination">Show Pagination</Label>
+            <Toggle
+              label="Show Pagination"
+              value={showPagination}
+              setValue={handleShowPagination}
             />
           </div>
           <h4 className="my-2 text-xl font-semibold dark:text-slate-200">
@@ -214,6 +229,129 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
           </AlertDialogCancel>
           <AlertDialogAction onClick={handleSubmit}>
             {getCopy('NewProjectModal', 'create_project')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+interface ProjectSettingsModalProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
+  isOpen,
+  setIsOpen,
+}) => {
+  const setProjectSettings = useSettingsStore(
+    (state) => state.setProjectSettings,
+  );
+
+  const initialState = useSettingsStore((state) => ({
+    projectName: state.projectName || '',
+    projectDescription: state.projectDescription || '',
+    showPagination: state.showPagination || true,
+  }));
+  const [projectName, setProjectName] = useState(initialState.projectName);
+  const [projectDescription, setProjectDescription] = useState(
+    initialState.projectDescription,
+  );
+
+  const [showPagination, setShowPagination] = useState<boolean>(
+    initialState.showPagination,
+  );
+  const handleShowPagination = (value: boolean) => {
+    setShowPagination(value);
+  };
+
+  const handleSubmit = () => {
+    setProjectSettings({
+      projectName,
+      projectDescription,
+      showPagination,
+    });
+    setIsOpen(false);
+  };
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      {/* <AlertDialogTrigger asChild>
+    <Button variant="secondary" className="justify-start gap-2">
+      <PlusIcon />
+      <div className="ml-2 text-xs font-bold ">
+        {getCopy('NewProjectModal', 'new_project')}
+      </div>
+    </Button>
+  </AlertDialogTrigger> */}
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {getCopy('NewProjectModal', 'update_project_header')}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {getCopy('NewProjectModal', 'project_details')}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <h4 className="my-2 text-xl font-semibold dark:text-slate-200">
+          Show Settings
+        </h4>
+        <div className="grid gap-2">
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="projectName">
+              {getCopy('NewProjectModal', 'project_name')}
+            </Label>
+            <Input
+              id="projectName"
+              className="col-span-2 h-8"
+              type="text"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              placeholder="Enter Project Name"
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="projectDescription">
+              {getCopy('NewProjectModal', 'project_description')}
+            </Label>
+            <Textarea
+              className="col-span-2 h-8"
+              id="description"
+              value={projectDescription}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setProjectDescription(e.target.value)
+              }
+              placeholder="Type your description here."
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4 text-white">
+            <Label htmlFor="showPagination">Show Pagination</Label>
+            <Toggle
+              label="Show Pagination"
+              value={showPagination}
+              setValue={handleShowPagination}
+            />
+          </div>
+
+          {/* <div className="grid grid-cols-3 items-center gap-4 text-white">
+        <Label htmlFor="defaultScreenSpacePosition">
+          {getCopy('NewProjectModal', 'default_screen_space_position')}
+        </Label>
+        <Input
+          id="defaultScreenSpacePosition"
+          className="col-span-2 h-8"
+          type="text"
+          value={defaultScreenSpacePosition}
+          onChange={(e) => setDefaultScreenSpacePosition(e.target.value)}
+          placeholder="Enter Default Screen Space Position"
+        />
+      </div> */}
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>
+            {getCopy('NewProjectModal', 'cancel')}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleSubmit}>
+            {getCopy('NewProjectModal', 'update_project')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -348,4 +486,4 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
   );
 };
 
-export { NewProjectModal, WorkspaceSettingsModal };
+export { NewProjectModal, ProjectSettingsModal, WorkspaceSettingsModal };

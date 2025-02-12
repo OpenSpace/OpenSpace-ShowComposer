@@ -19,6 +19,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import { ComponentBaseColors } from '@/store/ComponentTypes';
 
 interface NumberGUIProps {
   component: NumberComponent;
@@ -99,7 +101,10 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     }
   }, [component.id, component.property, luaApi, property]);
   return (
-    <ComponentContainer backgroundImage={component.backgroundImage}>
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
+    >
       <div className="grid w-[85%] gap-4 py-4">
         <div className="flex flex-row gap-2">
           <Label>{component.gui_name}</Label>
@@ -149,6 +154,9 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [gui_description, setGuiDescription] = useState<string>(
     component?.gui_description || '',
   );
+  const [color, setColor] = useState<string>(
+    component?.color || ComponentBaseColors.number,
+  );
   const [lockName, setLockName] = useState<boolean>(
     component?.lockName || false,
   );
@@ -185,6 +193,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       gui_description,
       lockName,
       backgroundImage,
+      color,
     });
   }, [
     property,
@@ -196,6 +205,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
     gui_description,
     lockName,
     backgroundImage,
+    color,
     handleComponentData,
   ]);
   useEffect(() => {
@@ -298,6 +308,12 @@ const NumberModal: React.FC<NumberModalProps> = ({
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="description">Background Color</Label>
+          <div className="flex flex-row gap-2">
+            <ColorPickerComponent color={color} setColor={setColor} />
+          </div>
+        </div>
         <div className="grid gap-2">
           <Label htmlFor="description">
             {getCopy('Number', 'background_image')}
