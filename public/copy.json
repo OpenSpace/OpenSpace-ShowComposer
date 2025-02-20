@@ -190,10 +190,11 @@
   "SetNavigation": {
     "save_current_navigation_state": "Set from Current Navigation State",
     "navigation_state_time": "Navigation State Time",
-    "fade_duration": "Fade Duration",
+    "fade_duration": "Transition Duration",
     "component_name": "Component Name",
     "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "gui_description": "Gui Description",
+    "transition_mode": "Transition Mode"
   },
   "SetTime": {
     "set_time_to_now": "Set Time To Now",
@@ -268,7 +269,8 @@
     "now": "Now"
   },
   "Title": {
-    "title": "Title"
+    "title": "Title",
+    "pageTitle": "Set from Page Title"
   },
   "Video": {
     "video": "Video",
@@ -302,5 +304,11 @@
     "create_project": "Create Show",
     "update_project": "Update Show",
     "default_screen_space_position": "Default Screen Space Position"
+  },
+  "LayoutEditModal": {
+    "edit_layout": "Edit Layout",
+    "grid_size": "Grid Size",
+    "grid_size_description": "This will also change default grid size.",
+    "persist_across_pages": "Persist Across Pages"
   }
 }

@@ -81,7 +81,8 @@ const MultiModal: React.FC<MultiModalProps> = ({
   );
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const getComponentById = useBoundStore((state) => state.getComponentById);
-
+  const copyComponent = useBoundStore((state) => state.copyComponent);
+  const removeComponent = useBoundStore((state) => state.removeComponent);
   // only return components that can be type MultiOption
   const multiOptions: Component['id'][] = useBoundStore((state) =>
     Object.keys(state.components).filter((c: Component['id']) =>
@@ -206,7 +207,9 @@ const MultiModal: React.FC<MultiModalProps> = ({
   useEffect(() => {
     setAvailableOptions(
       multiOptions.filter(
-        (component) => !items.some((item) => item.id === component),
+        (component) =>
+          // getComponentById(component)?.isMulti != 'false' &&
+          !items.some((item) => item.id === component),
       ),
     );
     handleComponentData({
@@ -223,6 +226,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
       color,
     });
   }, [items, backgroundImage, gui_name, gui_description, color]);
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const newList = Array.from(items);
@@ -232,9 +236,13 @@ const MultiModal: React.FC<MultiModalProps> = ({
   };
 
   const addItem = (component: MultiOption['id']) => {
+    const newComponent = copyComponent(component, true);
+    console.log('NEW: ', newComponent);
+    console.log('OLD: ', component);
+    if (!newComponent) return;
     const newItem: MultiType = {
-      id: component,
-      component: component,
+      id: newComponent,
+      component: newComponent,
       // Placeholder component
       // delay: 0, // Default delay of 1 second
       buffer: 0,
@@ -244,16 +252,17 @@ const MultiModal: React.FC<MultiModalProps> = ({
       chained: items.length > 0 ? true : false,
     };
     setItems([...items, newItem]);
-    updateComponent(component, {
+    updateComponent(newComponent, {
       isMulti: 'pendingSave',
     });
   };
   const removeItem = (id: string) => {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
-    updateComponent(id, {
-      isMulti: 'pendingDelete',
-    });
+    removeComponent(id);
+    // updateComponent(id, {
+    //   isMulti: 'pendingDelete',
+    // });
   };
   return (
     <Tabs defaultValue="multi" className="w-auto">

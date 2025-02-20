@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import { PageComponent } from '@/store/ComponentTypes';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
-import ImageUpload from '@/components/common/ImageUpload';
-// import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +11,7 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 interface PageGUIProps {
   component: PageComponent;
   shouldRender?: boolean;
@@ -140,21 +138,12 @@ const PageModal: React.FC<PageModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Page', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Page', 'gui_description')}

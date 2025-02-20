@@ -1,4 +1,3 @@
-import ImageUpload from '@/components/common/ImageUpload';
 import { getCopy } from '@/utils/copyHelpers';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,7 +16,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
+import SelectableDropdown from '@/components/common/SelectableDropdown';
 interface SetNavModalProps {
   component: SetNavComponent | null;
   handleComponentData: (data: Partial<SetNavComponent>) => void;
@@ -35,13 +35,20 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   );
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [intDuration, setIntDuration] = useState(component?.intDuration || 1.0);
-  const [fadeScene, setFadeScene] = useState<boolean>(
-    component?.fadeScene || true,
+  // const [fadeScene, setFadeScene] = useState<boolean>(
+  //   component?.fadeScene || true,
+  // );
+  const [mode, setMode] = useState<'jump' | 'fade' | 'fly'>(
+    component?.mode || 'jump',
   );
+
   const [setTime, setSetTime] = useState<boolean>(component?.setTime || true);
   const [gui_name, setGuiName] = useState(component?.gui_name);
   const [gui_description, setGuiDescription] = useState(
     component?.gui_description,
+  );
+  const [lockName, setLockName] = useState<boolean>(
+    component?.lockName || false,
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || '',
@@ -68,16 +75,17 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   }, [componentTime]);
   useEffect(() => {
     if (component) {
-      setFadeScene(component.fadeScene);
+      // setFadeScene(component.fadeScene);
       setSetTime(component.setTime);
     }
   }, [component]);
-
+  // Mars
   useEffect(() => {
     handleComponentData({
       time: componentTime,
-      fadeScene,
+      mode,
       setTime,
+      lockName,
       gui_name,
       gui_description,
       backgroundImage,
@@ -88,8 +96,9 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   }, [
     navigationState,
     componentTime,
-    fadeScene,
+    mode,
     setTime,
+    lockName,
     gui_name,
     gui_description,
     backgroundImage,
@@ -101,8 +110,16 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   const getNavigationState = async () => {
     if (!luaApi) return;
     const navState = await luaApi.navigation.getNavigationState();
+    console.log('navState', navState);
     setNavigationState(navState['1']);
     setCompontentTime(time);
+    if (!lockName) {
+      setGuiName(
+        `${
+          mode.charAt(0).toUpperCase() + mode.slice(1)
+        } to Navigation State : ${navState['1'].Anchor}`,
+      );
+    }
   };
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -152,14 +169,16 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
       <div className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-4 gap-4">
           <div
-            className={`grid gap-2 ${fadeScene ? 'opacity-100' : 'opacity-50'}`}
+            className={`grid gap-2 ${
+              mode != 'jump' ? 'opacity-100' : 'opacity-50'
+            }`}
           >
             <Label htmlFor="duration">
               {getCopy('SetNavigation', 'fade_duration')}
             </Label>
             <Input
               id="duration"
-              disabled={!fadeScene}
+              disabled={mode == 'jump'}
               placeholder="Duration to Fade"
               type="number"
               value={intDuration}
@@ -169,15 +188,55 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
             />
           </div>
           <div className="col-start-3 grid gap-2 ">
-            <Label />
-            <Toggle
-              label="Fade Scene"
-              value={fadeScene}
-              setValue={setFadeScene}
+            <Label>{getCopy('SetNavigation', 'transition_mode')}</Label>
+            <SelectableDropdown
+              options={[
+                { label: 'Jump', value: 'jump' },
+                { label: 'Fade In/Out', value: 'fade' },
+                { label: 'Fly', value: 'fly' },
+              ]}
+              selected={mode}
+              setSelected={(value) => {
+                if (!lockName) {
+                  setGuiName(
+                    `${
+                      value.charAt(0).toUpperCase() + value.slice(1)
+                    } to Navigation State : ${navigationState.Anchor}`,
+                  );
+                }
+                setMode(value as 'jump' | 'fade' | 'fly');
+              }}
             />
           </div>
         </div>
-        <div className="grid gap-2">
+        {/* <div className="grid grid-cols-4 "> */}
+        <div className="grid grid-cols-4 ">
+          <div className="col-span-4 grid grid-cols-3 gap-4">
+            <div className="col-span-2 grid gap-2">
+              <Label htmlFor="gioname">
+                {getCopy('Fade', 'component_name')}
+              </Label>
+              <Input
+                id="guiname"
+                placeholder="Name of Component"
+                type="text"
+                value={gui_name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setGuiName(e.target.value)
+                }
+              />
+            </div>
+            <div className="col-span-1 mt-6 grid gap-2">
+              <Toggle
+                label="Lock Name"
+                value={lockName}
+                setValue={setLockName}
+              />
+            </div>
+          </div>
+        </div>
+        {/* </div> */}
+        {/* <div className="grid gap-2">
           <Label htmlFor="guiname">
             {getCopy('SetNavigation', 'component_name')}
           </Label>
@@ -190,23 +249,14 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
               setGuiName(e.target.value)
             }
           />
-        </div>
+        </div> */}
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('SetNavigation', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('SetNavigation', 'gui_description')}
@@ -239,7 +289,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   const {
     navigationState,
     intDuration,
-    fadeScene,
+    mode,
     time,
     setTime,
     gui_description,
@@ -256,8 +306,8 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
           jumpToNavState(
             navigationState,
             setTime,
-            new Date(time),
-            fadeScene,
+            // new Date(time),
+            mode,
             intDuration,
           );
         },
@@ -275,7 +325,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     navigationState,
     time,
     intDuration,
-    fadeScene,
+    mode,
     setTime,
   ]);
   const fadeOutDuration = 400; // 1 second fade out

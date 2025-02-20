@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css'; // Import Quill styles
-import { debounce } from 'lodash'; // Assuming lodash is available
+// import { debounce } from 'lodash'; // Assuming lodash is available
 import { useTheme } from '../ThemeProvider';
 import TooltipHolder from '../common/TooltipHolder';
 import {
@@ -27,11 +27,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const quillRef = useRef<Quill | null>(null); // Reference to the Quill instance
   const [currentHeader, setCurrentHeader] = useState<number | boolean>(false);
   const [currentSize, setCurrentSize] = useState<string | boolean>('normal');
+  const [shouldFocus, setShouldFocus] = useState<boolean>(true); // Flag to control focus
 
   const handleHeaderChange = (value: number | false) => {
     if (quillRef.current) {
       quillRef.current.format('header', value);
       setCurrentHeader(value);
+      // setShouldFocus(true);
       setTimeout(() => focusEditor(), 100);
     }
   };
@@ -39,7 +41,19 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     if (quillRef.current) {
       quillRef.current.format('size', value);
       setCurrentSize(value);
+      // setShouldFocus(true);
       setTimeout(() => focusEditor(), 100);
+    }
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      editorRef.current &&
+      !editorRef.current.contains(event.target as Node)
+    ) {
+      // Prevent Quill from focusing
+      quillRef.current?.blur();
+      setShouldFocus(false); // Set flag to false on blur
     }
   };
 
@@ -48,20 +62,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       quillRef.current = new Quill(editorRef.current, {
         theme: 'snow',
         modules: {
-          // toolbar:
           toolbar: { container: '#toolbar' },
-          // [
-          //   // [{ header: [1, 2, false] }],
-          //   [{ header: [1, 2, 3, false] }],
-
-          //   // ['bold', 'italic', 'underline'],
-          //   // ['image', 'code-block'],
-          //   [{ size: [] }],
-          //   ['bold', 'italic', 'underline', 'blockquote'],
-
-          //   // ['link', 'image', 'video'],
-          //   ['clean'],
-          // ],
         },
       });
       const format = quillRef?.current?.getFormat();
@@ -79,49 +80,45 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           setCurrentSize(format?.size || 'normal');
       }
 
-      quillRef.current.on(
-        'text-change',
-        debounce(() => {
-          const html =
-            editorRef.current?.querySelector('.ql-editor')?.innerHTML;
-          setContent(html || '');
-        }, 400),
-      );
-      quillRef.current.on('selection-change', () => {
-        const format = quillRef?.current?.getFormat();
-        if (format) {
-          if (
-            'header' in format &&
-            (typeof format.header === 'number' ||
-              typeof format.header === 'boolean')
-          )
-            setCurrentHeader(format?.header || false);
-          if (
-            'size' in format &&
-            (typeof format.size === 'string' ||
-              typeof format.size === 'boolean')
-          )
-            setCurrentSize(format?.size || 'normal');
-        }
+      quillRef.current.on('text-change', () => {
+        const html = editorRef.current?.querySelector('.ql-editor')?.innerHTML;
+        setContent(html || '');
       });
+
+      // Add event listener for clicks outside the editor
+      document.addEventListener('click', handleClickOutside);
     }
 
     return () => {
+      document.removeEventListener('click', handleClickOutside);
       quillRef.current = null;
     };
   }, []);
 
+  useEffect(() => {
+    if (shouldFocus && quillRef.current) {
+      quillRef.current.focus(); // Focus only if the flag is true
+    }
+  }, [shouldFocus]);
+
   const focusEditor = () => {
     if (quillRef.current) {
-      // const length = quillRef.current.getLength();
       quillRef.current.focus();
-      // quillRef.current.setSelection(length, length);
+      setShouldFocus(true); // Allow focus again
     }
   };
 
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.root.innerHTML = content;
+      quillRef.current.root.addEventListener('blur', function () {
+        console.log('editor.root.innerHTML blur');
+      });
+      quillRef.current.root.addEventListener('focus', function () {
+        console.log('editor.root.innerHTML focus');
+      });
+      // quillRef.current.root.blur();
+      // quillRef.current.blur();
     }
   }, []);
 
@@ -231,6 +228,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         // className={`editor-container`}
         ref={editorRef}
         style={{ height: 200, width: 'auto' }}
+        onClick={focusEditor} // Focus on click
       />
     </div>
   );

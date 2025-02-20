@@ -10,7 +10,6 @@ import {
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Information from '@/components/common/Information';
 import { triggerBool } from '@/utils/triggerHelpers';
-import ImageUpload from '@/components/common/ImageUpload';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -22,9 +21,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 interface BoolGUIProps {
   component: BooleanComponent;
   shouldRender?: boolean;
@@ -242,21 +240,12 @@ const BoolModal: React.FC<BoolModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('SetTime', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Boolean', 'gui_description')}

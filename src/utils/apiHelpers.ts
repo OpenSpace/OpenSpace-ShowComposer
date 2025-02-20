@@ -142,6 +142,11 @@ const RegexLibrary = {
   TriggerProperty: {
     regex: /Scene\.(.*?)\.Renderable.Color/,
   },
+  SettingsProperty: {
+    // has any of these strings as the rootModules
+    regex:
+      /^(Scene\.(.*?)|Modules|NavigationHandler|Dashboard|InteractionMonitor|LuaConsole|OpenSpaceEngine|ParallelPeer|RenderEngine|ScriptScheduler|SessionRecording|TimeManager)/,
+  },
 };
 
 type PropertyType = keyof typeof RegexLibrary;
@@ -182,7 +187,7 @@ export const getActionSceneNodes = (
   properties: Property[],
   type: ActionType,
 ) => {
-  let regex = RegexLibrary['Renderable'].regex;
+  let regex = RegexLibrary['SettingsProperty'].regex;
 
   let sortedProps = properties
     .filter(
@@ -190,7 +195,6 @@ export const getActionSceneNodes = (
         regex.exec(p.uri) &&
         p.description?.Type === actionTypes[type] &&
         !p.description?.MetaData?.IsReadOnly,
-      //   p.description.MetaData.Visibility == "User"
     )
     .sort((a, b) => a.uri?.localeCompare(b.uri))
     .reduce((acc: Record<string, Property>, p: Property) => {

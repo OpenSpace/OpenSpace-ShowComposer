@@ -46,8 +46,9 @@ export const LayoutToolbar: React.FC = () => {
   // Handle layout creation from toolbar
 
   const gridSize = useSettingsStore((state) => state.gridSize);
-  const addLayout = useBoundStore((state) => state.addLayout);
 
+  const addLayout = useBoundStore((state) => state.addLayout);
+  const currentPage = useBoundStore((state) => state.currentPage);
   const handleLayoutCreate = (type: LayoutType) => {
     return addLayout({
       type,
@@ -55,6 +56,8 @@ export const LayoutToolbar: React.FC = () => {
       columns: type === 'grid' ? gridSize.columns : 1,
       x: 100,
       y: 100,
+      persistent: false,
+      parentPage: currentPage,
     });
   };
 

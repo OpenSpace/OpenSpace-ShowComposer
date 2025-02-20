@@ -245,20 +245,27 @@ export const createComponentSlice: ImmerStateCreator<
       state.components[id] = { ...state.components[id], ...updates };
     }),
   removeComponent: (id: Component['id']) => {
+    let componentsToRemove: Component['id'][] = ['id'];
     set((state) => {
       delete state.components[id];
       get().deletePosition(id);
       const component = state.getComponentById(id);
       if (component?.type == 'multi') {
         (component as MultiComponent).components.forEach((c) => {
-          if (state.components[c.component].isMulti == 'true') {
-            state.updateComponent(c.component, { isMulti: 'false' });
-          }
+          console.log('REMOVING COMPONENT FROM MULTI', c);
+          componentsToRemove.push(c.component);
+          get().deletePosition(c.component);
+          delete state.components[c.component];
+          // if (state.components[c.component].isMulti == 'true') {
+          //   state.updateComponent(c.component, { isMulti: 'false' });
+          // }
         });
       }
       state.pages = state.pages.map((page: Page) => ({
         ...page,
-        components: page.components.filter((compId: string) => compId !== id),
+        components: page.components.filter(
+          (compId: string) => !componentsToRemove.includes(compId),
+        ),
       }));
     });
   },

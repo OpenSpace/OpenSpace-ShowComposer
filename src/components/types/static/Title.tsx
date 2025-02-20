@@ -4,6 +4,8 @@ import { Label } from '@/components/ui/label';
 import { TitleComponent } from '@/store';
 import { throttle } from 'lodash';
 import React, { useEffect, useState, useRef } from 'react';
+import { useBoundStore } from '@/store/boundStore';
+import Toggle from '@/components/common/Toggle';
 interface TitleGUIProps {
   component: TitleComponent;
 }
@@ -135,33 +137,55 @@ const TitleModal: React.FC<TitleModalProps> = ({
   handleComponentData,
   isOpen,
 }) => {
-  const [text, setText] = useState(component?.text || '');
+  const currentPageTitle = useBoundStore(
+    (state) => state.getPageById(state.currentPage).name,
+  );
+  const [text, setText] = useState(
+    component?.text || (component?.setFromPageTitle ? currentPageTitle : ''),
+  );
+  const [setFromPageTitle, setSetFromPageTitle] = useState<boolean>(
+    component?.setFromPageTitle || true,
+  );
   useEffect(() => {
     handleComponentData({
       text,
+      setFromPageTitle,
     });
-  }, [text, handleComponentData]);
+  }, [text, setFromPageTitle, handleComponentData]);
+
+  useEffect(() => {
+    if (setFromPageTitle) {
+      setText(currentPageTitle);
+    }
+  }, [setFromPageTitle, currentPageTitle]);
+
   useEffect(() => {
     if (component) {
       setText(component?.text);
+      setSetFromPageTitle(component?.setFromPageTitle || true);
     } else {
-      setText('');
+      setText(currentPageTitle);
+      setSetFromPageTitle(true);
     }
   }, [component, setText]);
+
   useEffect(() => {
     if (!isOpen) {
       setText('');
+      setSetFromPageTitle(true);
     }
   }, [isOpen, setText]);
   return (
     <div className="grid grid-cols-1 gap-4">
       <Label>{getCopy('Title', 'title')}</Label>
-      <Input
-        // className="w-full rounded border p-2"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      {/* </div> */}
+      <Input value={text} onChange={(e) => setText(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <Label>{getCopy('Title', 'pageTitle')}</Label>
+        <Toggle
+          value={setFromPageTitle}
+          setValue={(value) => setSetFromPageTitle(value)}
+        />
+      </div>
     </div>
   );
 };

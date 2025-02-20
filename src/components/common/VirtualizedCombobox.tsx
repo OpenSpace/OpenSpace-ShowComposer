@@ -96,29 +96,16 @@ const VirtualizedCommand = ({
   const fuse = new Fuse(options, {
     keys: ['value'],
     // Specify the keys to search in
-    threshold: 0.3, // Adjust the threshold for fuzzy matching
-    // shouldSort: false,
+    threshold: 0.5, // Adjust the threshold for fuzzy matching
   });
 
-  // const virtualOptions = virtualizer.getVirtualItems();
-  //   co
-  // const handleSearch = (search: string) => {
-  //   setFilteredOptions(
-  //     options.filter((option) =>
-  //       option.value.toLowerCase().includes(search.toLowerCase() ?? []),
-  //     ),
-  //   );
-  // };
   const handleSearch = (search: string) => {
-    // console.log(search.trim());
     setSearch(search);
     if (search.trim() === '') {
       setFilteredOptions([]);
       if (presets) setShowPresets(true);
     } else {
       const result = fuse.search(search);
-      // console.log(result);
-      // console.log(result.map(({ item }) => item));
       setFilteredOptions(result.map(({ item }) => item));
       if (presets) setShowPresets(false);
     }

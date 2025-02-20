@@ -24,8 +24,10 @@ export interface LayoutSlice {
     type: LayoutType;
     x: number;
     y: number;
+    persistent: boolean;
     rows?: number;
     columns?: number;
+    parentPage?: string;
   }) => string;
   addLayouts: (layouts: LayoutBase[]) => void;
   updateLayout: (id: string, updates: Partial<LayoutBase>) => void;
@@ -74,6 +76,8 @@ export const createLayoutSlice: ImmerStateCreator<
         padding: 25,
         childWidth: 200,
         childHeight: 200,
+        persistent: config.persistent || false,
+        parentPage: config.parentPage || undefined,
       };
     });
     const layout = get().layouts[id];

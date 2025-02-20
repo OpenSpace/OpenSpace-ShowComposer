@@ -17,14 +17,13 @@ import {
   NavigationAimKey,
   RetargetAnchorKey,
 } from '@/store/apiStore';
-import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface FocusGUIProps {
   component: SetFocusComponent;
@@ -248,21 +247,12 @@ const FocusModal: React.FC<FocusModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Focus', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Focus', 'gui_description')}

@@ -6,7 +6,6 @@ import { ActionTriggerComponent } from '@/store/ComponentTypes';
 import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import ImageUpload from '@/components/common/ImageUpload';
 import { Input } from '@/components/ui/input';
 import ToggleComponent from '@/components/common/Toggle';
 import Information from '@/components/common/Information';
@@ -15,7 +14,7 @@ import { triggerAction } from '@/utils/triggerHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface ActionTriggerModalProps {
   component: ActionTriggerComponent | null;
@@ -91,59 +90,48 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
             delimiter="/"
           />
         </div>
-        <div className="grid grid-cols-4 gap-4">
-          <div className="col-span-3 grid gap-2">
-            <Label htmlFor="gioname">
-              {getCopy('Focus', 'component_name')}
-            </Label>
-            <Input
-              id="guiname"
-              placeholder="Name of Component"
-              type="text"
-              value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
-            />
-          </div>
-          <div className="cols-span-1 mt-6 grid gap-2">
-            <ToggleComponent
-              label="Lock Name"
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2 ">
+        <div className="grid gap-2">
+          <Label htmlFor="gioname">{getCopy('Fade', 'component_name')}</Label>
+          <Input
+            id="guiname"
+            placeholder="Name of Component"
+            type="text"
+            value={gui_name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setGuiName(e.target.value)
+            }
+          />
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Focus', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Focus', 'gui_description')}
-            </Label>
-            <Textarea
-              className="w-full"
-              id="description"
-              value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
-              placeholder="Type your descriptionhere."
-            />
-          </div>
+        <div className="mt-6 grid gap-2">
+          <ToggleComponent
+            label="Lock Name"
+            value={lockName}
+            setValue={setLockName}
+          />
+        </div>
+      </div>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="description">
+            {getCopy('Focus', 'gui_description')}
+          </Label>
+          <Textarea
+            className="w-full"
+            id="description"
+            value={gui_description}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setGuiDescription(e.target.value)
+            }
+            placeholder="Type your descriptionhere."
+          />
         </div>
       </div>
     </div>

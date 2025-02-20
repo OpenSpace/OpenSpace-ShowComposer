@@ -16,11 +16,19 @@ const LogPanel = () => {
   );
 
   useEffect(() => {
-    return;
+    // return;
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('errorLog');
+    subscribeToTopic('errorLog', undefined, undefined, {
+      timeStamping: true,
+      dateStamping: true,
+      categoryStamping: true,
+      logLevelStamping: true,
+      logLevel: 'All',
+    });
+
     return () => {
       unsubscribeFromTopic('errorLog');
+      // useOpenSpaceApiStore.getState().unsubscribeFromTopic('errorLog');
     };
   }, [connectionState]);
 

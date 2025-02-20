@@ -11,17 +11,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Pause, Play, Square } from 'lucide-react';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-// import { Separator } from '@/components/ui/separator';
 import { SessionPlaybackComponent } from '@/store/ComponentTypes';
 import { Textarea } from '@/components/ui/textarea';
-import ImageUpload from '@/components/common/ImageUpload';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import Information from '@/components/common/Information';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 //set up recording state
 export const SessionStateIdle = 'idle';
 export const SessionStateRecording = 'recording';
@@ -289,21 +287,12 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('SessionPlayback', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('SessionPlayback', 'gui_description')}

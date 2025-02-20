@@ -80,45 +80,41 @@ type NavigationState = {
   Pitch: number;
   Position: [number, number, number];
   ReferenceFrame: string;
+  Timestamp?: number;
   Up: [number, number, number];
   Yaw: number;
 };
 async function jumpToNavState(
   navigationState: NavigationState,
   setTime: boolean,
-  time: Date,
-  fadeScene: boolean,
+  mode: 'jump' | 'fade' | 'fly',
   fadeTime: number,
 ) {
-  // console.log('jumpToNavState', navigationState);
   const luaApi = useOpenSpaceApiStore.getState().luaApi;
   if (!luaApi) {
     console.log('No Api Access');
     return;
   }
 
-  if (fadeScene && fadeTime) {
-    const promise = new Promise((resolve) => {
-      luaApi.setPropertyValueSingle(
-        'RenderEngine.BlackoutFactor',
-        0,
-        fadeTime / 2.0,
-        'QuadraticEaseOut',
-      );
-      setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
-    });
-    await promise;
-    if (setTime) luaApi.time.setTime(time);
-    luaApi.navigation.setNavigationState(navigationState);
-    luaApi.setPropertyValueSingle(
-      'RenderEngine.BlackoutFactor',
-      1,
-      fadeTime / 2.0,
-      'QuadraticEaseIn',
-    );
-  } else {
-    if (setTime) luaApi.time.setTime(time);
-    await luaApi.navigation.setNavigationState(navigationState);
+  let navState = {
+    ...navigationState,
+  };
+  switch (mode) {
+    case 'jump':
+      luaApi.navigation.setNavigationState(navigationState, setTime);
+      break;
+    case 'fade':
+      if (!setTime) {
+        delete navState.Timestamp;
+      }
+      luaApi.pathnavigation.jumpToNavigationState(navState, fadeTime / 2.0);
+      break;
+    case 'fly':
+      if (!setTime) {
+        delete navState.Timestamp;
+      }
+      luaApi.pathnavigation.flyToNavigationState(navState, fadeTime);
+      break;
   }
 }
 

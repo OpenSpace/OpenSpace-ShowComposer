@@ -459,7 +459,9 @@ const App = () => {
                     const layout = layouts[layoutId];
                     if (
                       !layout ||
-                      (layout.parentPage && layout.parentPage != currentPage)
+                      (!layout.persistent &&
+                        layout.parentPage &&
+                        layout.parentPage != currentPage)
                     ) {
                       return null;
                     }
@@ -490,10 +492,6 @@ const App = () => {
 
                   {Object.keys(components).map((componentId) => {
                     const component = components[componentId];
-                    // console.log(
-                    //   'component in workspace render loop ',
-                    //   component,
-                    // );
                     // Skip if component is in a layout
                     if (
                       !component ||

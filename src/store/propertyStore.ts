@@ -37,6 +37,7 @@ interface State {
     topicName: string,
     throttleAmt?: number,
     properties?: string[],
+    settings?: any,
   ) => void;
   unsubscribeFromTopic: (topicName: string) => void;
   connectToTopic: (topicName: string) => void;
@@ -150,13 +151,14 @@ export const usePropertyStore = create<State>()(
         topicName: string,
         _throttleAmt: number = 200,
         properties,
+        settings,
       ) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
               const subscribeToTopic =
                 useOpenSpaceApiStore.getState().subscribeToTopic;
-              const topic = subscribeToTopic(topicName, properties);
+              const topic = subscribeToTopic(topicName, properties, settings);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
@@ -172,6 +174,9 @@ export const usePropertyStore = create<State>()(
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {
+                  if (topicName == 'errorLog') {
+                    console.log('data', data);
+                  }
                   testSetProperty(
                     topicName,
                     restrictNumbersToDecimalPlaces(data, 4),

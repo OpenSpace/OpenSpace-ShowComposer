@@ -4,7 +4,15 @@ import { DraggableEvent, DraggableData } from 'react-draggable';
 import { useSettingsStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { roundToNearest } from '@/utils/math';
-import { Edit2, GripHorizontal, Trash2, LayoutGrid, Copy } from 'lucide-react';
+import {
+  Edit2,
+  GripHorizontal,
+  Trash2,
+  LayoutGrid,
+  Copy,
+  Pin,
+  PinOff,
+} from 'lucide-react';
 // import { createIcon } from 'lucide-react';
 
 import { LayoutBase } from '@/store/ComponentTypes';
@@ -74,6 +82,11 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
     handleLayoutDrop(id, d.x, d.y);
   };
 
+  const handlePin = () => {
+    updateLayout(id, {
+      persistent: !layout.persistent,
+    });
+  };
   const handleResize = (
     _e: any,
     _direction: any,
@@ -150,7 +163,7 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
           'transition-colors duration-200',
           'hover:outline-blue-500 dark:hover:outline-blue-400',
           isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
-          'z-[9999]', // Ensure it's above other components
+          'z-[9999]',
         )}
       >
         {!isPresentMode && (
@@ -165,18 +178,31 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
               />
             </div>
             <div className="relative z-[99] flex items-start justify-end gap-2 px-2 py-1">
+              {layout.persistent ? (
+                <Pin
+                  className="h-4 w-4"
+                  onClick={handlePin}
+                  fill="white"
+                  stroke="white"
+                />
+              ) : (
+                <PinOff
+                  className="h-4 w-4"
+                  onClick={handlePin}
+                  fill="currentColor"
+                  stroke="currentColor"
+                />
+              )}
               <DropdownMenuComponent
                 items={[
-                  isGrid && (
-                    <div
-                      key="edit"
-                      className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-                      onClick={handleOpenEditModal}
-                    >
-                      <span>{getCopy('DraggableComponent', 'edit')}</span>
-                      <Edit2 className="h-4 w-4" />
-                    </div>
-                  ),
+                  <div
+                    key="edit"
+                    className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    onClick={handleOpenEditModal}
+                  >
+                    <span>{getCopy('DraggableComponent', 'edit')}</span>
+                    <Edit2 className="h-4 w-4" />
+                  </div>,
                   <div
                     key="copy"
                     className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"

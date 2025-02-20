@@ -3,7 +3,6 @@ import { getCopy } from '@/utils/copyHelpers';
 import { useEffect, useState } from 'react';
 import { sendLuaScript } from '@/utils/triggerHelpers';
 import Information from '@/components/common/Information';
-import ImageUpload from '@/components/common/ImageUpload';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,8 +11,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import CodeEditor from '@uiw/react-textarea-code-editor';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface ScriptGUIProps {
   component: ScriptComponent;
@@ -120,16 +119,6 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
         <div className="grid grid-cols-4 items-center gap-4">
           <div className="col-span-4 grid gap-2">
             <Label htmlFor="gioname">{getCopy('Script', 'script')}</Label>
-            {/* 
-            <Textarea
-              className="w-full"
-              id="script"
-              value={script}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                setScript(e.target.value);
-              }}
-              placeholder="Enter your Lua Script here."
-            /> */}
             <CodeEditor
               value={script}
               language="lua"
@@ -168,24 +157,15 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
               />
             </div>
           </div>
-          <div className="col-span-1 mt-6 grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row items-center justify-center gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2 ">
-            <Label htmlFor="description">
-              {getCopy('Fade', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Fade', 'gui_description')}

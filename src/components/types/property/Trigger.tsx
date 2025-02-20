@@ -8,7 +8,6 @@ import {
 } from '@/store';
 import Information from '@/components/common/Information';
 import { triggerTrigger } from '@/utils/triggerHelpers';
-import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
@@ -19,8 +18,8 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface TriggerGUIProps {
   component: TriggerComponent;
@@ -205,21 +204,12 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Trigger', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('Trigger', 'gui_description')}

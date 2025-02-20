@@ -1,8 +1,7 @@
 // ComponentModal.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ComponentType,
-  // useComponentStore,
   TitleComponent,
   Component,
   SetTimeComponent,
@@ -66,11 +65,11 @@ interface ComponentModalProps {
   initialData?: Partial<Component>;
   icon?: JSX.Element;
 }
-enum AsyncStatus {
-  False = 'false',
-  True = 'true',
-  Pending = 'pending',
-}
+// enum AsyncStatus {
+//   False = 'false',
+//   True = 'true',
+//   Pending = 'pending',
+// }
 const ComponentModal: React.FC<ComponentModalProps> = ({
   isOpen,
   onClose,
@@ -82,107 +81,96 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 }) => {
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
+  const removeComponent = useBoundStore((state) => state.removeComponent);
   const asyncPreSubmitOperation = useBoundStore(
     (state) => state.asyncPreSubmitOperation,
   );
   const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation,
   );
-  const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
-    AsyncStatus.False,
+
+  const executeAndResetAsyncPreSubmitOperation = useBoundStore(
+    (state) => state.executeAndResetAsyncPreSubmitOperation,
   );
+
   const components = useBoundStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
   const [componentData, setComponentData] = useState<Partial<Component>>({
     ...initialData,
   });
-  useEffect(() => {
-    if (asyncOperationStatus == AsyncStatus.Pending && componentData) {
-      setAsyncOperationStatus(AsyncStatus.True);
-    }
-  }, [asyncOperationStatus, componentData]);
 
   const handleSubmit = useCallback(async () => {
     if (componentId) {
-      if (useBoundStore.getState().asyncPreSubmitOperation) {
-        await useBoundStore.getState().executeAndResetAsyncPreSubmitOperation();
-        setAsyncOperationStatus(AsyncStatus.Pending);
-      } else {
-        if (component) {
-          if (component.type == 'multi') {
-            Object.entries(components)
-              .filter(
-                ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
-              )
-              .forEach(([id, c]) => {
-                if (c.isMulti === 'pendingSave') {
-                  updateComponent(id, {
-                    isMulti: 'true',
-                  });
-                } else if (c.isMulti === 'pendingDelete') {
-                  updateComponent(id, {
-                    isMulti: 'false',
-                  });
-                }
-              });
-          }
-          // console.log('UPDATING COMPONENT: ', componentId, componentData);
-          updateComponent(componentId, {
-            ...componentData,
-          });
-        } else {
-          // console.log(
-          //   'ADDING or UPDATING COMPONENT: ',
-          //   componentId,
-          //   componentData,
-          // );
-          addComponent({
-            id: componentId,
-            isDisabled: false,
-            type: type || 'default',
-            isMulti: initialData.isMulti || 'false',
-            gui_description: '',
-            gui_name: '',
-            ...componentData,
-          });
-
-          if (type == 'multi') {
-            Object.entries(components)
-              .filter(
-                ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
-              )
-              .forEach(([id, c]) => {
-                if (c.isMulti === 'pendingSave') {
-                  updateComponent(id, {
-                    isMulti: 'true',
-                  });
-                } else if (c.isMulti === 'pendingDelete') {
-                  updateComponent(id, {
-                    isMulti: 'false',
-                  });
-                }
-              });
-          }
-        }
-        onClose();
+      if (asyncPreSubmitOperation) {
+        await executeAndResetAsyncPreSubmitOperation();
       }
+
+      if (component) {
+        if (component.type == 'multi') {
+          Object.entries(components)
+            .filter(
+              ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
+            )
+            .forEach(([id, c]) => {
+              if (c.isMulti === 'pendingSave') {
+                updateComponent(id, {
+                  isMulti: 'true',
+                });
+              } else if (c.isMulti === 'pendingDelete') {
+                // updateComponent(id, {
+                //   isMulti: 'false',
+                // });
+                removeComponent(id);
+              }
+            });
+        }
+        updateComponent(componentId, {
+          ...componentData,
+        });
+      } else {
+        addComponent({
+          id: componentId,
+          isDisabled: false,
+          type: type || 'default',
+          isMulti: initialData.isMulti || 'false',
+          gui_description: '',
+          gui_name: '',
+          ...componentData,
+        });
+
+        if (type == 'multi') {
+          Object.entries(components)
+            .filter(
+              ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
+            )
+            .forEach(([id, c]) => {
+              if (c.isMulti === 'pendingSave') {
+                updateComponent(id, {
+                  isMulti: 'true',
+                });
+              } else if (c.isMulti === 'pendingDelete') {
+                removeComponent(id);
+                // updateComponent(id, {
+                //   isMulti: 'false',
+                // });
+              }
+            });
+        }
+      }
+      onClose();
     }
   }, [componentData, component, asyncPreSubmitOperation]);
-  useEffect(() => {
-    if (asyncOperationStatus == AsyncStatus.True) {
-      handleSubmit();
-      setAsyncOperationStatus(AsyncStatus.False);
-    }
-  }, [asyncOperationStatus, handleSubmit]);
+
   const handleCancel = () => {
     if ((component ? component.type : type) == 'multi') {
       Object.entries(components)
         .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
         .forEach(([id, c]) => {
           if (c.isMulti === 'pendingSave') {
-            updateComponent(id, {
-              isMulti: 'false',
-            });
+            removeComponent(id);
+            // updateComponent(id, {
+            //   isMulti: 'false',
+            // });
           } else if (c.isMulti === 'pendingDelete') {
             updateComponent(id, {
               isMulti: 'true',
@@ -190,7 +178,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
           }
         });
     }
-    // (null);
     resetAsyncPreSubmitOperation();
     onClose();
     if (onCancel) onCancel();

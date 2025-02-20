@@ -10,7 +10,6 @@ import {
 } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { formatDate, jumpToTime } from '@/utils/time';
-import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +20,7 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface SetTimeComponentProps {
   component: SetTimeType;
@@ -260,21 +259,13 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="description">Background Color</Label>
-              <div className="flex flex-row gap-2">
-                <ColorPickerComponent color={color} setColor={setColor} />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">
-                {getCopy('SetTime', 'background_image')}
-              </Label>
-              <ImageUpload
-                value={backgroundImage}
-                onChange={(v) => setBackgroundImage(v)}
-              />
-            </div>
+            <BackgroundHolder
+              color={color}
+              setColor={setColor}
+              backgroundImage={backgroundImage}
+              setBackgroundImage={setBackgroundImage}
+            />
+
             <div className="grid gap-2">
               <Label htmlFor="description">
                 {getCopy('SetTime', 'gui_description')}

@@ -99,7 +99,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
       minHeight={position?.minHeight || 100}
       minWidth={position.minWidth || 100}
       style={{
-        zIndex: 50,
+        zIndex: position?.minimized ? 0 : 99999,
         transformOrigin: `${originX}px ${originY}px`,
       }}
       data-state={position?.minimized ? 'closed' : 'open'}

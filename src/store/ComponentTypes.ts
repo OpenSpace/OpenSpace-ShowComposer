@@ -97,6 +97,7 @@ export interface RichTextComponent extends ComponentBase {
 export interface TitleComponent extends ComponentBase {
   type: 'title';
   text: string;
+  setFromPageTitle: boolean;
 }
 export interface VideoComponent extends ComponentBase {
   type: 'video';
@@ -153,7 +154,8 @@ export interface SetNavComponent extends ComponentBase {
   navigationState: any;
   time: Date | string;
   setTime: boolean;
-  fadeScene: boolean;
+  // fadeScene: boolean;
+  mode: 'jump' | 'fade' | 'fly';
   backgroundImage: string;
   intDuration: number;
   triggerAction: () => void;
@@ -219,6 +221,7 @@ export interface LayoutBase {
   padding: number;
   childWidth: number;
   childHeight: number;
+  persistent: boolean; //if layout should persist across pages
 }
 
 export type MultiOption =
@@ -229,7 +232,9 @@ export type MultiOption =
   | FlyToComponent
   | SetTimeComponent
   | SessionPlaybackComponent
-  | PageComponent;
+  | PageComponent
+  | ActionTriggerComponent
+  | ScriptComponent;
 
 export const staticComponents = [
   { value: 'richtext', label: 'Rich Text' },
@@ -273,6 +278,7 @@ export const multiOptions = [
   { value: 'setnavstate', label: 'Set Navigation' },
   { value: 'action', label: 'Trigger Action' },
   { value: 'page', label: 'Go To Page' },
+  { value: 'script', label: 'Lua Script' },
 ];
 
 //create typeguard to determing if opbject is of type MultiOption

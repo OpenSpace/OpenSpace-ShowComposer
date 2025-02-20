@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import {
   Pagination as PaginationContainer,
@@ -21,13 +21,13 @@ const Pagination: React.FC<PaginationProps> = ({
   length,
   setIndex,
 }) => {
-  const handleKeyPress = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowLeft' && currentIndex > 0) {
-      setIndex(currentIndex - 1);
-    } else if (event.key === 'ArrowRight' && currentIndex < length - 1) {
-      setIndex(currentIndex + 1);
-    }
-  };
+  // const handleKeyPress = (event: KeyboardEvent) => {
+  //   if (event.key === 'ArrowLeft' && currentIndex > 0) {
+  //     setIndex(currentIndex - 1);
+  //   } else if (event.key === 'ArrowRight' && currentIndex < length - 1) {
+  //     setIndex(currentIndex + 1);
+  //   }
+  // };
 
   const visiblePages = () => {
     const pages = [];
@@ -62,14 +62,6 @@ const Pagination: React.FC<PaginationProps> = ({
     return pages;
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-
-    // Remove event listener on cleanup
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [currentIndex, length]); // Dependencies array ensures effect runs when currentIndex or length changes
   return (
     <div className="absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center">
       <PaginationContainer>

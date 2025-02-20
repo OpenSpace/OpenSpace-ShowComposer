@@ -56,7 +56,11 @@ interface OpenSpaceApiState {
   setConnectionState: (state: ConnectionState) => void;
   subscribeToProperty: (property: string) => Topic | null; // Define parameters as needed
   unsubscribeFromProperty: (topic: Topic) => void; // Define parameters as needed
-  subscribeToTopic: (topic: string, properties?: string[]) => Topic | null; // Define parameters as needed
+  subscribeToTopic: (
+    topic: string,
+    properties?: string[],
+    settings?: any,
+  ) => Topic | null; // Define parameters as needed
   unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
   connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
   // subscribeToSessionRecording: () => Topic | null;
@@ -107,7 +111,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties,
         }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
           flattenPropertyTree(value as PropertyOwner);
-
+        console.log('property', properties);
         usePropertyStore.getState().getActions();
         const Visibility = properties.find(
           (p) => p.uri === EnginePropertyVisibilityKey,
@@ -142,22 +146,20 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
 
         usePropertyStore.getState().setProperties(fadeables);
 
-        const boolProps = getActionSceneNodes(
-          filteredProperties as Property[],
-          'Bool',
-        );
+        const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
 
         usePropertyStore.getState().setProperties(boolProps);
         const triggerProps = getActionSceneNodes(
-          filteredProperties as Property[],
+          properties as Property[],
           'Trigger',
         );
 
         usePropertyStore.getState().setProperties(triggerProps);
         const numberProps = getActionSceneNodes(
-          filteredProperties as Property[],
+          properties as Property[],
           'Number',
         );
+        console.log('numberProps', numberProps);
 
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {
@@ -226,20 +228,24 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     });
     subscription.cancel();
   },
-  subscribeToTopic: (topicName: string, properties?: string[]) => {
+  subscribeToTopic: (
+    topicName: string,
+    properties?: string[],
+    settings?: any,
+  ) => {
     const { connectionState, apiInstance } = get();
 
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
       console.error(
         'Cannot subscribe to topic, API instance is not connected.',
       );
-
       return null;
     }
     try {
       const topic = apiInstance.startTopic(topicName, {
         event: 'start_subscription',
-        properties,
+        properties: properties || [],
+        settings: settings || {},
       });
       return topic;
     } catch (e) {

@@ -13,9 +13,6 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useShallow } from 'zustand/react/shallow';
 
-// import { }
-// react-icon for flight
-import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,7 +25,7 @@ import Toggle from '@/components/common/Toggle';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import BackgroundHolder from '@/components/common/BackgroundHolder';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -408,45 +405,38 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             )}
           </>
         )}
-        <div className="grid grid-cols-4 items-center gap-4">
-          <div className="col-span-3 grid gap-2">
-            <Label htmlFor="gioname">
-              {getCopy('FlyTo', 'component_name')}
-            </Label>
-            <Input
-              id="guiname"
-              placeholder="Name of Component"
-              type="text"
-              value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
-            />
-          </div>
-          <div className="col-span-1 mt-6 grid gap-2">
-            <ToggleComponent
-              label="Lock Name"
-              value={lockName}
-              setValue={setLockName}
-            />
+        <div className="grid grid-cols-4 ">
+          <div className="col-span-3 grid grid-cols-3 gap-4">
+            <div className="col-span-2 grid gap-2">
+              <Label htmlFor="gioname">
+                {getCopy('Fade', 'component_name')}
+              </Label>
+              <Input
+                id="guiname"
+                placeholder="Name of Component"
+                type="text"
+                value={gui_name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setGuiName(e.target.value)
+                }
+              />
+            </div>
+            <div className="col-span-1 mt-6 grid gap-2">
+              <ToggleComponent
+                label="Lock Name"
+                value={lockName}
+                setValue={setLockName}
+              />
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">Background Color</Label>
-            <div className="flex flex-row gap-2">
-              <ColorPickerComponent color={color} setColor={setColor} />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('FlyTo', 'background_image')}
-            </Label>
-            <ImageUpload
-              value={backgroundImage}
-              onChange={(v) => setBackgroundImage(v)}
-            />
-          </div>
+          <BackgroundHolder
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <div className="grid gap-2">
             <Label htmlFor="description">
               {getCopy('FlyTo', 'gui_description')}
