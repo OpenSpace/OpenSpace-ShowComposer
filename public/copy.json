@@ -1,5 +1,6 @@
 {
   "Main": {
+    "project_name": "Current Show:  ",
     "interface_name": "OpenSpace Showbuilder",
     "static_components": "Static Components",
     "preset_components": "Preset Components",
@@ -310,5 +311,11 @@
     "grid_size": "Grid Size",
     "grid_size_description": "This will also change default grid size.",
     "persist_across_pages": "Persist Across Pages"
+  },
+  "LoadProjectModal": {
+    "load_project": "Open Show",
+    "load_project_description": "Choose a show to open.",
+    "cancel": "Cancel",
+    "add_project": "Open Show"
   }
 }

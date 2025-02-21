@@ -116,7 +116,9 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
+        setBackgroundImage={(v) => {
+          setBackgroundImage(v);
+        }}
       />
       <div className="grid grid-cols-1 gap-4">
         <div className="grid gap-2">

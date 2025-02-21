@@ -8,7 +8,7 @@ type CopyData = {
 
 let typedCopyData: CopyData = {};
 const loadCopyData = async () => {
-  const response = await fetch('/copy.json');
+  const response = await fetch('./copy.json');
   if (response.ok) {
     typedCopyData = await response.json();
   } else {

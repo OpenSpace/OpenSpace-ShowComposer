@@ -59,6 +59,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
     const selectedFile: File | null = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       const imageUrl = URL.createObjectURL(selectedFile);
+      console.log('FROM HANDLE FILE CHANGE:', imageUrl);
       setSelectedImage(imageUrl);
       setUploadFile(selectedFile);
     }
@@ -116,15 +117,12 @@ const ImageGallery: React.FC<GalleryProps> = ({
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {imagesToDisplay.map((image, _index) => (
-                  <button
-                    key={image}
-                    onClick={() => setSelectedImage(`/uploads/${image}`)}
-                  >
+                  <button key={image} onClick={() => setSelectedImage(image)}>
                     <Image
                       alt="Uploaded image"
                       className="aspect-square w-full rounded-md object-cover"
                       height="60"
-                      src={`/uploads/${image}`}
+                      src={image}
                       width="60"
                     />
                   </button>

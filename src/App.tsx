@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider } from './components/ThemeProvider';
-
+import favicon from './assets/images/favicon.png';
 import ComponentModal from './components/ComponentModal';
 import DraggableComponent from './components/DraggableComponent';
 import DroppableWorkspace from './components/DroppableWorkspace';
@@ -119,6 +119,7 @@ const App = () => {
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
   const pagesLength = useBoundStore((state) => state.pages?.length); // Get the global state
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
+  const projectName = useSettingsStore((state) => state.projectName);
 
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
@@ -128,24 +129,7 @@ const App = () => {
     if (pagesLength == 0 && currentPage == '') {
       addPage();
     }
-
-    // if (
-    //   !NavPanel ||
-    //   !TimePanel ||
-    //   !StatusPanel ||
-    //   !RecordPanel ||
-    //   !NavPosition ||
-    //   !TimePosition ||
-    //   !StatusPosition ||
-    //   !RecordPosition
-    // )
-    //   createStaticPanels();
   }, []);
-
-  useEffect(() => {
-    console.log('isPresentMode', isPresentMode);
-    console.log('showPagination', showPagination);
-  }, [isPresentMode, showPagination]);
 
   useEffect(() => {
     if (
@@ -345,11 +329,7 @@ const App = () => {
             <div className="h-full w-full  p-4 pr-2 ">
               <div className="flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800">
                 <div className=" flex-0 felx flex flex-row items-center gap-2 p-2 px-3">
-                  <img
-                    src="/src/assets/images/favicon.png"
-                    width={20}
-                    className="p-0"
-                  />
+                  <img src={favicon} width={20} className="p-0" />
                   <h2 className=" scroll-m-20 text-xs font-bold tracking-tight">
                     {getCopy('Main', 'interface_name')}
                   </h2>
@@ -357,14 +337,29 @@ const App = () => {
                 <Separator />
                 <GlobalMenuBar />
                 <Separator />
-                <div className="flex  flex-col gap-4 px-4 py-4 @container">
+                {/* <div className="flex flex-row items-center gap-2 p-2 px-4">
+                  <div className="text-xs font-bold ">
+                    {getCopy('Main', 'project_name')}
+                  </div>
+                  <div className="text-sm font-normal">{projectName}</div>
+                </div>
+                <Separator /> */}
+                <div className="flex  flex-col gap-2 px-4 py-2 @container">
                   <ConnectionStatus />
+                  <div className="flex flex-row items-center gap-2  ">
+                    <div className="text-xs font-bold ">
+                      {getCopy('Main', 'project_name')}
+                    </div>
+                    <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                      {projectName}
+                    </div>
+                  </div>
                   <Separator />
                   <Undo />
                   <Separator />
                 </div>
 
-                <div className="grid gap-2 p-2 @[167px]:gap-4">
+                <div className="grid gap-2 p-2 @[167px]:gap-2">
                   <h2 className="ml-2 text-xs font-bold ">
                     {getCopy('Main', 'layout')}
                   </h2>
@@ -392,7 +387,7 @@ const App = () => {
                         </Button>
                       ))}
                     </div>
-                    <h2 className="mt-4 text-xs font-bold">
+                    <h2 className=" text-xs font-bold">
                       {getCopy('Main', 'preset_components')}
                     </h2>
                     <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">

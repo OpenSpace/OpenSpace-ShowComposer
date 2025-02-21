@@ -24,6 +24,7 @@ import { Position, useSettingsStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { ComponentBase, LayoutBase, Page } from '@/store/ComponentTypes';
 import { v4 as uuidv4 } from 'uuid';
+import { allComponentLabels } from '@/store/ComponentTypes';
 interface ImportShowModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -54,9 +55,9 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     (state) => state.removeAllComponents,
   );
   useEffect(() => {
-    if (store && store.componentStore) {
+    if (store && store.boundStore) {
       console.log('store that was loaded', store);
-      const parsedPages = store.componentStore.pages.map(
+      const parsedPages = store.boundStore.pages.map(
         (page: any, index: number) => {
           return {
             name: page.name ? page.name : `${index + 1}`,
@@ -100,7 +101,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     // Logic to import selected pages/components
     console.log('Importing pages:', Array.from(selectedPages));
 
-    useBoundStore.setState(store.componentStore);
+    useBoundStore.setState(store.boundStore);
     useSettingsStore.setState(store.settingsStore);
     onClose();
   };
@@ -114,7 +115,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     const idMap: Record<string, string> = {};
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.componentStore.pages.find(
+      const page: Page = store.boundStore.pages.find(
         (p: Page) => p.id === selectedPage.id,
       );
       idMap[page.id] = uuidv4();
@@ -124,15 +125,15 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       if (page) {
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
-          const component = store.componentStore.components[componentId];
-          const layout = store.componentStore.layouts[componentId];
+          const component = store.boundStore.components[componentId];
+          const layout = store.boundStore.layouts[componentId];
           if (component) {
             idMap[componentId] = uuidv4();
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
               component.components.forEach((childId: string) => {
-                const component = store.componentStore.components[childId];
+                const component = store.boundStore.components[childId];
                 if (component) {
                   idMap[childId] = uuidv4();
                   selectedComponents.add(component);
@@ -148,7 +149,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
           // Add positions for the components in the page
         });
         page.components.forEach((componentId: string) => {
-          const position = store.componentStore.positions[componentId];
+          const position = store.boundStore.positions[componentId];
           if (position) {
             selectedPositions.add(position);
           }
@@ -204,7 +205,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     const selectedFullPages = new Set<Page>();
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.componentStore.pages.find(
+      const page: Page = store.boundStore.pages.find(
         (p: Page) => p.id === selectedPage.id,
       );
       console.log('page', page);
@@ -212,14 +213,14 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       if (page) {
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
-          const component = store.componentStore.components[componentId];
-          const layout = store.componentStore.layouts[componentId];
+          const component = store.boundStore.components[componentId];
+          const layout = store.boundStore.layouts[componentId];
           if (component) {
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
               component.components.forEach((childId: string) => {
-                const component = store.componentStore.components[childId];
+                const component = store.boundStore.components[childId];
                 if (component) {
                   selectedComponents.add(component);
                 }
@@ -233,7 +234,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
           // Add positions for the components in the page
         });
         page.components.forEach((componentId: string) => {
-          const position = store.componentStore.positions[componentId];
+          const position = store.boundStore.positions[componentId];
           if (position) {
             selectedPositions.add(position);
           }
@@ -245,7 +246,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     removeAllComponents();
     useBoundStore.setState({
       pages: Array.from(selectedFullPages),
-      currentPage: selectedFullPages.values().next().value.id,
+      currentPage: selectedFullPages.values().next().value?.id || '',
       currentPageIndex: 0,
     });
 
@@ -323,22 +324,23 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
                 </TableCell>
                 <TableCell>
                   {page.components
-                    .filter((v) => !store.componentStore.layouts[v])
+                    .filter((v) => !store.boundStore.layouts[v])
                     .map((componentId, index) => {
                       const component =
-                        store.componentStore.components[componentId];
-                      //   const layout = store.componentStore.layouts[componentId];
-                      //   if (layout) return null;
-                      // console.log('component', componentId);
+                        store.boundStore.components[componentId];
                       return (
                         <span
                           key={componentId}
                           className="text-gray-700 dark:text-gray-300"
                         >
-                          {component ? component.gui_name : 'Unknown Component'}
+                          {component && component.gui_name?.length > 0
+                            ? component.gui_name
+                            : allComponentLabels.find(
+                                (v) => v.value === component?.type,
+                              )?.label}
                           {index <
                           page.components.filter(
-                            (v) => !store.componentStore.layouts[v],
+                            (v) => !store.boundStore.layouts[v],
                           ).length -
                             1
                             ? ', '

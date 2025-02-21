@@ -14,7 +14,14 @@ import { Label } from './ui/label';
 import { getCopy } from '@/utils/copyHelpers';
 import { Input } from './ui/input';
 import ImportShowModal from './ImportShowModal';
-import { loadStore, saveStore } from '@/utils/saveProject';
+import {
+  loadStore,
+  exportProject,
+  saveProject,
+  loadProjects,
+  Project,
+  loadProject,
+} from '@/utils/saveProject';
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
@@ -25,6 +32,7 @@ import {
 } from './NewProjectModal';
 import { useSettingsStore } from '@/store/settingsStore';
 import NewPageModal from './NewPageModal';
+import LoadProjectModal from './LoadProjectModal';
 
 export function GlobalMenuBar() {
   const [loadedStore, setLoadedStore] = useState<any>(null);
@@ -37,12 +45,13 @@ export function GlobalMenuBar() {
     useState(false);
   const [isConnectionSettingsModalOpen, setIsConnectionSettingsModalOpen] =
     useState(false);
+  const [isLoadProjectModalOpen, setIsLoadProjectModalOpen] = useState(false);
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state,
   );
   const deletePage = useBoundStore((state) => state.deletePage);
   const currentPage = useBoundStore((state) => state.currentPage);
-
+  const [projects, setProjects] = useState<Project[]>([]);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
   const pageSizes = [
@@ -77,10 +86,19 @@ export function GlobalMenuBar() {
       console.error('Error loading store:', error);
     }
   };
-
+  const handleLoadProjects = async () => {
+    try {
+      const projects = await loadProjects();
+      setProjects(projects);
+      setIsLoadProjectModalOpen(true);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    }
+  };
   const handleDeleteAllConfirm = () => {
     removeAllComponents();
     setIsDeleteAllModalOpen(false);
+    setIsNewProjectModalOpen(true);
   };
 
   return (
@@ -95,8 +113,10 @@ export function GlobalMenuBar() {
             <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
               New Show
             </MenubarItem>
+            <MenubarItem onClick={saveProject}>Save </MenubarItem>
+            <MenubarItem onClick={handleLoadProjects}>Open</MenubarItem>
             <MenubarItem onClick={handleLoadStore}>Import</MenubarItem>
-            <MenubarItem onClick={saveStore}>Export</MenubarItem>
+            <MenubarItem onClick={exportProject}>Export</MenubarItem>
             <MenubarItem
               onClick={() => setIsDeleteAllModalOpen(true)}
               className="text-red-500"
@@ -231,6 +251,16 @@ export function GlobalMenuBar() {
         isOpen={isNewPageModalOpen}
         setIsOpen={setIsNewPageModalOpen}
         newPage={isNewPage}
+      />
+      <LoadProjectModal
+        isOpen={isLoadProjectModalOpen}
+        setIsOpen={setIsLoadProjectModalOpen}
+        projects={projects}
+        handleLoadProject={async (project: Project) => {
+          const store = await loadProject(project.filePath);
+          setLoadedStore(store); // Store the loaded data
+          setIsImportShowModalOpen(true); // Open the import modal
+        }}
       />
     </>
   );

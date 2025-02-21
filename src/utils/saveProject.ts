@@ -2,28 +2,18 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
 //save out the store to a json file that is saved to drive
-export const saveStore = () => {
-  // const componentStore = useComponentStore.getState();
+export const saveProject = () => {
   const settingsStore = useSettingsStore.getState();
-
-  // const positionStore = usePositionStore.getState();
-  const componentStore = useBoundStore.getState();
-  const store = { componentStore, settingsStore };
+  const boundStore = useBoundStore.getState();
+  const store = { boundStore, settingsStore };
   const storeString = JSON.stringify(store);
-  const blob = new Blob([storeString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  const date = new Date();
-  const timestamp = date.toISOString();
-
-  const filename = `${settingsStore.projectName.replace(
-    / /g,
-    '_',
-  )}_${timestamp}.json`;
-  // console.log(filename);
-  a.download = filename;
-  a.click();
+  fetch('/api/projects/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: storeString,
+  });
 };
 
 export const loadStore = async () => {
@@ -57,4 +47,55 @@ export const loadStore = async () => {
     };
     fileInput.click();
   });
+};
+
+export const exportProject = () => {
+  const settingsStore = useSettingsStore.getState();
+  const boundStore = useBoundStore.getState();
+  const store = { boundStore, settingsStore };
+  const storeString = JSON.stringify(store);
+  console.log('storeString', storeString);
+  fetch('/api/package', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: storeString,
+  })
+    .then((response) => response.blob())
+    .then((blob) => {
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${settingsStore.projectName.replace(
+        / /g,
+        '_',
+      )}-${Date.now()}.zip`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+};
+
+export interface Project {
+  projectName: string;
+  filePath: string;
+  lastModified: string;
+  created: string;
+}
+export const loadProjects = async () => {
+  const response = await fetch('/api/projects');
+  const projects = await response.json();
+  console.log('projects', projects);
+  return projects;
+};
+export const loadProject = async (filePath: string) => {
+  try {
+    const response = await fetch(filePath);
+    const project = await response.json();
+    return project;
+  } catch (error) {
+    console.error('Error loading project:', error);
+    return null;
+  }
 };

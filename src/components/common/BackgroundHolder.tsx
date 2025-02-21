@@ -10,6 +10,7 @@ interface BackgroundHolderProps {
   setColor: (color: string) => void;
   backgroundImage: string;
   setBackgroundImage: (image: string) => void;
+  componentId?: string;
 }
 
 const BackgroundHolder: React.FC<BackgroundHolderProps> = ({

@@ -106,7 +106,7 @@ export interface VideoComponent extends ComponentBase {
 
 export interface ImageComponent extends ComponentBase {
   type: 'image';
-  url: string;
+  backgroundImage: string;
 }
 
 export interface SessionPlaybackComponent extends ComponentBase {

@@ -14,7 +14,7 @@ const ImageGUIComponent: React.FC<ImageGUIProps> = ({ component }) => {
         //cover and center the background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundImage: `url(${component.url})`,
+        backgroundImage: `url(${component.backgroundImage})`,
       }}
     />
   );
@@ -27,16 +27,21 @@ const ImageModal: React.FC<ImageModalProps> = ({
   component,
   handleComponentData,
 }) => {
-  const [url, setUrl] = useState(component?.url || '');
+  const [url, setUrl] = useState(component?.backgroundImage || '');
   useEffect(() => {
     handleComponentData({
-      url,
+      backgroundImage: url,
     });
   }, [url, handleComponentData]);
   return (
     <div className="grid grid-cols-1 gap-4">
       <Label>{getCopy('Image', 'image')}</Label>
-      <ImageUpload value={url} onChange={(v) => setUrl(v)} />
+      <ImageUpload
+        value={url}
+        onChange={(v) => {
+          setUrl(v);
+        }}
+      />
     </div>
   );
 };

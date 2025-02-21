@@ -51,6 +51,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
       setShowPagination(initialState.showPagination);
     }
   }, [isOpen]);
+
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   const removeAllComponents = useBoundStore(
     (state) => state.removeAllComponents,
@@ -264,6 +265,14 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
   const handleShowPagination = (value: boolean) => {
     setShowPagination(value);
   };
+  useEffect(() => {
+    console.log('initialState', initialState);
+    if (isOpen) {
+      setProjectName(initialState.projectName);
+      setProjectDescription(initialState.projectDescription);
+      setShowPagination(initialState.showPagination);
+    }
+  }, [isOpen]);
 
   const handleSubmit = () => {
     setProjectSettings({

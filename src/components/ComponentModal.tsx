@@ -1,5 +1,5 @@
 // ComponentModal.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ComponentType,
   TitleComponent,
@@ -65,11 +65,11 @@ interface ComponentModalProps {
   initialData?: Partial<Component>;
   icon?: JSX.Element;
 }
-// enum AsyncStatus {
-//   False = 'false',
-//   True = 'true',
-//   Pending = 'pending',
-// }
+enum AsyncStatus {
+  False = 'false',
+  True = 'true',
+  Pending = 'pending',
+}
 const ComponentModal: React.FC<ComponentModalProps> = ({
   isOpen,
   onClose,
@@ -92,6 +92,9 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const executeAndResetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.executeAndResetAsyncPreSubmitOperation,
   );
+  const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
+    AsyncStatus.False,
+  );
 
   const components = useBoundStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
@@ -99,12 +102,20 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
     ...initialData,
   });
 
+  useEffect(() => {
+    if (asyncOperationStatus == AsyncStatus.Pending && componentData) {
+      setAsyncOperationStatus(AsyncStatus.True);
+    }
+  }, [componentData]);
+
   const handleSubmit = useCallback(async () => {
     if (componentId) {
       if (asyncPreSubmitOperation) {
+        console.log('FROM HANDLE SUBMIT:', asyncPreSubmitOperation);
         await executeAndResetAsyncPreSubmitOperation();
+        setAsyncOperationStatus(AsyncStatus.Pending);
+        return; // Exit the current execution
       }
-
       if (component) {
         if (component.type == 'multi') {
           Object.entries(components)
@@ -117,9 +128,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
                   isMulti: 'true',
                 });
               } else if (c.isMulti === 'pendingDelete') {
-                // updateComponent(id, {
-                //   isMulti: 'false',
-                // });
                 removeComponent(id);
               }
             });
@@ -150,16 +158,21 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
                 });
               } else if (c.isMulti === 'pendingDelete') {
                 removeComponent(id);
-                // updateComponent(id, {
-                //   isMulti: 'false',
-                // });
               }
             });
         }
       }
+      console.log('Closing modal');
       onClose();
     }
   }, [componentData, component, asyncPreSubmitOperation]);
+
+  useEffect(() => {
+    if (asyncOperationStatus == AsyncStatus.True) {
+      handleSubmit();
+      setAsyncOperationStatus(AsyncStatus.False);
+    }
+  }, [asyncOperationStatus]);
 
   const handleCancel = () => {
     if ((component ? component.type : type) == 'multi') {

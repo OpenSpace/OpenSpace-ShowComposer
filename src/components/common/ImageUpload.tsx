@@ -8,6 +8,7 @@ import { useBoundStore } from '@/store/boundStore';
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
+  componentId?: string;
 }
 const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const setAsyncPreSubmitOperation = useBoundStore(
@@ -18,7 +19,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   useEffect(() => {
-    fetch('/uploads')
+    fetch('/api/images')
       .then((response) => response.json())
       .then((data) => setGalleryImages(data.images))
       .catch((error) => console.error('Error fetching gallery images:', error));
@@ -49,14 +50,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     const formData = new FormData();
     formData.append('image', file); // Append the file
 
-    const response = await fetch('/upload', {
+    const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData, // Send formData
     });
     if (response.ok) {
       let data = await response.json();
       onChange(data.filePath);
-      console.log(data);
       console.log('Image saved successfully');
     } else {
       console.error('Failed to save image');
