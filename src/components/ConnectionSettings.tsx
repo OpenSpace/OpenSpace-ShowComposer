@@ -62,10 +62,13 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     setOpen(false);
   };
   useEffect(() => {
-    if (connectionState === ConnectionState.UNCONNECTED) {
+    console.log('connectionState in settings', connectionState);
+    if (connectionState == ConnectionState.UNCONNECTED) {
+      console.log('connecting');
       connect();
     }
-  }, []);
+  }, [connectionState]);
+
   useEffect(() => {
     if (prevPort !== initialPort || prevUrl !== initialUrl) {
       forceRefresh();
@@ -155,12 +158,13 @@ const ConnectionStatus = () => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
-  const connect = useOpenSpaceApiStore((state) => state.connect);
+  // const connect = useOpenSpaceApiStore((state) => state.connect);
 
   useEffect(() => {
-    if (connectionState === ConnectionState.UNCONNECTED) {
-      connect();
-    }
+    console.log('connectionState', connectionState);
+    // if (connectionState === ConnectionState.UNCONNECTED) {
+    //   connect();
+    // }
   }, [connectionState]);
 
   function renderConnectionState(size: number) {

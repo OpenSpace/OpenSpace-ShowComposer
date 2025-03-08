@@ -91,16 +91,25 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     get().connect();
   },
   connect: async () => {
+    console.log('connect');
+
+    if (
+      get().connectionState === ConnectionState.CONNECTED ||
+      get().connectionState === ConnectionState.CONNECTING
+    )
+      return;
     const host = useSettingsStore.getState().ip;
     const port = useSettingsStore.getState().port;
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
-    set({
-      apiInstance,
-      connectionState: ConnectionState.CONNECTING,
-      cancelReconnect: false,
-    });
+    get().setConnectionState(ConnectionState.CONNECTING);
+    get().apiInstance = apiInstance;
+    get().cancelReconnect = false;
+
     apiInstance.onConnect(async () => {
+      console.log('onConnect');
+      if (get().connectionState === ConnectionState.CONNECTED) return;
+
       try {
         console.log('OpenSpace connected');
         const luaApi = await apiInstance.library();
@@ -179,13 +188,14 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       let reconnectionInterval = 1000;
       if (!get().cancelReconnect) {
         reconnectTimeout = setTimeout(() => {
+          console.log('Reconnecting to OpenSpace');
           apiInstance?.connect();
+          get().setConnectionState(ConnectionState.CONNECTING);
           reconnectionInterval += 1000;
         }, reconnectionInterval);
       }
 
       set({
-        // reconnectTimeout: newTimeout,
         luaApi: null,
         connectionState: ConnectionState.UNCONNECTED,
       });

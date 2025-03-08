@@ -5,11 +5,14 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { useBoundStore } from '@/store/boundStore';
+import { fetchGalleryImages, uploadImage } from '@/utils/saveProject';
+
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   componentId?: string;
 }
+
 const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const setAsyncPreSubmitOperation = useBoundStore(
     (state) => state.setAsyncPreSubmitOperation,
@@ -19,10 +22,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   useEffect(() => {
-    fetch('/api/images')
-      .then((response) => response.json())
-      .then((data) => setGalleryImages(data.images))
-      .catch((error) => console.error('Error fetching gallery images:', error));
+    const loadGalleryImages = async () => {
+      try {
+        const images = await fetchGalleryImages();
+        setGalleryImages(images);
+      } catch (error) {
+        console.error('Error fetching gallery images:', error);
+      }
+    };
+    loadGalleryImages();
   }, []);
   const handleSelectImage = (imagePath: string) => {
     onChange(imagePath);
@@ -47,19 +55,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     if (file === null) {
       return;
     }
-    const formData = new FormData();
-    formData.append('image', file); // Append the file
-
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData, // Send formData
-    });
-    if (response.ok) {
-      let data = await response.json();
-      onChange(data.filePath);
+    try {
+      const filePath = await uploadImage(file);
+      onChange(filePath);
       console.log('Image saved successfully');
-    } else {
-      console.error('Failed to save image');
+    } catch (error) {
+      console.error('Failed to save image:', error);
     }
   }, [file]);
   return (

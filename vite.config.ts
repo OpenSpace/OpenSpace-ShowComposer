@@ -10,7 +10,8 @@ import { viteUploadPlugin } from './vite-plugin-upload';
 export default defineConfig(({ command }) => {
   const isBuild = command === 'build';
   return {
-    base: isBuild ? './' : '/',
+    // base: isBuild ? './' : '/',
+    base: './',
     plugins: [viteUploadPlugin(), react(), eslintPlugin()],
     resolve: {
       alias: {

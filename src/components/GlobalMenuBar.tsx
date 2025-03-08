@@ -15,12 +15,14 @@ import { getCopy } from '@/utils/copyHelpers';
 import { Input } from './ui/input';
 import ImportShowModal from './ImportShowModal';
 import {
-  loadStore,
+  // loadStore,
   exportProject,
   saveProject,
   loadProjects,
   Project,
   loadProject,
+  // loadStoreImageSeperately,
+  loadStoreToServer,
 } from '@/utils/saveProject';
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -78,7 +80,7 @@ export function GlobalMenuBar() {
 
   const handleLoadStore = async () => {
     try {
-      const store = await loadStore();
+      const store = await loadStoreToServer();
       console.log('Loaded store:', store);
       setLoadedStore(store); // Store the loaded data
       setIsImportShowModalOpen(true); // Open the import modal
@@ -257,6 +259,7 @@ export function GlobalMenuBar() {
         setIsOpen={setIsLoadProjectModalOpen}
         projects={projects}
         handleLoadProject={async (project: Project) => {
+          // const store = aloadStoreImageSeperately
           const store = await loadProject(project.filePath);
           setLoadedStore(store); // Store the loaded data
           setIsImportShowModalOpen(true); // Open the import modal
