@@ -2,18 +2,22 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 const BASE_URL = window.location.pathname;
 //save out the store to a json file that is saved to drive
-export const saveProject = () => {
+export const saveProject = async () => {
   const settingsStore = useSettingsStore.getState();
   const boundStore = useBoundStore.getState();
   const store = { boundStore, settingsStore };
   const storeString = JSON.stringify(store);
-  fetch(`${BASE_URL}api/projects/save`, {
+  const response = await fetch(`${BASE_URL}api/projects/save`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: storeString,
   });
+  if (response.ok) {
+    return true;
+  }
+  return false;
 };
 
 export const loadStore = async () => {
@@ -181,6 +185,7 @@ export const loadProjects = async () => {
 };
 export const loadProject = async (filePath: string) => {
   try {
+    console.log('filePath', `${BASE_URL}${filePath}`);
     const response = await fetch(`${BASE_URL}${filePath}`);
     const project = await response.json();
     return project;

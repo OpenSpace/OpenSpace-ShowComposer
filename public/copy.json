@@ -304,7 +304,8 @@
     "page_height": "Page Height",
     "create_project": "Create Show",
     "update_project": "Update Show",
-    "default_screen_space_position": "Default Screen Space Position"
+    "default_screen_space_position": "Default Screen Space Position",
+    "load_project": "Load Show"
   },
   "LayoutEditModal": {
     "edit_layout": "Edit Layout",
@@ -317,5 +318,8 @@
     "load_project_description": "Choose a show to open.",
     "cancel": "Cancel",
     "add_project": "Open Show"
+  },
+  "ConfirmationModal": {
+    "ok": "OK"
   }
 }

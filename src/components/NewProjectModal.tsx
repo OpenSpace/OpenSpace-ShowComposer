@@ -20,11 +20,13 @@ import Toggle from './common/Toggle';
 interface NewProjectModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  handleLoadProjects: () => void | null;
 }
 
 const NewProjectModal: React.FC<NewProjectModalProps> = ({
   isOpen,
   setIsOpen,
+  handleLoadProjects,
 }) => {
   const setProjectSettings = useSettingsStore(
     (state) => state.setProjectSettings,
@@ -231,6 +233,11 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
           <AlertDialogAction onClick={handleSubmit}>
             {getCopy('NewProjectModal', 'create_project')}
           </AlertDialogAction>
+          {handleLoadProjects && (
+            <AlertDialogAction onClick={handleLoadProjects}>
+              {getCopy('NewProjectModal', 'load_project')}
+            </AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

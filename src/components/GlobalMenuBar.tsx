@@ -35,6 +35,7 @@ import {
 import { useSettingsStore } from '@/store/settingsStore';
 import NewPageModal from './NewPageModal';
 import LoadProjectModal from './LoadProjectModal';
+import ConfirmationModal from './ConfirmationModal';
 
 export function GlobalMenuBar() {
   const [loadedStore, setLoadedStore] = useState<any>(null);
@@ -48,6 +49,7 @@ export function GlobalMenuBar() {
   const [isConnectionSettingsModalOpen, setIsConnectionSettingsModalOpen] =
     useState(false);
   const [isLoadProjectModalOpen, setIsLoadProjectModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state,
   );
@@ -102,6 +104,12 @@ export function GlobalMenuBar() {
     setIsDeleteAllModalOpen(false);
     setIsNewProjectModalOpen(true);
   };
+  const handleSaveConfirm = async () => {
+    const saved = await saveProject();
+    if (saved) {
+      setIsConfirmationModalOpen(true);
+    }
+  };
 
   return (
     <>
@@ -115,7 +123,7 @@ export function GlobalMenuBar() {
             <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
               New Show
             </MenubarItem>
-            <MenubarItem onClick={saveProject}>Save </MenubarItem>
+            <MenubarItem onClick={handleSaveConfirm}>Save </MenubarItem>
             <MenubarItem onClick={handleLoadProjects}>Open</MenubarItem>
             <MenubarItem onClick={handleLoadStore}>Import</MenubarItem>
             <MenubarItem onClick={exportProject}>Export</MenubarItem>
@@ -240,6 +248,9 @@ export function GlobalMenuBar() {
       <NewProjectModal
         isOpen={isNewProjectModalOpen}
         setIsOpen={setIsNewProjectModalOpen}
+        handleLoadProjects={() => {
+          setIsLoadProjectModalOpen(true);
+        }}
       />
       <ProjectSettingsModal
         isOpen={isProjectSettingsModalOpen}
@@ -259,11 +270,16 @@ export function GlobalMenuBar() {
         setIsOpen={setIsLoadProjectModalOpen}
         projects={projects}
         handleLoadProject={async (project: Project) => {
-          // const store = aloadStoreImageSeperately
           const store = await loadProject(project.filePath);
-          setLoadedStore(store); // Store the loaded data
-          setIsImportShowModalOpen(true); // Open the import modal
+          useBoundStore.setState(store.boundStore);
+          useSettingsStore.setState(store.settingsStore);
         }}
+      />
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onConfirm={() => {}}
+        message={'Project has been saved!'}
+        setOpen={setIsConfirmationModalOpen}
       />
     </>
   );

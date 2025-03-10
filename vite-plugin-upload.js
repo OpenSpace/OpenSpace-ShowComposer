@@ -160,7 +160,7 @@ export function viteUploadPlugin() {
                 const filePath = path.join(projectsDir, file);
                 const stats = await fsp.stat(filePath); // Get file statistics
                 return {
-                  filePath: '/' + path.relative(process.cwd(), filePath),
+                  filePath: './' + path.relative(process.cwd(), filePath),
                   projectName: path.basename(file, '.json'),
                   lastModified: stats.mtime, // Last modified date
                   created: stats.birthtime, // Created date
