@@ -1,13 +1,14 @@
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-const BASE_URL = window.location.pathname;
+import basePath from './basePath';
+
 //save out the store to a json file that is saved to drive
 export const saveProject = async () => {
   const settingsStore = useSettingsStore.getState();
   const boundStore = useBoundStore.getState();
   const store = { boundStore, settingsStore };
   const storeString = JSON.stringify(store);
-  const response = await fetch(`${BASE_URL}api/projects/save`, {
+  const response = await fetch(`${basePath}api/projects/save`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ export const loadStoreImageSeperately = async () => {
         }
 
         try {
-          const response = await fetch(`${BASE_URL}api/projects/load`, {
+          const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
             body: formData, // Send the JSON file and images to the server
           });
@@ -121,7 +122,7 @@ export const loadStoreToServer = async () => {
         formData.append('file', file); // Append the ZIP file
 
         try {
-          const response = await fetch(`${BASE_URL}api/projects/load`, {
+          const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
             body: formData, // Send the ZIP file to the server
           });
@@ -143,13 +144,28 @@ export const loadStoreToServer = async () => {
   });
 };
 
+export const confirmStoreImport = async (confirm: boolean, tempId: string) => {
+  const response = await fetch(`${basePath}api/projects/confirm-import`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ tempId, confirm }), // New fields
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to confirm store import');
+  }
+  return await response.json(); // Return the response if needed
+};
+
 export const exportProject = () => {
   const settingsStore = useSettingsStore.getState();
   const boundStore = useBoundStore.getState();
   const store = { boundStore, settingsStore };
   const storeString = JSON.stringify(store);
   console.log('storeString', storeString);
-  fetch(`${BASE_URL}api/package`, {
+  fetch(`${basePath}api/package`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -178,15 +194,16 @@ export interface Project {
   created: string;
 }
 export const loadProjects = async () => {
-  const response = await fetch(`${BASE_URL}api/projects`);
+  const response = await fetch(`${basePath}api/projects`);
   const projects = await response.json();
   console.log('projects', projects);
   return projects;
 };
+
 export const loadProject = async (filePath: string) => {
   try {
-    console.log('filePath', `${BASE_URL}${filePath}`);
-    const response = await fetch(`${BASE_URL}${filePath}`);
+    // console.log('filePath', `/${filePath}`);
+    const response = await fetch(`${basePath}${filePath}`);
     const project = await response.json();
     return project;
   } catch (error) {
@@ -196,19 +213,23 @@ export const loadProject = async (filePath: string) => {
 };
 
 export const fetchGalleryImages = async () => {
-  const response = await fetch(`${BASE_URL}api/images`);
+  const response = await fetch(`${basePath}api/images`);
   if (!response.ok) {
     throw new Error('Error fetching gallery images');
   }
   const data = await response.json();
-  return data.images;
+  // remomve trailing slash from basePath
+  const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
+  return data.images.map(
+    (image: any) => `${basePathWithoutTrailingSlash}${image}`,
+  );
 };
 
 export const uploadImage = async (file: File) => {
   const formData = new FormData();
   formData.append('image', file); // Append the file
 
-  const response = await fetch(`${BASE_URL}api/upload`, {
+  const response = await fetch(`${basePath}api/upload`, {
     method: 'POST',
     body: formData, // Send formData
   });
@@ -216,5 +237,7 @@ export const uploadImage = async (file: File) => {
     throw new Error('Failed to save image');
   }
   const data = await response.json();
-  return data.filePath;
+  // console.log('data', data);
+  const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
+  return `${basePathWithoutTrailingSlash}${data.filePath}`;
 };

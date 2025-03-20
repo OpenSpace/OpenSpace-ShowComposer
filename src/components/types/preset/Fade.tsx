@@ -240,9 +240,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
 
-  useEffect(() => {
-    console.log('properties', properties);
-  }, [properties]);
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)

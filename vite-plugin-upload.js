@@ -39,7 +39,6 @@ export function viteUploadPlugin() {
             req.body = JSON.parse(body); // Parse the JSON string
             try {
               const jsonData = req.body;
-              console.log('JSON Data: ', jsonData);
               const projectName =
                 jsonData.settingsStore.projectName.replace(/ /g, '_') ||
                 'project';
@@ -121,7 +120,6 @@ export function viteUploadPlugin() {
           req.on('end', async () => {
             try {
               const projectData = JSON.parse(body); // Parse the JSON string
-              console.log('projectData', projectData);
               const projectName =
                 projectData.settingsStore.projectName.replace(/ /g, '_') ||
                 'project';
@@ -201,11 +199,8 @@ export function viteUploadPlugin() {
               }),
             );
           } else if (pathname == '/api/images') {
-            console.log('uploads path');
             const uploadsDir = path.resolve(__dirname, 'uploads');
-            console.log(uploadsDir);
             fs.readdir(uploadsDir, (err, files) => {
-              console.log(files);
               if (err) {
                 console.error('Error reading uploads directory:', err);
                 return res

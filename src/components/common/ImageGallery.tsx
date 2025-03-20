@@ -59,7 +59,6 @@ const ImageGallery: React.FC<GalleryProps> = ({
     const selectedFile: File | null = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       const imageUrl = URL.createObjectURL(selectedFile);
-      console.log('FROM HANDLE FILE CHANGE:', imageUrl);
       setSelectedImage(imageUrl);
       setUploadFile(selectedFile);
     }
@@ -69,6 +68,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const imagesToDisplay = images.slice(startIndex, endIndex);
+  console.log('imagesToDisplay', imagesToDisplay);
   // Modal component with pagination and image selection
   return (
     <>

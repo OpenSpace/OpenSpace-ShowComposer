@@ -46,19 +46,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   };
   useEffect(() => {
     if (file) {
-      console.log('SETTING ASYNC OPERATION');
       setAsyncPreSubmitOperation(async () => await saveImageToServer());
     }
   }, [file]);
   const saveImageToServer = useCallback(async () => {
-    console.log('SAVEING IMAGE TO SEVER');
     if (file === null) {
       return;
     }
     try {
       const filePath = await uploadImage(file);
       onChange(filePath);
-      console.log('Image saved successfully');
     } catch (error) {
       console.error('Failed to save image:', error);
     }

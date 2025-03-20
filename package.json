@@ -52,6 +52,7 @@
     "react-quill-new": "3.2.2",
     "react-resizable-panels": "2.0.20",
     "react-rnd": "10.4.11",
+    "react-router-dom": "7.4.0",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
     "uuid": "10.0.0",

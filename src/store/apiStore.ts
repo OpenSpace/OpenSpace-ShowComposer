@@ -120,7 +120,6 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties,
         }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
           flattenPropertyTree(value as PropertyOwner);
-        console.log('property', properties);
         usePropertyStore.getState().getActions();
         const Visibility = properties.find(
           (p) => p.uri === EnginePropertyVisibilityKey,
@@ -168,7 +167,6 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
           properties as Property[],
           'Number',
         );
-        console.log('numberProps', numberProps);
 
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {

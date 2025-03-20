@@ -1,4 +1,4 @@
-// import copyData from '../assets/copy.json';
+import basePath from './basePath';
 
 type CopyData = {
   [component: string]: {
@@ -8,7 +8,7 @@ type CopyData = {
 
 let typedCopyData: CopyData = {};
 const loadCopyData = async () => {
-  const response = await fetch('./copy.json');
+  const response = await fetch(`${basePath}copy.json`);
   if (response.ok) {
     typedCopyData = await response.json();
   } else {

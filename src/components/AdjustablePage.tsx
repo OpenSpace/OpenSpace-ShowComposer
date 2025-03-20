@@ -20,9 +20,7 @@ const AdjustablePage: React.FC = () => {
   );
 
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
-  useEffect(() => {
-    console.log('currentPageIndex', currentPageIndex);
-  }, [currentPageIndex]);
+
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
   const [isDragging, setIsDragging] = useState(false);
   const [locked, setLocked] = useState(true);

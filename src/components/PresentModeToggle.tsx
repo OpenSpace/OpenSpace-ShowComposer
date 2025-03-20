@@ -24,7 +24,7 @@ const PresentModeToggle = () => {
         togglePresentMode();
       }
     } else {
-      setPresentLocked(false);
+      // setPresentLocked(false);
     }
   }, [query, isPresentMode, togglePresentMode, setPresentLocked]);
   return isPresentLocked ? null : (

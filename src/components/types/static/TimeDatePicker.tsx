@@ -309,7 +309,6 @@ const TimeDatePicker = () => {
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta >= 0}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                console.log(e.target.valueAsNumber);
                 setNegativeDeltaTime(e.target.valueAsNumber);
               }}
               placeholder={`Negative ${stepSize} / second`}
@@ -327,7 +326,6 @@ const TimeDatePicker = () => {
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta < 0}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                console.log(e.target.valueAsNumber);
                 setPositiveDeltaTime(e.target.valueAsNumber);
               }}
               placeholder={`${stepSize} / second`}

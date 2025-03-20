@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { ComponentBase, LayoutBase, Page } from '@/store/ComponentTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { allComponentLabels } from '@/store/ComponentTypes';
+import { confirmStoreImport } from '@/utils/saveProject';
 interface ImportShowModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -44,8 +45,11 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
-  //   const components = useBoundStore((state) => state.components);
-  //
+  const closeWithConfirmation = async (confirm: boolean) => {
+    const response = await confirmStoreImport(confirm, store._tempImportId);
+    console.log('response', response);
+    onClose();
+  };
 
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();
   const setProjectSettings = useSettingsStore(
@@ -56,7 +60,6 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
   );
   useEffect(() => {
     if (store && store.boundStore) {
-      console.log('store that was loaded', store);
       const parsedPages = store.boundStore.pages.map(
         (page: any, index: number) => {
           return {
@@ -81,33 +84,28 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
         });
       });
     }
-    console.log(newSelectedPages);
     setSelectedPages(newSelectedPages);
   };
 
   const handlePageSelect = (page: SelectedPage) => {
     let newSelectedPages = [...selectedPages];
-    console.log(page);
     if (newSelectedPages.find((p) => p.id === page.id)) {
       newSelectedPages = newSelectedPages.filter((p) => p.id !== page.id);
     } else {
       newSelectedPages.push(page);
     }
-    console.log(newSelectedPages);
     setSelectedPages(newSelectedPages);
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     // Logic to import selected pages/components
-    console.log('Importing pages:', Array.from(selectedPages));
-
     useBoundStore.setState(store.boundStore);
     useSettingsStore.setState(store.settingsStore);
-    onClose();
+    await closeWithConfirmation(true);
+    // onClose();
   };
-  const handleImportToCurrentShow = () => {
-    console.log('Importing pages:', Array.from(selectedPages));
 
+  const handleImportToCurrentShow = async () => {
     const selectedComponents = new Set<ComponentBase>();
     const selectedPositions = new Set<Position>();
     const selectedLayouts = new Set<LayoutBase>();
@@ -119,8 +117,6 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
         (p: Page) => p.id === selectedPage.id,
       );
       idMap[page.id] = uuidv4();
-      console.log('idMap', idMap);
-      console.log('page', page);
       selectedFullPages.add(page);
       if (page) {
         // Add components from the selected page
@@ -157,7 +153,6 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       }
     });
 
-    console.log('idMap', idMap);
     // Function to replace old IDs with new IDs based on the idMap
     const replaceIdsInString = (items: any[]) => {
       const jsonString = JSON.stringify(items);
@@ -185,7 +180,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     addComponents(updatedComponents);
     addPositions(updatedPositions);
     addLayouts(updatedLayouts);
-    onClose();
+    await closeWithConfirmation(true);
   };
 
   const initialState = useSettingsStore((state) => ({
@@ -197,8 +192,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     projectDescription: '',
   }));
 
-  const handleImportToNewShow = () => {
-    console.log('Importing pages:', Array.from(selectedPages));
+  const handleImportToNewShow = async () => {
     const selectedComponents = new Set<ComponentBase>();
     const selectedPositions = new Set<Position>();
     const selectedLayouts = new Set<LayoutBase>();
@@ -208,7 +202,6 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       const page: Page = store.boundStore.pages.find(
         (p: Page) => p.id === selectedPage.id,
       );
-      console.log('page', page);
       selectedFullPages.add(page);
       if (page) {
         // Add components from the selected page
@@ -262,7 +255,8 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     });
     //open new project settings
 
-    onClose();
+    await closeWithConfirmation(true);
+    // onClose();
   };
 
   return (
@@ -354,7 +348,14 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
           </TableBody>
         </Table>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            onClick={async () => {
+              // onClose();
+              await closeWithConfirmation(false);
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction onClick={handleImportToNewShow}>
             Import Pages To New Show
           </AlertDialogAction>

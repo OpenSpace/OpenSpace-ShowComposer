@@ -111,7 +111,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const handleSubmit = useCallback(async () => {
     if (componentId) {
       if (asyncPreSubmitOperation) {
-        console.log('FROM HANDLE SUBMIT:', asyncPreSubmitOperation);
         await executeAndResetAsyncPreSubmitOperation();
         setAsyncOperationStatus(AsyncStatus.Pending);
         return; // Exit the current execution
@@ -162,7 +161,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             });
         }
       }
-      console.log('Closing modal');
       onClose();
     }
   }, [componentData, component, asyncPreSubmitOperation]);

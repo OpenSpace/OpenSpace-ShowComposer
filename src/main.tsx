@@ -1,13 +1,28 @@
-// import { StrictMode } from 'react';
+// // import { StrictMode } from 'react';
+// import ReactDOM from 'react-dom/client';
+// import App from './App';
+// import './index.css';
+
+// const rootElement = document.getElementById('root') as HTMLElement;
+// const root = ReactDOM.createRoot(rootElement);
+
+// root.render(
+//   // <StrictMode>
+//   <App />,
+//   // </StrictMode>,
+// );
+
+// import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
 const rootElement = document.getElementById('root') as HTMLElement;
 const root = ReactDOM.createRoot(rootElement);
-
 root.render(
-  // <StrictMode>
+  // <React.StrictMode>
+  // <BrowserRouter>
   <App />,
-  // </StrictMode>,
+  // </BrowserRouter>,
+  // </React.StrictMode>
 );

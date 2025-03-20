@@ -317,7 +317,8 @@
     "load_project": "Open Show",
     "load_project_description": "Choose a show to open.",
     "cancel": "Cancel",
-    "add_project": "Open Show"
+    "add_project": "Open Show",
+    "edit_project": "Edit Show"
   },
   "ConfirmationModal": {
     "ok": "OK"

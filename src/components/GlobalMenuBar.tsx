@@ -83,7 +83,6 @@ export function GlobalMenuBar() {
   const handleLoadStore = async () => {
     try {
       const store = await loadStoreToServer();
-      console.log('Loaded store:', store);
       setLoadedStore(store); // Store the loaded data
       setIsImportShowModalOpen(true); // Open the import modal
     } catch (error) {

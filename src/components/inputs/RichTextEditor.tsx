@@ -111,12 +111,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.root.innerHTML = content;
-      quillRef.current.root.addEventListener('blur', function () {
-        console.log('editor.root.innerHTML blur');
-      });
-      quillRef.current.root.addEventListener('focus', function () {
-        console.log('editor.root.innerHTML focus');
-      });
+
       // quillRef.current.root.blur();
       // quillRef.current.blur();
     }

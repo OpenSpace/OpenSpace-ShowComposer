@@ -108,9 +108,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     () => recordingState === SessionStateIdle,
     [recordingState],
   );
-  useEffect(() => {
-    console.log('fileList', fileList);
-  }, [fileList]);
+
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
       setLoop(true);

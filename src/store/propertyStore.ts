@@ -102,7 +102,6 @@ export const usePropertyStore = create<State>()(
                 subscription,
               };
               const testSetProperty = (propName: string, value: any) => {
-                console.log('testSetProperty', propName, value);
                 usePropertyStore
                   .getState()
                   .setProperty(propName, normalizeKeys(value));
@@ -115,7 +114,6 @@ export const usePropertyStore = create<State>()(
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription.iterator()) {
                   // throttledHandleUpdates(
-                  console.log('data', data);
                   testSetProperty(
                     name,
                     // data,
@@ -175,7 +173,7 @@ export const usePropertyStore = create<State>()(
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {
                   if (topicName == 'errorLog') {
-                    console.log('data', data);
+                    // console.log('data', data);
                   }
                   testSetProperty(
                     topicName,

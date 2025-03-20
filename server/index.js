@@ -29,7 +29,6 @@ app.use(express.static('../dist')); // Assuming 'dist' is your Vite build direct
 // Route for handling file uploads
 app.post('/upload', upload.single('image'), (req, res) => {
   // Handle the uploaded file here
-  console.log(req.file);
   const filePath = req.file.path;
   res.json({
     message: 'File uploaded successfully',

@@ -237,8 +237,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
 
   const addItem = (component: MultiOption['id']) => {
     const newComponent = copyComponent(component, true);
-    console.log('NEW: ', newComponent);
-    console.log('OLD: ', component);
+
     if (!newComponent) return;
     const newItem: MultiType = {
       id: newComponent,

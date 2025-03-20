@@ -62,9 +62,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     setOpen(false);
   };
   useEffect(() => {
-    console.log('connectionState in settings', connectionState);
     if (connectionState == ConnectionState.UNCONNECTED) {
-      console.log('connecting');
       connect();
     }
   }, [connectionState]);
@@ -160,12 +158,12 @@ const ConnectionStatus = () => {
   );
   // const connect = useOpenSpaceApiStore((state) => state.connect);
 
-  useEffect(() => {
-    console.log('connectionState', connectionState);
-    // if (connectionState === ConnectionState.UNCONNECTED) {
-    //   connect();
-    // }
-  }, [connectionState]);
+  // useEffect(() => {
+  //   console.log('connectionState', connectionState);
+  //   // if (connectionState === ConnectionState.UNCONNECTED) {
+  //   //   connect();
+  //   // }
+  // }, [connectionState]);
 
   function renderConnectionState(size: number) {
     switch (connectionState) {

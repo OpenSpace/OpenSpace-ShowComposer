@@ -60,7 +60,6 @@ const SelectionTool: React.FC = () => {
         rect.y < compRect.y + compRect.height &&
         rect.y + rect.height > compRect.y
       ) {
-        console.log('selecting', c);
         selectComponent(c);
       }
     });

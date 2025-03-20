@@ -31,9 +31,6 @@ const NewPageModal: React.FC<NewPageModalProps> = ({
     state.getPageById(state.currentPage),
   );
 
-  useEffect(() => {
-    console.log('currentPage', currentPage);
-  }, [currentPage]);
   const [pageName, setPageName] = useState<string>(
     newPage ? '' : currentPage?.name || '',
   );
