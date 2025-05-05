@@ -40,9 +40,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   return (
     <Select
       key={key}
-      value={
-        selected && selected?.length > 0 ? selected : undefined || undefined
-      }
+      value={selected && selected.length > 0 ? selected : undefined}
       onValueChange={(value: string) => {
         handleSelect(value);
         if (shouldClear) setKey(+new Date());

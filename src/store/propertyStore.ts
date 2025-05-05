@@ -27,6 +27,7 @@ interface State {
   sessionRecording: any;
   favorites: Array<any>;
   actions: Record<string, any>;
+  errorLog: Array<any>;
   setProperty: (name: string, value: any) => void;
   setProperties: (properties: Record<string, any>) => void;
   setFavorites: (favorites: Array<any>) => void;
@@ -51,6 +52,7 @@ export const usePropertyStore = create<State>()(
       topicSubscriptions: {}, // New topics state
       properties: {}, // New properties state
       time: {},
+      errorLog: [],
       sessionRecording: {},
       favorites: [],
       actions: {},
@@ -65,6 +67,11 @@ export const usePropertyStore = create<State>()(
               });
             } else if (name == 'sessionRecording') {
               state.sessionRecording = { ...state.sessionRecording, ...value };
+            } else if (name == 'errorLog') {
+              state.errorLog.push(value);
+              if (state.errorLog.length > 10) {
+                state.errorLog = state.errorLog.slice(-10);
+              }
             } else {
               state.properties[name] = { ...state.properties[name], ...value };
             }
@@ -173,7 +180,8 @@ export const usePropertyStore = create<State>()(
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {
                   if (topicName == 'errorLog') {
-                    // console.log('data', data);
+                    // console.log('errorLog', data);
+                    usePropertyStore.getState().setProperty('errorLog', data);
                   }
                   testSetProperty(
                     topicName,

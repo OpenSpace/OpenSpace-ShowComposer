@@ -432,7 +432,7 @@ export const createComponentSlice: ImmerStateCreator<
       y: 500,
       minWidth: 325,
       minHeight: 425,
-      width: 325,
+      width: 700,
       height: 425,
       minimized: true,
     });
