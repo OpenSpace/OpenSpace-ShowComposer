@@ -1,6 +1,6 @@
 ## Introduction
 
-Youth Learning Interface - Showbuilder project using the following frameworks/libraries:
+ShowComposer project using the following frameworks/libraries:
 
 - React
 - TypeScript
