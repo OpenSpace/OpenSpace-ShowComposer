@@ -2,12 +2,12 @@
 
 ShowComposer project using the following frameworks/libraries:
 
-- React
-- TypeScript
-- Vite
-- Zustand
-- Tailwind CSS
-- Multiple eslint & prettier plugins installed
+  - React
+  - TypeScript
+  - Vite
+  - Zustand
+  - Tailwind CSS
+  - Multiple eslint & prettier plugins installed
 
 ## Install
 
