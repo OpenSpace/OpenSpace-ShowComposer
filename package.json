@@ -53,7 +53,7 @@
     "react-quill-new": "3.2.2",
     "react-resizable-panels": "2.0.20",
     "react-rnd": "10.4.11",
-    "react-router-dom": "7.4.0",
+    "react-router-dom": "7.6.0",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
     "uuid": "10.0.0",
@@ -83,6 +83,6 @@
     "prettier-plugin-tailwindcss": "0.4.1",
     "tailwindcss": "3.4.1",
     "typescript": "5.5.4",
-    "vite": "5.2.12"
+    "vite": "5.4.19"
   }
 }
