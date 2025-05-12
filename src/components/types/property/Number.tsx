@@ -13,7 +13,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { formatName } from '@/utils/apiHelpers';
+import { formatName, Property } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
@@ -168,14 +168,14 @@ const NumberModal: React.FC<NumberModalProps> = ({
   const [exponent, setExponent] = useState<number>(component?.exponent || 1);
   useEffect(() => {
     const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData) return;
-    setMax(parseFloat(propertyData.description.AdditionalData.MaximumValue));
-    setMin(parseFloat(propertyData.description.AdditionalData.MinimumValue));
-    setStep(propertyData.description.AdditionalData.SteppingValue);
-    setExponent(propertyData.description.AdditionalData.Exponent);
+    if (!propertyData || !propertyData.metaData) return;
+    setMax(parseFloat(propertyData.metaData.additionalData.max));
+    setMin(parseFloat(propertyData.metaData.additionalData.min));
+    setStep(propertyData.metaData.additionalData.step);
+    setExponent(propertyData.metaData.additionalData.exponent);
     if (!lockName) {
       setGuiName(formatName(propertyData.uri));
-      setGuiDescription(propertyData.description.description);
+      setGuiDescription(propertyData.metaData.description);
     }
   }, [property]);
 
@@ -211,7 +211,9 @@ const NumberModal: React.FC<NumberModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].type === 'Number' && !a.includes('.Fade'))
+    .filter(
+      (a) => properties[a].metaData?.type === 'Number' && !a.includes('.Fade'),
+    )
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

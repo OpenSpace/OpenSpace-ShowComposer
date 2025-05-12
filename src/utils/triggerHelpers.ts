@@ -52,7 +52,7 @@ const triggerBool = async (
       luaApi.setPropertyValueSingle(property, false);
       break;
     case 'toggle': {
-      const value = await luaApi.getPropertyValue(property);
+      const value = await luaApi.propertyValue(property);
       luaApi.setPropertyValueSingle(property, !value[1]);
       break;
     }

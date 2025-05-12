@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonLabel from '@/components/common/ButtonLabel';
-import { formatName } from '@/utils/apiHelpers';
+import { formatName, Property } from '@/utils/apiHelpers';
 import { capitalize } from 'lodash';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
@@ -142,10 +142,12 @@ const BoolModal: React.FC<BoolModalProps> = ({
   );
   useEffect(() => {
     // console.log(properties);
-    const propertyData = usePropertyStore.getState().properties[property];
+    const propertyData = usePropertyStore.getState().properties[
+      property
+    ] as Property;
     if (!propertyData || lockName) return;
     setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
-    setGuiDescription(propertyData.description.description);
+    setGuiDescription(propertyData.metaData.description);
   }, [property, action]);
 
   useEffect(() => {
@@ -172,7 +174,7 @@ const BoolModal: React.FC<BoolModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].type === 'Bool')
+    .filter((a) => properties[a].metaData?.type === 'Bool')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

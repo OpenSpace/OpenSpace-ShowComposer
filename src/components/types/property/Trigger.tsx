@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import ButtonLabel from '@/components/common/ButtonLabel';
-import { formatName } from '@/utils/apiHelpers';
+import { formatName, Property } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
@@ -118,10 +118,12 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   );
 
   useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property];
+    const propertyData = usePropertyStore.getState().properties[
+      property
+    ] as Property;
     if (!propertyData || lockName) return;
     setGuiName(formatName(propertyData.uri));
-    setGuiDescription(propertyData.description.description);
+    setGuiDescription(propertyData.metaData.description);
   }, [property]);
 
   useEffect(() => {
@@ -146,7 +148,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].type === 'Trigger')
+    .filter((a) => properties[a].metaData?.type === 'Trigger')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

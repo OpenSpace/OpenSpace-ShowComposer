@@ -20,6 +20,7 @@ import {
   getActionSceneNodes,
   getRenderables,
   isPropertyVisible,
+  isPropertyOwnerVisible,
 } from '@/utils/apiHelpers';
 import { useSettingsStore } from './settingsStore';
 
@@ -118,7 +119,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         const {
           propertyOwners,
           properties,
-        }: { propertyOwners: PropertyOwner[]; properties: PropertyOwner[] } =
+        }: { propertyOwners: PropertyOwner[]; properties: Property[] } =
           flattenPropertyTree(value as PropertyOwner);
         usePropertyStore.getState().getActions();
         const Visibility = properties.find(
@@ -136,10 +137,10 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
 
         // Filter the properties based on the visibility
         const filteredProperties = properties.filter((p) =>
-          isPropertyVisible(p, Visibility as PropertyOwner),
+          isPropertyVisible(p, Visibility),
         );
         const filteredPropertyOwners = propertyOwners.filter((p) =>
-          isPropertyVisible(p, Visibility as PropertyOwner),
+          isPropertyOwnerVisible(p, Visibility),
         );
 
         // Find the favorites
