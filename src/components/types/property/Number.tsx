@@ -13,7 +13,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { formatName, Property } from '@/utils/apiHelpers';
+import { formatName } from '@/utils/apiHelpers';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
