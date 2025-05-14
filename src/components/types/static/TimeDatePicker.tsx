@@ -119,15 +119,15 @@ const TimeDatePicker = () => {
   const prevDeltaTimeStep = usePropertyStore((state) => state.time?.prevStep);
   function setNextDeltaTimeStep() {
     updateDeltaTime.cancel();
-    luaApi.time.interpolateNextDeltaTimeStep();
+    luaApi?.time.interpolateNextDeltaTimeStep();
   }
   function setPrevDeltaTimeStep() {
     updateDeltaTime.cancel();
-    luaApi.time.interpolatePreviousDeltaTimeStep();
+    luaApi?.time.interpolatePreviousDeltaTimeStep();
   }
   function togglePause() {
     setPaused((paused: boolean) => !paused);
-    luaApi.time.togglePause();
+    luaApi?.time.togglePause();
   }
   useEffect(() => {
     setPaused(isPaused);
@@ -138,9 +138,9 @@ const TimeDatePicker = () => {
     // is given.
     try {
       const fixedTimeString = newTime.toJSON().replace('Z', '');
-      luaApi.time.setTime(fixedTimeString);
+      luaApi?.time.setTime(fixedTimeString);
     } catch {
-      luaApi.time.setTime(time);
+      luaApi?.time.setTime(time);
     }
   }
   function setDateRelative(delta: number) {
@@ -151,17 +151,17 @@ const TimeDatePicker = () => {
       // ISO 8601-style time zones (the Z). It does, however, always assume that UTC
       // is given.
       const fixedTimeString = newTime.toJSON().replace('Z', '');
-      luaApi.time.setTime(fixedTimeString);
+      luaApi?.time.setTime(fixedTimeString);
     } catch {
-      luaApi.time.setTime(time);
+      luaApi?.time.setTime(time);
     }
   }
   function interpolateDate(newTime: Date) {
     const fixedTimeString = newTime.toJSON().replace('Z', '');
-    luaApi.time.interpolateTime(fixedTimeString);
+    luaApi?.time.interpolateTime(fixedTimeString);
   }
   function interpolateDateRelative(delta: number) {
-    luaApi.time.interpolateTimeRelative(delta);
+    luaApi?.time.interpolateTimeRelative(delta);
   }
   function changeDate(event // useLock: boolean,
   : {
@@ -186,7 +186,7 @@ const TimeDatePicker = () => {
     }
   }
   function realtime() {
-    luaApi.time.interpolateDeltaTime(1);
+    luaApi?.time.interpolateDeltaTime(1);
   }
   function now() {
     setDate(new Date());

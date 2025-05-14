@@ -23,7 +23,6 @@ export const SessionStatePaused = 'playing-paused';
 
 const SessionPanel = () => {
   const [useTextFormat, _setUseTextFormat] = useState(false);
-  const [forceTime, setForceTime] = useState(true);
   const [filenameRecording, setFilenameRecording] = useState('');
   const [filenamePlayback, setFilenamePlayback] = useState<string>('');
   const [shouldOutputFrames, setShouldOutputFrames] = useState(false);
@@ -48,12 +47,14 @@ const SessionPanel = () => {
   const connectionState = useOpenSpaceApiStore(
     (state) => state.connectionState,
   );
+
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   //   const refreshTopic = usePropertyStore(state => state.refreshTopic);
   const unsubscribeFromTopic = usePropertyStore(
     (state) => state.unsubscribeFromTopic,
   );
+
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
     subscribeToTopic('sessionRecording', 0, ['state', 'files']);
@@ -61,10 +62,12 @@ const SessionPanel = () => {
       unsubscribeFromTopic('sessionRecording');
     };
   }, [connectionState]);
+
   const isIdle = useMemo(
     () => recordingState === SessionStateIdle,
     [recordingState],
   );
+
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
       setLoopPlayback(true);
@@ -73,6 +76,7 @@ const SessionPanel = () => {
       setLoopPlayback(newLoopPlayback);
     }
   }
+
   function onShouldUpdateFramesChange(newValue: boolean) {
     if (newValue) {
       setLoopPlayback(false);
@@ -81,42 +85,41 @@ const SessionPanel = () => {
       setShouldOutputFrames(newValue);
     }
   }
+
   function updateRecordingFilename(evt: React.ChangeEvent<HTMLInputElement>) {
     setFilenameRecording(evt.target.value);
   }
+
   function startRecording() {
-    if (useTextFormat) {
-      luaApi.sessionRecording.startRecordingAscii(filenameRecording);
-    } else {
-      // Binary
-      luaApi.sessionRecording.startRecording(filenameRecording);
-    }
+    luaApi?.sessionRecording.startRecording();
   }
+
   function toggleRecording() {
     if (isIdle) {
       startRecording();
     } else {
-      luaApi.sessionRecording.stopRecording();
+      const format = useTextFormat ? 'Ascii' : 'Binary';
+      luaApi?.sessionRecording.stopRecording(filenameRecording, format);
     }
   }
+
   function startPlayback() {
     if (shouldOutputFrames) {
-      luaApi.sessionRecording.enableTakeScreenShotDuringPlayback(
-        outputFramerate,
-      );
-    }
-    if (forceTime) {
-      luaApi.sessionRecording.startPlayback(filenamePlayback, loopPlayback);
-    } else {
-      luaApi.sessionRecording.startPlaybackRecordedTime(
+      luaApi?.sessionRecording.startPlayback(
         filenamePlayback,
         loopPlayback,
+        true,
+        outputFramerate,
       );
+    } else {
+      luaApi?.sessionRecording.startPlayback(filenamePlayback, loopPlayback);
     }
   }
+
   function stopPlayback() {
-    luaApi.sessionRecording.stopPlayback();
+    luaApi?.sessionRecording.stopPlayback();
   }
+
   function togglePlayback() {
     if (isIdle) {
       startPlayback();
@@ -124,8 +127,9 @@ const SessionPanel = () => {
       stopPlayback();
     }
   }
+
   function togglePlaybackPaused() {
-    luaApi.sessionRecording.togglePlaybackPause();
+    luaApi?.sessionRecording.togglePlaybackPause();
   }
   //   function refreshPlaybackFilesList() {
   //     refreshTopic('sessionRecording', ['state', 'files']);
@@ -137,6 +141,7 @@ const SessionPanel = () => {
   const textFormatLabel = (
     <span>{getCopy('SessionPanel', 'text_file_format')}</span>
   );
+
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
       case SessionStateIdle:
@@ -219,6 +224,7 @@ const SessionPanel = () => {
         return null;
     }
   }, [recordingState, filenameRecording, filenamePlayback]);
+
   return (
     <div className="m-2 flex">
       <div className="grid-rows grid gap-3">
@@ -271,18 +277,6 @@ const SessionPanel = () => {
           <div className="grid gap-2">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="timechange"
-                checked={forceTime}
-                onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate') setForceTime(checked);
-                }}
-              />
-              <Label htmlFor="timechange">
-                {getCopy('SessionPanel', 'force_time_change_to_recorded_time')}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
                 id="loop"
                 checked={loopPlayback}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
@@ -328,4 +322,5 @@ const SessionPanel = () => {
     </div>
   );
 };
+
 export default SessionPanel;

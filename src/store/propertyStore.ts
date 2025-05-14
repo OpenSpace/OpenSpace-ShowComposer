@@ -6,7 +6,7 @@ import { useOpenSpaceApiStore } from './apiStore';
 import { throttle } from 'lodash';
 import { updateTime } from '@/utils/time';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
-import { normalizeKeys } from '@/utils/apiHelpers';
+import { normalizeKeys, PropertyOwner } from '@/utils/apiHelpers';
 
 type subscription = {
   count: number;
@@ -25,12 +25,12 @@ interface State {
   properties: Record<string, any>;
   time: any;
   sessionRecording: any;
-  favorites: Array<any>;
+  favorites: Array<PropertyOwner>;
   actions: Record<string, any>;
   errorLog: Array<any>;
   setProperty: (name: string, value: any) => void;
   setProperties: (properties: Record<string, any>) => void;
-  setFavorites: (favorites: Array<any>) => void;
+  setFavorites: (favorites: Array<PropertyOwner>) => void;
   refreshTopic: (name: string, properties?: string[]) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
@@ -42,6 +42,7 @@ interface State {
   ) => void;
   unsubscribeFromTopic: (topicName: string) => void;
   connectToTopic: (topicName: string) => void;
+  disconnectFromTopic: (topicName: string) => void;
   getActions: () => void;
 }
 
@@ -202,7 +203,7 @@ export const usePropertyStore = create<State>()(
             if (!state.topicSubscriptions[topicName]) {
               const topic = useOpenSpaceApiStore
                 .getState()
-                .luaApi.startTopic('sessionRecording', {
+                .apiInstance?.startTopic('sessionRecording', {
                   event: 'refresh',
                   properties: properties,
                 });
@@ -256,6 +257,25 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/connect',
         ),
+      disconnectFromTopic: (topicName: string) =>
+        set(
+          (state) => {
+            if (!state.topicSubscriptions[topicName]) return;
+            if (state.topicSubscriptions[topicName].count > 1) {
+              state.topicSubscriptions[topicName].count -= 1;
+            } else {
+              // console.log(state.topicSubscriptions[topicName].subscription);
+              // console.log(state.topicSubscriptions[topicName]);
+              const apiDisconnect =
+                useOpenSpaceApiStore.getState().disconnectFromTopic;
+              apiDisconnect(state.topicSubscriptions[topicName].subscription);
+              console.log('Unsubscribed from topic: ', topicName);
+              delete state.topicSubscriptions[topicName];
+            }
+          },
+          false,
+          'topic/disconnect',
+        ),
       unsubscribeFromTopic: (topicName: string) =>
         set(
           (state) => {
@@ -279,8 +299,8 @@ export const usePropertyStore = create<State>()(
         (async () => {
           const actions = await useOpenSpaceApiStore
             .getState()
-            .luaApi.action.actions();
-
+            .luaApi?.action.actions();
+          if (!actions) return;
           const reducedActions = Object.values(actions['1']).reduce(
             (acc: Record<string, any>, action: any) => {
               const newKey = action.Name.concat(` ${action.GuiPath}`);

@@ -67,8 +67,8 @@ const FlightControlPanel = () => {
     (state) => state.unsubscribeFromProperty,
   );
   const connectToTopic = usePropertyStore((state) => state.connectToTopic);
-  const unsubscribeFromTopic = usePropertyStore(
-    (state) => state.unsubscribeFromTopic,
+  const disconnectFromTopic = usePropertyStore(
+    (state) => state.disconnectFromTopic,
   );
   // const dispatch = useDispatch();
 
@@ -83,7 +83,9 @@ const FlightControlPanel = () => {
     subscribeToProperty(ZoomFrictionKey);
     subscribeToProperty(RollFrictionKey);
     return () => {
-      unsubscribeFromTopic('flightcontroller');
+      if (connectionState != ConnectionState.CONNECTED) return;
+
+      disconnectFromTopic('flightcontroller');
       unsubscribeFromProperty(RotationalFrictionKey);
       unsubscribeFromProperty(ZoomFrictionKey);
       unsubscribeFromProperty(RollFrictionKey);
@@ -91,19 +93,20 @@ const FlightControlPanel = () => {
     // subscribeToTopic('camera', 500);
   }, [connectionState]);
   function sendFlightControlInput(payload: InputStatePayload) {
+    console.log(payload);
     // console.log('Sending flight control input');
     // console.log(flightControlTopic);
     flightControlTopic && flightControlTopic.talk(payload);
   }
   function toggleRotation() {
     // console.log('IS THIS HAPPENING? ');
-    luaApi.setPropertyValue(RotationalFrictionKey, !rotationFriction);
+    luaApi?.setPropertyValue(RotationalFrictionKey, !rotationFriction);
   }
   function toggleZoom() {
-    luaApi.setPropertyValue(ZoomFrictionKey, !zoomFriction);
+    luaApi?.setPropertyValue(ZoomFrictionKey, !zoomFriction);
   }
   function toggleRoll() {
-    luaApi.setPropertyValue(RollFrictionKey, !rollFriction);
+    luaApi?.setPropertyValue(RollFrictionKey, !rollFriction);
   }
   const infoBoxContent = (
     <>

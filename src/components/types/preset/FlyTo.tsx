@@ -47,18 +47,19 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     if (luaApi) {
       updateComponent(component.id, {
         triggerAction: () => {
-          component.geo
-            ? luaApi.globebrowsing.flyToGeo(
-                component.target,
-                component.lat,
-                component.long,
-                component.alt,
-                component.intDuration,
-              )
-            : luaApi.pathnavigation.flyTo(
-                component.target,
-                component.intDuration,
-              );
+          const { target, geo, lat, long, alt, intDuration } = component;
+          if (!target) {
+            return;
+          }
+
+          if (geo) {
+            if (lat === undefined || long === undefined || alt === undefined) {
+              return;
+            }
+            luaApi.navigation.flyToGeo(target, lat, long, alt, intDuration);
+          } else {
+            luaApi.navigation.flyTo(target, component.intDuration);
+          }
         },
         isDisabled: false,
       });
@@ -145,8 +146,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     setOptions(
       favorites.map((favorite) => {
         return {
-          name: favorite.name,
-          shouldGeo: !favorite.tags.includes('earth_satellite'),
+          name: favorite.guiName,
+          shouldGeo: !favorite.tag.includes('earth_satellite'),
         };
       }),
     );

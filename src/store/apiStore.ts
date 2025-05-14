@@ -44,7 +44,7 @@ export const EngineFadeDurationKey = 'OpenSpaceEngine.FadeDuration';
 
 interface OpenSpaceApiState {
   apiInstance: null | OSApiClass; // Consider using a more specific type if possible
-  luaApi: any; // Consider using a more specific type if possible
+  luaApi: OpenSpace.openspace | undefined; // Consider using a more specific type if possible
   error: string | null;
   connectionState: ConnectionState;
   cancelReconnect: boolean;
@@ -52,7 +52,7 @@ interface OpenSpaceApiState {
   connect: () => void;
   disconnect: () => void;
   forceRefresh: () => void;
-  setLuaApi: (luaApi: any) => void;
+  setLuaApi: (luaApi: OpenSpace.openspace) => void;
   setError: (error: string) => void;
   setConnectionState: (state: ConnectionState) => void;
   subscribeToProperty: (property: string) => Topic | null; // Define parameters as needed
@@ -66,13 +66,14 @@ interface OpenSpaceApiState {
   connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
   // subscribeToSessionRecording: () => Topic | null;
   // unsubscribeFromSessionRecording: (topic: Topic) => void;
+  disconnectFromTopic: (topic: Topic) => void;
 }
 
 let reconnectTimeout: NodeJS.Timeout | null;
 
 export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   apiInstance: null,
-  luaApi: null,
+  luaApi: undefined,
   error: null,
   cancelReconnect: false,
   // reconnectTimeout: null,
@@ -195,7 +196,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       }
 
       set({
-        luaApi: null,
+        luaApi: undefined,
         connectionState: ConnectionState.UNCONNECTED,
       });
     });
@@ -208,7 +209,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
     set({
       // // reconnectTimeout: newTimeout,
-      // luaApi: null,
+      luaApi: undefined,
       connectionState: ConnectionState.UNCONNECTED,
     });
   },
@@ -290,6 +291,14 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.talk({
       event: 'stop_subscription',
+    });
+    topic.cancel();
+  },
+  disconnectFromTopic: (topic: Topic) => {
+    const { connectionState, apiInstance } = get();
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
+    topic.talk({
+      type: 'disconnect',
     });
     topic.cancel();
   },

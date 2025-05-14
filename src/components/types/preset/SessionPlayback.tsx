@@ -59,9 +59,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   }, [connectionState]);
   const [file, setFile] = useState<string>(component?.file || '');
   const [loop, setLoop] = useState<boolean>(component?.loop || false);
-  const [forceTime, setForceTime] = useState<boolean>(
-    component?.forceTime || false,
-  );
+
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(
     component?.lockName || false,
@@ -86,7 +84,6 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     handleComponentData({
       file,
       loop,
-      forceTime,
       lockName,
       gui_name,
       gui_description,
@@ -96,7 +93,6 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   }, [
     file,
     loop,
-    forceTime,
     lockName,
     gui_name,
     gui_description,
@@ -118,14 +114,10 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     }
   }
   function startPlayback() {
-    if (forceTime) {
-      luaApi.sessionRecording.startPlayback(file, loop);
-    } else {
-      luaApi.sessionRecording.startPlaybackRecordedTime(file, loop);
-    }
+    luaApi?.sessionRecording.startPlayback(file, loop);
   }
   function stopPlayback() {
-    luaApi.sessionRecording.stopPlayback();
+    luaApi?.sessionRecording.stopPlayback();
   }
   function togglePlayback() {
     if (isIdle) {
@@ -135,7 +127,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     }
   }
   function togglePlaybackPaused() {
-    luaApi.sessionRecording.togglePlaybackPause();
+    luaApi?.sessionRecording.togglePlaybackPause();
   }
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
@@ -216,21 +208,6 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             {getCopy('SessionPlayback', 'play_session')}
           </Label>
           <div className="grid gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="timechange"
-                checked={forceTime}
-                onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate') setForceTime(checked);
-                }}
-              />
-              <Label htmlFor="timechange">
-                {getCopy(
-                  'SessionPlayback',
-                  'force_time_change_to_recorded_time',
-                )}
-              </Label>
-            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="loop"
@@ -318,7 +295,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
   component,
   shouldRender = true,
 }) => {
-  const { file, loop, forceTime, gui_name, gui_description } = component;
+  const { file, loop, gui_name, gui_description } = component;
   const recordingState = usePropertyStore(
     (state) => state.sessionRecording.state || SessionStateIdle,
   );
@@ -344,14 +321,10 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     [recordingState],
   );
   function startPlayback() {
-    if (forceTime) {
-      luaApi.sessionRecording.startPlayback(file, loop);
-    } else {
-      luaApi.sessionRecording.startPlaybackRecordedTime(file, loop);
-    }
+    luaApi?.sessionRecording.startPlayback(file, loop);
   }
   function stopPlayback() {
-    luaApi.sessionRecording.stopPlayback();
+    luaApi?.sessionRecording.stopPlayback();
   }
   function togglePlayback() {
     if (isIdle) {
@@ -361,7 +334,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     }
   }
   function togglePlaybackPaused() {
-    luaApi.sessionRecording.togglePlaybackPause();
+    luaApi?.sessionRecording.togglePlaybackPause();
   }
   // function refreshPlaybackFilesList() {
   //   refreshTopic('sessionRecording', ['state', 'files']);
@@ -380,7 +353,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
         isDisabled: true,
       });
     }
-  }, [luaApi, file, loop, forceTime, isIdle]);
+  }, [luaApi, file, loop, isIdle]);
 
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {

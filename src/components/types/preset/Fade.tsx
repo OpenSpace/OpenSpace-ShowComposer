@@ -49,12 +49,15 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({
     return state.properties[component.property];
   });
   const fadeProperty = usePropertyStore((state) => {
-    return state.properties[component.property.replace('.Opacity', '.Fade')];
+    const uri = component?.property?.replace('.Opacity', '.Fade');
+    return uri ? state.properties[uri] : 0;
   });
 
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     console.log('Subscribing to property', component.property);
+    const uri = component?.property?.replace('.Opacity', '.Fade');
+    if (!uri) return;
     subscribeToProperty(component.property.replace('.Opacity', '.Fade'), 0);
     return () => {
       unsubscribeFromProperty(component.property.replace('.Opacity', '.Fade'));

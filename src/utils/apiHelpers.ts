@@ -82,7 +82,9 @@ export const flattenPropertyTree = (
 //   return propertyOwners.find((p) => p.uri === uri);
 // };
 
-export const findFavorites = (propertyOwners: PropertyOwner[]) => {
+export const findFavorites = (
+  propertyOwners: PropertyOwner[],
+): PropertyOwner[] => {
   function hasInterestingTag(uri: string): boolean {
     let owner = propertyOwners.find((p: PropertyOwner) => p.uri === uri);
     if (!owner) {
@@ -98,12 +100,10 @@ export const findFavorites = (propertyOwners: PropertyOwner[]) => {
     return [];
   }
 
-  const uris: string[] = scene?.subowners.map((owner) => owner.uri);
-  const urisWithTags = uris?.filter((uri) => hasInterestingTag(uri));
-  const favorites = urisWithTags.map((uri) => ({
-    ...propertyOwners.find((p) => p.uri === uri),
-    key: uri,
-  }));
+  const favorites = scene.subowners.filter((owner) =>
+    hasInterestingTag(owner.uri),
+  );
+
   return favorites;
 };
 

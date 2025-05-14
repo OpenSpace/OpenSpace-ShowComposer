@@ -111,7 +111,7 @@ async function jumpToTime(
   const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
   if (fadeScene && diffBiggerThanADay && interpolate) {
     const promise = new Promise((resolve) => {
-      luaApi.setPropertyValueSingle(
+      luaApi?.setPropertyValueSingle(
         'RenderEngine.BlackoutFactor',
         0,
         fadeTime / 2.0,
@@ -120,17 +120,20 @@ async function jumpToTime(
       setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
     });
     await promise;
-    luaApi.time.setTime(newTime);
-    luaApi.setPropertyValueSingle(
+    const fixedTimeString = newTime.toJSON().replace('Z', '');
+    luaApi?.time.setTime(fixedTimeString);
+    luaApi?.setPropertyValueSingle(
       'RenderEngine.BlackoutFactor',
       1,
       fadeTime / 2.0,
       'QuadraticEaseIn',
     );
   } else if (!interpolate) {
-    luaApi.time.setTime(newTime);
+    const fixedTimeString = newTime.toJSON().replace('Z', '');
+    luaApi?.time.setTime(fixedTimeString);
   } else {
-    luaApi.time.interpolateTime(newTime, fadeTime);
+    const fixedTimeString = newTime.toJSON().replace('Z', '');
+    luaApi?.time.interpolateTime(fixedTimeString, fadeTime);
   }
 }
 

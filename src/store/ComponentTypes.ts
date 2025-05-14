@@ -113,7 +113,6 @@ export interface SessionPlaybackComponent extends ComponentBase {
   type: 'sessionplayback';
   file: string;
   loop: boolean;
-  forceTime: boolean;
   backgroundImage: string;
   triggerAction: () => void;
 }

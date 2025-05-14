@@ -18,11 +18,14 @@ import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
+import { NavigationState } from '@/types/types';
+
 interface SetNavModalProps {
   component: SetNavComponent | null;
   handleComponentData: (data: Partial<SetNavComponent>) => void;
   isOpen: boolean;
 }
+
 const SetNavModal: React.FC<SetNavModalProps> = ({
   component,
   handleComponentData,
@@ -109,14 +112,15 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
 
   const getNavigationState = async () => {
     if (!luaApi) return;
-    const navState = await luaApi.navigation.getNavigationState();
-    setNavigationState(navState['1']);
+    const navState =
+      (await luaApi.navigation.getNavigationState()) as NavigationState;
+    setNavigationState(navState);
     setCompontentTime(time);
     if (!lockName) {
       setGuiName(
         `${
           mode.charAt(0).toUpperCase() + mode.slice(1)
-        } to Navigation State : ${navState['1'].Anchor}`,
+        } to Navigation State : ${navState.Anchor}`,
       );
     }
   };
