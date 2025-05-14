@@ -1,23 +1,20 @@
-import { Button } from '@/components/ui/button';
-import { getCopy } from '@/utils/copyHelpers';
+import React, { useEffect,useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import Fuse from 'fuse.js';
+import { Check, ChevronsUpDown } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandList
 } from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import React, { useRef, useState, useEffect } from 'react';
+import { getCopy } from '@/utils/copyHelpers';
 type Option = {
   value: string;
   label: string;
@@ -36,7 +33,7 @@ const breakAndColorString = (str: string, delimiter: string) => {
     'text-slate-950 dark:text-slate-50',
     'text-slate-700 dark:text-slate-300',
     'text-slate-600 dark:text-slate-400',
-    'text-slate-500 dark:text-slate-500',
+    'text-slate-500 dark:text-slate-500'
   ];
   const segments = str.split(delimiter);
   return segments.flatMap((segment, index) => [
@@ -53,7 +50,7 @@ const breakAndColorString = (str: string, delimiter: string) => {
       >
         {delimiter}
       </span>
-    ),
+    )
   ]);
 };
 const VirtualizedCommand = ({
@@ -63,7 +60,7 @@ const VirtualizedCommand = ({
   selectedOption = '',
   onSelectOption,
   presets = [],
-  delimiter = '>',
+  delimiter = '>'
 }: VirtualizedCommandProps) => {
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
   const parentRef = useRef(null);
@@ -73,17 +70,17 @@ const VirtualizedCommand = ({
     count: filteredOptions.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 45,
-    overscan: 5,
+    overscan: 5
   });
   const focusElement = (index: number) => {
     virtualizer.scrollToIndex(index, {
-      align: 'start',
+      align: 'start'
     });
   };
   useEffect(() => {
     if (selectedOption && selectedOption !== '') {
       const index = filteredOptions.findIndex(
-        (option) => option.value === selectedOption,
+        (option) => option.value === selectedOption
       );
       setTimeout(() => {
         focusElement(index);
@@ -96,7 +93,7 @@ const VirtualizedCommand = ({
   const fuse = new Fuse(options, {
     keys: ['value'],
     // Specify the keys to search in
-    threshold: 0.5, // Adjust the threshold for fuzzy matching
+    threshold: 0.5 // Adjust the threshold for fuzzy matching
   });
 
   const handleSearch = (search: string) => {
@@ -141,15 +138,13 @@ const VirtualizedCommand = ({
         placeholder={placeholder}
       />
 
-      <CommandEmpty>
-        {getCopy('VirtualizedCombobox', 'no_item_found.')}
-      </CommandEmpty>
+      <CommandEmpty>{getCopy('VirtualizedCombobox', 'no_item_found.')}</CommandEmpty>
       <CommandList>
         <div
           style={{
             // height: `${virtualizer.getTotalSize()}px`,
             width: '100%',
-            position: 'relative',
+            position: 'relative'
           }}
         >
           <CommandGroup>
@@ -162,15 +157,13 @@ const VirtualizedCommand = ({
                     onSelectOption && onSelectOption(value);
                   }}
                   style={{
-                    height: '45px',
+                    height: '45px'
                   }}
                 >
                   <Check
                     className={cn(
                       'mr-2 h-4 w-4',
-                      selectedOption === preset.value
-                        ? 'opacity-100'
-                        : 'opacity-0',
+                      selectedOption === preset.value ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                   {preset.label}
@@ -185,7 +178,7 @@ const VirtualizedCommand = ({
             style={{
               height: `${virtualizer.getTotalSize()}px`,
               width: '100%',
-              position: 'relative',
+              position: 'relative'
             }}
           >
             <CommandGroup
@@ -193,21 +186,21 @@ const VirtualizedCommand = ({
               style={{
                 // maxHeight: height,
                 width: 'inherit',
-                overflow: 'auto',
+                overflow: 'auto'
               }}
             >
               {virtualizer.getVirtualItems().map((virtualOption) => (
                 <CommandItem
                   // data-index={virtual÷åOption.index}
                   // ref={virtualizer.measureElement}
-                  className="w-max items-center"
+                  className={"w-max items-center"}
                   style={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     minWidth: width,
                     height: `${virtualOption.size}px`,
-                    transform: `translateY(${virtualOption.start}px)`,
+                    transform: `translateY(${virtualOption.start}px)`
                   }}
                   key={virtualOption.key}
                   // key={filteredOptions[virtualOption.index].value}
@@ -219,16 +212,15 @@ const VirtualizedCommand = ({
                   <Check
                     className={cn(
                       'mr-2 !h-4 !w-4',
-                      selectedOption ===
-                        filteredOptions[virtualOption.index].value
+                      selectedOption === filteredOptions[virtualOption.index].value
                         ? 'opacity-100'
-                        : 'opacity-0',
+                        : 'opacity-0'
                     )}
                   />
                   <span>
                     {breakAndColorString(
                       filteredOptions[virtualOption.index].label,
-                      delimiter,
+                      delimiter
                     )}
                   </span>
                 </CommandItem>
@@ -260,19 +252,19 @@ export function VirtualizedCombobox({
   delimiter = '>',
   // height = '300px',
 
-  presets = null,
+  presets = null
 }: VirtualizedComboboxProps) {
   const [open, setOpen] = useState<boolean>(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="overflow-hidden">
+      <PopoverTrigger asChild className={"overflow-hidden"}>
         <Button
-          variant="outline"
-          role="combobox"
+          variant={"outline"}
+          role={"combobox"}
           aria-expanded={open}
-          className="relative justify-between"
+          className={"relative justify-between"}
           style={{
-            width: width,
+            width: width
           }}
         >
           <span>
@@ -280,7 +272,7 @@ export function VirtualizedCombobox({
               selectedOption
                 ? options.find((option) => option === selectedOption) ?? ''
                 : searchPlaceholder,
-              delimiter,
+              delimiter
             )}
           </span>
           <ChevronsUpDown
@@ -289,16 +281,16 @@ export function VirtualizedCombobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className=" p-0"
+        className={" p-0"}
         style={{
-          width: width,
+          width: width
         }}
       >
         <VirtualizedCommand
           width={width}
           options={options.map((option) => ({
             value: option,
-            label: option,
+            label: option
           }))}
           placeholder={searchPlaceholder}
           selectedOption={selectedOption}

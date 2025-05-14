@@ -11,7 +11,7 @@ const PropertyVisibilityNumber = {
   AdvancedUser: 3,
   User: 2,
   NoviceUser: 1,
-  Always: 0,
+  Always: 0
 };
 
 type PropertyVisibility = keyof typeof PropertyVisibilityNumber;
@@ -40,7 +40,7 @@ export interface PropertyOwner {
 
 export const flattenPropertyTree = (
   propertyOwner: PropertyOwner,
-  baseUri?: string | null,
+  baseUri?: string | null
 ): {
   propertyOwners: PropertyOwner[];
   properties: Property[];
@@ -50,9 +50,7 @@ export const flattenPropertyTree = (
   // const groups = {};
 
   propertyOwner.subowners?.forEach((subowner: PropertyOwner) => {
-    const uri = baseUri
-      ? `${baseUri}.${subowner.identifier}`
-      : subowner.identifier;
+    const uri = baseUri ? `${baseUri}.${subowner.identifier}` : subowner.identifier;
 
     propertyOwners.push({
       uri,
@@ -61,7 +59,7 @@ export const flattenPropertyTree = (
       properties: [...subowner.properties],
       subowners: [...subowner.subowners],
       tag: subowner.tag,
-      description: subowner.description,
+      description: subowner.description
     });
     const childData = flattenPropertyTree(subowner, uri);
     propertyOwners = propertyOwners.concat(childData.propertyOwners);
@@ -73,7 +71,7 @@ export const flattenPropertyTree = (
   return {
     // favorites,
     propertyOwners,
-    properties,
+    properties
     // groups,
   };
 };
@@ -82,11 +80,9 @@ export const flattenPropertyTree = (
 //   return propertyOwners.find((p) => p.uri === uri);
 // };
 
-export const findFavorites = (
-  propertyOwners: PropertyOwner[],
-): PropertyOwner[] => {
+export const findFavorites = (propertyOwners: PropertyOwner[]): PropertyOwner[] => {
   function hasInterestingTag(uri: string): boolean {
-    let owner = propertyOwners.find((p: PropertyOwner) => p.uri === uri);
+    const owner = propertyOwners.find((p: PropertyOwner) => p.uri === uri);
     if (!owner) {
       return false;
     }
@@ -100,9 +96,7 @@ export const findFavorites = (
     return [];
   }
 
-  const favorites = scene.subowners.filter((owner) =>
-    hasInterestingTag(owner.uri),
-  );
+  const favorites = scene.subowners.filter((owner) => hasInterestingTag(owner.uri));
 
   return favorites;
 };
@@ -120,33 +114,33 @@ export const findFavorites = (
 
 const RegexLibrary = {
   Renderable: {
-    regex: /^Scene\.(.*?)/,
+    regex: /^Scene\.(.*?)/
   },
   Fadable: {
-    regex: /Scene\.(.*?)\.Fade/,
+    regex: /Scene\.(.*?)\.Fade/
   },
   Opacity: {
-    regex: /Scene\.(.*?)\.Opacity/,
+    regex: /Scene\.(.*?)\.Opacity/
   },
   TriggerProperty: {
-    regex: /Scene\.(.*?)\.Renderable.Color/,
+    regex: /Scene\.(.*?)\.Renderable.Color/
   },
   SettingsProperty: {
     // has any of these strings as the rootModules
     regex:
-      /^(Scene\.(.*?)|Modules|NavigationHandler|Dashboard|InteractionMonitor|LuaConsole|OpenSpaceEngine|ParallelPeer|RenderEngine|ScriptScheduler|SessionRecording|TimeManager)/,
-  },
+      /^(Scene\.(.*?)|Modules|NavigationHandler|Dashboard|InteractionMonitor|LuaConsole|OpenSpaceEngine|ParallelPeer|RenderEngine|ScriptScheduler|SessionRecording|TimeManager)/
+  }
 };
 
 type PropertyType = keyof typeof RegexLibrary;
 
 export const getRenderables: (
   properties: Property[],
-  propertyType: PropertyType,
+  propertyType: PropertyType
 ) => Record<string, any> = (properties, propertyType) => {
-  let regex = RegexLibrary[propertyType].regex;
-  let values = Object.values(properties);
-  let renderables: Record<string, any> = values
+  const {regex} = RegexLibrary[propertyType];
+  const values = Object.values(properties);
+  const renderables: Record<string, any> = values
     .filter((p: Property) => {
       return (
         regex.exec(p.uri) &&
@@ -158,7 +152,7 @@ export const getRenderables: (
     //reduce this array into an object with the key being the value of the regex match and the value is the property
     .reduce((acc: Record<string, Property>, p: Property) => {
       // let key = regex.exec(p.uri)[1];
-      let key = p.uri;
+      const key = p.uri;
       acc[key] = p;
       return acc;
     }, {});
@@ -169,33 +163,30 @@ export const getRenderables: (
 const actionTypes = {
   Bool: 'BoolProperty',
   Number: 'FloatProperty',
-  Trigger: 'TriggerProperty',
+  Trigger: 'TriggerProperty'
 };
 type ActionType = keyof typeof actionTypes;
 
-export const getActionSceneNodes = (
-  properties: Property[],
-  type: ActionType,
-) => {
-  let regex = RegexLibrary['SettingsProperty'].regex;
+export const getActionSceneNodes = (properties: Property[], type: ActionType) => {
+  const {regex} = RegexLibrary['SettingsProperty'];
 
-  let sortedProps = properties
+  const sortedProps = properties
     .filter(
       (p) =>
         regex.exec(p.uri) &&
         p.metaData.type === actionTypes[type] &&
-        !p.metaData.isReadOnly,
+        !p.metaData.isReadOnly
     )
     .sort((a, b) => a.uri?.localeCompare(b.uri))
     .reduce((acc: Record<string, Property>, p: Property) => {
       // let key = regex.exec(p.uri)[1];
-      let key = p.uri;
+      const key = p.uri;
       acc[key] = {
         ...p,
         metaData: {
           ...p.metaData,
-          type: type,
-        },
+          type: type
+        }
       };
       return acc;
     }, {});
@@ -207,7 +198,7 @@ export const getActionSceneNodes = (
 export function getStringBetween(
   fullString: string,
   startString: string,
-  endString: string,
+  endString: string
 ): string {
   const startIndex = fullString.indexOf(startString);
   if (startIndex === -1) {
@@ -236,23 +227,19 @@ export function formatName(name: string) {
 }
 
 // Returns whether a property should be visible in the gui
-export function isPropertyVisible(
-  property: Property,
-  visibility: Property | undefined,
-) {
+export function isPropertyVisible(property: Property, visibility: Property | undefined) {
   if (!visibility || visibility.value === undefined) return false;
 
   // console.log(property);
 
-  const propertyVisibility =
-    PropertyVisibilityNumber[property.metaData.visibility];
+  const propertyVisibility = PropertyVisibilityNumber[property.metaData.visibility];
 
   return (visibility.value as number) >= propertyVisibility;
 }
 
 export function isPropertyOwnerVisible(
   propertyOwner: PropertyOwner,
-  visibility: Property | undefined,
+  visibility: Property | undefined
 ) {
   if (!visibility || visibility.value === undefined) {
     return false;
@@ -263,7 +250,7 @@ export function isPropertyOwnerVisible(
 
 function hasVisibleChildren(
   propertyOwner: PropertyOwner,
-  visibilitySetting: Property | undefined,
+  visibilitySetting: Property | undefined
 ) {
   let queue: PropertyOwner[] = [propertyOwner];
 
@@ -275,7 +262,7 @@ function hasVisibleChildren(
     // Check if any of the owner's properties are visible
     if (
       currentOwner.properties?.some((property) =>
-        isPropertyVisible(property, visibilitySetting),
+        isPropertyVisible(property, visibilitySetting)
       )
     ) {
       return true;

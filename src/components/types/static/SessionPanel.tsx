@@ -1,17 +1,14 @@
-import {
-  ConnectionState,
-  useOpenSpaceApiStore,
-  usePropertyStore,
-} from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
-import { Label } from '@/components/ui/label';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Circle, Pause, Play, Square } from 'lucide-react';
+
+import SelectableDropdown from '@/components/common/SelectableDropdown';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Circle, Pause, Play, Square } from 'lucide-react';
-import SelectableDropdown from '@/components/common/SelectableDropdown';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { getCopy } from '@/utils/copyHelpers';
 
 //set up recording state
 export const SessionStateIdle = 'idle';
@@ -31,29 +28,21 @@ const SessionPanel = () => {
   const [isInputFocused, setIsInputFocused] = useState(false); // State to track input focus
 
   //   const [nameIsTaken, setNameIsTaken] = useState(false);
-  const fileList = usePropertyStore(
-    (state) => state.sessionRecording.files || [],
-  );
+  const fileList = usePropertyStore((state) => state.sessionRecording.files || []);
   const recordingState = usePropertyStore(
-    (state) => state.sessionRecording.state || SessionStateIdle,
+    (state) => state.sessionRecording.state || SessionStateIdle
   );
 
   const nameIsTaken = useMemo(() => {
-    return fileList
-      .map((v: string) => v.split('.')[0])
-      .includes(filenameRecording);
+    return fileList.map((v: string) => v.split('.')[0]).includes(filenameRecording);
   }, [fileList, filenameRecording]);
 
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
 
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   //   const refreshTopic = usePropertyStore(state => state.refreshTopic);
-  const unsubscribeFromTopic = usePropertyStore(
-    (state) => state.unsubscribeFromTopic,
-  );
+  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
@@ -63,10 +52,7 @@ const SessionPanel = () => {
     };
   }, [connectionState]);
 
-  const isIdle = useMemo(
-    () => recordingState === SessionStateIdle,
-    [recordingState],
-  );
+  const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
@@ -109,7 +95,7 @@ const SessionPanel = () => {
         filenamePlayback,
         loopPlayback,
         true,
-        outputFramerate,
+        outputFramerate
       );
     } else {
       luaApi?.sessionRecording.startPlayback(filenamePlayback, loopPlayback);
@@ -134,23 +120,19 @@ const SessionPanel = () => {
   //   function refreshPlaybackFilesList() {
   //     refreshTopic('sessionRecording', ['state', 'files']);
   //   }
-  const fileNameLabel = (
-    <span>{getCopy('SessionPanel', 'name_of_recording')}</span>
-  );
+  const fileNameLabel = <span>{getCopy('SessionPanel', 'name_of_recording')}</span>;
   //   const fpsLabel = <span>{getCopy('SessionPanel', 'fps')}</span>;
-  const textFormatLabel = (
-    <span>{getCopy('SessionPanel', 'text_file_format')}</span>
-  );
+  const textFormatLabel = <span>{getCopy('SessionPanel', 'text_file_format')}</span>;
 
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
       case SessionStateIdle:
         return filenamePlayback ? (
           <Button
-            variant="outline"
+            variant={"outline"}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className="gap-2"
+            className={"gap-2"}
             onClick={() => togglePlayback()}
           >
             <Play />
@@ -160,10 +142,10 @@ const SessionPanel = () => {
       case SessionStateRecording:
         return (
           <Button
-            variant="outline"
+            variant={"outline"}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className="gap-2"
+            className={"gap-2"}
             onClick={() => toggleRecording()}
           >
             <Square />
@@ -172,22 +154,22 @@ const SessionPanel = () => {
         );
       case SessionStatePlaying:
         return (
-          <div className="grid grid-cols-2 gap-2">
+          <div className={"grid grid-cols-2 gap-2"}>
             <Button
-              variant="outline"
+              variant={"outline"}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className="gap-2"
+              className={"gap-2"}
               onClick={togglePlaybackPaused}
             >
               <Pause />
               {getCopy('SessionPanel', 'pause')}
             </Button>
             <Button
-              variant="outline"
+              variant={"outline"}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className="gap-2"
+              className={"gap-2"}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -197,22 +179,22 @@ const SessionPanel = () => {
         );
       case SessionStatePaused:
         return (
-          <div className="grid grid-cols-2 gap-2">
+          <div className={"grid grid-cols-2 gap-2"}>
             <Button
-              variant="outline"
+              variant={"outline"}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className="gap-2"
+              className={"gap-2"}
               onClick={togglePlaybackPaused}
             >
               <Play />
               {getCopy('SessionPanel', 'resume')}
             </Button>
             <Button
-              variant="outline"
+              variant={"outline"}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className="gap-2"
+              className={"gap-2"}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -226,24 +208,24 @@ const SessionPanel = () => {
   }, [recordingState, filenameRecording, filenamePlayback]);
 
   return (
-    <div className="m-2 flex">
-      <div className="grid-rows grid gap-3">
-        <div className="grid  gap-3">
-          <Label className="flex items-center justify-start gap-2">
+    <div className={"m-2 flex"}>
+      <div className={"grid-rows grid gap-3"}>
+        <div className={"grid  gap-3"}>
+          <Label className={"flex items-center justify-start gap-2"}>
             {getCopy('SessionPanel', 'record_session')}
           </Label>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="textformat" />
-            <Label htmlFor="textformat">{textFormatLabel}</Label>
+          <div className={"flex items-center space-x-2"}>
+            <Checkbox id={"textformat"} />
+            <Label htmlFor={"textformat"}>{textFormatLabel}</Label>
           </div>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="grid w-full gap-2">
-              <Label htmlFor="guiname">{fileNameLabel}</Label>
-              <div className="flex w-full flex-row gap-2">
+          <div className={"grid grid-cols-1 gap-4"}>
+            <div className={"grid w-full gap-2"}>
+              <Label htmlFor={"guiname"}>{fileNameLabel}</Label>
+              <div className={"flex w-full flex-row gap-2"}>
                 <Input
-                  className="grow"
+                  className={"grow"}
                   value={filenameRecording}
-                  placeholder="Enter recording filename..."
+                  placeholder={"Enter recording filename..."}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
                     updateRecordingFilename(evt)
                   }
@@ -251,17 +233,17 @@ const SessionPanel = () => {
                   onBlur={() => setIsInputFocused(false)} // Set focus state to false
                 />
                 <Button
-                  variant="outline"
+                  variant={"outline"}
                   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-                  className="gap-2"
+                  className={"gap-2"}
                   onClick={() => toggleRecording()}
                 >
-                  <Circle size="12" />
+                  <Circle size={"12"} />
                   {getCopy('SessionPanel', 'record')}
                 </Button>
               </div>
               {nameIsTaken && isInputFocused && (
-                <Label className="text-red-500">
+                <Label className={"text-red-500"}>
                   {getCopy('SessionPanel', 'name_is_already_taken.')}
                 </Label>
               )}
@@ -270,46 +252,38 @@ const SessionPanel = () => {
         </div>
         <Separator />
 
-        <div className="grid  gap-3">
-          <Label className="flex items-center justify-start gap-2">
+        <div className={"grid  gap-3"}>
+          <Label className={"flex items-center justify-start gap-2"}>
             {getCopy('SessionPanel', 'play_session')}
           </Label>
-          <div className="grid gap-2">
-            <div className="flex items-center space-x-2">
+          <div className={"grid gap-2"}>
+            <div className={"flex items-center space-x-2"}>
               <Checkbox
-                id="loop"
+                id={"loop"}
                 checked={loopPlayback}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate')
-                    onLoopPlaybackChange(checked);
+                  if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
                 }}
               />
-              <Label htmlFor="loop">
-                {getCopy('SessionPanel', 'loop_playback')}
-              </Label>
+              <Label htmlFor={"loop"}>{getCopy('SessionPanel', 'loop_playback')}</Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className={"flex items-center space-x-2"}>
               <Checkbox
-                id="frames"
+                id={"frames"}
                 checked={shouldOutputFrames}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate')
-                    onShouldUpdateFramesChange(checked);
+                  if (checked !== 'indeterminate') onShouldUpdateFramesChange(checked);
                 }}
               />
-              <Label htmlFor="frames">
-                {getCopy('SessionPanel', 'output_frames')}
-              </Label>
+              <Label htmlFor={"frames"}>{getCopy('SessionPanel', 'output_frames')}</Label>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-2">
-            <Label htmlFor="playback">
-              {getCopy('SessionPanel', 'playback_file')}
-            </Label>
-            <div className="flex w-full flex-col gap-2">
+          <div className={"grid grid-cols-1 gap-2"}>
+            <Label htmlFor={"playback"}>{getCopy('SessionPanel', 'playback_file')}</Label>
+            <div className={"flex w-full flex-col gap-2"}>
               {/* <div className="grow"> */}
               <SelectableDropdown
-                placeholder="Select playback file..."
+                placeholder={"Select playback file..."}
                 options={fileList}
                 setSelected={(value: string) => setFilenamePlayback(value)}
                 selected={filenamePlayback}

@@ -1,10 +1,8 @@
 import React from 'react';
 import { ColorPicker, IColor, useColor } from 'react-color-palette';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 import 'react-color-palette/css'; // Ensure CSS is imported
 
 interface ColorPickerComponentProps {
@@ -14,7 +12,7 @@ interface ColorPickerComponentProps {
 
 const ColorPickerComponent: React.FC<ColorPickerComponentProps> = ({
   color,
-  setColor,
+  setColor
 }) => {
   const [colorState, setColorState] = useColor(color); // Use useColor hook
 
@@ -27,7 +25,7 @@ const ColorPickerComponent: React.FC<ColorPickerComponentProps> = ({
     <Popover>
       <PopoverTrigger>
         <div
-          className="h-16 w-16 rounded-full"
+          className={"h-16 w-16 rounded-full"}
           style={{ backgroundColor: colorState.hex }}
         ></div>
       </PopoverTrigger>

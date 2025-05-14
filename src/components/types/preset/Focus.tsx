@@ -1,48 +1,38 @@
-import { SetFocusComponent } from '@/store/ComponentTypes';
-import { getCopy } from '@/utils/copyHelpers';
-import {
-  ConnectionState,
-  useOpenSpaceApiStore,
-  usePropertyStore,
-} from '@/store';
 import { useEffect, useState } from 'react';
-import { formatName, getStringBetween } from '@/utils/apiHelpers';
+import { useShallow } from 'zustand/react/shallow';
+
+import BackgroundHolder from '@/components/common/BackgroundHolder';
+import ButtonLabel from '@/components/common/ButtonLabel';
+import ComponentContainer from '@/components/common/ComponentContainer';
 import Information from '@/components/common/Information';
+import ToggleComponent from '@/components/common/Toggle';
+import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
+import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import {
-  NavigationAnchorKey,
   NavigationAimKey,
-  RetargetAnchorKey,
+  NavigationAnchorKey,
+  RetargetAnchorKey
 } from '@/store/apiStore';
-import ButtonLabel from '@/components/common/ButtonLabel';
-import ComponentContainer from '@/components/common/ComponentContainer';
-import ToggleComponent from '@/components/common/Toggle';
-import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
+import { SetFocusComponent } from '@/store/ComponentTypes';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import BackgroundHolder from '@/components/common/BackgroundHolder';
+import { formatName, getStringBetween } from '@/utils/apiHelpers';
+import { getCopy } from '@/utils/copyHelpers';
 
 interface FocusGUIProps {
   component: SetFocusComponent;
   shouldRender?: boolean;
 }
-const FocusComponent: React.FC<FocusGUIProps> = ({
-  component,
-  shouldRender = true,
-}) => {
+const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const subscribeToProperty = usePropertyStore(
-    (state) => state.subscribeToProperty,
-  );
+  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
+    (state) => state.unsubscribeFromProperty
   );
   const property = usePropertyStore((state) => {
     //using this to check if the property exists
@@ -59,29 +49,21 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
       unsubscribeFromProperty(`Scene.${component.property}.Renderable.Enabled`);
       unsubscribeFromProperty(NavigationAnchorKey);
     };
-  }, [
-    component.property,
-    connectionState,
-    subscribeToProperty,
-    unsubscribeFromProperty,
-  ]);
+  }, [component.property, connectionState, subscribeToProperty, unsubscribeFromProperty]);
 
   useEffect(() => {
     if (luaApi) {
       updateComponent(component.id, {
         triggerAction: () => {
           luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
-          luaApi.setPropertyValueSingle(
-            NavigationAnchorKey,
-            component.property,
-          );
+          luaApi.setPropertyValueSingle(NavigationAnchorKey, component.property);
           luaApi.setPropertyValueSingle(NavigationAimKey, '');
         },
-        isDisabled: property ? false : true,
+        isDisabled: property ? false : true
       });
     } else {
       updateComponent(component.id, {
-        isDisabled: true,
+        isDisabled: true
       });
     }
   }, [component.id, component.property, luaApi, property]);
@@ -98,7 +80,7 @@ const FocusComponent: React.FC<FocusGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className="flex flex-row gap-2">
+          <div className={"flex flex-row gap-2"}>
             {component.gui_name}
             {/* {CurrentAnchor?.value && (
               <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
@@ -118,36 +100,30 @@ interface FocusModalProps {
 }
 const FocusModal: React.FC<FocusModalProps> = ({
   component,
-  handleComponentData,
+  handleComponentData
   //   isOpen,
 }) => {
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [lockName, setLockName] = useState<boolean>(
-    component?.lockName || false,
-  );
+  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || '',
+    component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || '',
+    component?.backgroundImage || ''
   );
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.setfocus,
+    component?.color || ComponentBaseColors.setfocus
   );
 
-  const subscribeToProperty = usePropertyStore(
-    (state) => state.subscribeToProperty,
-  );
+  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
+    (state) => state.unsubscribeFromProperty
   );
   const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey],
+    (state) => state.properties[NavigationAnchorKey]
   );
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -161,9 +137,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     setProperty(property);
     if (!lockName) {
       setGuiName(`Focus on ${property}`);
-      setGuiDescription(
-        `Focus on ${property}. ${CurrentAnchor?.metaData.description}`,
-      );
+      setGuiDescription(`Focus on ${property}. ${CurrentAnchor?.metaData.description}`);
     }
   };
 
@@ -174,7 +148,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
       lockName,
       gui_name,
       gui_description,
-      color,
+      color
     });
   }, [
     property,
@@ -183,7 +157,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     gui_description,
     lockName,
     color,
-    handleComponentData,
+    handleComponentData
   ]);
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
@@ -205,66 +179,56 @@ const FocusModal: React.FC<FocusModalProps> = ({
     }, {});
   return (
     <>
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
-            <div className="text-sm font-medium text-black">
+      <div className={"grid grid-cols-1 gap-4"}>
+        <div className={"grid grid-cols-1 gap-4"}>
+          <div className={"grid gap-2"}>
+            <div className={"text-sm font-medium text-black"}>
               {getCopy('Focus', 'property')}
             </div>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
               selectedOption={
-                (Object.keys(sortedKeys).find(
-                  (key) => key === property,
-                ) as string) || ''
+                (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
               }
-              searchPlaceholder="Search the Scene..."
+              searchPlaceholder={"Search the Scene..."}
             />
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-4">
-          <div className="col-span-3 grid gap-2">
-            <Label htmlFor="gioname">
-              {getCopy('Focus', 'component_name')}
-            </Label>
+        <div className={"grid grid-cols-4 gap-4"}>
+          <div className={"col-span-3 grid gap-2"}>
+            <Label htmlFor={"gioname"}>{getCopy('Focus', 'component_name')}</Label>
             <Input
-              id="guiname"
-              placeholder="Name of Component"
-              type="text"
+              id={"guiname"}
+              placeholder={"Name of Component"}
+              type={"text"}
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
               }
             />
           </div>
-          <div className="cols-span-1 mt-6 grid gap-2">
-            <ToggleComponent
-              label="Lock Name"
-              value={lockName}
-              setValue={setLockName}
-            />
+          <div className={"cols-span-1 mt-6 grid gap-2"}>
+            <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className={"grid grid-cols-1 gap-4"}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Focus', 'gui_description')}
-            </Label>
+          <div className={"grid gap-2"}>
+            <Label htmlFor={"description"}>{getCopy('Focus', 'gui_description')}</Label>
             <Textarea
-              className="w-full"
-              id="description"
+              className={"w-full"}
+              id={"description"}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder="Type your message here."
+              placeholder={"Type your message here."}
             />
           </div>
         </div>
@@ -272,4 +236,4 @@ const FocusModal: React.FC<FocusModalProps> = ({
     </>
   );
 };
-export { FocusModal, FocusComponent };
+export { FocusComponent,FocusModal };

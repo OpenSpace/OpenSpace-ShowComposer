@@ -1,5 +1,6 @@
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
+
 import basePath from './basePath';
 
 //save out the store to a json file that is saved to drive
@@ -11,9 +12,9 @@ export const saveProject = async () => {
   const response = await fetch(`${basePath}api/projects/save`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: storeString,
+    body: storeString
   });
   if (response.ok) {
     return true;
@@ -83,7 +84,7 @@ export const loadStoreImageSeperately = async () => {
         try {
           const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
-            body: formData, // Send the JSON file and images to the server
+            body: formData // Send the JSON file and images to the server
           });
 
           if (!response.ok) {
@@ -124,7 +125,7 @@ export const loadStoreToServer = async () => {
         try {
           const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
-            body: formData, // Send the ZIP file to the server
+            body: formData // Send the ZIP file to the server
           });
 
           if (!response.ok) {
@@ -148,9 +149,9 @@ export const confirmStoreImport = async (confirm: boolean, tempId: string) => {
   const response = await fetch(`${basePath}api/projects/confirm-import`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ tempId, confirm }), // New fields
+    body: JSON.stringify({ tempId, confirm }) // New fields
   });
 
   if (!response.ok) {
@@ -168,9 +169,9 @@ export const exportProject = () => {
   fetch(`${basePath}api/package`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: storeString,
+    body: storeString
   })
     .then((response) => response.blob())
     .then((blob) => {
@@ -178,10 +179,7 @@ export const exportProject = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${settingsStore.projectName.replace(
-        / /g,
-        '_',
-      )}-${Date.now()}.zip`;
+      a.download = `${settingsStore.projectName.replace(/ /g, '_')}-${Date.now()}.zip`;
       a.click();
       window.URL.revokeObjectURL(url);
     });
@@ -220,9 +218,7 @@ export const fetchGalleryImages = async () => {
   const data = await response.json();
   // remomve trailing slash from basePath
   const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
-  return data.images.map(
-    (image: any) => `${basePathWithoutTrailingSlash}${image}`,
-  );
+  return data.images.map((image: any) => `${basePathWithoutTrailingSlash}${image}`);
 };
 
 export const uploadImage = async (file: File) => {
@@ -231,7 +227,7 @@ export const uploadImage = async (file: File) => {
 
   const response = await fetch(`${basePath}api/upload`, {
     method: 'POST',
-    body: formData, // Send formData
+    body: formData // Send formData
   });
   if (!response.ok) {
     throw new Error('Failed to save image');

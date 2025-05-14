@@ -1,20 +1,20 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Component, LayoutBase, LogComponent, Page } from './ComponentTypes';
-import { PageSlice } from './pageSlice';
-import { LayoutSlice } from './layoutSlice';
-import { Position, PositionSlice } from './positionSlice';
-import { useSettingsStore } from './settingsStore';
+
 import { roundToNearest } from '@/utils/math';
 
+import { Component, LayoutBase, LogComponent, Page } from './ComponentTypes';
 import {
-  TimeComponent,
-  NavComponent,
-  StatusComponent,
-  RecordComponent,
+  ImmerStateCreator,
   MultiComponent,
   MultiState,
-  ImmerStateCreator,
-} from './ComponentTypes';
+  NavComponent,
+  RecordComponent,
+  StatusComponent,
+  TimeComponent} from './ComponentTypes';
+import { LayoutSlice } from './layoutSlice';
+import { PageSlice } from './pageSlice';
+import { Position, PositionSlice } from './positionSlice';
+import { useSettingsStore } from './settingsStore';
 
 export interface ComponentSlice {
   components: Record<string, Component>;
@@ -26,26 +26,20 @@ export interface ComponentSlice {
   addComponent: (component: Component) => void;
   addComponents: (components: Component[]) => void;
   getComponentById: (id: Component['id']) => Component;
-  addComponentToPageById: (
-    componentId: Component['id'],
-    pageId: Page['id'],
-  ) => void;
+  addComponentToPageById: (componentId: Component['id'], pageId: Page['id']) => void;
   handleComponentDrop: (
     componentId: string,
     x: number,
     y: number,
-    fromHistory?: boolean,
+    fromHistory?: boolean
   ) => void;
-  removeComponentToPageById: (
-    componentId: Component['id'],
-    pageId: Page['id'],
-  ) => void;
+  removeComponentToPageById: (componentId: Component['id'], pageId: Page['id']) => void;
   updateComponent: (id: Component['id'], updates: Partial<Component>) => void;
   removeComponent: (id: Component['id']) => void;
   copyComponent: (
     id: Component['id'],
     offset?: boolean,
-    newData?: Partial<Position>,
+    newData?: Partial<Position>
   ) => string | null;
   //   //   copyLayout: (id: LayoutBase['id']) => void;
   removeAllComponents: () => void;
@@ -55,9 +49,7 @@ export interface ComponentSlice {
   executeAndResetAsyncPreSubmitOperation: () => void;
   createPanels: () => void;
   updatePanel: (
-    updates: Partial<
-      TimeComponent | NavComponent | StatusComponent | RecordComponent
-    >,
+    updates: Partial<TimeComponent | NavComponent | StatusComponent | RecordComponent>
   ) => void;
   // Other component-related methods...
 }
@@ -88,12 +80,12 @@ export const createComponentSlice: ImmerStateCreator<
             { x: 0, y: 0, width: 300, height: 175 },
             currentPage,
             useSettingsStore.getState().pageWidth,
-            useSettingsStore.getState().pageHeight,
+            useSettingsStore.getState().pageHeight
           )
         ) {
           get().addComponentToPageById(component.id, currentPage.id);
           get().updateComponent(component.id, {
-            parentPage: currentPage.id,
+            parentPage: currentPage.id
           });
         }
       }
@@ -106,7 +98,7 @@ export const createComponentSlice: ImmerStateCreator<
       minWidth: 50,
       minHeight: 50,
       width: 300,
-      height: 175,
+      height: 175
     });
   },
   addComponents: (components: Component[]) => {
@@ -134,7 +126,7 @@ export const createComponentSlice: ImmerStateCreator<
     const componentUpdates: Partial<Component> = {};
     const currentPageId = get().currentPage;
     const currentPage = get().getPageById(currentPageId);
-    const layouts = get().layouts;
+    const {layouts} = get();
     const filteredLayouts = Object.values(layouts).filter((v) => {
       return !v.parentPage || (v.parentPage && v.parentPage == currentPageId);
     });
@@ -151,7 +143,7 @@ export const createComponentSlice: ImmerStateCreator<
           { x: adjustedPosition.x, y: adjustedPosition.y, width, height },
           currentPage,
           useSettingsStore.getState().pageWidth,
-          useSettingsStore.getState().pageHeight,
+          useSettingsStore.getState().pageHeight
         )
       ) {
         get().addComponentToPageById(componentId, currentPage.id);
@@ -168,7 +160,7 @@ export const createComponentSlice: ImmerStateCreator<
         get().isOverLayout(
           adjustedPosition.x + width / 2.0,
           adjustedPosition.y + height / 2.0,
-          layout.id,
+          layout.id
         )
       ) {
         targetLayout = layout;
@@ -189,7 +181,7 @@ export const createComponentSlice: ImmerStateCreator<
             (targetLayout as LayoutBase).id,
             componentId,
             adjustedPosition.x,
-            adjustedPosition.y,
+            adjustedPosition.y
           );
           get().resizeComponentsInLayout((targetLayout as LayoutBase).id);
           get().resizeComponentsInLayout(currentLayoutId);
@@ -203,12 +195,7 @@ export const createComponentSlice: ImmerStateCreator<
       // Component does not belong to a layout
       if (targetLayout) {
         // Add to new layout
-        get().addComponentToLayout(
-          (targetLayout as LayoutBase).id,
-          componentId,
-          x,
-          y,
-        );
+        get().addComponentToLayout((targetLayout as LayoutBase).id, componentId, x, y);
         // get().reorderComponentInLayout(
         //   (targetLayout as LayoutBase).id,
         //   componentId,
@@ -222,7 +209,7 @@ export const createComponentSlice: ImmerStateCreator<
           isDragging: false,
           x: roundToNearest(x, 25),
           y: roundToNearest(y, 25),
-          parentId: undefined,
+          parentId: undefined
         });
       }
     }
@@ -235,9 +222,7 @@ export const createComponentSlice: ImmerStateCreator<
     set((state) => {
       const page = state.pages.find((page: Page) => page.id === pageId);
       if (page) {
-        page.components = page.components.filter(
-          (id: string) => id !== componentId,
-        );
+        page.components = page.components.filter((id: string) => id !== componentId);
       }
     }),
   updateComponent: (id: Component['id'], updates: Partial<Component>) =>
@@ -245,7 +230,7 @@ export const createComponentSlice: ImmerStateCreator<
       state.components[id] = { ...state.components[id], ...updates };
     }),
   removeComponent: (id: Component['id']) => {
-    let componentsToRemove: Component['id'][] = ['id'];
+    const componentsToRemove: Component['id'][] = ['id'];
     set((state) => {
       delete state.components[id];
       get().deletePosition(id);
@@ -264,15 +249,15 @@ export const createComponentSlice: ImmerStateCreator<
       state.pages = state.pages.map((page: Page) => ({
         ...page,
         components: page.components.filter(
-          (compId: string) => !componentsToRemove.includes(compId),
-        ),
+          (compId: string) => !componentsToRemove.includes(compId)
+        )
       }));
     });
   },
   copyComponent: (
     id: Component['id'],
     offset: boolean = true,
-    newData: Partial<Position> = {},
+    newData: Partial<Position> = {}
   ) => {
     const state = get();
     const component = state.components[id];
@@ -284,7 +269,7 @@ export const createComponentSlice: ImmerStateCreator<
           ...component,
           parentPage: undefined,
           parentLayout: undefined,
-          id: newId,
+          id: newId
           //   ...newData,
         };
       });
@@ -297,7 +282,7 @@ export const createComponentSlice: ImmerStateCreator<
         width: width,
         height: height,
         parentId: undefined,
-        ...newData,
+        ...newData
       });
       return newId;
     }
@@ -321,7 +306,7 @@ export const createComponentSlice: ImmerStateCreator<
   resetAsyncPreSubmitOperation: () => set({ asyncPreSubmitOperation: null }),
   setAsyncPreSubmitOperation: (operation: (() => any) | null) =>
     set({
-      asyncPreSubmitOperation: operation,
+      asyncPreSubmitOperation: operation
     }),
   executeAndResetAsyncPreSubmitOperation: async () => {
     const state = get(); // Get the current state
@@ -331,18 +316,12 @@ export const createComponentSlice: ImmerStateCreator<
     }
   },
   createPanels: () => {
-    const {
-      timepanelId,
-      navpanelId,
-      statuspanelId,
-      recordpanelId,
-      logpanelId,
-    } = {
+    const { timepanelId, navpanelId, statuspanelId, recordpanelId, logpanelId } = {
       timepanelId: uuidv4(),
       navpanelId: uuidv4(),
       statuspanelId: uuidv4(),
       recordpanelId: uuidv4(),
-      logpanelId: uuidv4(),
+      logpanelId: uuidv4()
     };
 
     set((state) => {
@@ -352,7 +331,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Time Panel',
         gui_description: '',
-        isDisabled: false,
+        isDisabled: false
       };
 
       state.navpanel = {
@@ -361,7 +340,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Nav Panel',
         gui_description: '',
-        isDisabled: false,
+        isDisabled: false
       };
       state.statuspanel = {
         id: statuspanelId,
@@ -369,7 +348,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Status Panel',
         gui_description: '',
-        isDisabled: false,
+        isDisabled: false
       };
       state.recordpanel = {
         id: recordpanelId,
@@ -377,7 +356,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Record Panel',
         gui_description: '',
-        isDisabled: false,
+        isDisabled: false
       };
       state.logpanel = {
         id: logpanelId,
@@ -385,7 +364,7 @@ export const createComponentSlice: ImmerStateCreator<
         isMulti: 'false' as MultiState,
         gui_name: 'Error Log Panel',
         gui_description: '',
-        isDisabled: false,
+        isDisabled: false
       };
     });
     get().addPosition(navpanelId, {
@@ -395,7 +374,7 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 325,
       width: 225,
       height: 325,
-      minimized: true,
+      minimized: true
     });
 
     get().addPosition(statuspanelId, {
@@ -405,7 +384,7 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 250,
       width: 275,
       height: 250,
-      minimized: true,
+      minimized: true
     });
 
     get().addPosition(recordpanelId, {
@@ -415,7 +394,7 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 400,
       width: 275,
       height: 400,
-      minimized: true,
+      minimized: true
     });
     // });
     get().addPosition(timepanelId, {
@@ -425,7 +404,7 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 425,
       width: 325,
       height: 425,
-      minimized: true,
+      minimized: true
     });
     get().addPosition(logpanelId, {
       x: 250,
@@ -434,17 +413,13 @@ export const createComponentSlice: ImmerStateCreator<
       minHeight: 425,
       width: 700,
       height: 425,
-      minimized: true,
+      minimized: true
     });
   },
   updatePanel: (
     updates: Partial<
-      | TimeComponent
-      | NavComponent
-      | StatusComponent
-      | RecordComponent
-      | LogComponent
-    >,
+      TimeComponent | NavComponent | StatusComponent | RecordComponent | LogComponent
+    >
   ) => {
     set((state) => {
       switch (updates.type) {
@@ -487,7 +462,7 @@ export const createComponentSlice: ImmerStateCreator<
           break;
       }
     });
-  },
+  }
 
   // Other component-related methods...
 });
@@ -496,7 +471,7 @@ export function isComponentOverlappingPage(
   componentPosition: { x: number; y: number; width: number; height: number },
   page: Page,
   pageWidth: number,
-  pageHeight: number,
+  pageHeight: number
 ): boolean {
   if (!componentPosition || !page) {
     return false;

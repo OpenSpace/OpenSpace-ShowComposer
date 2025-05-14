@@ -1,4 +1,5 @@
-import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { forwardRef,useEffect, useImperativeHandle, useState } from 'react';
+
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +26,7 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      triggerAnimation,
+      triggerAnimation
     }));
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
             const elapsedTime = Date.now() - startTime;
             const newProgress = Math.min(
               (elapsedTime / widthAnimationDuration) * 100,
-              100,
+              100
             );
             setProgress(newProgress);
 
@@ -79,18 +80,18 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
             'pointer-events-none': isAnimatingWidth,
             'pointer-events-auto': !isAnimatingWidth,
             'duration-[ms] opacity-0 transition-opacity': isFadingOut,
-            'opacity-100': !isFadingOut,
-          },
+            'opacity-100': !isFadingOut
+          }
         )}
         style={{
           transitionDuration: isFadingOut ? `${fadeOutDuration}ms` : '0ms',
-          opacity: !(isAnimatingWidth || isFadingOut) ? 0 : '',
+          opacity: !(isAnimatingWidth || isFadingOut) ? 0 : ''
         }}
       >
         <Progress value={progress} />
       </div>
     );
-  },
+  }
 );
 
 export default StatusBar;

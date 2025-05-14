@@ -1,12 +1,14 @@
+import { throttle } from 'lodash';
 import { Topic } from 'openspace-api-js';
 import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
 import { devtools } from 'zustand/middleware';
-import { useOpenSpaceApiStore } from './apiStore';
-import { throttle } from 'lodash';
-import { updateTime } from '@/utils/time';
-import { restrictNumbersToDecimalPlaces } from '@/utils/math';
+import { immer } from 'zustand/middleware/immer';
+
 import { PropertyOwner } from '@/utils/apiHelpers';
+import { restrictNumbersToDecimalPlaces } from '@/utils/math';
+import { updateTime } from '@/utils/time';
+
+import { useOpenSpaceApiStore } from './apiStore';
 
 type subscription = {
   count: number;
@@ -16,7 +18,7 @@ type subscription = {
 export enum ConnectionState {
   UNCONNECTED = 'UNCONNECTED',
   CONNECTED = 'CONNECTED',
-  CONNECTING = 'CONNECTING',
+  CONNECTING = 'CONNECTING'
 }
 //need to work this out
 interface State {
@@ -38,7 +40,7 @@ interface State {
     topicName: string,
     throttleAmt?: number,
     properties?: string[],
-    settings?: any,
+    settings?: any
   ) => void;
   unsubscribeFromTopic: (topicName: string) => void;
   connectToTopic: (topicName: string) => void;
@@ -64,7 +66,7 @@ export const usePropertyStore = create<State>()(
             if (name == 'time') {
               state.time = updateTime({
                 ...state.time,
-                ...value,
+                ...value
               });
             } else if (name == 'sessionRecording') {
               state.sessionRecording = { ...state.sessionRecording, ...value };
@@ -78,7 +80,7 @@ export const usePropertyStore = create<State>()(
             }
           },
           false,
-          'property/set',
+          'property/set'
         ),
       setProperties: (properties: Record<string, any>) =>
         set(
@@ -86,7 +88,7 @@ export const usePropertyStore = create<State>()(
             state.properties = { ...state.properties, ...properties };
           },
           false,
-          'property/setProperties',
+          'property/setProperties'
         ),
       setFavorites: (favorites: Array<any>) =>
         set(
@@ -94,20 +96,19 @@ export const usePropertyStore = create<State>()(
             state.favorites = favorites;
           },
           false,
-          'property/setFavorites',
+          'property/setFavorites'
         ),
       // Function to manage subscription counts
       subscribeToProperty: (name: string, _throttleAmt: number = 0) =>
         set(
           (state: any) => {
             if (!state.propertySubscriptions[name]) {
-              const apiSubscription =
-                useOpenSpaceApiStore.getState().subscribeToProperty;
+              const apiSubscription = useOpenSpaceApiStore.getState().subscribeToProperty;
               const subscription = apiSubscription(name);
               if (!subscription) return;
               state.propertySubscriptions[name] = {
                 count: 0,
-                subscription,
+                subscription
               };
               const testSetProperty = (propName: string, value: any) => {
                 usePropertyStore.getState().setProperty(propName, value);
@@ -123,7 +124,7 @@ export const usePropertyStore = create<State>()(
                   testSetProperty(
                     name,
                     // data,
-                    restrictNumbersToDecimalPlaces(data, 4),
+                    restrictNumbersToDecimalPlaces(data, 4)
                   );
                 }
               })();
@@ -132,7 +133,7 @@ export const usePropertyStore = create<State>()(
             state.propertySubscriptions[name].count += 1;
           },
           false,
-          'property/subscribe',
+          'property/subscribe'
         ),
       unsubscribeFromProperty: (name: string) =>
         set(
@@ -149,24 +150,23 @@ export const usePropertyStore = create<State>()(
             }
           },
           false,
-          'property/unsubscribe',
+          'property/unsubscribe'
         ),
       subscribeToTopic: (
         topicName: string,
         _throttleAmt: number = 200,
         properties,
-        settings,
+        settings
       ) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
-              const subscribeToTopic =
-                useOpenSpaceApiStore.getState().subscribeToTopic;
+              const {subscribeToTopic} = useOpenSpaceApiStore.getState();
               const topic = subscribeToTopic(topicName, properties, settings);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
-                subscription: topic,
+                subscription: topic
               };
               const testSetProperty = (propName: string, value: any) => {
                 usePropertyStore.getState().setProperty(propName, value);
@@ -182,10 +182,7 @@ export const usePropertyStore = create<State>()(
                     // console.log('errorLog', data);
                     usePropertyStore.getState().setProperty('errorLog', data);
                   }
-                  testSetProperty(
-                    topicName,
-                    restrictNumbersToDecimalPlaces(data, 4),
-                  );
+                  testSetProperty(topicName, restrictNumbersToDecimalPlaces(data, 4));
                 }
               })();
               console.log('Subscribed to topic: ', topicName);
@@ -193,7 +190,7 @@ export const usePropertyStore = create<State>()(
             state.topicSubscriptions[topicName].count += 1;
           },
           false,
-          'topic/subscribe',
+          'topic/subscribe'
         ),
       refreshTopic: (topicName: string, properties) =>
         set(
@@ -203,7 +200,7 @@ export const usePropertyStore = create<State>()(
                 .getState()
                 .apiInstance?.startTopic('sessionRecording', {
                   event: 'refresh',
-                  properties: properties,
+                  properties: properties
                 });
               (async () => {
                 if (topic) {
@@ -216,24 +213,23 @@ export const usePropertyStore = create<State>()(
               })();
             } else {
               state.topicSubscriptions[topicName].subscription.talk({
-                event: 'refresh',
+                event: 'refresh'
               });
             }
           },
           false,
-          'topic/refresh',
+          'topic/refresh'
         ),
       connectToTopic: (topicName: string) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
-              const connectToTopic =
-                useOpenSpaceApiStore.getState().connectToTopic;
+              const {connectToTopic} = useOpenSpaceApiStore.getState();
               const topic = connectToTopic(topicName);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
-                subscription: topic,
+                subscription: topic
               };
               const testSetProperty = (propName: string, value: any) => {
                 // console.log(propName, value);
@@ -251,7 +247,7 @@ export const usePropertyStore = create<State>()(
             state.topicSubscriptions[topicName].count += 1;
           },
           false,
-          'topic/connect',
+          'topic/connect'
         ),
       disconnectFromTopic: (topicName: string) =>
         set(
@@ -262,15 +258,14 @@ export const usePropertyStore = create<State>()(
             } else {
               // console.log(state.topicSubscriptions[topicName].subscription);
               // console.log(state.topicSubscriptions[topicName]);
-              const apiDisconnect =
-                useOpenSpaceApiStore.getState().disconnectFromTopic;
+              const apiDisconnect = useOpenSpaceApiStore.getState().disconnectFromTopic;
               apiDisconnect(state.topicSubscriptions[topicName].subscription);
               console.log('Unsubscribed from topic: ', topicName);
               delete state.topicSubscriptions[topicName];
             }
           },
           false,
-          'topic/disconnect',
+          'topic/disconnect'
         ),
       unsubscribeFromTopic: (topicName: string) =>
         set(
@@ -281,21 +276,18 @@ export const usePropertyStore = create<State>()(
             } else {
               // console.log(state.topicSubscriptions[topicName].subscription);
               // console.log(state.topicSubscriptions[topicName]);
-              const apiUnsubscribe =
-                useOpenSpaceApiStore.getState().unsubscribeFromTopic;
+              const apiUnsubscribe = useOpenSpaceApiStore.getState().unsubscribeFromTopic;
               apiUnsubscribe(state.topicSubscriptions[topicName].subscription);
               console.log('Unsubscribed from topic: ', topicName);
               delete state.topicSubscriptions[topicName];
             }
           },
           false,
-          'topic/unsubscribe',
+          'topic/unsubscribe'
         ),
       getActions: () => {
         (async () => {
-          const actions = await useOpenSpaceApiStore
-            .getState()
-            .luaApi?.action.actions();
+          const actions = await useOpenSpaceApiStore.getState().luaApi?.action.actions();
           if (!actions) return;
           const reducedActions = Object.values(actions['1']).reduce(
             (acc: Record<string, any>, action: any) => {
@@ -303,15 +295,15 @@ export const usePropertyStore = create<State>()(
               acc[newKey] = action;
               return acc;
             },
-            {},
+            {}
           );
           set((state) => {
             state.actions = reducedActions;
           });
         })();
-      },
-    })),
-  ),
+      }
+    }))
+  )
 );
 
 export const selectFilteredProperties = (state: State) => {

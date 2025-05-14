@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { DraggableData,DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { DraggableEvent, DraggableData } from 'react-draggable';
 // import { Button } from '@/pages/ui/button';
-import { GripHorizontal, LockOpen, Lock } from 'lucide-react';
-import { Page } from '@/store/ComponentTypes';
+import { GripHorizontal, Lock,LockOpen } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
+import { Page } from '@/store/ComponentTypes';
+
+import ButtonLabel from './common/ButtonLabel';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import ButtonLabel from './common/ButtonLabel';
-import { cn } from '@/lib/utils';
-import { useBoundStore } from '@/store/boundStore';
 const AdjustablePage: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const updatePage = useBoundStore((state) => state.updatePage);
-  const page: Page = useBoundStore((state) =>
-    state.getPageById(state.currentPage),
-  );
+  const page: Page = useBoundStore((state) => state.getPageById(state.currentPage));
 
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
 
@@ -37,7 +37,7 @@ const AdjustablePage: React.FC = () => {
     setIsDragging(false);
     updatePage(page.id, {
       x: d.x,
-      y: d.y,
+      y: d.y
     });
   };
   return (
@@ -48,41 +48,41 @@ const AdjustablePage: React.FC = () => {
         x: page.x,
         y: page.y,
         width: pageWidth,
-        height: pageHeight,
+        height: pageHeight
       }}
       position={{
         x: page.x,
-        y: page.y,
+        y: page.y
       }}
       size={{
         width: pageWidth,
-        height: pageHeight,
+        height: pageHeight
       }}
       onDragStart={(e: DraggableEvent) => {
         setIsDragging(true);
         e.stopPropagation();
       }}
-      bounds="parent"
+      bounds={"parent"}
       onDragStop={(e: DraggableEvent, d: DraggableData) => handleDragStop(e, d)}
       onResize={(_e, _direction, ref, _delta, position) => {
         updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
         updatePage(page.id, {
           x: position.x,
-          y: position.y,
+          y: position.y
         });
       }}
       onResizeStop={(_e, _direction, ref, _delta, position) => {
         updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
         updatePage(page.id, {
           x: position.x,
-          y: position.y,
+          y: position.y
         });
       }}
       disableDragging={locked || isPresentMode} // Conditionally disable dragging
       enableResizing={!locked && !isPresentMode} // Conditionally disable resizing
       style={{
         zIndex: 0,
-        backgroundColor: page.color,
+        backgroundColor: page.color
       }}
       className={cn(
         'absolute cursor-move',
@@ -94,16 +94,16 @@ const AdjustablePage: React.FC = () => {
           ? 'border-0 '
           : locked
             ? 'pointer-events-none border-2 border-dashed border-slate-700/30 dark:border-slate-200/30 '
-            : 'border-slate-700/80dark:border-slate-200 pointer-events-auto border-2 border-dashed ',
+            : 'border-slate-700/80dark:border-slate-200 pointer-events-auto border-2 border-dashed '
       )}
     >
-      <div className="drag-handle  absolute top-0 h-[30px] w-full cursor-move">
+      <div className={"drag-handle  absolute top-0 h-[30px] w-full cursor-move"}>
         {!isPresentMode && !locked && (
-          <div className="absolute flex w-full flex-col items-center justify-center gap-1">
+          <div className={"absolute flex w-full flex-col items-center justify-center gap-1"}>
             <GripHorizontal
               className={cn(
                 'stroke-slate-700/40 transition-colors duration-300 dark:stroke-slate-500',
-                'group-hover:stroke-slate-800 dark:group-hover:stroke-white',
+                'group-hover:stroke-slate-800 dark:group-hover:stroke-white'
               )}
             />
           </div>
@@ -111,46 +111,44 @@ const AdjustablePage: React.FC = () => {
         {!isPresentMode && (
           <>
             {!locked && (
-              <div className="absolute right-14 top-3">
+              <div className={"absolute right-14 top-3"}>
                 <ButtonLabel
                   resize={false}
                   className={cn(
                     'text-xs text-slate-700 dark:text-slate-200',
                     'transition-opacity duration-500',
-                    isVisible ? 'opacity-100' : 'opacity-0',
+                    isVisible ? 'opacity-100' : 'opacity-0'
                   )}
                 >
                   {pageWidth} x {pageHeight}
                 </ButtonLabel>
               </div>
             )}
-            <div className="p-3">
-              <ButtonLabel className="w-auto text-xs text-slate-700 dark:text-slate-200">
+            <div className={"p-3"}>
+              <ButtonLabel className={"w-auto text-xs text-slate-700 dark:text-slate-200"}>
                 {page.name ? page.name : `Page ${currentPageIndex + 1}`}
               </ButtonLabel>
             </div>
-            <div className="pointer-events-auto absolute right-3 top-3 z-[999]">
+            <div className={"pointer-events-auto absolute right-3 top-3 z-[999]"}>
               <Tooltip>
-                <TooltipContent>
-                  {locked ? 'Unlock Page' : 'Lock Page'}
-                </TooltipContent>
+                <TooltipContent>{locked ? 'Unlock Page' : 'Lock Page'}</TooltipContent>
 
                 <TooltipTrigger asChild>
                   <Button
-                    size="icon"
-                    variant="outline"
+                    size={"icon"}
+                    variant={"outline"}
                     // pressed={isPresentMode}
                     onClick={() => setLocked(!locked)}
                     className={cn(
                       'z-50 p-1 transition-opacity duration-100',
-                      locked ? 'opacity-60' : 'opacity-100',
+                      locked ? 'opacity-60' : 'opacity-100'
                     )}
                   >
                     {locked ? (
-                      <Lock size="16" />
+                      <Lock size={"16"} />
                     ) : (
                       <LockOpen
-                        size="16"
+                        size={"16"}
                         // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
                       />
                     )}

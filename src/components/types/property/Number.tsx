@@ -1,44 +1,38 @@
 import { useEffect, useState } from 'react';
-import { getCopy } from '@/utils/copyHelpers';
-import {
-  useOpenSpaceApiStore,
-  usePropertyStore,
-  NumberComponent,
-  ConnectionState,
-} from '@/store';
-import Information from '@/components/common/Information';
-import { triggerNumber } from '@/utils/triggerHelpers';
-import Slider from '@/components/inputs/Slider';
-import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { formatName } from '@/utils/apiHelpers';
-import ComponentContainer from '@/components/common/ComponentContainer';
-import ToggleComponent from '@/components/common/Toggle';
 import { useShallow } from 'zustand/react/shallow';
+
+import BackgroundHolder from '@/components/common/BackgroundHolder';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import Information from '@/components/common/Information';
+import ToggleComponent from '@/components/common/Toggle';
+import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
+import Slider from '@/components/inputs/Slider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  ConnectionState,
+  NumberComponent,
+  useOpenSpaceApiStore,
+  usePropertyStore} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
-import BackgroundHolder from '@/components/common/BackgroundHolder';
+import { formatName } from '@/utils/apiHelpers';
+import { getCopy } from '@/utils/copyHelpers';
+import { triggerNumber } from '@/utils/triggerHelpers';
 
 interface NumberGUIProps {
   component: NumberComponent;
 }
 const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const subscribeToProperty = usePropertyStore(
-    (state) => state.subscribeToProperty,
-  );
+  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
+    (state) => state.unsubscribeFromProperty
   );
-  const property = usePropertyStore(
-    (state) => state.properties[component.property],
-  );
+  const property = usePropertyStore((state) => state.properties[component.property]);
   const [tempValue, setTempValue] = useState(property?.value);
   const [triggeredByArrowKey, setTriggeredByArrowKey] = useState(false);
   useEffect(() => {
@@ -77,12 +71,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     return () => {
       unsubscribeFromProperty(component.property);
     };
-  }, [
-    component.property,
-    connectionState,
-    subscribeToProperty,
-    unsubscribeFromProperty,
-  ]);
+  }, [component.property, connectionState, subscribeToProperty, unsubscribeFromProperty]);
 
   useEffect(() => {
     if (luaApi) {
@@ -91,11 +80,11 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         triggerAction: (_value: number) => {
           triggerNumber(component.property, _value);
         },
-        isDisabled: property ? false : true,
+        isDisabled: property ? false : true
       });
     } else {
       updateComponent(component.id, {
-        isDisabled: true,
+        isDisabled: true
       });
     }
   }, [component.id, component.property, luaApi, property]);
@@ -104,8 +93,8 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
     >
-      <div className="grid w-[85%] gap-4 py-4">
-        <div className="flex flex-row gap-2">
+      <div className={"grid w-[85%] gap-4 py-4"}>
+        <div className={"flex flex-row gap-2"}>
           <Label>{component.gui_name}</Label>
           <Information content={component.gui_description} />
         </div>
@@ -120,8 +109,8 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         />
 
         <Input
-          type="number"
-          className="w-auto bg-opacity-50 text-xs"
+          type={"number"}
+          className={"w-auto bg-opacity-50 text-xs"}
           value={tempValue || 0}
           min={component.min}
           max={component.max}
@@ -140,27 +129,20 @@ interface NumberModalProps {
   component: NumberComponent | null;
   handleComponentData: (data: Partial<NumberComponent>) => void;
 }
-const NumberModal: React.FC<NumberModalProps> = ({
-  component,
-  handleComponentData,
-}) => {
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentData }) => {
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || '',
+    component?.gui_description || ''
   );
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.number,
+    component?.color || ComponentBaseColors.number
   );
-  const [lockName, setLockName] = useState<boolean>(
-    component?.lockName || false,
-  );
+  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || '',
+    component?.backgroundImage || ''
   );
   const [min, setMin] = useState<number>(component?.min || 0.1);
   const [max, setMax] = useState<number>(component?.max || 100);
@@ -192,7 +174,7 @@ const NumberModal: React.FC<NumberModalProps> = ({
       gui_description,
       lockName,
       backgroundImage,
-      color,
+      color
     });
   }, [
     property,
@@ -205,15 +187,13 @@ const NumberModal: React.FC<NumberModalProps> = ({
     lockName,
     backgroundImage,
     color,
-    handleComponentData,
+    handleComponentData
   ]);
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter(
-      (a) => properties[a].metaData?.type === 'Number' && !a.includes('.Fade'),
-    )
+    .filter((a) => properties[a].metaData?.type === 'Number' && !a.includes('.Fade'))
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;
@@ -229,108 +209,100 @@ const NumberModal: React.FC<NumberModalProps> = ({
       return acc;
     }, {});
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid gap-2">
+    <div className={"grid grid-cols-1 gap-4"}>
+      <div className={"grid grid-cols-1 gap-4"}>
+        <div className={"grid gap-2"}>
           <Label>{getCopy('Number', 'property')}</Label>
           <VirtualizedCombobox
             options={Object.keys(sortedKeys)}
             selectOption={(v: string) => setProperty(sortedKeys[v])}
             selectedOption={
-              Object.keys(sortedKeys).find(
-                (key) => sortedKeys[key] === property,
-              ) || ''
+              Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
             }
-            searchPlaceholder="Search the Scene..."
+            searchPlaceholder={"Search the Scene..."}
           />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="min">{getCopy('Number', 'range_min')}</Label>
+      <div className={"grid grid-cols-4 gap-4"}>
+        <div className={"grid gap-2"}>
+          <Label htmlFor={"min"}>{getCopy('Number', 'range_min')}</Label>
           <Input
-            id="min"
-            placeholder="Slider Min"
-            type="number"
+            id={"min"}
+            placeholder={"Slider Min"}
+            type={"number"}
             value={min || 0}
             onChange={(e) => setMin(parseFloat(e.target.value))}
           />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="max">{getCopy('Number', 'range_max')}</Label>
+        <div className={"grid gap-2"}>
+          <Label htmlFor={"max"}>{getCopy('Number', 'range_max')}</Label>
           <Input
-            id="max"
-            placeholder="Slider Max"
-            type="number"
+            id={"max"}
+            placeholder={"Slider Max"}
+            type={"number"}
             value={max || 0}
             onChange={(e) => setMax(parseFloat(e.target.value))}
           />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="step">{getCopy('Number', 'step')}</Label>
+        <div className={"grid gap-2"}>
+          <Label htmlFor={"step"}>{getCopy('Number', 'step')}</Label>
           <Input
-            id="step"
-            placeholder="Slider Step"
-            type="number"
+            id={"step"}
+            placeholder={"Slider Step"}
+            type={"number"}
             value={step || 0}
             onChange={(e) => setStep(parseFloat(e.target.value))}
           />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="exp">{getCopy('Number', 'exponent')}</Label>
+        <div className={"grid gap-2"}>
+          <Label htmlFor={"exp"}>{getCopy('Number', 'exponent')}</Label>
           <Input
-            id="exp"
-            placeholder="getCopy('Number', 'exponent')"
-            type="number"
+            id={"exp"}
+            placeholder={"getCopy('Number', 'exponent')"}
+            type={"number"}
             value={exponent || 0}
             onChange={(e) => setExponent(parseFloat(e.target.value))}
           />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-2">
-        <div className="col-span-3 grid gap-2">
-          <Label htmlFor="gioname">{getCopy('Number', 'component_name')}</Label>
+      <div className={"grid grid-cols-4 gap-2"}>
+        <div className={"col-span-3 grid gap-2"}>
+          <Label htmlFor={"gioname"}>{getCopy('Number', 'component_name')}</Label>
           <Input
-            id="guiname"
-            placeholder="Name of Component"
-            type="text"
+            id={"guiname"}
+            placeholder={"Name of Component"}
+            type={"text"}
             value={gui_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setGuiName(e.target.value)
             }
           />
         </div>
-        <div className="col-span-1 mt-6 grid gap-2">
-          <ToggleComponent
-            label="Lock Name"
-            value={lockName}
-            setValue={setLockName}
-          />
+        <div className={"col-span-1 mt-6 grid gap-2"}>
+          <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-4">
+      <div className={"grid grid-cols-1 gap-4"}>
         <BackgroundHolder
           color={color}
           setColor={setColor}
           backgroundImage={backgroundImage}
           setBackgroundImage={setBackgroundImage}
         />
-        <div className="grid gap-2">
-          <Label htmlFor="description">
-            {getCopy('Number', 'gui_description')}
-          </Label>
+        <div className={"grid gap-2"}>
+          <Label htmlFor={"description"}>{getCopy('Number', 'gui_description')}</Label>
           <Textarea
-            className="w-full"
-            id="description"
+            className={"w-full"}
+            id={"description"}
             value={gui_description}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setGuiDescription(e.target.value)
             }
-            placeholder="Type your message here."
+            placeholder={"Type your message here."}
           />
         </div>
       </div>
     </div>
   );
 };
-export { NumberModal, NumberGUIComponent };
+export { NumberGUIComponent,NumberModal };

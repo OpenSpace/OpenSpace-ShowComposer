@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import {
   AlertDialog,
@@ -10,8 +9,10 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 import { Page } from '@/store/ComponentTypes';
@@ -22,22 +23,16 @@ interface NewPageModalProps {
   newPage: boolean;
 }
 
-const NewPageModal: React.FC<NewPageModalProps> = ({
-  isOpen,
-  setIsOpen,
-  newPage,
-}) => {
+const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage }) => {
   const currentPage: Page = useBoundStore((state) =>
-    state.getPageById(state.currentPage),
+    state.getPageById(state.currentPage)
   );
 
   const [pageName, setPageName] = useState<string>(
-    newPage ? '' : currentPage?.name || '',
+    newPage ? '' : currentPage?.name || ''
   );
   const [backgroundColor, setBackgroundColor] = useState<string>(
-    newPage
-      ? ComponentBaseColors.page
-      : currentPage?.color || ComponentBaseColors.page,
+    newPage ? ComponentBaseColors.page : currentPage?.color || ComponentBaseColors.page
   );
   useEffect(() => {
     if (!newPage) {
@@ -73,30 +68,25 @@ const NewPageModal: React.FC<NewPageModalProps> = ({
               : 'Update the page name and background color.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="grid gap-4">
-          <div className="grid grid-cols-3 items-center gap-4 text-white">
-            <Label htmlFor="pageName">Page Name</Label>
+        <div className={"grid gap-4"}>
+          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
+            <Label htmlFor={"pageName"}>Page Name</Label>
             <Input
-              id="pageName"
-              className="col-span-2 h-8"
-              type="text"
+              id={"pageName"}
+              className={"col-span-2 h-8"}
+              type={"text"}
               value={pageName}
               onChange={(e) => setPageName(e.target.value)}
-              placeholder="Enter Page Name"
+              placeholder={"Enter Page Name"}
             />
           </div>
-          <div className="grid items-center gap-4 text-white">
-            <Label htmlFor="backgroundColor">Background Color</Label>
-            <ColorPickerComponent
-              color={backgroundColor}
-              setColor={setBackgroundColor}
-            />
+          <div className={"grid items-center gap-4 text-white"}>
+            <Label htmlFor={"backgroundColor"}>Background Color</Label>
+            <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
           </div>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setIsOpen(false)}>
-            Cancel
-          </AlertDialogCancel>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleSubmit}>
             {newPage ? 'Create Page' : 'Update Page'}
           </AlertDialogAction>

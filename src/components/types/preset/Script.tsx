@@ -1,18 +1,19 @@
-import { useOpenSpaceApiStore, ConnectionState } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 import { useEffect, useState } from 'react';
-import { sendLuaScript } from '@/utils/triggerHelpers';
+import CodeEditor from '@uiw/react-textarea-code-editor';
+
+import BackgroundHolder from '@/components/common/BackgroundHolder';
+import ButtonLabel from '@/components/common/ButtonLabel';
+import ComponentContainer from '@/components/common/ComponentContainer';
 import Information from '@/components/common/Information';
+import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import ButtonLabel from '@/components/common/ButtonLabel';
-import ComponentContainer from '@/components/common/ComponentContainer';
-import ToggleComponent from '@/components/common/Toggle';
+import { ConnectionState,useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/store/ComponentTypes';
-import CodeEditor from '@uiw/react-textarea-code-editor';
-import BackgroundHolder from '@/components/common/BackgroundHolder';
+import { getCopy } from '@/utils/copyHelpers';
+import { sendLuaScript } from '@/utils/triggerHelpers';
 
 interface ScriptGUIProps {
   component: ScriptComponent;
@@ -20,7 +21,7 @@ interface ScriptGUIProps {
 }
 const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
   component,
-  shouldRender = true,
+  shouldRender = true
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
 
@@ -31,11 +32,11 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
         triggerAction: () => {
           sendLuaScript(component.script);
         },
-        isDisabled: false,
+        isDisabled: false
       });
     } else {
       updateComponent(component.id, {
-        isDisabled: true,
+        isDisabled: true
       });
     }
   }, [component.id, component.script, luaApi]);
@@ -52,7 +53,7 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className="flex flex-row gap-2">
+          <div className={"flex flex-row gap-2"}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>
@@ -69,25 +70,21 @@ interface ScriptModalProps {
 }
 const ScriptModal: React.FC<ScriptModalProps> = ({
   component,
-  handleComponentData,
+  handleComponentData
   //   isOpen,
 }) => {
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const [script, setScript] = useState<string>(component?.script || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [lockName, setLockName] = useState<boolean>(
-    component?.lockName || false,
-  );
+  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || '',
+    component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || '',
+    component?.backgroundImage || ''
   );
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.fade,
+    component?.color || ComponentBaseColors.fade
   );
 
   useEffect(() => {
@@ -97,7 +94,7 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
       lockName,
       gui_name,
       gui_description,
-      color,
+      color
     });
   }, [
     script,
@@ -106,7 +103,7 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
     gui_description,
     lockName,
     color,
-    handleComponentData,
+    handleComponentData
   ]);
 
   useEffect(() => {
@@ -115,14 +112,14 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <div className="col-span-4 grid gap-2">
-            <Label htmlFor="gioname">{getCopy('Script', 'script')}</Label>
+      <div className={"grid grid-cols-1 gap-4"}>
+        <div className={"grid grid-cols-4 items-center gap-4"}>
+          <div className={"col-span-4 grid gap-2"}>
+            <Label htmlFor={"gioname"}>{getCopy('Script', 'script')}</Label>
             <CodeEditor
               value={script}
-              language="lua"
-              placeholder="Please enter Lua code."
+              language={"lua"}
+              placeholder={"Please enter Lua code."}
               onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setScript(evn.target.value)
               }
@@ -130,28 +127,26 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
               style={{
                 // backgroundColor: '#f5f55',
                 fontFamily:
-                  'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                  'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
               }}
             />
           </div>
-          <div className="col-span-3 grid grid-cols-3  gap-2 ">
-            <div className="col-span-2 grid gap-2">
-              <Label htmlFor="gioname">
-                {getCopy('Fade', 'component_name')}
-              </Label>
+          <div className={"col-span-3 grid grid-cols-3  gap-2 "}>
+            <div className={"col-span-2 grid gap-2"}>
+              <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id="guiname"
-                placeholder="Name of Component"
-                type="text"
+                id={"guiname"}
+                placeholder={"Name of Component"}
+                type={"text"}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className="col-span-1 mt-6 grid gap-2">
+            <div className={"col-span-1 mt-6 grid gap-2"}>
               <ToggleComponent
-                label="Lock Name"
+                label={"Lock Name"}
                 value={lockName}
                 setValue={setLockName}
               />
@@ -159,25 +154,23 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className={"grid grid-cols-1 gap-4"}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('Fade', 'gui_description')}
-            </Label>
+          <div className={"grid gap-2"}>
+            <Label htmlFor={"description"}>{getCopy('Fade', 'gui_description')}</Label>
             <Textarea
-              className="w-full"
-              id="description"
+              className={"w-full"}
+              id={"description"}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder="Type your message here."
+              placeholder={"Type your message here."}
             />
           </div>
         </div>
@@ -185,4 +178,4 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
     </>
   );
 };
-export { ScriptModal, ScriptGUIComponent };
+export { ScriptGUIComponent,ScriptModal };

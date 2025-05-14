@@ -1,5 +1,6 @@
 // SelectionTool.tsx
 import React, { useRef, useState } from 'react';
+
 import { useBoundStore } from '@/store/boundStore';
 
 const SelectionTool: React.FC = () => {
@@ -34,7 +35,7 @@ const SelectionTool: React.FC = () => {
       x: Math.min(startPos.x, offsetX),
       y: Math.min(startPos.y, offsetY),
       width: Math.abs(startPos.x - offsetX),
-      height: Math.abs(startPos.y - offsetY),
+      height: Math.abs(startPos.y - offsetY)
     };
     setRect(newRect);
   };
@@ -50,7 +51,7 @@ const SelectionTool: React.FC = () => {
         x: compPos.x,
         y: compPos.y,
         width: compPos.width,
-        height: compPos.height,
+        height: compPos.height
       };
 
       // Check if the component is within the selection rectangle
@@ -68,7 +69,7 @@ const SelectionTool: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative h-full w-full"
+      className={"relative h-full w-full"}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -76,12 +77,12 @@ const SelectionTool: React.FC = () => {
     >
       {isSelecting && (
         <div
-          className="absolute border-2 border-dashed border-blue-500 bg-blue-200 bg-opacity-25"
+          className={"absolute border-2 border-dashed border-blue-500 bg-blue-200 bg-opacity-25"}
           style={{
             left: rect.x,
             top: rect.y,
             width: rect.width,
-            height: rect.height,
+            height: rect.height
           }}
         ></div>
       )}

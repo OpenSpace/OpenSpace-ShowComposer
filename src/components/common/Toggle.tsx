@@ -1,8 +1,10 @@
 import React from 'react';
-import { Label } from '../ui/label';
+
+import { cn } from '@/lib/utils';
+
 // import { Switch } from '../ui/switch';
 import { Checkbox } from '../ui/checkbox';
-import { cn } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 interface ToggleComponentProps {
   value: boolean;
@@ -17,7 +19,7 @@ const Toggle: React.FC<ToggleComponentProps> = ({
   setValue,
   disabled = false,
   label,
-  className = '',
+  className = ''
 }) => {
   return (
     <div className={cn('flex items-center space-x-2', className)}>

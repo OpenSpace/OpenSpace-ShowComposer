@@ -4,9 +4,9 @@ import { NavigationState } from '@/types/types';
 const triggerFade = async (
   property: string,
   intDuration: number,
-  action: 'on' | 'off' | 'toggle',
+  action: 'on' | 'off' | 'toggle'
 ) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const {luaApi} = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -36,11 +36,8 @@ const triggerFade = async (
   }
 };
 
-const triggerBool = async (
-  property: string,
-  action: 'on' | 'off' | 'toggle',
-) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+const triggerBool = async (property: string, action: 'on' | 'off' | 'toggle') => {
+  const {luaApi} = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -60,7 +57,7 @@ const triggerBool = async (
 };
 
 const triggerTrigger = async (property: string) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const {luaApi} = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -69,7 +66,7 @@ const triggerTrigger = async (property: string) => {
 };
 
 const triggerNumber = async (property: string, newValue: number) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const {luaApi} = useOpenSpaceApiStore.getState();
   // console.log('triggerNumber', property, newValue);
   luaApi?.setPropertyValueSingle(property, newValue);
 };
@@ -78,16 +75,16 @@ async function jumpToNavState(
   navigationState: NavigationState,
   setTime: boolean,
   mode: 'jump' | 'fade' | 'fly',
-  fadeTime: number,
+  fadeTime: number
 ) {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const {luaApi} = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
   }
 
-  let navState = {
-    ...navigationState,
+  const navState = {
+    ...navigationState
   };
   switch (mode) {
     case 'jump':
@@ -113,17 +110,14 @@ const triggerAction = (actionName: string) => {
 };
 
 const sendLuaScript = (script: string) => {
-  useOpenSpaceApiStore
-    .getState()
-    .apiInstance?.executeLuaScript(script, false, false);
+  useOpenSpaceApiStore.getState().apiInstance?.executeLuaScript(script, false, false);
 };
 
 export {
-  triggerFade,
-  triggerBool,
-  triggerTrigger,
-  triggerAction,
-  triggerNumber,
   jumpToNavState,
   sendLuaScript,
-};
+  triggerAction,
+  triggerBool,
+  triggerFade,
+  triggerNumber,
+  triggerTrigger};

@@ -1,10 +1,7 @@
 import React from 'react';
+
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type ToggleButtonProps = {
   tooltipText: string;
@@ -19,14 +16,14 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
   icon,
   selected,
   disabled,
-  onClick,
+  onClick
 }) => {
   return (
     <Tooltip>
       <TooltipContent>{tooltipText}</TooltipContent>
       <TooltipTrigger asChild>
         <Button
-          size="icon"
+          size={"icon"}
           disabled={disabled}
           variant={'outline'}
           onClick={onClick}

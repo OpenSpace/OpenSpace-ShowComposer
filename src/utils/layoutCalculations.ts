@@ -2,7 +2,7 @@ import { LayoutBase } from '@/store/ComponentTypes';
 
 export function calculateTotalLayoutWidth(
   layout: LayoutBase,
-  numberOfChildren: number,
+  numberOfChildren: number
 ): number {
   const padding = layout.padding || 10;
   const childWidth = layout.childWidth || 0;
@@ -11,7 +11,7 @@ export function calculateTotalLayoutWidth(
 
 export function calculateTotalLayoutHeight(
   layout: LayoutBase,
-  numberOfChildren: number,
+  numberOfChildren: number
 ): number {
   const padding = layout.padding || 10;
   const childHeight = layout.childHeight || 0;
@@ -21,7 +21,7 @@ export function calculateTotalLayoutHeight(
 export function calculateGridIndex(
   x: number,
   y: number,
-  layout: LayoutBase,
+  layout: LayoutBase
 ): { gridIndex: number; gridPosition: { x: number; y: number } } {
   const { rows, columns, childWidth, childHeight, padding } = layout;
 
@@ -42,7 +42,7 @@ export function calculateGridIndex(
   // Calculate the top-left position of the grid cell
   const gridPosition = {
     x: padding + clampedColumnIndex * (childWidth + padding),
-    y: padding + clampedRowIndex * (childHeight + padding),
+    y: padding + clampedRowIndex * (childHeight + padding)
   };
 
   return { gridIndex, gridPosition };

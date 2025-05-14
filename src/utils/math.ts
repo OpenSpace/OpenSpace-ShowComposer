@@ -19,7 +19,7 @@ type RecursivePartial<T> = {
 
 export function restrictNumbersToDecimalPlaces<T>(
   obj: T,
-  decimalPlaces: number,
+  decimalPlaces: number
 ): RecursivePartial<T> {
   // Helper function to format numbers to specified decimal places
   const formatNumber = (n: number, places: number): number => {

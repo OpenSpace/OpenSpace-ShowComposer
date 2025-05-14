@@ -1,18 +1,19 @@
+import React, { useEffect, useRef,useState } from 'react';
+import { throttle } from 'lodash';
+
+import Toggle from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
-import { getCopy } from '@/utils/copyHelpers';
 import { Label } from '@/components/ui/label';
 import { TitleComponent } from '@/store';
-import { throttle } from 'lodash';
-import React, { useEffect, useState, useRef } from 'react';
 import { useBoundStore } from '@/store/boundStore';
-import Toggle from '@/components/common/Toggle';
+import { getCopy } from '@/utils/copyHelpers';
 interface TitleGUIProps {
   component: TitleComponent;
 }
 const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
   const [textStyle, setTextStyle] = useState({
     fontSize: '1rem',
-    lineHeight: '1.2',
+    lineHeight: '1.2'
     // visibility: 'visible',
     // position: 'static',
   });
@@ -28,7 +29,7 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
       // Avoid affecting layout
       whiteSpace: string;
     },
-    containerWidth: number,
+    containerWidth: number
   ) {
     // Create a temporary element for the text
     const element = document.createElement('span');
@@ -49,7 +50,7 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
     // Measure the element
     const dimensions = {
       textWidth: element.offsetWidth,
-      textHeight: element.offsetHeight,
+      textHeight: element.offsetHeight
     };
 
     // Clean up by removing the element from the document
@@ -70,14 +71,14 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
         // Hide the element
         position: 'absolute',
         // Avoid affecting layout
-        whiteSpace: 'nowrap', // Prevent line breaks during width measurement
+        whiteSpace: 'nowrap' // Prevent line breaks during width measurement
       };
 
       // Assuming measureTextDimensions is a function you've implemented
       const { textWidth, textHeight } = measureTextDimensions(
         component.text,
         trialStyle,
-        width - 160,
+        width - 160
       );
       if (textWidth <= width && textHeight <= height) {
         minSize = size + precision;
@@ -87,13 +88,13 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
     }
     setTextStyle({
       fontSize: `${minSize}px`,
-      lineHeight: `${minSize * 1.1}px`,
+      lineHeight: `${minSize * 1.1}px`
     });
   }, 250); // 100ms throttle period
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         const { width, height } = entry.contentRect;
         throttledMeasureAndApply(width, height);
       }
@@ -111,13 +112,13 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
   return (
     <div
       ref={containerRef}
-      className="absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center"
+      className={"absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center"}
     >
       <h1
-        className="dark:text-white"
+        className={"dark:text-white"}
         style={{
           fontSize: textStyle.fontSize,
-          lineHeight: textStyle.lineHeight,
+          lineHeight: textStyle.lineHeight
           // visibility: textStyle.visibility,
           // position: textStyle.position,
         }}
@@ -135,21 +136,21 @@ interface TitleModalProps {
 const TitleModal: React.FC<TitleModalProps> = ({
   component,
   handleComponentData,
-  isOpen,
+  isOpen
 }) => {
   const currentPageTitle = useBoundStore(
-    (state) => state.getPageById(state.currentPage).name,
+    (state) => state.getPageById(state.currentPage).name
   );
   const [text, setText] = useState(
-    component?.text || (component?.setFromPageTitle ? currentPageTitle : ''),
+    component?.text || (component?.setFromPageTitle ? currentPageTitle : '')
   );
   const [setFromPageTitle, setSetFromPageTitle] = useState<boolean>(
-    component?.setFromPageTitle || true,
+    component?.setFromPageTitle || true
   );
   useEffect(() => {
     handleComponentData({
       text,
-      setFromPageTitle,
+      setFromPageTitle
     });
   }, [text, setFromPageTitle, handleComponentData]);
 
@@ -176,10 +177,10 @@ const TitleModal: React.FC<TitleModalProps> = ({
     }
   }, [isOpen, setText]);
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className={"grid grid-cols-1 gap-4"}>
       <Label>{getCopy('Title', 'title')}</Label>
       <Input value={text} onChange={(e) => setText(e.target.value)} />
-      <div className="flex items-center gap-2">
+      <div className={"flex items-center gap-2"}>
         <Label>{getCopy('Title', 'pageTitle')}</Label>
         <Toggle
           value={setFromPageTitle}
@@ -189,4 +190,4 @@ const TitleModal: React.FC<TitleModalProps> = ({
     </div>
   );
 };
-export { TitleModal, TitleGUIComponent };
+export { TitleGUIComponent,TitleModal };

@@ -3,12 +3,11 @@ import React from 'react';
 import {
   Pagination as PaginationContainer,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
-} from '@/components/ui/pagination';
+  PaginationPrevious} from '@/components/ui/pagination';
 
 interface PaginationProps {
   currentIndex: number;
@@ -16,11 +15,7 @@ interface PaginationProps {
   setIndex: (index: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  currentIndex,
-  length,
-  setIndex,
-}) => {
+const Pagination: React.FC<PaginationProps> = ({ currentIndex, length, setIndex }) => {
   // const handleKeyPress = (event: KeyboardEvent) => {
   //   if (event.key === 'ArrowLeft' && currentIndex > 0) {
   //     setIndex(currentIndex - 1);
@@ -63,15 +58,13 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center">
+    <div className={"absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center"}>
       <PaginationContainer>
-        <PaginationContent className="z-[49]">
+        <PaginationContent className={"z-[49]"}>
           <PaginationItem>
             <PaginationPrevious
               className={`${
-                currentIndex > 0
-                  ? 'pointer-events-all'
-                  : 'pointer-events-none opacity-0'
+                currentIndex > 0 ? 'pointer-events-all' : 'pointer-events-none opacity-0'
               } cursor-pointer`}
               onClick={() => setIndex(currentIndex - 1)}
             />
@@ -82,7 +75,7 @@ const Pagination: React.FC<PaginationProps> = ({
             visiblePages().map((index) => (
               <PaginationItem key={index}>
                 <PaginationLink
-                  className="cursor-pointer"
+                  className={"cursor-pointer"}
                   isActive={currentIndex === index}
                   onClick={() => setIndex(index)}
                 >

@@ -3,39 +3,32 @@ export enum ConnectionState {
   UNCONNECTED,
   CONNECTING,
   CONNECTED,
-  DISCONNECTED,
+  DISCONNECTED
 }
-import OpenSpaceApi, {
-  OpenSpaceApi as OSApiClass,
-  Topic,
-} from 'openspace-api-js';
-
-import { usePropertyStore } from './propertyStore';
+import OpenSpaceApi, { OpenSpaceApi as OSApiClass, Topic } from 'openspace-api-js';
 
 import {
-  PropertyOwner,
-  Property,
   findFavorites,
   flattenPropertyTree,
   getActionSceneNodes,
   getRenderables,
-  isPropertyVisible,
   isPropertyOwnerVisible,
-} from '@/utils/apiHelpers';
+  isPropertyVisible,
+  Property,
+  PropertyOwner} from '@/utils/apiHelpers';
+
+import { usePropertyStore } from './propertyStore';
 import { useSettingsStore } from './settingsStore';
 
 export const rootOwnerKey = '__rootOwner';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
-export const RetargetAnchorKey =
-  'NavigationHandler.OrbitalNavigator.RetargetAnchor';
+export const RetargetAnchorKey = 'NavigationHandler.OrbitalNavigator.RetargetAnchor';
 export const RetargetAimKey = 'NavigationHandler.OrbitalNavigator.RetargetAim';
 export const RotationalFrictionKey =
   'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction';
-export const ZoomFrictionKey =
-  'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
-export const RollFrictionKey =
-  'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
+export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
+export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
 // OpenSpace engine
 export const EngineModeSessionRecordingPlayback = 'session_recording_playback';
@@ -60,7 +53,7 @@ interface OpenSpaceApiState {
   subscribeToTopic: (
     topic: string,
     properties?: string[],
-    settings?: any,
+    settings?: any
   ) => Topic | null; // Define parameters as needed
   unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
   connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
@@ -101,7 +94,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     )
       return;
     const host = useSettingsStore.getState().ip;
-    const port = useSettingsStore.getState().port;
+    const {port} = useSettingsStore.getState();
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionState(ConnectionState.CONNECTING);
@@ -119,29 +112,25 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         const value = await apiInstance.getProperty(rootOwnerKey);
         const {
           propertyOwners,
-          properties,
+          properties
         }: { propertyOwners: PropertyOwner[]; properties: Property[] } =
           flattenPropertyTree(value as PropertyOwner);
         usePropertyStore.getState().getActions();
-        const Visibility = properties.find(
-          (p) => p.uri === EnginePropertyVisibilityKey,
-        );
-        const FadeDuration = properties.find(
-          (p) => p.uri === EngineFadeDurationKey,
-        );
+        const Visibility = properties.find((p) => p.uri === EnginePropertyVisibilityKey);
+        const FadeDuration = properties.find((p) => p.uri === EngineFadeDurationKey);
 
         // Set the inital properties to the store
-        let initData: Record<string, any> = {};
+        const initData: Record<string, any> = {};
         initData[EngineFadeDurationKey as string] = FadeDuration;
         initData[EnginePropertyVisibilityKey as string] = Visibility;
         usePropertyStore.getState().setProperties(initData);
 
         // Filter the properties based on the visibility
         const filteredProperties = properties.filter((p) =>
-          isPropertyVisible(p, Visibility),
+          isPropertyVisible(p, Visibility)
         );
         const filteredPropertyOwners = propertyOwners.filter((p) =>
-          isPropertyOwnerVisible(p, Visibility),
+          isPropertyOwnerVisible(p, Visibility)
         );
 
         // Find the favorites
@@ -151,7 +140,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         // Get the renderables
         const fadeables: Record<string, any> = getRenderables(
           filteredProperties as Property[],
-          'Opacity',
+          'Opacity'
         );
 
         usePropertyStore.getState().setProperties(fadeables);
@@ -159,23 +148,17 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
 
         usePropertyStore.getState().setProperties(boolProps);
-        const triggerProps = getActionSceneNodes(
-          properties as Property[],
-          'Trigger',
-        );
+        const triggerProps = getActionSceneNodes(properties as Property[], 'Trigger');
 
         usePropertyStore.getState().setProperties(triggerProps);
-        const numberProps = getActionSceneNodes(
-          properties as Property[],
-          'Number',
-        );
+        const numberProps = getActionSceneNodes(properties as Property[], 'Number');
 
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
         set({
           error: 'OpenSpace library could not be loaded',
-          connectionState: ConnectionState.UNCONNECTED,
+          connectionState: ConnectionState.UNCONNECTED
         });
       }
     });
@@ -197,7 +180,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
 
       set({
         luaApi: undefined,
-        connectionState: ConnectionState.UNCONNECTED,
+        connectionState: ConnectionState.UNCONNECTED
       });
     });
     apiInstance.connect();
@@ -210,23 +193,20 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     set({
       // // reconnectTimeout: newTimeout,
       luaApi: undefined,
-      connectionState: ConnectionState.UNCONNECTED,
+      connectionState: ConnectionState.UNCONNECTED
     });
   },
   subscribeToProperty: (propertyName: string) => {
     const { connectionState, apiInstance } = get();
     // console.log('Connection State: ', connectionState);
     // console.log('API Instance: ', apiInstance);
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED)
-      return null;
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return null;
     try {
       const subscription = apiInstance.subscribeToProperty(propertyName);
       // console.log(subscription);
       return subscription;
     } catch (e) {
-      console.error(
-        'Cannot subscribe to property, API instance is not connected.',
-      );
+      console.error('Cannot subscribe to property, API instance is not connected.');
       return null;
     }
   },
@@ -234,55 +214,43 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     subscription.talk({
-      event: 'stop_subscription',
+      event: 'stop_subscription'
     });
     subscription.cancel();
   },
-  subscribeToTopic: (
-    topicName: string,
-    properties?: string[],
-    settings?: any,
-  ) => {
+  subscribeToTopic: (topicName: string, properties?: string[], settings?: any) => {
     const { connectionState, apiInstance } = get();
 
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
-      console.error(
-        'Cannot subscribe to topic, API instance is not connected.',
-      );
+      console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }
     try {
       const topic = apiInstance.startTopic(topicName, {
         event: 'start_subscription',
         properties: properties || [],
-        settings: settings || {},
+        settings: settings || {}
       });
       return topic;
     } catch (e) {
-      console.error(
-        'Cannot subscribe to topic, API instance is not connected.',
-      );
+      console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }
   },
   connectToTopic: (topicName: string) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
-      console.error(
-        'Cannot subscribe to topic, API instance is not connected.',
-      );
+      console.error('Cannot subscribe to topic, API instance is not connected.');
 
       return null;
     }
     try {
       const topic = apiInstance.startTopic(topicName, {
-        type: 'connect',
+        type: 'connect'
       });
       return topic;
     } catch (e) {
-      console.error(
-        'Cannot subscribe to topic, API instance is not connected.',
-      );
+      console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }
   },
@@ -290,7 +258,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.talk({
-      event: 'stop_subscription',
+      event: 'stop_subscription'
     });
     topic.cancel();
   },
@@ -298,8 +266,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.talk({
-      type: 'disconnect',
+      type: 'disconnect'
     });
     topic.cancel();
-  },
+  }
 }));

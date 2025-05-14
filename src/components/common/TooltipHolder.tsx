@@ -6,14 +6,10 @@ interface TooltipHolderProps {
   side?: 'top' | 'right' | 'bottom' | 'left';
 }
 
-const TooltipHolder: React.FC<TooltipHolderProps> = ({
-  children,
-  content,
-  side,
-}) => (
+const TooltipHolder: React.FC<TooltipHolderProps> = ({ children, content, side }) => (
   <Tooltip>
     <TooltipTrigger asChild>{children}</TooltipTrigger>
-    <TooltipContent className="bg-white" side={side}>
+    <TooltipContent className={"bg-white"} side={side}>
       {content}
     </TooltipContent>
   </Tooltip>

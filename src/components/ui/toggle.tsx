@@ -11,19 +11,19 @@ const toggleVariants = cva(
       variant: {
         default: 'bg-transparent',
         outline:
-          'border border-slate-200 bg-transparent hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-50',
+          'border border-slate-200 bg-transparent hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-50'
       },
       size: {
         default: 'h-10 px-3',
         sm: 'h-9 px-2.5',
-        lg: 'h-11 px-5',
-      },
+        lg: 'h-11 px-5'
+      }
     },
     defaultVariants: {
       variant: 'default',
-      size: 'default',
-    },
-  },
+      size: 'default'
+    }
+  }
 );
 
 const Toggle = React.forwardRef<

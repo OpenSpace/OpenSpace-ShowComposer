@@ -1,15 +1,16 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { createPageSlice, PageSlice } from './pageSlice';
-import { createLayoutSlice, LayoutSlice } from './layoutSlice';
-import { createPositionSlice, PositionSlice } from './positionSlice';
-import { createComponentSlice, ComponentSlice } from './componentSlice'; // Assuming you have a componentSlice
-// import { debounce, isEmpty } from 'lodash';
-import { temporal } from 'zundo';
 // import { isEmpty, throttle } from 'lodash';
 // import diff from 'microdiff';
 import debounce from 'just-debounce-it';
+// import { debounce, isEmpty } from 'lodash';
+import { temporal } from 'zundo';
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
+
+import { ComponentSlice,createComponentSlice } from './componentSlice'; // Assuming you have a componentSlice
+import { createLayoutSlice, LayoutSlice } from './layoutSlice';
+import { createPageSlice, PageSlice } from './pageSlice';
+import { createPositionSlice, PositionSlice } from './positionSlice';
 // import isDeepEqual from 'fast-deep-equal';
 // import { isEmpty } from 'lodash';
 // Define the combined state type
@@ -24,7 +25,7 @@ export const useBoundStore = create<BoundStoreState>()(
             ...createPageSlice(...a),
             ...createLayoutSlice(...a),
             ...createPositionSlice(...a),
-            ...createComponentSlice(...a),
+            ...createComponentSlice(...a)
           }),
           {
             limit: 20,
@@ -61,7 +62,7 @@ export const useBoundStore = create<BoundStoreState>()(
 
                   firstState = null; // Reset fir
                 },
-                500, // Debounce time
+                500 // Debounce time
                 // true,
               );
 
@@ -82,7 +83,7 @@ export const useBoundStore = create<BoundStoreState>()(
                 // }
               };
               return myCustomSetter;
-            },
+            }
             // equality: isDeepEqual,
             // onSave: (state) => console.log('saved', state),
             // diff: (pastState, currentState) => {
@@ -118,30 +119,28 @@ export const useBoundStore = create<BoundStoreState>()(
             //   console.log('newStateFromDiff', newStateFromDiff);
             //   return isEmpty(newStateFromDiff) ? null : newStateFromDiff;
             // },
-          },
-        ),
+          }
+        )
       ),
-      { name: 'bound-store' }, // Name for the persisted store
+      { name: 'bound-store' } // Name for the persisted store
     ),
-    { name: 'bound-store' }, // Name for the devtools
-  ),
+    { name: 'bound-store' } // Name for the devtools
+  )
 );
 
-import { useStoreWithEqualityFn } from 'zustand/traditional';
 import type { TemporalState } from 'zundo';
+import { useStoreWithEqualityFn } from 'zustand/traditional';
 
 function useTemporalStore(): TemporalState<BoundStoreState>;
+function useTemporalStore<T>(selector: (state: TemporalState<BoundStoreState>) => T): T;
 function useTemporalStore<T>(
   selector: (state: TemporalState<BoundStoreState>) => T,
-): T;
-function useTemporalStore<T>(
-  selector: (state: TemporalState<BoundStoreState>) => T,
-  equality: (a: T, b: T) => boolean,
+  equality: (a: T, b: T) => boolean
 ): T;
 
 function useTemporalStore<T>(
   selector?: (state: TemporalState<BoundStoreState>) => T,
-  equality?: (a: T, b: T) => boolean,
+  equality?: (a: T, b: T) => boolean
 ) {
   // @ts-ignore
   return useStoreWithEqualityFn(useBoundStore.temporal, selector!, equality);

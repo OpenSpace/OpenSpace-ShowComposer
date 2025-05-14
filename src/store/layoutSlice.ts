@@ -1,17 +1,18 @@
 import { v4 as uuidv4 } from 'uuid';
+
 // import { PositionState, usePositionStore } from './positionStore';
 import {
-  calculateTotalLayoutHeight,
-  calculateTotalLayoutWidth,
   calculateGridIndex,
-} from '@/utils/layoutCalculations';
+  calculateTotalLayoutHeight,
+  calculateTotalLayoutWidth} from '@/utils/layoutCalculations';
 import { roundToNearest } from '@/utils/math';
-import { ImmerStateCreator, LayoutBase } from './ComponentTypes';
+
 import { ComponentSlice, isComponentOverlappingPage } from './componentSlice';
+import { ImmerStateCreator, LayoutBase } from './ComponentTypes';
 // import { StateCreator } from 'zustand';
 import { PageSlice } from './pageSlice';
-import { useSettingsStore } from './settingsStore';
 import { PositionSlice } from './positionSlice';
+import { useSettingsStore } from './settingsStore';
 
 export type LayoutType = 'row' | 'column' | 'grid';
 interface Position {
@@ -39,20 +40,20 @@ export interface LayoutSlice {
     layoutId: string,
     componentId: string,
     x: number,
-    y: number,
+    y: number
   ) => void;
   getGridPosition: (layoutId: string, gridIndex: number) => Position;
   removeComponentFromLayout: (
     layoutId: string,
     componentId: string,
     x: number,
-    y: number,
+    y: number
   ) => void;
   reorderComponentInLayout: (
     layoutId: string,
     componentId: string,
     x: number,
-    y: number,
+    y: number
   ) => void;
 }
 export const createLayoutSlice: ImmerStateCreator<
@@ -69,22 +70,19 @@ export const createLayoutSlice: ImmerStateCreator<
       state.layouts[id] = {
         id,
         type: config.type,
-        children:
-          config.type === 'grid' ? new Array(rows * columns).fill(null) : [],
+        children: config.type === 'grid' ? new Array(rows * columns).fill(null) : [],
         rows,
         columns,
         padding: 25,
         childWidth: 200,
         childHeight: 200,
         persistent: config.persistent || false,
-        parentPage: config.parentPage || undefined,
+        parentPage: config.parentPage || undefined
       };
     });
     const layout = get().layouts[id];
-    const width =
-      (layout.childWidth + layout.padding) * layout.columns + layout.padding;
-    const height =
-      (layout.childHeight + layout.padding) * layout.rows + layout.padding;
+    const width = (layout.childWidth + layout.padding) * layout.columns + layout.padding;
+    const height = (layout.childHeight + layout.padding) * layout.rows + layout.padding;
 
     get().addPosition(id, {
       x: config.x,
@@ -92,7 +90,7 @@ export const createLayoutSlice: ImmerStateCreator<
       minWidth: 50,
       minHeight: 50,
       width,
-      height,
+      height
     });
     return id;
   },
@@ -114,9 +112,7 @@ export const createLayoutSlice: ImmerStateCreator<
           const currentTotalCells = layout.rows * layout.columns;
           if (newTotalCells > currentTotalCells) {
             // Add new cells
-            const newCells = new Array(newTotalCells - currentTotalCells).fill(
-              null,
-            );
+            const newCells = new Array(newTotalCells - currentTotalCells).fill(null);
             layout.children = [...layout.children, ...newCells];
           } else if (newTotalCells < currentTotalCells) {
             // Remove cells
@@ -125,8 +121,7 @@ export const createLayoutSlice: ImmerStateCreator<
           layout.rows = newRows;
           layout.columns = newColumns;
 
-          const height =
-            newRows * (layout.childHeight + layout.padding) + layout.padding;
+          const height = newRows * (layout.childHeight + layout.padding) + layout.padding;
           const width =
             newColumns * (layout.childWidth + layout.padding) + layout.padding;
           state.positions[id].height = height;
@@ -162,11 +157,11 @@ export const createLayoutSlice: ImmerStateCreator<
                     x: position.x + layoutPosition.x,
                     y: position.y + layoutPosition.y,
                     width: position.width,
-                    height: position.height,
+                    height: position.height
                   },
                   currentPage,
                   useSettingsStore.getState().pageWidth,
-                  useSettingsStore.getState().pageHeight,
+                  useSettingsStore.getState().pageHeight
                 )
               ) {
                 get().addComponentToPageById(componentId, currentPage.id);
@@ -202,12 +197,12 @@ export const createLayoutSlice: ImmerStateCreator<
         minWidth: 50,
         minHeight: 50,
         width: width,
-        height: height,
+        height: height
       });
       const newChildren = layout.children.map((childId) => {
         if (childId) {
           return get().copyComponent(childId, false, {
-            parentId: newId,
+            parentId: newId
           });
         }
         return null;
@@ -217,7 +212,7 @@ export const createLayoutSlice: ImmerStateCreator<
         state.layouts[newId] = {
           ...layout,
           id: newId,
-          children: newChildren,
+          children: newChildren
         };
       });
       return newId;
@@ -227,7 +222,7 @@ export const createLayoutSlice: ImmerStateCreator<
   handleLayoutDrop: (layoutId: string, x: number, y: number) => {
     get().updatePosition(layoutId, {
       x: roundToNearest(x, 25),
-      y: roundToNearest(y, 25),
+      y: roundToNearest(y, 25)
     });
     const currentPage = get().getPageById(get().currentPage);
     if (currentPage) {
@@ -237,7 +232,7 @@ export const createLayoutSlice: ImmerStateCreator<
           { x, y, width, height },
           currentPage,
           useSettingsStore.getState().pageWidth,
-          useSettingsStore.getState().pageHeight,
+          useSettingsStore.getState().pageHeight
         )
       ) {
         get().addComponentToPageById(layoutId, currentPage.id);
@@ -268,13 +263,13 @@ export const createLayoutSlice: ImmerStateCreator<
       if (layout.type === 'row') {
         const totalLayoutWidth = calculateTotalLayoutWidth(
           layout,
-          layout.children.length,
+          layout.children.length
         );
         state.positions[layoutId].width = totalLayoutWidth;
       } else if (layout.type === 'column') {
         const totalLayoutHeight = calculateTotalLayoutHeight(
           layout,
-          layout.children.length,
+          layout.children.length
         );
         state.positions[layoutId].height = totalLayoutHeight;
       }
@@ -287,7 +282,7 @@ export const createLayoutSlice: ImmerStateCreator<
             x: index * (layout.childWidth + layout.padding) + layout.padding,
             y: layout.padding,
             width: layout.childWidth,
-            height: layout.childHeight,
+            height: layout.childHeight
           });
         }
       } else if (layout.type === 'column') {
@@ -297,7 +292,7 @@ export const createLayoutSlice: ImmerStateCreator<
             x: layout.padding,
             y: index * (layout.childHeight + layout.padding) + layout.padding,
             width: layout.childWidth,
-            height: layout.childHeight,
+            height: layout.childHeight
           });
         }
       } else {
@@ -306,18 +301,13 @@ export const createLayoutSlice: ImmerStateCreator<
           x: position.x,
           y: position.y,
           width: layout.childWidth,
-          height: layout.childHeight,
+          height: layout.childHeight
         });
       }
     });
     // });
   },
-  addComponentToLayout: (
-    layoutId: string,
-    componentId: string,
-    x: number,
-    y: number,
-  ) => {
+  addComponentToLayout: (layoutId: string, componentId: string, x: number, y: number) => {
     set((state) => {
       const layout = state.layouts[layoutId];
       if (layout) {
@@ -326,7 +316,7 @@ export const createLayoutSlice: ImmerStateCreator<
           const { gridIndex, gridPosition } = calculateGridIndex(
             adjustedPosition.x,
             adjustedPosition.y,
-            layout,
+            layout
           );
           if (layout.children[gridIndex] === null) {
             state.positions[componentId].parentId = layoutId;
@@ -352,22 +342,20 @@ export const createLayoutSlice: ImmerStateCreator<
     const { columns, childWidth, childHeight, padding } = layout;
     return {
       x: padding + (gridIndex % columns) * (childWidth + padding),
-      y: padding + Math.floor(gridIndex / columns) * (childHeight + padding),
+      y: padding + Math.floor(gridIndex / columns) * (childHeight + padding)
     };
   },
   removeComponentFromLayout: (
     layoutId: string,
     componentId: string,
     x: number,
-    y: number,
+    y: number
   ) => {
     set((state) => {
       const layout = state.layouts[layoutId];
       if (layout) {
         if (layout.type === 'grid') {
-          const gridIndex = layout.children.findIndex(
-            (id) => id === componentId,
-          );
+          const gridIndex = layout.children.findIndex((id) => id === componentId);
           if (gridIndex !== -1) {
             layout.children[gridIndex] = null;
           }
@@ -384,12 +372,7 @@ export const createLayoutSlice: ImmerStateCreator<
       }
     });
   },
-  reorderComponentInLayout(
-    layoutId: string,
-    componentId: string,
-    x: number,
-    y: number,
-  ) {
+  reorderComponentInLayout(layoutId: string, componentId: string, x: number, y: number) {
     const layout = get().layouts[layoutId];
     if (!layout) {
       console.error(`Layout with ID ${layoutId} not found.`);
@@ -410,8 +393,7 @@ export const createLayoutSlice: ImmerStateCreator<
         if (componentId !== layout.children[index]) {
           if (
             adjustedPosition.x + layout.childWidth / 2.0 > component.x &&
-            adjustedPosition.x + layout.childWidth / 2.0 <
-              component.x + component.width
+            adjustedPosition.x + layout.childWidth / 2.0 < component.x + component.width
           ) {
             newIndex = index;
           }
@@ -420,14 +402,10 @@ export const createLayoutSlice: ImmerStateCreator<
 
       if (newIndex !== null && newIndex !== currentIndex) {
         set((state) => {
-          state.layouts[layoutId].children = state.layouts[
-            layoutId
-          ].children.filter((id) => id !== componentId);
-          state.layouts[layoutId].children.splice(
-            newIndex as number,
-            0,
-            componentId,
+          state.layouts[layoutId].children = state.layouts[layoutId].children.filter(
+            (id) => id !== componentId
           );
+          state.layouts[layoutId].children.splice(newIndex as number, 0, componentId);
         });
       }
     } else if (layout.type === 'column') {
@@ -435,8 +413,7 @@ export const createLayoutSlice: ImmerStateCreator<
         if (componentId !== layout.children[index]) {
           if (
             adjustedPosition.y + layout.childHeight / 2.0 > component.y &&
-            adjustedPosition.y + layout.childHeight / 2.0 <
-              component.y + component.height
+            adjustedPosition.y + layout.childHeight / 2.0 < component.y + component.height
           ) {
             newIndex = index;
           }
@@ -445,21 +422,17 @@ export const createLayoutSlice: ImmerStateCreator<
 
       if (newIndex !== null && newIndex !== currentIndex) {
         set((state) => {
-          state.layouts[layoutId].children = state.layouts[
-            layoutId
-          ].children.filter((id) => id !== componentId);
-          state.layouts[layoutId].children.splice(
-            newIndex as number,
-            0,
-            componentId,
+          state.layouts[layoutId].children = state.layouts[layoutId].children.filter(
+            (id) => id !== componentId
           );
+          state.layouts[layoutId].children.splice(newIndex as number, 0, componentId);
         });
       }
     } else if (layout.type === 'grid') {
       const { gridIndex, gridPosition } = calculateGridIndex(
         adjustedPosition.x,
         adjustedPosition.y,
-        layout,
+        layout
       );
       if (layout.children[gridIndex] === null) {
         get().updatePosition(componentId, {
@@ -467,7 +440,7 @@ export const createLayoutSlice: ImmerStateCreator<
           y: gridPosition.y,
           width: layout.childWidth,
           height: layout.childHeight,
-          parentId: layoutId,
+          parentId: layoutId
         });
 
         set((state) => {
@@ -476,5 +449,5 @@ export const createLayoutSlice: ImmerStateCreator<
         });
       }
     }
-  },
+  }
 });

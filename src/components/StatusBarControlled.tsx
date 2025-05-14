@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback,useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 interface StatusBarControlledProps {
   progress: number; // Float value between 0 and 1
@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   progress,
-  debounceDuration,
+  debounceDuration
 }) => {
   // const [_width, _setWidth] = useState(0);
   const [_progressState, setProgress] = useState(progress);
@@ -21,7 +21,7 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
     throttle((value: number) => {
       setProgress(value);
     }, 100),
-    [], // Empty dependency array ensures this function is created only once
+    [] // Empty dependency array ensures this function is created only once
   );
   useEffect(() => {
     // this isnt throttleing correct
@@ -55,7 +55,7 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
         {
           // 'opacity-0': isFadingOut,
           // 'opacity-100': !isFadingOut,
-        },
+        }
       )}
     >
       <Progress value={(Math.round(progress * 1000) / 1000) * 100} />

@@ -1,26 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
-import 'quill/dist/quill.snow.css'; // Import Quill styles
+
+import { cn } from '@/lib/utils';
+
+import TooltipHolder from '../common/TooltipHolder';
 // import { debounce } from 'lodash'; // Assuming lodash is available
 import { useTheme } from '../ThemeProvider';
-import TooltipHolder from '../common/TooltipHolder';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '../ui/dropdown-menu';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
+
+import 'quill/dist/quill.snow.css'; // Import Quill styles
 interface RichTextEditorProps {
   content: string;
   setContent: (content: string) => void;
 }
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({
-  content,
-  setContent,
-}) => {
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) => {
   const { theme } = useTheme();
 
   const editorRef = useRef<HTMLDivElement>(null); // Reference to the editor div
@@ -47,10 +47,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (
-      editorRef.current &&
-      !editorRef.current.contains(event.target as Node)
-    ) {
+    if (editorRef.current && !editorRef.current.contains(event.target as Node)) {
       // Prevent Quill from focusing
       quillRef.current?.blur();
       setShouldFocus(false); // Set flag to false on blur
@@ -62,15 +59,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       quillRef.current = new Quill(editorRef.current, {
         theme: 'snow',
         modules: {
-          toolbar: { container: '#toolbar' },
-        },
+          toolbar: { container: '#toolbar' }
+        }
       });
       const format = quillRef?.current?.getFormat();
       if (format) {
         if (
           'header' in format &&
-          (typeof format.header === 'number' ||
-            typeof format.header === 'boolean')
+          (typeof format.header === 'number' || typeof format.header === 'boolean')
         )
           setCurrentHeader(format?.header || false);
         if (
@@ -119,15 +115,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className={` p-4  ${theme == 'dark' ? 'dark-mode' : ''}`}>
-      <div id="toolbar">
-        <span className="ql-formats">
+      <div id={"toolbar"}>
+        <span className={"ql-formats"}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className={cn(
-                  'flex !w-auto',
-                  currentHeader === false && 'text-gray-500',
-                )}
+                className={cn('flex !w-auto', currentHeader === false && 'text-gray-500')}
                 size={'lg'}
                 variant={'ghost'}
               >
@@ -168,7 +161,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="flex !w-auto" size={'lg'} variant={'ghost'}>
+              <Button className={"flex !w-auto"} size={'lg'} variant={'ghost'}>
                 {typeof currentSize === 'string'
                   ? currentSize.charAt(0).toUpperCase() + currentSize.slice(1)
                   : ''}
@@ -202,20 +195,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </span>
-        <span className="ql-formats">
-          <TooltipHolder content="Bold">
-            <button className="ql-bold"></button>
+        <span className={"ql-formats"}>
+          <TooltipHolder content={"Bold"}>
+            <button className={"ql-bold"}></button>
           </TooltipHolder>
-          <TooltipHolder content="Italic">
-            <button className="ql-italic"></button>
+          <TooltipHolder content={"Italic"}>
+            <button className={"ql-italic"}></button>
           </TooltipHolder>
-          <TooltipHolder content="Underline">
-            <button className="ql-underline"></button>
+          <TooltipHolder content={"Underline"}>
+            <button className={"ql-underline"}></button>
           </TooltipHolder>
         </span>
-        <span className="ql-formats">
-          <TooltipHolder content="Clear Formatting">
-            <button className="ql-clean"></button>
+        <span className={"ql-formats"}>
+          <TooltipHolder content={"Clear Formatting"}>
+            <button className={"ql-clean"}></button>
           </TooltipHolder>
         </span>
       </div>

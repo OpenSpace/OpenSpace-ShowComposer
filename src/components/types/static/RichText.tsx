@@ -1,10 +1,11 @@
-import RichTextEditor from '@/components/inputs/RichTextEditor';
-import { RichTextComponent } from '@/store';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
-import { useBoundStore } from '@/store/boundStore';
-import { Label } from '@/components/ui/label';
+
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import RichTextEditor from '@/components/inputs/RichTextEditor';
+import { Label } from '@/components/ui/label';
+import { RichTextComponent } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 
 interface RichTextGUIProps {
@@ -12,9 +13,7 @@ interface RichTextGUIProps {
 }
 
 const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
-  const position = useBoundStore(
-    (state) => state.positions[component?.id || ''],
-  );
+  const position = useBoundStore((state) => state.positions[component?.id || '']);
   const updatePosition = useBoundStore((state) => state.updatePosition);
   // const [text, setText] = useState(component?.text || '');
   const [height, setHeight] = useState(position?.height || 100);
@@ -46,19 +45,19 @@ const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
   useEffect(() => {
     updatePosition(component.id, {
       height,
-      width,
+      width
     });
   }, [height, width]);
   return (
     <div
-      className=" absolute right-0 top-0 flex h-full w-full items-center justify-center "
+      className={" absolute right-0 top-0 flex h-full w-full items-center justify-center "}
       style={{
-        backgroundColor: component.color,
+        backgroundColor: component.color
       }}
     >
-      <div className="ql-snow">
+      <div className={"ql-snow"}>
         <div
-          className=" ql-editor prose-sm z-[99] h-full w-full p-4 prose-headings:my-0 prose-p:my-0 dark:text-slate-200"
+          className={" ql-editor prose-sm z-[99] h-full w-full p-4 prose-headings:my-0 prose-p:my-0 dark:text-slate-200"}
           dangerouslySetInnerHTML={{ __html: component.text }}
         />
       </div>
@@ -73,29 +72,29 @@ interface RichTextModalProps {
 
 const RichTextModal: React.FC<RichTextModalProps> = ({
   component,
-  handleComponentData,
+  handleComponentData
   //   isOpen,
 }) => {
   const [text, setText] = useState(component?.text || '');
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.richtext,
+    component?.color || ComponentBaseColors.richtext
   );
   useEffect(() => {
     handleComponentData({ text, color });
   }, [text, color, handleComponentData]);
   return (
     <>
-      <div className="grid-span-3 grid gap-2">
-        <Label htmlFor="description">Background Color</Label>
-        <div className="z-99 2 flex flex-row items-center justify-center">
+      <div className={"grid-span-3 grid gap-2"}>
+        <Label htmlFor={"description"}>Background Color</Label>
+        <div className={"z-99 2 flex flex-row items-center justify-center"}>
           <ColorPickerComponent color={color} setColor={setColor} />
         </div>
       </div>
-      <div className="grid-span-1 grid gap-2">
+      <div className={"grid-span-1 grid gap-2"}>
         <RichTextEditor content={text} setContent={setText} />
       </div>
     </>
   );
 };
 
-export { RichTextModal, RichTextGUIComponent };
+export { RichTextGUIComponent,RichTextModal };

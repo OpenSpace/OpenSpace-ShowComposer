@@ -1,5 +1,6 @@
 import { throttle } from 'lodash';
-import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
+
+import { useOpenSpaceApiStore,usePropertyStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
 export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   // Ensure we don't have white spaces
@@ -61,7 +62,7 @@ const updateTime = (newTimeState: TimeState) => {
     if (isDate(newTime)) {
       newState.time = newTime;
     } else {
-      let ztime = new Date(dateStringWithTimeZone(newTime));
+      const ztime = new Date(dateStringWithTimeZone(newTime));
 
       if (!isNaN(ztime as any)) {
         newState.time = ztime;
@@ -92,10 +93,10 @@ async function jumpToTime(
   newTime: Date,
   interpolate: boolean,
   fadeTime: number,
-  fadeScene: boolean,
+  fadeScene: boolean
 ) {
   let timeNow = usePropertyStore.getState().time?.['timeCapped'];
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const {luaApi} = useOpenSpaceApiStore.getState();
   // console.log('NEW TIME: ', newTime);
   if (!isDate(timeNow)) {
     timeNow = new Date(timeNow);
@@ -104,7 +105,7 @@ async function jumpToTime(
     newTime = new Date(newTime);
   }
   const timeDiffSeconds = Math.round(
-    Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000,
+    Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000
   );
 
   // console.log(timeDiffSeconds);
@@ -115,7 +116,7 @@ async function jumpToTime(
         'RenderEngine.BlackoutFactor',
         0,
         fadeTime / 2.0,
-        'QuadraticEaseOut',
+        'QuadraticEaseOut'
       );
       setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
     });
@@ -126,7 +127,7 @@ async function jumpToTime(
       'RenderEngine.BlackoutFactor',
       1,
       fadeTime / 2.0,
-      'QuadraticEaseIn',
+      'QuadraticEaseIn'
     );
   } else if (!interpolate) {
     const fixedTimeString = newTime.toJSON().replace('Z', '');
@@ -152,4 +153,4 @@ function formatDate(date: Date) {
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-export { updateTime, jumpToTime, isDate, formatDate };
+export { formatDate,isDate, jumpToTime, updateTime };

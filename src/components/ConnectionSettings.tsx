@@ -1,24 +1,19 @@
-import React, { ReactElement, useState, useEffect, cloneElement } from 'react';
-import { useSettingsStore, useOpenSpaceApiStore } from '@/store'; // Adjust the import path accordingly
-import { ConnectionState } from '@/store';
+import React, { cloneElement,ReactElement, useEffect, useState } from 'react';
+import { CheckCircle, HelpCircle, Radio,XCircle } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { CheckCircle, XCircle, HelpCircle, Radio } from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useOpenSpaceApiStore,useSettingsStore } from '@/store'; // Adjust the import path accordingly
+import { ConnectionState } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
+
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 interface ConnectionSettingsProps {
   triggerButton?: ReactElement;
 }
-const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
-  triggerButton,
-}) => {
+const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }) => {
   const { ip: initialUrl, port: initialPort } = useSettingsStore();
 
   // const initialState = useMemo(() => useSettingsStore((state) => ({
@@ -38,20 +33,16 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
           if (triggerButton.props.onClick) {
             triggerButton.props.onClick(...args);
           }
-        },
+        }
       })
     : null;
   const [url, setUrl] = useState(initialUrl);
   const [port, setPort] = useState(initialPort);
-  const setConnectionSettings = useSettingsStore(
-    (state) => state.setConnectionSettings,
-  );
+  const setConnectionSettings = useSettingsStore((state) => state.setConnectionSettings);
   const connect = useOpenSpaceApiStore((state) => state.connect);
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   // const disconnect = useOpenSpaceApiStore((state) => state.disconnect);
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const [prevPort, setPrevPort] = useState<string>(port);
   const [prevUrl, setPrevUrl] = useState<string>(url);
   const [open, setOpen] = useState<boolean>(false);
@@ -93,53 +84,49 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>{enhancedTriggerButton}</PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="bg-white">
+        <TooltipContent side={"bottom"} className={"bg-white"}>
           {getCopy('ConnectionSettings', 'openspace_connection_settings')}
         </TooltipContent>
       </Tooltip>
 
-      <PopoverContent className="w-80">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">
+      <PopoverContent className={"w-80"}>
+        <div className={"grid gap-4"}>
+          <div className={"space-y-2"}>
+            <h4 className={"font-medium leading-none"}>
               {getCopy('ConnectionSettings', 'openspace_connection')}
             </h4>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className={"text-sm text-slate-500 dark:text-slate-400"}>
               {getCopy('ConnectionSettings', 'address_copy')}
             </p>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="IP">
-                {getCopy('ConnectionSettings', 'ip_address')}
-              </Label>
+          <div className={"grid gap-2"}>
+            <div className={"grid grid-cols-3 items-center gap-4"}>
+              <Label htmlFor={"IP"}>{getCopy('ConnectionSettings', 'ip_address')}</Label>
               <Input
-                id="IP"
+                id={"IP"}
                 // defaultValue=""
-                className="col-span-2 h-8"
-                type="text"
+                className={"col-span-2 h-8"}
+                type={"text"}
                 // className="m-2 p-2"
                 // id="url"
                 value={url}
                 onChange={handleUrlChange}
-                placeholder="Enter OpenSpace URL"
+                placeholder={"Enter OpenSpace URL"}
               />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="port">
-                {getCopy('ConnectionSettings', 'port')}
-              </Label>
+            <div className={"grid grid-cols-3 items-center gap-4"}>
+              <Label htmlFor={"port"}>{getCopy('ConnectionSettings', 'port')}</Label>
               <Input
-                id="port"
-                className="col-span-2 h-8"
-                type="text"
+                id={"port"}
+                className={"col-span-2 h-8"}
+                type={"text"}
                 value={port}
                 onChange={handlePortChange}
-                placeholder="Enter OpenSpace Port"
+                placeholder={"Enter OpenSpace Port"}
               />
             </div>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={handleClose}>
+            <div className={"flex justify-between"}>
+              <Button variant={"outline"} onClick={handleClose}>
                 {getCopy('ConnectionSettings', 'cancel')}
               </Button>
               <Button onClick={handleSubmit}>
@@ -153,9 +140,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
   );
 };
 const ConnectionStatus = () => {
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   // const connect = useOpenSpaceApiStore((state) => state.connect);
 
   // useEffect(() => {
@@ -169,43 +154,43 @@ const ConnectionStatus = () => {
     switch (connectionState) {
       case ConnectionState.CONNECTED:
         return (
-          <div className="flex items-center gap-1">
-            <CheckCircle size={size} stroke="green" strokeWidth={2} />
-            <Label className="text-xs">
+          <div className={"flex items-center gap-1"}>
+            <CheckCircle size={size} stroke={"green"} strokeWidth={2} />
+            <Label className={"text-xs"}>
               {getCopy('ConnectionSettings', 'connected')}
             </Label>
           </div>
         );
       case ConnectionState.CONNECTING:
         return (
-          <div className="flex items-center gap-1">
+          <div className={"flex items-center gap-1"}>
             <Radio
               size={size}
-              className="animate-pulse"
-              stroke="orange"
+              className={"animate-pulse"}
+              stroke={"orange"}
               strokeWidth={2}
             />
-            <Label className="animate-pulse text-xs">
+            <Label className={"animate-pulse text-xs"}>
               {getCopy('ConnectionSettings', 'connecting')}
             </Label>
           </div>
         );
       case ConnectionState.UNCONNECTED:
         return (
-          <div className="flex items-center gap-1">
-            <XCircle size={size} stroke="red" strokeWidth={2} />{' '}
-            <Label className="text-xs">
+          <div className={"flex items-center gap-1"}>
+            <XCircle size={size} stroke={"red"} strokeWidth={2} />{' '}
+            <Label className={"text-xs"}>
               {getCopy('ConnectionSettings', 'disconnected')}
             </Label>
           </div>
         );
       default:
-        return <HelpCircle size={size} color="black" />;
+        return <HelpCircle size={size} color={"black"} />;
     }
   }
   return (
-    <div className="flex flex-row items-center gap-3">
-      <h2 className=" text-xs font-bold">
+    <div className={"flex flex-row items-center gap-3"}>
+      <h2 className={" text-xs font-bold"}>
         {getCopy('ConnectionSettings', 'openspace_status:')}
       </h2>
       {renderConnectionState(20)}

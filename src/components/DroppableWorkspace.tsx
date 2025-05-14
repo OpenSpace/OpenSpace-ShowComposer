@@ -1,15 +1,17 @@
 // DroppableWorkspace.tsx
-import React, { useState, useEffect } from 'react';
-import { useSettingsStore } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
+import React, { useEffect,useState } from 'react';
+
 import SelectionTool from '@/components/SelectionTool';
-import { Badge } from './ui/badge';
-import { useTheme } from './ThemeProvider';
-import AdjustablePage from './AdjustablePage';
-import ScaleGUI from './ScaleGUI';
-import { ConnectionStatus } from './ConnectionSettings';
 import { cn } from '@/lib/utils';
+import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
+import { getCopy } from '@/utils/copyHelpers';
+
+import { Badge } from './ui/badge';
+import AdjustablePage from './AdjustablePage';
+import { ConnectionStatus } from './ConnectionSettings';
+import ScaleGUI from './ScaleGUI';
+import { useTheme } from './ThemeProvider';
 
 const DroppableWorkspace: React.FC<{
   children: React.ReactNode;
@@ -17,9 +19,7 @@ const DroppableWorkspace: React.FC<{
   const { theme } = useTheme();
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const currentPage = useBoundStore((state) => state.currentPage);
-  const { x: pageX, y: pageY } = useBoundStore((state) =>
-    state.getPageById(currentPage),
-  );
+  const { x: pageX, y: pageY } = useBoundStore((state) => state.getPageById(currentPage));
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
@@ -50,18 +50,12 @@ const DroppableWorkspace: React.FC<{
         // Ensure the div does not move out of the container's bounds
         if (newTranslateX > 0) {
           newTranslateX = 0;
-        } else if (
-          newTranslateX <
-          (containerRect.width - divRect.width) / scale
-        ) {
+        } else if (newTranslateX < (containerRect.width - divRect.width) / scale) {
           newTranslateX = (containerRect.width - divRect.width) / scale;
         }
         if (newTranslateY > 0) {
           newTranslateY = 0;
-        } else if (
-          newTranslateY <
-          (containerRect.height - divRect.height) / scale
-        ) {
+        } else if (newTranslateY < (containerRect.height - divRect.height) / scale) {
           newTranslateY = (containerRect.height - divRect.height) / scale;
         }
         setTranslateX(newTranslateX);
@@ -99,24 +93,24 @@ const DroppableWorkspace: React.FC<{
         // id="workspace"
         className={cn(
           'relative h-full w-full rounded-lg border border-slate-200 bg-white text-slate-950',
-          'dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500',
+          'dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
         )}
         style={{
           overflow: 'hidden',
-          transition: 'transform 0.2s',
+          transition: 'transform 0.2s'
         }}
       >
         {!isPresentMode && (
           <Badge
-            variant="secondary"
-            className=" font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700"
+            variant={"secondary"}
+            className={" font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700"}
           >
             {getCopy('DroppableWorkspace', 'edit_mode')}
           </Badge>
         )}
 
         {isPresentMode && (
-          <div className="absolute left-3 top-3">
+          <div className={"absolute left-3 top-3"}>
             <ConnectionStatus />
           </div>
         )}
@@ -125,7 +119,7 @@ const DroppableWorkspace: React.FC<{
         <div
           onWheel={handleWheel}
           onMouseDown={isShiftPressed ? handleMouseDown : undefined}
-          id="innerContainer"
+          id={"innerContainer"}
           style={{
             position: 'absolute',
             top: isPresentMode ? -pageY : 0,
@@ -146,14 +140,14 @@ const DroppableWorkspace: React.FC<{
             transform: isPresentMode
               ? `scale(1.0) translate(0px,0px)`
               : `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
-            cursor: isShiftPressed ? 'grab' : 'default',
+            cursor: isShiftPressed ? 'grab' : 'default'
           }}
         >
           <AdjustablePage />
           {children}
         </div>
       </div>
-      <div className="absolute right-5 top-7 flex flex-col items-center justify-center gap-2">
+      <div className={"absolute right-5 top-7 flex flex-col items-center justify-center gap-2"}>
         {!isPresentMode && <ScaleGUI />}
       </div>
     </>

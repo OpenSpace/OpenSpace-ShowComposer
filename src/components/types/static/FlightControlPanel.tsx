@@ -1,30 +1,20 @@
+import { useEffect } from 'react';
+import { RefreshCcwDot,Rotate3d, ZoomIn } from 'lucide-react';
+
 import Information from '@/components/common/Information';
-import { getCopy } from '@/utils/copyHelpers';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Rotate3d, ZoomIn, RefreshCcwDot } from 'lucide-react';
-import {
-  ConnectionState,
-  useOpenSpaceApiStore,
-  usePropertyStore,
-} from '@/store';
-import { useEffect } from 'react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { getCopy } from '@/utils/copyHelpers';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
-export const RetargetAnchorKey =
-  'NavigationHandler.OrbitalNavigator.RetargetAnchor';
+export const RetargetAnchorKey = 'NavigationHandler.OrbitalNavigator.RetargetAnchor';
 export const RetargetAimKey = 'NavigationHandler.OrbitalNavigator.RetargetAim';
 export const RotationalFrictionKey =
   'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction';
-export const ZoomFrictionKey =
-  'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
-export const RollFrictionKey =
-  'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
+export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
+export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 type InputState = {
   values: {
     orbitX?: number;
@@ -40,36 +30,30 @@ type InputStatePayload = {
   inputState: InputState;
 };
 const FlightControlPanel = () => {
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const rotationFriction = usePropertyStore(
-    (state) => state.properties[RotationalFrictionKey]?.value || false,
+    (state) => state.properties[RotationalFrictionKey]?.value || false
   );
   const zoomFriction = usePropertyStore(
-    (state) => state.properties[ZoomFrictionKey]?.value || false,
+    (state) => state.properties[ZoomFrictionKey]?.value || false
   );
   const rollFriction = usePropertyStore(
-    (state) => state.properties[RollFrictionKey]?.value || false,
+    (state) => state.properties[RollFrictionKey]?.value || false
   );
   // const camera = usePropertyStore(
   //   (state) => state.properties['camera'] || false,
   // );
   const flightControlTopic = usePropertyStore(
-    (state) => state.topicSubscriptions['flightcontroller']?.subscription,
+    (state) => state.topicSubscriptions['flightcontroller']?.subscription
   );
-  const subscribeToProperty = usePropertyStore(
-    (state) => state.subscribeToProperty,
-  );
+  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   // const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
+    (state) => state.unsubscribeFromProperty
   );
   const connectToTopic = usePropertyStore((state) => state.connectToTopic);
-  const disconnectFromTopic = usePropertyStore(
-    (state) => state.disconnectFromTopic,
-  );
+  const disconnectFromTopic = usePropertyStore((state) => state.disconnectFromTopic);
   // const dispatch = useDispatch();
 
   let touchStartX = 0;
@@ -111,17 +95,14 @@ const FlightControlPanel = () => {
   const infoBoxContent = (
     <>
       <p>
-        {getCopy(
-          'FlightControlPanel',
-          'interact_with_the_area_to_control_the_camera.',
-        )}
+        {getCopy('FlightControlPanel', 'interact_with_the_area_to_control_the_camera.')}
       </p>
       <br />
       <p>
         <b>{getCopy('FlightControlPanel', 'mouse_controls:')}</b>
       </p>
       <p>{getCopy('FlightControlPanel', 'click_and_drag_to_rotate._hold')}</p>
-      <ul className="list-inside">
+      <ul className={"list-inside"}>
         <li>{getCopy('FlightControlPanel', 'shift_to_pan')}</li>
         <li>{getCopy('FlightControlPanel', 'control_info')}</li>
       </ul>
@@ -129,14 +110,11 @@ const FlightControlPanel = () => {
       <p>
         <b>{getCopy('FlightControlPanel', 'touch_controls:')}</b>
       </p>
-      <ul className="list-inside">
+      <ul className={"list-inside"}>
         <li>{getCopy('FlightControlPanel', '1_finger_to_rotate')}</li>
         <li>{getCopy('FlightControlPanel', '2_fingers_to_pan')}</li>
         <li>
-          {getCopy(
-            'FlightControlPanel',
-            '3_fingers_to_zoom_(y-axis)_or_roll_(x-axis)',
-          )}
+          {getCopy('FlightControlPanel', '3_fingers_to_zoom_(y-axis)_or_roll_(x-axis)')}
         </li>
       </ul>
     </>
@@ -158,7 +136,7 @@ const FlightControlPanel = () => {
       deltaX /= scaleFactor;
       deltaY /= scaleFactor;
       const inputState: InputState = {
-        values: {},
+        values: {}
       };
       if (event.touches.length === 1) {
         inputState.values.orbitX = -deltaX;
@@ -172,7 +150,7 @@ const FlightControlPanel = () => {
       }
       sendFlightControlInput({
         type: 'inputState',
-        inputState,
+        inputState
       });
     }
   }
@@ -187,9 +165,9 @@ const FlightControlPanel = () => {
           orbitY: 0.0,
           panX: 0.0,
           panY: 0.0,
-          localRollX: 0.0,
-        },
-      },
+          localRollX: 0.0
+        }
+      }
     });
   }
   function mouseUp() {
@@ -206,9 +184,9 @@ const FlightControlPanel = () => {
           orbitY: 0.0,
           panX: 0.0,
           panY: 0.0,
-          localRollX: 0.0,
-        },
-      },
+          localRollX: 0.0
+        }
+      }
     });
   }
   function mouseMove(event: React.MouseEvent) {
@@ -219,7 +197,7 @@ const FlightControlPanel = () => {
     const deltaX = event.movementX / 20;
     const deltaY = -event.movementY / 20;
     const inputState: InputState = {
-      values: {},
+      values: {}
     };
     if (event.shiftKey) {
       inputState.values.panX = -deltaX;
@@ -235,21 +213,21 @@ const FlightControlPanel = () => {
 
     sendFlightControlInput({
       type: 'inputState',
-      inputState,
+      inputState
     });
   }
   return (
     <div
-      id="flightPanel"
-      className="z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4"
+      id={"flightPanel"}
+      className={"z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4"}
     >
-      <div className="flex w-full flex-col gap-2 px-4">
+      <div className={"flex w-full flex-col gap-2 px-4"}>
         {/* <div className="flex w-full flex-row justify-start"></div> */}
-        <Label className="flex w-full justify-start">
+        <Label className={"flex w-full justify-start"}>
           {getCopy('FlightControlPanel', 'camera_friction')}
         </Label>
-        <div className="flex w-full flex-row justify-center gap-2">
-          <div className="grid grid-cols-3 gap-2">
+        <div className={"flex w-full flex-row justify-center gap-2"}>
+          <div className={"grid grid-cols-3 gap-2"}>
             <Tooltip>
               <TooltipContent>
                 {getCopy('FlightControlPanel', 'rotation_friction')}
@@ -259,9 +237,7 @@ const FlightControlPanel = () => {
                   size={'icon'}
                   onClick={toggleRotation}
                   variant={rotationFriction ? 'default' : 'outline'}
-                  className={`${
-                    rotationFriction ? 'opacity-100' : 'opacity-60'
-                  }`}
+                  className={`${rotationFriction ? 'opacity-100' : 'opacity-60'}`}
                 >
                   <Rotate3d />
                 </Button>
@@ -298,24 +274,24 @@ const FlightControlPanel = () => {
               </TooltipTrigger>
             </Tooltip>
           </div>
-          <Information content="Controls to disable friction for different camera movements" />
+          <Information content={"Controls to disable friction for different camera movements"} />
         </div>
         {/* </div> */}
       </div>
-      <div className="flex w-full flex-col items-center gap-2 px-4">
-        <div className="flex w-full flex-row justify-start gap-2">
+      <div className={"flex w-full flex-col items-center gap-2 px-4"}>
+        <div className={"flex w-full flex-row justify-start gap-2"}>
           <Label>{getCopy('FlightControlPanel', 'control_area')}</Label>
           <Information content={infoBoxContent} />
         </div>
         <div
-          className="bg-slate-800/40"
+          className={"bg-slate-800/40"}
           style={{
             height: '180px',
             width: '180px',
             outline: '2px solid gray',
             userSelect: 'none',
             cursor: 'crosshair',
-            zIndex: 9999,
+            zIndex: 9999
           }}
           onPointerDown={mouseDown}
           onPointerUp={mouseUp}
@@ -327,7 +303,7 @@ const FlightControlPanel = () => {
           onTouchEnd={touchUp}
           onTouchCancel={touchUp}
           onTouchMove={touchMove}
-          id="controlArea"
+          id={"controlArea"}
         />
       </div>
     </div>

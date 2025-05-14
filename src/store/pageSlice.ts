@@ -1,12 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { LayoutSlice } from './layoutSlice';
+
 import { ComponentSlice } from './componentSlice';
+import { ComponentBase, ComponentBaseColors, ImmerStateCreator } from './ComponentTypes';
+import { LayoutSlice } from './layoutSlice';
 import { PositionSlice } from './positionSlice';
-import {
-  ComponentBase,
-  ComponentBaseColors,
-  ImmerStateCreator,
-} from './ComponentTypes';
 
 export type Page = {
   components: Array<ComponentBase['id']>;
@@ -46,7 +43,7 @@ export const createPageSlice: ImmerStateCreator<
         x: 100,
         y: 100,
         name: name || '',
-        color: color || ComponentBaseColors.page,
+        color: color || ComponentBaseColors.page
       };
       state.pages.push(newPage);
       state.currentPageIndex = state.pages.length - 1;
@@ -78,7 +75,7 @@ export const createPageSlice: ImmerStateCreator<
       state.pages = state.pages.filter((page) => page.id !== pageID);
       let newIndex = Math.min(
         Math.max(state.currentPageIndex, 0),
-        state.pages.length - 1,
+        state.pages.length - 1
       );
       state.currentPageIndex = newIndex;
       if (state.pages.length === 0) {
@@ -112,8 +109,8 @@ export const createPageSlice: ImmerStateCreator<
         minWidth: 400,
         minHeight: 400,
         name: '',
-        color: '#00000000',
+        color: '#00000000'
       }
     );
-  },
+  }
 });

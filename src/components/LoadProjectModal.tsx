@@ -8,11 +8,11 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-
-import { Project } from '@/utils/saveProject';
 import { getCopy } from '@/utils/copyHelpers';
+import { Project } from '@/utils/saveProject';
+
 import Pagination from './Pagination';
 
 interface LoadProjectModalProps {
@@ -26,7 +26,7 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
   isOpen,
   setIsOpen,
   handleLoadProject,
-  projects,
+  projects
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
@@ -44,24 +44,23 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
   const endIndex = startIndex + itemsPerPage;
   const projectsToDisplay = projects
     .sort(
-      (a, b) =>
-        new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime(),
+      (a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()
     )
     .slice(startIndex, endIndex);
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="text-white">
+      <AlertDialogContent className={"text-white"}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-gray-900 dark:text-gray-100">
+          <AlertDialogTitle className={"text-gray-900 dark:text-gray-100"}>
             {getCopy('LoadProjectModal', 'load_project')}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-700 dark:text-gray-300">
+          <AlertDialogDescription className={"text-gray-700 dark:text-gray-300"}>
             {getCopy('LoadProjectModal', 'load_project_description')}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="grid gap-2 text-white">
-          <div className="flex flex-col gap-2">
+        <div className={"grid gap-2 text-white"}>
+          <div className={"flex flex-col gap-2"}>
             {projectsToDisplay.map((project) => (
               <button
                 key={project.filePath}
@@ -75,12 +74,11 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
                       : ''
                   }`}
                 >
-                  <h3 className="text-sm">{project.projectName}</h3>
-                  <p className="text-xs text-gray-500">
-                    Last Modified:{' '}
-                    {new Date(project.lastModified).toLocaleString()}
+                  <h3 className={"text-sm"}>{project.projectName}</h3>
+                  <p className={"text-xs text-gray-500"}>
+                    Last Modified: {new Date(project.lastModified).toLocaleString()}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className={"text-xs text-gray-500"}>
                     Created: {new Date(project.created).toLocaleString()}
                   </p>
                 </div>
@@ -88,7 +86,7 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
             ))}
           </div>
         </div>
-        <div className="relative flex h-24 w-full items-center justify-center ">
+        <div className={"relative flex h-24 w-full items-center justify-center "}>
           <Pagination
             currentIndex={currentPage}
             length={totalPages}
@@ -96,9 +94,7 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
           />
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setIsOpen(false)}>
-            Cancel
-          </AlertDialogCancel>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
 
           <AlertDialogAction
             disabled={!selectedProject}

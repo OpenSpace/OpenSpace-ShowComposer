@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  },
+  }
 });
 
 const upload = multer({ storage: storage });
@@ -40,18 +40,17 @@ export function viteUploadPlugin() {
             try {
               const jsonData = req.body;
               const projectName =
-                jsonData.settingsStore.projectName.replace(/ /g, '_') ||
-                'project';
+                jsonData.settingsStore.projectName.replace(/ /g, '_') || 'project';
               const zipFileName = `${projectName}-${Date.now()}.zip`;
 
               // Set up response headers for download
               res.writeHead(200, {
                 'Content-Type': 'application/zip', // Set the content type for zip files
-                'Content-Disposition': `attachment; filename="${zipFileName}"`, // Set the filename for download
+                'Content-Disposition': `attachment; filename="${zipFileName}"` // Set the filename for download
               });
 
               const archive = archiver('zip', {
-                zlib: { level: 9 }, // Maximum compression
+                zlib: { level: 9 } // Maximum compression
               });
 
               // Pipe archive to the response
@@ -59,7 +58,7 @@ export function viteUploadPlugin() {
               jsonData.timestamp = Date.now();
               // Add the JSON file to the zip in a folder named after the project
               archive.append(JSON.stringify(jsonData, null, 2), {
-                name: `${projectName}/data.json`,
+                name: `${projectName}/data.json`
               });
 
               // Function to extract image URLs from JSON
@@ -68,8 +67,7 @@ export function viteUploadPlugin() {
                 JSON.stringify(obj, (key, value) => {
                   if (
                     typeof value === 'string' &&
-                    (value.startsWith('uploads/') ||
-                      value.startsWith('/uploads/'))
+                    (value.startsWith('uploads/') || value.startsWith('/uploads/'))
                   ) {
                     urls.add(value);
                   }
@@ -91,12 +89,10 @@ export function viteUploadPlugin() {
                   // Use fsp for access
                   await fsp.access(filePath);
                   archive.file(filePath, {
-                    name: `${projectName}/uploads/${fileName}`,
+                    name: `${projectName}/uploads/${fileName}`
                   }); // Place images in a subfolder
                 } catch (error) {
-                  console.warn(
-                    `Warning: Referenced image not found: ${fileName}`,
-                  );
+                  console.warn(`Warning: Referenced image not found: ${fileName}`);
                 }
               }
 
@@ -121,26 +117,19 @@ export function viteUploadPlugin() {
             try {
               const projectData = JSON.parse(body); // Parse the JSON string
               const projectName =
-                projectData.settingsStore.projectName.replace(/ /g, '_') ||
-                'project';
+                projectData.settingsStore.projectName.replace(/ /g, '_') || 'project';
               const projectsDir = path.join(__dirname, 'projects');
               await fsp.mkdir(projectsDir, { recursive: true });
               // const files = await fsp.readdir(projectsDir);
-              const projectFilePath = path.join(
-                projectsDir,
-                `${projectName}.json`,
-              );
+              const projectFilePath = path.join(projectsDir, `${projectName}.json`);
               // Save the project data to a file
-              await fsp.writeFile(
-                projectFilePath,
-                JSON.stringify(projectData, null, 2),
-              );
+              await fsp.writeFile(projectFilePath, JSON.stringify(projectData, null, 2));
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(
                 JSON.stringify({
                   message: 'Project saved successfully',
-                  filePath: projectFilePath,
-                }),
+                  filePath: projectFilePath
+                })
               );
             } catch (error) {
               console.error('Error saving project:', error);
@@ -161,18 +150,16 @@ export function viteUploadPlugin() {
                   filePath: './' + path.relative(process.cwd(), filePath),
                   projectName: path.basename(file, '.json'),
                   lastModified: stats.mtime, // Last modified date
-                  created: stats.birthtime, // Created date
+                  created: stats.birthtime // Created date
                 };
-              }),
+              })
             );
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(projectList));
           } catch (error) {
             console.error('Error reading projects directory:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(
-              JSON.stringify({ error: 'Failed to read projects directory' }),
-            );
+            res.end(JSON.stringify({ error: 'Failed to read projects directory' }));
           }
         } else {
           next(); // Call the next middleware for other routes
@@ -194,9 +181,9 @@ export function viteUploadPlugin() {
             res.end(
               JSON.stringify({
                 message: 'File uploaded successfully',
-                filePath: filePath,
+                filePath: filePath
                 // `/${filePath}`,
-              }),
+              })
             );
           } else if (pathname == '/api/images') {
             const uploadsDir = path.resolve(__dirname, 'uploads');
@@ -222,6 +209,6 @@ export function viteUploadPlugin() {
         });
         //handle uploads path for file info get request
       });
-    },
+    }
   };
 }
