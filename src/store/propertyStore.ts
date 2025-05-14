@@ -6,7 +6,7 @@ import { useOpenSpaceApiStore } from './apiStore';
 import { throttle } from 'lodash';
 import { updateTime } from '@/utils/time';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
-import { normalizeKeys, PropertyOwner } from '@/utils/apiHelpers';
+import { PropertyOwner } from '@/utils/apiHelpers';
 
 type subscription = {
   count: number;
@@ -110,9 +110,7 @@ export const usePropertyStore = create<State>()(
                 subscription,
               };
               const testSetProperty = (propName: string, value: any) => {
-                usePropertyStore
-                  .getState()
-                  .setProperty(propName, normalizeKeys(value));
+                usePropertyStore.getState().setProperty(propName, value);
               };
               // const throttledHandleUpdates = throttle(
               //   testSetProperty,
@@ -239,9 +237,7 @@ export const usePropertyStore = create<State>()(
               };
               const testSetProperty = (propName: string, value: any) => {
                 // console.log(propName, value);
-                usePropertyStore
-                  .getState()
-                  .setProperty(propName, normalizeKeys(value));
+                usePropertyStore.getState().setProperty(propName, value);
               };
               const throttledHandleUpdates = throttle(testSetProperty, 200);
               (async () => {

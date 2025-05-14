@@ -1,3 +1,4 @@
+import { NavigationState } from '@/types/types';
 import { StateCreator } from 'zustand';
 
 export type LayoutType = 'row' | 'column' | 'grid';
@@ -150,7 +151,7 @@ export interface SetTimeComponent extends ComponentBase {
 
 export interface SetNavComponent extends ComponentBase {
   type: 'setnavstate';
-  navigationState: any;
+  navigationState: NavigationState;
   time: Date | string;
   setTime: boolean;
   // fadeScene: boolean;

@@ -162,7 +162,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     if (!lockName) {
       setGuiName(`Focus on ${property}`);
       setGuiDescription(
-        `Focus on ${property}. ${CurrentAnchor?.description.description}`,
+        `Focus on ${property}. ${CurrentAnchor?.metaData.description}`,
       );
     }
   };

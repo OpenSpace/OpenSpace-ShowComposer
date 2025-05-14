@@ -33,9 +33,9 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const time = usePropertyStore((state) => state.time?.['timeCapped']);
-  const [navigationState, setNavigationState] = useState<any>(
-    component?.navigationState || {},
-  );
+  const [navigationState, setNavigationState] = useState<
+    NavigationState | undefined
+  >(component?.navigationState);
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [intDuration, setIntDuration] = useState(component?.intDuration || 1.0);
   // const [fadeScene, setFadeScene] = useState<boolean>(
@@ -112,8 +112,10 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
 
   const getNavigationState = async () => {
     if (!luaApi) return;
-    const navState =
-      (await luaApi.navigation.getNavigationState()) as NavigationState;
+    const { 1: navState } = (await luaApi.navigation.getNavigationState()) as {
+      ['1']: NavigationState;
+    };
+
     setNavigationState(navState);
     setCompontentTime(time);
     if (!lockName) {
@@ -124,6 +126,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
       );
     }
   };
+
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="grid grid-cols-1 gap-4">
@@ -136,7 +139,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
             Navigation State Anchor
           </Label>
           <ButtonLabel className="border bg-transparent">
-            {navigationState.Anchor}
+            {navigationState?.Anchor}
           </ButtonLabel>
         </div>
         {/* 
@@ -204,7 +207,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
                   setGuiName(
                     `${
                       value.charAt(0).toUpperCase() + value.slice(1)
-                    } to Navigation State : ${navigationState.Anchor}`,
+                    } to Navigation State : ${navigationState?.Anchor}`,
                   );
                 }
                 setMode(value as 'jump' | 'fade' | 'fly');
@@ -279,10 +282,12 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
     </div>
   );
 };
+
 interface SetNavGUIComponentProps {
   component: SetNavComponent;
   shouldRender?: boolean;
 }
+
 const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   component,
   shouldRender = true,
@@ -300,6 +305,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     backgroundImage,
     color,
   } = component;
+  console.log('navigationState', navigationState);
 
   useEffect(() => {
     if (luaApi) {
@@ -364,4 +370,5 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     </ComponentContainer>
   ) : null;
 };
+
 export { SetNavModal, SetNavGUIComponent };

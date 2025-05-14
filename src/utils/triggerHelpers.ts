@@ -1,4 +1,5 @@
 import { useOpenSpaceApiStore } from '@/store';
+import { NavigationState } from '@/types/types';
 
 const triggerFade = async (
   property: string,
@@ -64,7 +65,7 @@ const triggerTrigger = async (property: string) => {
     console.log('No Api Access');
     return;
   }
-  luaApi.setPropertyValueSingle(property, true);
+  luaApi.setPropertyValueSingle(property, null);
 };
 
 const triggerNumber = async (property: string, newValue: number) => {
@@ -72,15 +73,7 @@ const triggerNumber = async (property: string, newValue: number) => {
   // console.log('triggerNumber', property, newValue);
   luaApi?.setPropertyValueSingle(property, newValue);
 };
-type NavigationState = {
-  Anchor: string;
-  Pitch: number;
-  Position: [number, number, number];
-  ReferenceFrame: string;
-  Timestamp?: number;
-  Up: [number, number, number];
-  Yaw: number;
-};
+
 async function jumpToNavState(
   navigationState: NavigationState,
   setTime: boolean,

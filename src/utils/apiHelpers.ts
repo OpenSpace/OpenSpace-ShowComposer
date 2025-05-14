@@ -204,16 +204,6 @@ export const getActionSceneNodes = (
 
 // functio
 
-export function normalizeKeys(obj: Record<string, any>): Record<string, any> {
-  return Object.keys(obj).reduce(
-    (acc, key) => {
-      acc[key.toLowerCase()] = obj[key];
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
-}
-
 export function getStringBetween(
   fullString: string,
   startString: string,
