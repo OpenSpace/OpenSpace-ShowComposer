@@ -76,19 +76,27 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
   }
 
   return (
-    <div className={"flex flex-row items-center justify-center"}>
+    <div className={'flex flex-row items-center justify-center'}>
       {['year', 'month', 'day', 'hours', 'minutes', 'seconds'].map((part, index) => (
         <div
           key={index}
           style={{ margin: '0px' }}
-          className={"flex flex-col items-center justify-center gap-1 "}
+          className={'flex flex-col items-center justify-center gap-1 '}
         >
-          <Toggle className={"h-4"} onClick={() => adjustDatePart(part, 1)} pressed={false}>
-            <ChevronUp className={"h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]"} />
+          <Toggle
+            className={'h-4'}
+            onClick={() => adjustDatePart(part, 1)}
+            pressed={false}
+          >
+            <ChevronUp
+              className={
+                'h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]'
+              }
+            />
           </Toggle>
           <Input
-            type={"text"}
-            className={"flex h-[20px] w-[40px]  p-0 text-center text-xs"}
+            type={'text'}
+            className={'flex h-[20px] w-[40px]  p-0 text-center text-xs'}
             value={
               part === 'month'
                 ? monthAbbreviations[dateObj.getUTCMonth()]
@@ -105,11 +113,13 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
             readOnly
           />
           <Toggle
-            className={"h-4"}
+            className={'h-4'}
             onClick={() => adjustDatePart(part, -1)}
             pressed={false}
           >
-            <ChevronDown className={"h-6 w-6 cursor-pointer transition-all hover:scale-110"} />
+            <ChevronDown
+              className={'h-6 w-6 cursor-pointer transition-all hover:scale-110'}
+            />
           </Toggle>
         </div>
       ))}

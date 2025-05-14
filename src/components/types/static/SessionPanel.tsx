@@ -129,10 +129,10 @@ const SessionPanel = () => {
       case SessionStateIdle:
         return filenamePlayback ? (
           <Button
-            variant={"outline"}
+            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={"gap-2"}
+            className={'gap-2'}
             onClick={() => togglePlayback()}
           >
             <Play />
@@ -142,10 +142,10 @@ const SessionPanel = () => {
       case SessionStateRecording:
         return (
           <Button
-            variant={"outline"}
+            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={"gap-2"}
+            className={'gap-2'}
             onClick={() => toggleRecording()}
           >
             <Square />
@@ -154,22 +154,22 @@ const SessionPanel = () => {
         );
       case SessionStatePlaying:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
+          <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={togglePlaybackPaused}
             >
               <Pause />
               {getCopy('SessionPanel', 'pause')}
             </Button>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -179,22 +179,22 @@ const SessionPanel = () => {
         );
       case SessionStatePaused:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
+          <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={togglePlaybackPaused}
             >
               <Play />
               {getCopy('SessionPanel', 'resume')}
             </Button>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -208,24 +208,24 @@ const SessionPanel = () => {
   }, [recordingState, filenameRecording, filenamePlayback]);
 
   return (
-    <div className={"m-2 flex"}>
-      <div className={"grid-rows grid gap-3"}>
-        <div className={"grid  gap-3"}>
-          <Label className={"flex items-center justify-start gap-2"}>
+    <div className={'m-2 flex'}>
+      <div className={'grid-rows grid gap-3'}>
+        <div className={'grid  gap-3'}>
+          <Label className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPanel', 'record_session')}
           </Label>
-          <div className={"flex items-center space-x-2"}>
-            <Checkbox id={"textformat"} />
-            <Label htmlFor={"textformat"}>{textFormatLabel}</Label>
+          <div className={'flex items-center space-x-2'}>
+            <Checkbox id={'textformat'} />
+            <Label htmlFor={'textformat'}>{textFormatLabel}</Label>
           </div>
-          <div className={"grid grid-cols-1 gap-4"}>
-            <div className={"grid w-full gap-2"}>
-              <Label htmlFor={"guiname"}>{fileNameLabel}</Label>
-              <div className={"flex w-full flex-row gap-2"}>
+          <div className={'grid grid-cols-1 gap-4'}>
+            <div className={'grid w-full gap-2'}>
+              <Label htmlFor={'guiname'}>{fileNameLabel}</Label>
+              <div className={'flex w-full flex-row gap-2'}>
                 <Input
-                  className={"grow"}
+                  className={'grow'}
                   value={filenameRecording}
-                  placeholder={"Enter recording filename..."}
+                  placeholder={'Enter recording filename...'}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
                     updateRecordingFilename(evt)
                   }
@@ -233,17 +233,17 @@ const SessionPanel = () => {
                   onBlur={() => setIsInputFocused(false)} // Set focus state to false
                 />
                 <Button
-                  variant={"outline"}
+                  variant={'outline'}
                   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-                  className={"gap-2"}
+                  className={'gap-2'}
                   onClick={() => toggleRecording()}
                 >
-                  <Circle size={"12"} />
+                  <Circle size={'12'} />
                   {getCopy('SessionPanel', 'record')}
                 </Button>
               </div>
               {nameIsTaken && isInputFocused && (
-                <Label className={"text-red-500"}>
+                <Label className={'text-red-500'}>
                   {getCopy('SessionPanel', 'name_is_already_taken.')}
                 </Label>
               )}
@@ -252,38 +252,38 @@ const SessionPanel = () => {
         </div>
         <Separator />
 
-        <div className={"grid  gap-3"}>
-          <Label className={"flex items-center justify-start gap-2"}>
+        <div className={'grid  gap-3'}>
+          <Label className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPanel', 'play_session')}
           </Label>
-          <div className={"grid gap-2"}>
-            <div className={"flex items-center space-x-2"}>
+          <div className={'grid gap-2'}>
+            <div className={'flex items-center space-x-2'}>
               <Checkbox
-                id={"loop"}
+                id={'loop'}
                 checked={loopPlayback}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
                   if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
                 }}
               />
-              <Label htmlFor={"loop"}>{getCopy('SessionPanel', 'loop_playback')}</Label>
+              <Label htmlFor={'loop'}>{getCopy('SessionPanel', 'loop_playback')}</Label>
             </div>
-            <div className={"flex items-center space-x-2"}>
+            <div className={'flex items-center space-x-2'}>
               <Checkbox
-                id={"frames"}
+                id={'frames'}
                 checked={shouldOutputFrames}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
                   if (checked !== 'indeterminate') onShouldUpdateFramesChange(checked);
                 }}
               />
-              <Label htmlFor={"frames"}>{getCopy('SessionPanel', 'output_frames')}</Label>
+              <Label htmlFor={'frames'}>{getCopy('SessionPanel', 'output_frames')}</Label>
             </div>
           </div>
-          <div className={"grid grid-cols-1 gap-2"}>
-            <Label htmlFor={"playback"}>{getCopy('SessionPanel', 'playback_file')}</Label>
-            <div className={"flex w-full flex-col gap-2"}>
+          <div className={'grid grid-cols-1 gap-2'}>
+            <Label htmlFor={'playback'}>{getCopy('SessionPanel', 'playback_file')}</Label>
+            <div className={'flex w-full flex-col gap-2'}>
               {/* <div className="grow"> */}
               <SelectableDropdown
-                placeholder={"Select playback file..."}
+                placeholder={'Select playback file...'}
                 options={fileList}
                 setSelected={(value: string) => setFilenamePlayback(value)}
                 selected={filenamePlayback}

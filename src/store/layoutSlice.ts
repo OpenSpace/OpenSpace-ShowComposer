@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   calculateGridIndex,
   calculateTotalLayoutHeight,
-  calculateTotalLayoutWidth} from '@/utils/layoutCalculations';
+  calculateTotalLayoutWidth
+} from '@/utils/layoutCalculations';
 import { roundToNearest } from '@/utils/math';
 
 import { ComponentSlice, isComponentOverlappingPage } from './componentSlice';

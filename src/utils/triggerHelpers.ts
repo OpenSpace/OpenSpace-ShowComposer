@@ -6,7 +6,7 @@ const triggerFade = async (
   intDuration: number,
   action: 'on' | 'off' | 'toggle'
 ) => {
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -37,7 +37,7 @@ const triggerFade = async (
 };
 
 const triggerBool = async (property: string, action: 'on' | 'off' | 'toggle') => {
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -57,7 +57,7 @@ const triggerBool = async (property: string, action: 'on' | 'off' | 'toggle') =>
 };
 
 const triggerTrigger = async (property: string) => {
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -66,7 +66,7 @@ const triggerTrigger = async (property: string) => {
 };
 
 const triggerNumber = async (property: string, newValue: number) => {
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   // console.log('triggerNumber', property, newValue);
   luaApi?.setPropertyValueSingle(property, newValue);
 };
@@ -77,7 +77,7 @@ async function jumpToNavState(
   mode: 'jump' | 'fade' | 'fly',
   fadeTime: number
 ) {
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -120,4 +120,5 @@ export {
   triggerBool,
   triggerFade,
   triggerNumber,
-  triggerTrigger};
+  triggerTrigger
+};

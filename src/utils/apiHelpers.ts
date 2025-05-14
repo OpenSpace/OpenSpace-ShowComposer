@@ -138,7 +138,7 @@ export const getRenderables: (
   properties: Property[],
   propertyType: PropertyType
 ) => Record<string, any> = (properties, propertyType) => {
-  const {regex} = RegexLibrary[propertyType];
+  const { regex } = RegexLibrary[propertyType];
   const values = Object.values(properties);
   const renderables: Record<string, any> = values
     .filter((p: Property) => {
@@ -168,7 +168,7 @@ const actionTypes = {
 type ActionType = keyof typeof actionTypes;
 
 export const getActionSceneNodes = (properties: Property[], type: ActionType) => {
-  const {regex} = RegexLibrary['SettingsProperty'];
+  const { regex } = RegexLibrary['SettingsProperty'];
 
   const sortedProps = properties
     .filter(

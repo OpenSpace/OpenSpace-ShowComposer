@@ -123,17 +123,17 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   };
 
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
-      <div className={"grid grid-cols-1 gap-4"}>
+    <div className={'grid grid-cols-1 gap-4'}>
+      <div className={'grid grid-cols-1 gap-4'}>
         <Button onClick={getNavigationState}>
           {getCopy('SetNavigation', 'save_current_navigation_state')}
         </Button>
         <div className={`grid  gap-2 opacity-100`}>
-          <Label className={"flex items-center justify-start gap-2"}>
+          <Label className={'flex items-center justify-start gap-2'}>
             <Anchor size={14} />
             Navigation State Anchor
           </Label>
-          <ButtonLabel className={"border bg-transparent"}>
+          <ButtonLabel className={'border bg-transparent'}>
             {navigationState?.Anchor}
           </ButtonLabel>
         </div>
@@ -150,35 +150,37 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
           </ButtonLabel>
         </div> */}
       </div>
-      <div className={"grid grid-cols-2 gap-4"}>
+      <div className={'grid grid-cols-2 gap-4'}>
         <div className={`grid  gap-2 ${setTime ? 'opacity-100' : 'opacity-50'}`}>
-          <Label className={"flex items-center justify-start gap-2"}>
+          <Label className={'flex items-center justify-start gap-2'}>
             <Clock size={14} />
             {getCopy('SetNavigation', 'navigation_state_time')}
           </Label>
-          <ButtonLabel className={"border bg-transparent"}>{timeLabel}</ButtonLabel>
+          <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
         </div>
-        <div className={"grid gap-2"}>
+        <div className={'grid gap-2'}>
           <Label />
-          <Toggle label={"Include Time"} value={setTime} setValue={setSetTime} />
+          <Toggle label={'Include Time'} value={setTime} setValue={setSetTime} />
         </div>
       </div>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-4 gap-4"}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-4 gap-4'}>
           <div className={`grid gap-2 ${mode != 'jump' ? 'opacity-100' : 'opacity-50'}`}>
-            <Label htmlFor={"duration"}>{getCopy('SetNavigation', 'fade_duration')}</Label>
+            <Label htmlFor={'duration'}>
+              {getCopy('SetNavigation', 'fade_duration')}
+            </Label>
             <Input
-              id={"duration"}
+              id={'duration'}
               disabled={mode == 'jump'}
-              placeholder={"Duration to Fade"}
-              type={"number"}
+              placeholder={'Duration to Fade'}
+              type={'number'}
               value={intDuration}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setIntDuration(parseFloat(e.target.value))
               }
             />
           </div>
-          <div className={"col-start-3 grid gap-2 "}>
+          <div className={'col-start-3 grid gap-2 '}>
             <Label>{getCopy('SetNavigation', 'transition_mode')}</Label>
             <SelectableDropdown
               options={[
@@ -201,22 +203,22 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
           </div>
         </div>
         {/* <div className="grid grid-cols-4 "> */}
-        <div className={"grid grid-cols-4 "}>
-          <div className={"col-span-4 grid grid-cols-3 gap-4"}>
-            <div className={"col-span-2 grid gap-2"}>
-              <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 '}>
+          <div className={'col-span-4 grid grid-cols-3 gap-4'}>
+            <div className={'col-span-2 grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id={"guiname"}
-                placeholder={"Name of Component"}
-                type={"text"}
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className={"col-span-1 mt-6 grid gap-2"}>
-              <Toggle label={"Lock Name"} value={lockName} setValue={setLockName} />
+            <div className={'col-span-1 mt-6 grid gap-2'}>
+              <Toggle label={'Lock Name'} value={lockName} setValue={setLockName} />
             </div>
           </div>
         </div>
@@ -235,25 +237,25 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
             }
           />
         </div> */}
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>
               {getCopy('SetNavigation', 'gui_description')}
             </Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -350,4 +352,4 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   ) : null;
 };
 
-export { SetNavGUIComponent,SetNavModal };
+export { SetNavGUIComponent, SetNavModal };

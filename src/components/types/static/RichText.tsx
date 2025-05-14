@@ -50,14 +50,18 @@ const RichTextGUIComponent: React.FC<RichTextGUIProps> = ({ component }) => {
   }, [height, width]);
   return (
     <div
-      className={" absolute right-0 top-0 flex h-full w-full items-center justify-center "}
+      className={
+        ' absolute right-0 top-0 flex h-full w-full items-center justify-center '
+      }
       style={{
         backgroundColor: component.color
       }}
     >
-      <div className={"ql-snow"}>
+      <div className={'ql-snow'}>
         <div
-          className={" ql-editor prose-sm z-[99] h-full w-full p-4 prose-headings:my-0 prose-p:my-0 dark:text-slate-200"}
+          className={
+            ' ql-editor prose-sm z-[99] h-full w-full p-4 prose-headings:my-0 prose-p:my-0 dark:text-slate-200'
+          }
           dangerouslySetInnerHTML={{ __html: component.text }}
         />
       </div>
@@ -84,17 +88,17 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
   }, [text, color, handleComponentData]);
   return (
     <>
-      <div className={"grid-span-3 grid gap-2"}>
-        <Label htmlFor={"description"}>Background Color</Label>
-        <div className={"z-99 2 flex flex-row items-center justify-center"}>
+      <div className={'grid-span-3 grid gap-2'}>
+        <Label htmlFor={'description'}>Background Color</Label>
+        <div className={'z-99 2 flex flex-row items-center justify-center'}>
           <ColorPickerComponent color={color} setColor={setColor} />
         </div>
       </div>
-      <div className={"grid-span-1 grid gap-2"}>
+      <div className={'grid-span-1 grid gap-2'}>
         <RichTextEditor content={text} setContent={setText} />
       </div>
     </>
   );
 };
 
-export { RichTextGUIComponent,RichTextModal };
+export { RichTextGUIComponent, RichTextModal };

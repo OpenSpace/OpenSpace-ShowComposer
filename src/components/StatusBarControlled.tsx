@@ -1,4 +1,4 @@
-import { useCallback,useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 interface StatusBarControlledProps {
   progress: number; // Float value between 0 and 1

@@ -16,7 +16,8 @@ import {
   SetTimeComponent as SetTimeType,
   TitleComponent,
   TriggerComponent,
-  VideoComponent} from '@/store';
+  VideoComponent
+} from '@/store';
 import { ActionTriggerComponent, ScriptComponent } from '@/store/ComponentTypes';
 import { getCopy } from '@/utils/copyHelpers';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { DraggableData,DraggableEvent } from 'react-draggable';
+import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { GripHorizontal,Minus } from 'lucide-react';
+import { GripHorizontal, Minus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,8 @@ import {
   NavComponent,
   RecordComponent,
   StatusComponent,
-  TimeComponent} from '@/store/ComponentTypes';
+  TimeComponent
+} from '@/store/ComponentTypes';
 import { roundToNearest } from '@/utils/math';
 
 import FlightControlPanel from './types/static/FlightControlPanel';
@@ -114,24 +115,26 @@ const DraggablePanel: React.FC<PanelProps> = ({
         isDragging ? 'z-50 border-blue-500 shadow-lg' : ''
       )}
     >
-      <div className={"drag-handle group absolute top-0 h-[30px] w-full cursor-move"}>
-        <div className={"absolute flex w-full flex-col items-center justify-center gap-1"}>
+      <div className={'drag-handle group absolute top-0 h-[30px] w-full cursor-move'}>
+        <div
+          className={'absolute flex w-full flex-col items-center justify-center gap-1'}
+        >
           <GripHorizontal
             className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
           />
         </div>
       </div>
-      <div className={"absolute right-1 top-1 "}>
+      <div className={'absolute right-1 top-1 '}>
         <Button
-          variant={"ghost"}
-          size={"icon"}
-          className={"m-0 h-4 w-4 p-0"}
+          variant={'ghost'}
+          size={'icon'}
+          className={'m-0 h-4 w-4 p-0'}
           onClick={minimize}
         >
-          <Minus size={"20"} />
+          <Minus size={'20'} />
         </Button>
       </div>
-      <div className={"mt-1 p-3"}>{inner()}</div>
+      <div className={'mt-1 p-3'}>{inner()}</div>
     </Rnd>
   );
 };

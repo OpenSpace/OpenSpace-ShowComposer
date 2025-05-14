@@ -15,7 +15,8 @@ import {
   isPropertyOwnerVisible,
   isPropertyVisible,
   Property,
-  PropertyOwner} from '@/utils/apiHelpers';
+  PropertyOwner
+} from '@/utils/apiHelpers';
 
 import { usePropertyStore } from './propertyStore';
 import { useSettingsStore } from './settingsStore';
@@ -94,7 +95,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     )
       return;
     const host = useSettingsStore.getState().ip;
-    const {port} = useSettingsStore.getState();
+    const { port } = useSettingsStore.getState();
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionState(ConnectionState.CONNECTING);

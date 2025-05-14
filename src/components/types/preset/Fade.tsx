@@ -17,7 +17,8 @@ import {
   ConnectionState,
   FadeComponent,
   useOpenSpaceApiStore,
-  usePropertyStore} from '@/store';
+  usePropertyStore
+} from '@/store';
 import { Toggle } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
@@ -108,7 +109,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={"flex flex-row gap-2"}>
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>
@@ -235,10 +236,10 @@ const FadeModal: React.FC<FadeModalProps> = ({
   );
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid gap-2"}>
-            <div className={"text-sm font-medium text-black"}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid gap-2'}>
+            <div className={'text-sm font-medium text-black'}>
               {getCopy('Fade', 'property')}
             </div>
             <VirtualizedCombobox
@@ -247,12 +248,12 @@ const FadeModal: React.FC<FadeModalProps> = ({
               selectedOption={
                 Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
               }
-              searchPlaceholder={"Search the Scene..."}
+              searchPlaceholder={'Search the Scene...'}
             />
           </div>
         </div>
-        <div className={"grid grid-cols-2 gap-4"}>
-          <div className={"grid gap-2"}>
+        <div className={'grid grid-cols-2 gap-4'}>
+          <div className={'grid gap-2'}>
             <Label>{getCopy('Fade', 'action_type')}</Label>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
@@ -261,12 +262,12 @@ const FadeModal: React.FC<FadeModalProps> = ({
             />
           </div>
 
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"duration"}>{getCopy('Fade', 'fade_duration')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'duration'}>{getCopy('Fade', 'fade_duration')}</Label>
             <Input
-              id={"duration"}
-              placeholder={"Duration to Fade"}
-              type={"number"}
+              id={'duration'}
+              placeholder={'Duration to Fade'}
+              type={'number'}
               min={0}
               max={20}
               step={0.1}
@@ -276,46 +277,46 @@ const FadeModal: React.FC<FadeModalProps> = ({
             />
           </div>
         </div>
-        <div className={"grid grid-cols-4 "}>
-          <div className={"col-span-3 grid grid-cols-3 gap-4"}>
-            <div className={"col-span-2 grid gap-2"}>
-              <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 '}>
+          <div className={'col-span-3 grid grid-cols-3 gap-4'}>
+            <div className={'col-span-2 grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id={"guiname"}
-                placeholder={"Name of Component"}
-                type={"text"}
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className={"col-span-1 mt-6 grid gap-2"}>
+            <div className={'col-span-1 mt-6 grid gap-2'}>
               <ToggleComponent
-                label={"Lock Name"}
+                label={'Lock Name'}
                 value={lockName}
                 setValue={setLockName}
               />
             </div>
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('Fade', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('Fade', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -323,4 +324,4 @@ const FadeModal: React.FC<FadeModalProps> = ({
     </>
   );
 };
-export { FadeGUIComponent,FadeModal };
+export { FadeGUIComponent, FadeModal };

@@ -23,7 +23,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
       <TooltipContent>{tooltipText}</TooltipContent>
       <TooltipTrigger asChild>
         <Button
-          size={"icon"}
+          size={'icon'}
           disabled={disabled}
           variant={'outline'}
           onClick={onClick}

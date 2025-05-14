@@ -7,7 +7,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { ComponentSlice,createComponentSlice } from './componentSlice'; // Assuming you have a componentSlice
+import { ComponentSlice, createComponentSlice } from './componentSlice'; // Assuming you have a componentSlice
 import { createLayoutSlice, LayoutSlice } from './layoutSlice';
 import { createPageSlice, PageSlice } from './pageSlice';
 import { createPositionSlice, PositionSlice } from './positionSlice';

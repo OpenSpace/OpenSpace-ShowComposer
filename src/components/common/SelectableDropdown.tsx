@@ -48,7 +48,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
       }}
       disabled={options.length === 0}
     >
-      <SelectTrigger className={"w-auto"}>
+      <SelectTrigger className={'w-auto'}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

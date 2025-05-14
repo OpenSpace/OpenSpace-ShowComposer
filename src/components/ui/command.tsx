@@ -26,8 +26,12 @@ interface CommandDialogProps extends DialogProps {}
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className={"overflow-hidden p-0 shadow-lg"}>
-        <Command className={"[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-slate-500 dark:[&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5"}>
+      <DialogContent className={'overflow-hidden p-0 shadow-lg'}>
+        <Command
+          className={
+            '[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-slate-500 dark:[&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'
+          }
+        >
           {children}
         </Command>
       </DialogContent>
@@ -39,8 +43,8 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className={"flex items-center border-b px-3"} data-cmdk-input-wrapper={""}>
-    <Search className={"mr-2 h-4 w-4 shrink-0 opacity-50"} />
+  <div className={'flex items-center border-b px-3'} data-cmdk-input-wrapper={''}>
+    <Search className={'mr-2 h-4 w-4 shrink-0 opacity-50'} />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -71,7 +75,7 @@ const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
-  <CommandPrimitive.Empty ref={ref} className={"py-6 text-center text-sm"} {...props} />
+  <CommandPrimitive.Empty ref={ref} className={'py-6 text-center text-sm'} {...props} />
 ));
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
@@ -145,4 +149,5 @@ export {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut};
+  CommandShortcut
+};

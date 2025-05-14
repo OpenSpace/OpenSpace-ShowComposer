@@ -7,7 +7,8 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious} from '@/components/ui/pagination';
+  PaginationPrevious
+} from '@/components/ui/pagination';
 
 interface PaginationProps {
   currentIndex: number;
@@ -58,9 +59,11 @@ const Pagination: React.FC<PaginationProps> = ({ currentIndex, length, setIndex 
   };
 
   return (
-    <div className={"absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center"}>
+    <div
+      className={'absolute bottom-0 left-0  mb-6 flex w-full items-center justify-center'}
+    >
       <PaginationContainer>
-        <PaginationContent className={"z-[49]"}>
+        <PaginationContent className={'z-[49]'}>
           <PaginationItem>
             <PaginationPrevious
               className={`${
@@ -75,7 +78,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentIndex, length, setIndex 
             visiblePages().map((index) => (
               <PaginationItem key={index}>
                 <PaginationLink
-                  className={"cursor-pointer"}
+                  className={'cursor-pointer'}
                   isActive={currentIndex === index}
                   onClick={() => setIndex(index)}
                 >

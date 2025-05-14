@@ -1,5 +1,5 @@
 // DroppableWorkspace.tsx
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SelectionTool from '@/components/SelectionTool';
 import { cn } from '@/lib/utils';
@@ -102,15 +102,17 @@ const DroppableWorkspace: React.FC<{
       >
         {!isPresentMode && (
           <Badge
-            variant={"secondary"}
-            className={" font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700"}
+            variant={'secondary'}
+            className={
+              ' font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700'
+            }
           >
             {getCopy('DroppableWorkspace', 'edit_mode')}
           </Badge>
         )}
 
         {isPresentMode && (
-          <div className={"absolute left-3 top-3"}>
+          <div className={'absolute left-3 top-3'}>
             <ConnectionStatus />
           </div>
         )}
@@ -119,7 +121,7 @@ const DroppableWorkspace: React.FC<{
         <div
           onWheel={handleWheel}
           onMouseDown={isShiftPressed ? handleMouseDown : undefined}
-          id={"innerContainer"}
+          id={'innerContainer'}
           style={{
             position: 'absolute',
             top: isPresentMode ? -pageY : 0,
@@ -147,7 +149,11 @@ const DroppableWorkspace: React.FC<{
           {children}
         </div>
       </div>
-      <div className={"absolute right-5 top-7 flex flex-col items-center justify-center gap-2"}>
+      <div
+        className={
+          'absolute right-5 top-7 flex flex-col items-center justify-center gap-2'
+        }
+      >
         {!isPresentMode && <ScaleGUI />}
       </div>
     </>

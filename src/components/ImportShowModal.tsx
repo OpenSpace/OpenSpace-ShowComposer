@@ -19,7 +19,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow} from '@/components/ui/table';
+  TableRow
+} from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { Position, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -252,12 +253,12 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
       {/* <AlertDialogTrigger asChild>
         <Button variant="secondary">Import Show</Button>
       </AlertDialogTrigger> */}
-      <AlertDialogContent className={"w-full max-w-3xl"}>
+      <AlertDialogContent className={'w-full max-w-3xl'}>
         <AlertDialogHeader>
-          <AlertDialogTitle className={"text-gray-900 dark:text-gray-100"}>
+          <AlertDialogTitle className={'text-gray-900 dark:text-gray-100'}>
             Import Show
           </AlertDialogTitle>
-          <AlertDialogDescription className={"text-gray-700 dark:text-gray-300"}>
+          <AlertDialogDescription className={'text-gray-700 dark:text-gray-300'}>
             Select Pages you want to add to current Show.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -294,12 +295,12 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
               >
                 <TableCell>
                   <Checkbox
-                    className={"peer"}
+                    className={'peer'}
                     checked={selectedPages.find((p) => p.id === page.id) !== undefined}
                     onCheckedChange={() => handlePageSelect(page)}
                   />
                 </TableCell>
-                <TableCell className={"dark:text-gray-100"}>{page.name}</TableCell>
+                <TableCell className={'dark:text-gray-100'}>{page.name}</TableCell>
                 <TableCell>
                   {page.components
                     .filter((v) => !store.boundStore.layouts[v])
@@ -308,7 +309,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
                       return (
                         <span
                           key={componentId}
-                          className={"text-gray-700 dark:text-gray-300"}
+                          className={'text-gray-700 dark:text-gray-300'}
                         >
                           {component && component.gui_name?.length > 0
                             ? component.gui_name

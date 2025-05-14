@@ -17,7 +17,8 @@ import {
   ConnectionState,
   Toggle,
   useOpenSpaceApiStore,
-  usePropertyStore} from '@/store';
+  usePropertyStore
+} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 import { formatName, Property } from '@/utils/apiHelpers';
@@ -91,7 +92,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = tr
       }}
     >
       <ButtonLabel>
-        <div className={"flex gap-2"}>
+        <div className={'flex gap-2'}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </div>
@@ -167,10 +168,10 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
     }, {});
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid gap-2"}>
-            <div className={"text-sm font-medium text-black"}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid gap-2'}>
+            <div className={'text-sm font-medium text-black'}>
               {getCopy('Boolean', 'property')}
             </div>
             <VirtualizedCombobox
@@ -179,12 +180,12 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
               selectedOption={
                 Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
               }
-              searchPlaceholder={"Search the Scene..."}
+              searchPlaceholder={'Search the Scene...'}
             />
           </div>
         </div>
-        <div className={"grid grid-cols-2 gap-4"}>
-          <div className={"grid gap-2"}>
+        <div className={'grid grid-cols-2 gap-4'}>
+          <div className={'grid gap-2'}>
             <Label>{getCopy('Boolean', 'action_type')}</Label>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
@@ -193,40 +194,44 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
             />
           </div>
         </div>
-        <div className={"grid grid-cols-4 gap-2"}>
-          <div className={"col-span-3 grid gap-2"}>
-            <Label htmlFor={"gioname"}>{getCopy('Boolean', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 gap-2'}>
+          <div className={'col-span-3 grid gap-2'}>
+            <Label htmlFor={'gioname'}>{getCopy('Boolean', 'component_name')}</Label>
             <Input
-              id={"guiname"}
-              placeholder={"Name of Component"}
-              type={"text"}
+              id={'guiname'}
+              placeholder={'Name of Component'}
+              type={'text'}
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
               }
             />
           </div>
-          <div className={"col-span-1 mt-6 grid gap-2"}>
-            <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+          <div className={'col-span-1 mt-6 grid gap-2'}>
+            <ToggleComponent
+              label={'Lock Name'}
+              value={lockName}
+              setValue={setLockName}
+            />
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('Boolean', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('Boolean', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -234,4 +239,4 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
     </>
   );
 };
-export { BoolGUIComponent,BoolModal };
+export { BoolGUIComponent, BoolModal };

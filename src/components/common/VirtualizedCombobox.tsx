@@ -1,4 +1,4 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Fuse from 'fuse.js';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -193,7 +193,7 @@ const VirtualizedCommand = ({
                 <CommandItem
                   // data-index={virtual÷åOption.index}
                   // ref={virtualizer.measureElement}
-                  className={"w-max items-center"}
+                  className={'w-max items-center'}
                   style={{
                     position: 'absolute',
                     top: 0,
@@ -257,12 +257,12 @@ export function VirtualizedCombobox({
   const [open, setOpen] = useState<boolean>(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className={"overflow-hidden"}>
+      <PopoverTrigger asChild className={'overflow-hidden'}>
         <Button
-          variant={"outline"}
-          role={"combobox"}
+          variant={'outline'}
+          role={'combobox'}
           aria-expanded={open}
-          className={"relative justify-between"}
+          className={'relative justify-between'}
           style={{
             width: width
           }}
@@ -281,7 +281,7 @@ export function VirtualizedCombobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={" p-0"}
+        className={' p-0'}
         style={{
           width: width
         }}

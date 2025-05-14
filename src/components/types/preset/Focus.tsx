@@ -80,7 +80,7 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={"flex flex-row gap-2"}>
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             {/* {CurrentAnchor?.value && (
               <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
@@ -179,10 +179,10 @@ const FocusModal: React.FC<FocusModalProps> = ({
     }, {});
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid gap-2"}>
-            <div className={"text-sm font-medium text-black"}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid gap-2'}>
+            <div className={'text-sm font-medium text-black'}>
               {getCopy('Focus', 'property')}
             </div>
             <VirtualizedCombobox
@@ -191,44 +191,48 @@ const FocusModal: React.FC<FocusModalProps> = ({
               selectedOption={
                 (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
               }
-              searchPlaceholder={"Search the Scene..."}
+              searchPlaceholder={'Search the Scene...'}
             />
           </div>
         </div>
-        <div className={"grid grid-cols-4 gap-4"}>
-          <div className={"col-span-3 grid gap-2"}>
-            <Label htmlFor={"gioname"}>{getCopy('Focus', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 gap-4'}>
+          <div className={'col-span-3 grid gap-2'}>
+            <Label htmlFor={'gioname'}>{getCopy('Focus', 'component_name')}</Label>
             <Input
-              id={"guiname"}
-              placeholder={"Name of Component"}
-              type={"text"}
+              id={'guiname'}
+              placeholder={'Name of Component'}
+              type={'text'}
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
               }
             />
           </div>
-          <div className={"cols-span-1 mt-6 grid gap-2"}>
-            <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+          <div className={'cols-span-1 mt-6 grid gap-2'}>
+            <ToggleComponent
+              label={'Lock Name'}
+              value={lockName}
+              setValue={setLockName}
+            />
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('Focus', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('Focus', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -236,4 +240,4 @@ const FocusModal: React.FC<FocusModalProps> = ({
     </>
   );
 };
-export { FocusComponent,FocusModal };
+export { FocusComponent, FocusModal };

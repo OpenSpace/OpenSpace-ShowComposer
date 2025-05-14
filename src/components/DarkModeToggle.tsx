@@ -13,12 +13,20 @@ export function DarkModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className={"flex items-center justify-center"}>
-          <Sun className={"h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"} />
-          <Moon className={"absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"} />
+        <div className={'flex items-center justify-center'}>
+          <Sun
+            className={
+              'h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0'
+            }
+          />
+          <Moon
+            className={
+              'absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100'
+            }
+          />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={"end"}>
+      <DropdownMenuContent align={'end'}>
         <DropdownMenuCheckboxItem
           checked={theme == 'light'}
           onCheckedChange={() => setTheme('light')}

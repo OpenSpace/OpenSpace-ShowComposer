@@ -1,6 +1,6 @@
 import { throttle } from 'lodash';
 
-import { useOpenSpaceApiStore,usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
 export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   // Ensure we don't have white spaces
@@ -96,7 +96,7 @@ async function jumpToTime(
   fadeScene: boolean
 ) {
   let timeNow = usePropertyStore.getState().time?.['timeCapped'];
-  const {luaApi} = useOpenSpaceApiStore.getState();
+  const { luaApi } = useOpenSpaceApiStore.getState();
   // console.log('NEW TIME: ', newTime);
   if (!isDate(timeNow)) {
     timeNow = new Date(timeNow);
@@ -153,4 +153,4 @@ function formatDate(date: Date) {
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-export { formatDate,isDate, jumpToTime, updateTime };
+export { formatDate, isDate, jumpToTime, updateTime };

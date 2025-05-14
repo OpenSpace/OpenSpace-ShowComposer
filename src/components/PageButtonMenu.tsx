@@ -53,18 +53,18 @@ const PageButtonMenu = () => {
           <TooltipContent>{getCopy('PageButtonMenu', 'page_settings')}</TooltipContent>
           <DropdownMenu>
             <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild className={"z-[999999]"}>
+              <DropdownMenuTrigger asChild className={'z-[999999]'}>
                 <Button
                   // className="absolute "
-                  size={"icon"}
-                  variant={"outline"}
+                  size={'icon'}
+                  variant={'outline'}
                 >
-                  <FileCog strokeWidth={"1.5"} size={"20"} />
+                  <FileCog strokeWidth={'1.5'} size={'20'} />
                 </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>
 
-            <DropdownMenuContent align={"end"}>
+            <DropdownMenuContent align={'end'}>
               {/* <DropdownMenuItem> */}
 
               {/* </DropdownMenuItem> */}
@@ -74,9 +74,9 @@ const PageButtonMenu = () => {
               <DropdownMenuItem onClick={() => deletePage(currentPage)}>
                 {getCopy('PageButtonMenu', 'delete_page')}
               </DropdownMenuItem>
-              <Separator className={"my-1"} />
+              <Separator className={'my-1'} />
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger side={"left"}>
+                <DropdownMenuSubTrigger side={'left'}>
                   {/* <UserPlus className="mr-2 h-4 w-4" /> */}
                   <span>{getCopy('PageButtonMenu', 'screen_presets')}</span>
                 </DropdownMenuSubTrigger>
@@ -95,31 +95,31 @@ const PageButtonMenu = () => {
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-              <div className={"grid gap-2 p-2"}>
-                <div className={"space-between flex flex-row items-center gap-4"}>
-                  <Label htmlFor={"port"}>{getCopy('PageButtonMenu', 'width')}</Label>
+              <div className={'grid gap-2 p-2'}>
+                <div className={'space-between flex flex-row items-center gap-4'}>
+                  <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'width')}</Label>
                   <Input
-                    id={"width"}
-                    className={"h-8 w-40"}
-                    type={"number"}
+                    id={'width'}
+                    className={'h-8 w-40'}
+                    type={'number'}
                     value={pageWidth}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updatePageSize(parseInt(e.target.value), pageHeight);
                     }}
-                    placeholder={"Enter Page Width"}
+                    placeholder={'Enter Page Width'}
                   />
                 </div>
-                <div className={"flex flex-row  items-center gap-4"}>
-                  <Label htmlFor={"port"}>{getCopy('PageButtonMenu', 'height')}</Label>
+                <div className={'flex flex-row  items-center gap-4'}>
+                  <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'height')}</Label>
                   <Input
-                    id={"height"}
-                    className={"h-8 w-40"}
-                    type={"number"}
+                    id={'height'}
+                    className={'h-8 w-40'}
+                    type={'number'}
                     value={pageHeight}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       updatePageSize(pageWidth, parseInt(e.target.value));
                     }}
-                    placeholder={"Enter Page Height"}
+                    placeholder={'Enter Page Height'}
                   />
                 </div>
               </div>

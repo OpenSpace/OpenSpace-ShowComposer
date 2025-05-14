@@ -1,6 +1,6 @@
 // DraggableComponent.tsx
 import React, { useState } from 'react';
-import { DraggableData,DraggableEvent } from 'react-draggable';
+import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { Copy, Edit2, GripHorizontal, Trash2 } from 'lucide-react';
 
@@ -178,37 +178,47 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
               layoutId && 'bg-blue-500/10'
             )}
           >
-            <div className={"absolute flex w-full flex-col items-center justify-center gap-1"}>
+            <div
+              className={
+                'absolute flex w-full flex-col items-center justify-center gap-1'
+              }
+            >
               <GripHorizontal
                 className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
               />
             </div>
-            <div className={"relative z-[99] flex items-start justify-end gap-2 p-2"}>
+            <div className={'relative z-[99] flex items-start justify-end gap-2 p-2'}>
               <DropdownMenuComponent
                 items={[
                   <div
-                    key={"edit"}
-                    className={"flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"}
+                    key={'edit'}
+                    className={
+                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
+                    }
                     onClick={onEdit}
                   >
                     <span>{getCopy('DraggableComponent', 'edit')}</span>
-                    <Edit2 className={"h-4 w-4"} />
+                    <Edit2 className={'h-4 w-4'} />
                   </div>,
                   <div
-                    key={"edit"}
-                    className={"flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"}
+                    key={'edit'}
+                    className={
+                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
+                    }
                     onClick={onCopy}
                   >
                     <span>{getCopy('DraggableComponent', 'copy')}</span>
-                    <Copy className={"h-4 w-4"} />
+                    <Copy className={'h-4 w-4'} />
                   </div>,
                   <div
-                    key={"delete"}
-                    className={"flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100"}
+                    key={'delete'}
+                    className={
+                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100'
+                    }
                     onClick={handleDeleteClick}
                   >
                     <span>{getCopy('DraggableComponent', 'delete')}</span>
-                    <Trash2 className={"h-4 w-4"} />
+                    <Trash2 className={'h-4 w-4'} />
                   </div>
                 ]}
               />

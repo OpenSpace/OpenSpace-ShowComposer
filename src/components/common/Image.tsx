@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image as LucideImage } from 'lucide-react'; // Ensure you have the correct import path
 
 import { cn } from '@/lib/utils';
@@ -30,7 +30,7 @@ const Image: React.FC<ImageProps> = ({ src, alt, ...props }) => {
             props.className
           )}
         >
-          <LucideImage className={"text-muted-foreground h-8 h-8"} />
+          <LucideImage className={'text-muted-foreground h-8 h-8'} />
         </div>
       )}
     </>

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef,useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
-import { Edit2, Link, Unlink,XIcon } from 'lucide-react';
+import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import ButtonLabel from '@/components/common/ButtonLabel';
@@ -29,7 +29,8 @@ import {
   MultiOption,
   multiOptions as MultiOptions,
   SetFocusComponent,
-  TriggerComponent} from '@/store/ComponentTypes';
+  TriggerComponent
+} from '@/store/ComponentTypes';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -250,18 +251,18 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
     // });
   };
   return (
-    <Tabs defaultValue={"multi"} className={"w-auto"}>
-      <TabsList className={"mb-4"}>
-        <TabsTrigger value={"multi"}>{getCopy('Multi', 'multi_settings')}</TabsTrigger>
-        <TabsTrigger value={"visual"}>{getCopy('Multi', 'visual_settings')}</TabsTrigger>
+    <Tabs defaultValue={'multi'} className={'w-auto'}>
+      <TabsList className={'mb-4'}>
+        <TabsTrigger value={'multi'}>{getCopy('Multi', 'multi_settings')}</TabsTrigger>
+        <TabsTrigger value={'visual'}>{getCopy('Multi', 'visual_settings')}</TabsTrigger>
       </TabsList>
-      <TabsContent value={"multi"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid grid-cols-2 gap-4"}>
-            <div className={"grid gap-2"}>
+      <TabsContent value={'multi'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid grid-cols-2 gap-4'}>
+            <div className={'grid gap-2'}>
               {/* <Label>Add Existing Component</Label> */}
               <SelectableDropdown
-                placeholder={"Add Existing Component"}
+                placeholder={'Add Existing Component'}
                 shouldClear={true}
                 options={availableOptions.map((component) => ({
                   value: component,
@@ -273,11 +274,11 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                 }}
               />
             </div>
-            <div className={"grid gap-2"}>
+            <div className={'grid gap-2'}>
               {/* <Label>Add New Component</Label> */}
 
               <SelectableDropdown
-                placeholder={"Add New Component"}
+                placeholder={'Add New Component'}
                 options={MultiOptions}
                 selected={undefined}
                 shouldClear={true}
@@ -290,12 +291,12 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
            Add {getComponentById(component).type}
            </button>
            ))} */}
-          <p className={"text-sm text-slate-500 dark:text-slate-400"}>
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             <b>{getCopy('Multi', 'delay:')}</b>
             {getCopy('Multi', 'delay_copy')}
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId={"droppable"}>
+            <Droppable droppableId={'droppable'}>
               {(provided) => (
                 <div
                   {...provided.droppableProps}
@@ -309,9 +310,11 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className={"mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2"}
+                          className={
+                            'mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2'
+                          }
                         >
-                          <div className={"w-[40%] overflow-hidden whitespace-nowrap"}>
+                          <div className={'w-[40%] overflow-hidden whitespace-nowrap'}>
                             {getComponentById(item.id)?.gui_name}
                           </div>
                           <Tooltip>
@@ -325,12 +328,12 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                   recalculateOffsets(newItems);
                                   setItems(newItems);
                                 }}
-                                className={"p-1"}
+                                className={'p-1'}
                               >
                                 {item.chained ? <Link size={20} /> : <Unlink size={20} />}
                               </Toggle>
                             </TooltipTrigger>
-                            <TooltipContent className={"w-[200px] bg-white"}>
+                            <TooltipContent className={'w-[200px] bg-white'}>
                               <b>{getCopy('Multi', 'chained_items:')}</b>
                               {getCopy(
                                 'Multi',
@@ -344,25 +347,25 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                               )}
                             </TooltipContent>
                           </Tooltip>
-                          <div className={"flex items-center gap-1"}>
+                          <div className={'flex items-center gap-1'}>
                             <Label>{getCopy('Multi', 'delay')}</Label>
                             <Input
-                              type={"number"}
-                              className={"w-20"}
-                              name={"delay"}
-                              min={"0"}
-                              max={"20"}
-                              step={"0.2"}
+                              type={'number'}
+                              className={'w-20'}
+                              name={'delay'}
+                              min={'0'}
+                              max={'20'}
+                              step={'0.2'}
                               value={item.buffer}
                               onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                                const {value} = e.currentTarget;
+                                const { value } = e.currentTarget;
                                 const newItems = Array.from(items);
                                 newItems[index].buffer = parseFloat(value);
                                 setItems(newItems);
                               }}
                             />
                           </div>
-                          <div className={"flex-0 grid grid-cols-2 gap-2"}>
+                          <div className={'flex-0 grid grid-cols-2 gap-2'}>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Toggle
@@ -378,7 +381,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                     });
                                     setIsModalOpen(true);
                                   }}
-                                  className={"p-1"}
+                                  className={'p-1'}
                                 >
                                   <Edit2
                                     size={20} // Adjust size as needed
@@ -400,7 +403,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                   />
                                 </Toggle>
                               </TooltipTrigger>
-                              <TooltipContent className={"bg-white"}>
+                              <TooltipContent className={'bg-white'}>
                                 {getCopy('Multi', 'edit_component')}
                               </TooltipContent>
                             </Tooltip>
@@ -409,14 +412,14 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                 <Toggle
                                   pressed={undefined}
                                   onClick={() => removeItem(item.id)}
-                                  className={"p-1"}
+                                  className={'p-1'}
                                 >
                                   <XIcon
                                     size={20} // Adjust size as needed
                                   />
                                 </Toggle>
                               </TooltipTrigger>
-                              <TooltipContent className={"bg-white"}>
+                              <TooltipContent className={'bg-white'}>
                                 {getCopy('Multi', 'remove_from_component')}
                               </TooltipContent>
                             </Tooltip>
@@ -432,15 +435,15 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
           </DragDropContext>
         </div>
       </TabsContent>
-      <TabsContent value={"visual"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid grid-cols-1 gap-4"}>
-            <div className={"grid gap-2"}>
-              <Label htmlFor={"gioname"}>{getCopy('Multi', 'component_name')}</Label>
+      <TabsContent value={'visual'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid grid-cols-1 gap-4'}>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Multi', 'component_name')}</Label>
               <Input
-                id={"guiname"}
-                placeholder={"Name of Component"}
-                type={"text"}
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
@@ -448,30 +451,32 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
               />
             </div>
           </div>
-          <div className={"grid grid-cols-1 gap-4"}>
-            <div className={"grid gap-2"}>
-              <Label htmlFor={"description"}>Background Color</Label>
-              <div className={"flex flex-row gap-2"}>
+          <div className={'grid grid-cols-1 gap-4'}>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>Background Color</Label>
+              <div className={'flex flex-row gap-2'}>
                 <ColorPickerComponent color={color} setColor={setColor} />
               </div>
             </div>
-            <div className={"grid gap-2"}>
-              <Label htmlFor={"description"}>{getCopy('Multi', 'background_image')}</Label>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>
+                {getCopy('Multi', 'background_image')}
+              </Label>
               <ImageUpload
                 value={backgroundImage}
                 onChange={(v) => setBackgroundImage(v)}
               />
             </div>
-            <div className={"grid gap-2"}>
-              <Label htmlFor={"description"}>{getCopy('Multi', 'gui_description')}</Label>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>{getCopy('Multi', 'gui_description')}</Label>
               <Textarea
-                className={"w-full"}
-                id={"description"}
+                className={'w-full'}
+                id={'description'}
                 value={gui_description}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setGuiDescription(e.target.value)
                 }
-                placeholder={"Type your message here."}
+                placeholder={'Type your message here.'}
               />
             </div>
           </div>
@@ -638,10 +643,10 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
         fadeOutDuration={fadeOutDuration}
       />
       <ButtonLabel>
-        <div className={"flex flex-col gap-2"}>
+        <div className={'flex flex-col gap-2'}>
           <p>{component.gui_name}</p>
           {currentItems.length > 0 && (
-            <div className={"grid-rows grid gap-1"}>
+            <div className={'grid-rows grid gap-1'}>
               <Label>{getCopy('Multi', 'current_items:')}</Label>
               {currentItems.map((v) => (
                 <Label key={v}>{v}</Label>
@@ -659,4 +664,4 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     </ComponentContainer>
   );
 };
-export { MultiGUIComponent,MultiModal };
+export { MultiGUIComponent, MultiModal };

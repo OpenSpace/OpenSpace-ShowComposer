@@ -68,20 +68,20 @@ const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage 
               : 'Update the page name and background color.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className={"grid gap-4"}>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"pageName"}>Page Name</Label>
+        <div className={'grid gap-4'}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'pageName'}>Page Name</Label>
             <Input
-              id={"pageName"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'pageName'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={pageName}
               onChange={(e) => setPageName(e.target.value)}
-              placeholder={"Enter Page Name"}
+              placeholder={'Enter Page Name'}
             />
           </div>
-          <div className={"grid items-center gap-4 text-white"}>
-            <Label htmlFor={"backgroundColor"}>Background Color</Label>
+          <div className={'grid items-center gap-4 text-white'}>
+            <Label htmlFor={'backgroundColor'}>Background Color</Label>
             <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { throttle } from 'lodash';
-import { FastForward, Pause, Play,Rewind } from 'lucide-react';
+import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
 import ButtonLabel from '@/components/common/ButtonLabel';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
@@ -8,7 +8,7 @@ import DateComponent from '@/components/timepicker/DateComponent';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConnectionState, useOpenSpaceApiStore,usePropertyStore } from '@/store';
+import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 const updateDelayMs = 1000;
@@ -241,31 +241,31 @@ const TimeDatePicker = () => {
       ? `${adjustedPrevDelta} ${stepSize} / second`
       : 'None';
     return (
-      <div className={"grid grid-cols-3 gap-2"}>
-        <div className={"gap-.5 grid"}>
+      <div className={'grid grid-cols-3 gap-2'}>
+        <div className={'gap-.5 grid'}>
           <Button
-            variant={"outline"}
-            size={"sm"}
+            variant={'outline'}
+            size={'sm'}
             disabled={!hasPrevDeltaTimeStep}
             onClick={setPrevDeltaTimeStep}
           >
-            <Rewind fill={"black"} />
+            <Rewind fill={'black'} />
           </Button>
-          <Label className={"text-xs text-zinc-500"}> {prevLabel}</Label>
+          <Label className={'text-xs text-zinc-500'}> {prevLabel}</Label>
         </div>
-        <Button variant={"outline"} size={"sm"} onClick={togglePause}>
-          {paused ? <Play fill={"black"} /> : <Pause fill={"black"} />}
+        <Button variant={'outline'} size={'sm'} onClick={togglePause}>
+          {paused ? <Play fill={'black'} /> : <Pause fill={'black'} />}
         </Button>
-        <div className={"gap-.5 grid"}>
+        <div className={'gap-.5 grid'}>
           <Button
-            variant={"outline"}
-            size={"sm"}
+            variant={'outline'}
+            size={'sm'}
             disabled={!hasNextDeltaTimeStep}
             onClick={setNextDeltaTimeStep}
           >
-            <FastForward fill={"black"} />
+            <FastForward fill={'black'} />
           </Button>
-          <Label className={"text-xs text-zinc-500"}> {nextLabel}</Label>
+          <Label className={'text-xs text-zinc-500'}> {nextLabel}</Label>
         </div>
       </div>
     );
@@ -273,23 +273,23 @@ const TimeDatePicker = () => {
   if (!time) return null;
   return (
     <div>
-      <div className={"grid gap-2 p-0"}>
-        <div className={"grid gap-2"}>
+      <div className={'grid gap-2 p-0'}>
+        <div className={'grid gap-2'}>
           <Label>{getCopy('TimeDatePicker', 'select_date')}</Label>
           <DateComponent date={time} onChange={changeDate} />
         </div>
-        <div className={"grid gap-2"}>
+        <div className={'grid gap-2'}>
           <Label>{getCopy('TimeDatePicker', 'simulation_speed')}</Label>
           {/* <Separator /> */}
           <SelectableDropdown
-            placeholder={"Select a Unit"}
+            placeholder={'Select a Unit'}
             options={Object.values(Steps)}
             selected={stepSize}
             setSelected={setStepSize}
           />
         </div>
-        <div className={"grid grid-cols-2 gap-2"}>
-          <div className={"gap-.5 grid"}>
+        <div className={'grid grid-cols-2 gap-2'}>
+          <div className={'gap-.5 grid'}>
             <Input
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta >= 0}
@@ -298,15 +298,17 @@ const TimeDatePicker = () => {
               }}
               placeholder={`Negative ${stepSize} / second`}
               value={adjustedDelta >= 0 ? 0 : -adjustedDelta}
-              type={"number"}
+              type={'number'}
               // readOnly
               // reverse
               // noValue={adjustedDelta >= 0}
               // showOutsideRangeHint={false}
             />
-            <Label className={"text-xs text-zinc-500"}>{`Negative ${stepSize} / second`}</Label>
+            <Label
+              className={'text-xs text-zinc-500'}
+            >{`Negative ${stepSize} / second`}</Label>
           </div>
-          <div className={"gap-.5 grid"}>
+          <div className={'gap-.5 grid'}>
             <Input
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta < 0}
@@ -315,28 +317,28 @@ const TimeDatePicker = () => {
               }}
               placeholder={`${stepSize} / second`}
               value={adjustedDelta < 0 ? 0 : adjustedDelta}
-              type={"number"}
+              type={'number'}
               // readOnly
             />
-            <Label className={"text-xs text-zinc-500"}>{`${stepSize} / second`}</Label>
+            <Label className={'text-xs text-zinc-500'}>{`${stepSize} / second`}</Label>
           </div>
         </div>
         {deltaTimeStepsContol()}
-        <div className={"grid grid-cols-2 gap-2"}>
+        <div className={'grid grid-cols-2 gap-2'}>
           <Button
             variant={targetDeltaTime == 1 ? 'default' : 'outline'}
-            size={"sm"}
+            size={'sm'}
             onClick={realtime}
             className={`${targetDeltaTime == 1 ? 'opacity-100' : 'opacity-60'}`}
           >
             {getCopy('TimeDatePicker', 'realtime')}
           </Button>
-          <Button variant={"outline"} size={"sm"} onClick={now}>
+          <Button variant={'outline'} size={'sm'} onClick={now}>
             {getCopy('TimeDatePicker', 'now')}
           </Button>
         </div>
         {/* </div> */}
-        <ButtonLabel className={"border bg-transparent"}>{timeLabel}</ButtonLabel>
+        <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
       </div>
       {/* )} */}
     </div>

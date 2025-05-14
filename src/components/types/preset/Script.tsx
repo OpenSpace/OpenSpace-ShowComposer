@@ -9,7 +9,7 @@ import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState,useOpenSpaceApiStore } from '@/store';
+import { ConnectionState, useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/store/ComponentTypes';
 import { getCopy } from '@/utils/copyHelpers';
@@ -53,7 +53,7 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={"flex flex-row gap-2"}>
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>
@@ -112,14 +112,14 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
 
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-4 items-center gap-4"}>
-          <div className={"col-span-4 grid gap-2"}>
-            <Label htmlFor={"gioname"}>{getCopy('Script', 'script')}</Label>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-4 items-center gap-4'}>
+          <div className={'col-span-4 grid gap-2'}>
+            <Label htmlFor={'gioname'}>{getCopy('Script', 'script')}</Label>
             <CodeEditor
               value={script}
-              language={"lua"}
-              placeholder={"Please enter Lua code."}
+              language={'lua'}
+              placeholder={'Please enter Lua code.'}
               onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setScript(evn.target.value)
               }
@@ -131,22 +131,22 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
               }}
             />
           </div>
-          <div className={"col-span-3 grid grid-cols-3  gap-2 "}>
-            <div className={"col-span-2 grid gap-2"}>
-              <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
+          <div className={'col-span-3 grid grid-cols-3  gap-2 '}>
+            <div className={'col-span-2 grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id={"guiname"}
-                placeholder={"Name of Component"}
-                type={"text"}
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className={"col-span-1 mt-6 grid gap-2"}>
+            <div className={'col-span-1 mt-6 grid gap-2'}>
               <ToggleComponent
-                label={"Lock Name"}
+                label={'Lock Name'}
                 value={lockName}
                 setValue={setLockName}
               />
@@ -154,23 +154,23 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
           </div>
         </div>
 
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('Fade', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('Fade', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -178,4 +178,4 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
     </>
   );
 };
-export { ScriptGUIComponent,ScriptModal };
+export { ScriptGUIComponent, ScriptModal };

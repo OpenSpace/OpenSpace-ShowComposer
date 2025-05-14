@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect,useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -65,22 +65,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
   }, [file]);
   return (
     <>
-      <div className={"grid gap-4"}>
+      <div className={'grid gap-4'}>
         <Label>{getCopy('ImageUpload', 'set_image_url')}</Label>
-        <div className={"grid grid-cols-7 gap-2"}>
-          <div className={"col-span-4"}>
+        <div className={'grid grid-cols-7 gap-2'}>
+          <div className={'col-span-4'}>
             <Input
-              type={"text"}
-              placeholder={"Set Image URL"}
-              className={"relative w-full rounded border p-2"}
+              type={'text'}
+              placeholder={'Set Image URL'}
+              className={'relative w-full rounded border p-2'}
               value={value}
               onChange={handleURLChange}
             />
           </div>
-          <div className={"col-span-1 flex-1 flex-row items-center justify-center text-center text-2xl text-slate-900 dark:text-slate-200"}>
+          <div
+            className={
+              'col-span-1 flex-1 flex-row items-center justify-center text-center text-2xl text-slate-900 dark:text-slate-200'
+            }
+          >
             {getCopy('ImageUpload', 'or')}
           </div>
-          <Button className={"col-span-2"} onClick={() => setGalleryVisible(true)}>
+          <Button className={'col-span-2'} onClick={() => setGalleryVisible(true)}>
             {getCopy('ImageUpload', 'select_image')}
           </Button>
           {galleryVisible && (

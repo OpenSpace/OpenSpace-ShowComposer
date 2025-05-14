@@ -14,7 +14,8 @@ import {
   ConnectionState,
   NumberComponent,
   useOpenSpaceApiStore,
-  usePropertyStore} from '@/store';
+  usePropertyStore
+} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/store/ComponentTypes';
 import { formatName } from '@/utils/apiHelpers';
@@ -93,8 +94,8 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
     >
-      <div className={"grid w-[85%] gap-4 py-4"}>
-        <div className={"flex flex-row gap-2"}>
+      <div className={'grid w-[85%] gap-4 py-4'}>
+        <div className={'flex flex-row gap-2'}>
           <Label>{component.gui_name}</Label>
           <Information content={component.gui_description} />
         </div>
@@ -109,8 +110,8 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         />
 
         <Input
-          type={"number"}
-          className={"w-auto bg-opacity-50 text-xs"}
+          type={'number'}
+          className={'w-auto bg-opacity-50 text-xs'}
           value={tempValue || 0}
           min={component.min}
           max={component.max}
@@ -209,9 +210,9 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
       return acc;
     }, {});
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid gap-2"}>
+    <div className={'grid grid-cols-1 gap-4'}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid gap-2'}>
           <Label>{getCopy('Number', 'property')}</Label>
           <VirtualizedCombobox
             options={Object.keys(sortedKeys)}
@@ -219,90 +220,90 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
             selectedOption={
               Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
             }
-            searchPlaceholder={"Search the Scene..."}
+            searchPlaceholder={'Search the Scene...'}
           />
         </div>
       </div>
-      <div className={"grid grid-cols-4 gap-4"}>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"min"}>{getCopy('Number', 'range_min')}</Label>
+      <div className={'grid grid-cols-4 gap-4'}>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'min'}>{getCopy('Number', 'range_min')}</Label>
           <Input
-            id={"min"}
-            placeholder={"Slider Min"}
-            type={"number"}
+            id={'min'}
+            placeholder={'Slider Min'}
+            type={'number'}
             value={min || 0}
             onChange={(e) => setMin(parseFloat(e.target.value))}
           />
         </div>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"max"}>{getCopy('Number', 'range_max')}</Label>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'max'}>{getCopy('Number', 'range_max')}</Label>
           <Input
-            id={"max"}
-            placeholder={"Slider Max"}
-            type={"number"}
+            id={'max'}
+            placeholder={'Slider Max'}
+            type={'number'}
             value={max || 0}
             onChange={(e) => setMax(parseFloat(e.target.value))}
           />
         </div>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"step"}>{getCopy('Number', 'step')}</Label>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'step'}>{getCopy('Number', 'step')}</Label>
           <Input
-            id={"step"}
-            placeholder={"Slider Step"}
-            type={"number"}
+            id={'step'}
+            placeholder={'Slider Step'}
+            type={'number'}
             value={step || 0}
             onChange={(e) => setStep(parseFloat(e.target.value))}
           />
         </div>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"exp"}>{getCopy('Number', 'exponent')}</Label>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'exp'}>{getCopy('Number', 'exponent')}</Label>
           <Input
-            id={"exp"}
+            id={'exp'}
             placeholder={"getCopy('Number', 'exponent')"}
-            type={"number"}
+            type={'number'}
             value={exponent || 0}
             onChange={(e) => setExponent(parseFloat(e.target.value))}
           />
         </div>
       </div>
-      <div className={"grid grid-cols-4 gap-2"}>
-        <div className={"col-span-3 grid gap-2"}>
-          <Label htmlFor={"gioname"}>{getCopy('Number', 'component_name')}</Label>
+      <div className={'grid grid-cols-4 gap-2'}>
+        <div className={'col-span-3 grid gap-2'}>
+          <Label htmlFor={'gioname'}>{getCopy('Number', 'component_name')}</Label>
           <Input
-            id={"guiname"}
-            placeholder={"Name of Component"}
-            type={"text"}
+            id={'guiname'}
+            placeholder={'Name of Component'}
+            type={'text'}
             value={gui_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setGuiName(e.target.value)
             }
           />
         </div>
-        <div className={"col-span-1 mt-6 grid gap-2"}>
-          <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+        <div className={'col-span-1 mt-6 grid gap-2'}>
+          <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
         </div>
       </div>
-      <div className={"grid grid-cols-1 gap-4"}>
+      <div className={'grid grid-cols-1 gap-4'}>
         <BackgroundHolder
           color={color}
           setColor={setColor}
           backgroundImage={backgroundImage}
           setBackgroundImage={setBackgroundImage}
         />
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"description"}>{getCopy('Number', 'gui_description')}</Label>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'description'}>{getCopy('Number', 'gui_description')}</Label>
           <Textarea
-            className={"w-full"}
-            id={"description"}
+            className={'w-full'}
+            id={'description'}
             value={gui_description}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setGuiDescription(e.target.value)
             }
-            placeholder={"Type your message here."}
+            placeholder={'Type your message here.'}
           />
         </div>
       </div>
     </div>
   );
 };
-export { NumberGUIComponent,NumberModal };
+export { NumberGUIComponent, NumberModal };

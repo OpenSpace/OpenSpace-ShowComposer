@@ -66,11 +66,15 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
 
   if (!isOpen || !layoutId) return null;
   return (
-    <div className={"fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"}>
-      <Card className={"w-[510px] bg-white"}>
+    <div
+      className={
+        'fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50'
+      }
+    >
+      <Card className={'w-[510px] bg-white'}>
         <CardHeader>
           <CardTitle>
-            <div className={"flex flex-row gap-2"}>
+            <div className={'flex flex-row gap-2'}>
               {getCopy('LayoutEditModal', 'edit_layout')}
             </div>
           </CardTitle>
@@ -79,47 +83,47 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className={"grid gap-2"}>
+          <div className={'grid gap-2'}>
             {layoutType == 'grid' ? (
               <>
-                <Label className={"text-lg"}>
+                <Label className={'text-lg'}>
                   {getCopy('LayoutEditModal', 'grid_size')}
                 </Label>
-                <Label className={"text-sm text-gray-500"}>
+                <Label className={'text-sm text-gray-500'}>
                   {getCopy('LayoutEditModal', 'grid_size_description')}
                 </Label>
-                <div className={"mt-4 grid grid-cols-2 gap-4"}>
-                  <div className={"grid-cols-1items-center col-span-1 grid gap-2"}>
-                    <Label htmlFor={"rows"}># of Rows</Label>
+                <div className={'mt-4 grid grid-cols-2 gap-4'}>
+                  <div className={'grid-cols-1items-center col-span-1 grid gap-2'}>
+                    <Label htmlFor={'rows'}># of Rows</Label>
                     <Input
-                      id={"rows"}
+                      id={'rows'}
                       // className="h-8"
-                      type={"text"}
+                      type={'text'}
                       value={rows}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setRows(e.target.value)
                       }
-                      placeholder={"# of Rows"}
+                      placeholder={'# of Rows'}
                     />
                   </div>
-                  <div className={"col-span-1 grid grid-cols-1 items-center gap-4"}>
-                    <Label htmlFor={"columns"}># of Columns</Label>
+                  <div className={'col-span-1 grid grid-cols-1 items-center gap-4'}>
+                    <Label htmlFor={'columns'}># of Columns</Label>
                     <Input
-                      id={"columns"}
+                      id={'columns'}
                       // className="h-8"
-                      type={"text"}
+                      type={'text'}
                       value={columns}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setColumns(e.target.value)
                       }
-                      placeholder={"# of Columns"}
+                      placeholder={'# of Columns'}
                     />
                   </div>
                 </div>
               </>
             ) : null}
-            <div className={"flex flex-row gap-2"}>
-              <Label htmlFor={"persistent"}>
+            <div className={'flex flex-row gap-2'}>
+              <Label htmlFor={'persistent'}>
                 {getCopy('LayoutEditModal', 'persist_across_pages')}
               </Label>
               <Toggle value={persistent} setValue={setPersistent} />
@@ -127,7 +131,7 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
           </div>
         </CardContent>
         <CardFooter>
-          <div className={"flex w-full flex-row justify-end gap-2"}>
+          <div className={'flex w-full flex-row justify-end gap-2'}>
             <Button variant={'outline'} onClick={onClose}>
               Cancel
             </Button>

@@ -1,6 +1,6 @@
 // App.jsx
 // import React from 'react';
-import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import basePath from './utils/basePath';
 import Editor from './Editor';
@@ -19,8 +19,8 @@ function App() {
         </ul>
       </nav> */}
       <Routes>
-        <Route path={"/"} element={<Editor />} />
-        <Route path={"/hub"} element={<Hub />} />
+        <Route path={'/'} element={<Editor />} />
+        <Route path={'/hub'} element={<Hub />} />
       </Routes>
     </Router>
   );

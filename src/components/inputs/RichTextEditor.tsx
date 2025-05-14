@@ -115,8 +115,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
 
   return (
     <div className={` p-4  ${theme == 'dark' ? 'dark-mode' : ''}`}>
-      <div id={"toolbar"}>
-        <span className={"ql-formats"}>
+      <div id={'toolbar'}>
+        <span className={'ql-formats'}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -161,7 +161,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className={"flex !w-auto"} size={'lg'} variant={'ghost'}>
+              <Button className={'flex !w-auto'} size={'lg'} variant={'ghost'}>
                 {typeof currentSize === 'string'
                   ? currentSize.charAt(0).toUpperCase() + currentSize.slice(1)
                   : ''}
@@ -195,20 +195,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
             </DropdownMenuContent>
           </DropdownMenu>
         </span>
-        <span className={"ql-formats"}>
-          <TooltipHolder content={"Bold"}>
-            <button className={"ql-bold"}></button>
+        <span className={'ql-formats'}>
+          <TooltipHolder content={'Bold'}>
+            <button className={'ql-bold'}></button>
           </TooltipHolder>
-          <TooltipHolder content={"Italic"}>
-            <button className={"ql-italic"}></button>
+          <TooltipHolder content={'Italic'}>
+            <button className={'ql-italic'}></button>
           </TooltipHolder>
-          <TooltipHolder content={"Underline"}>
-            <button className={"ql-underline"}></button>
+          <TooltipHolder content={'Underline'}>
+            <button className={'ql-underline'}></button>
           </TooltipHolder>
         </span>
-        <span className={"ql-formats"}>
-          <TooltipHolder content={"Clear Formatting"}>
-            <button className={"ql-clean"}></button>
+        <span className={'ql-formats'}>
+          <TooltipHolder content={'Clear Formatting'}>
+            <button className={'ql-clean'}></button>
           </TooltipHolder>
         </span>
       </div>

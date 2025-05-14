@@ -10,7 +10,8 @@ import {
   NavComponent,
   RecordComponent,
   StatusComponent,
-  TimeComponent} from './ComponentTypes';
+  TimeComponent
+} from './ComponentTypes';
 import { LayoutSlice } from './layoutSlice';
 import { PageSlice } from './pageSlice';
 import { Position, PositionSlice } from './positionSlice';
@@ -126,7 +127,7 @@ export const createComponentSlice: ImmerStateCreator<
     const componentUpdates: Partial<Component> = {};
     const currentPageId = get().currentPage;
     const currentPage = get().getPageById(currentPageId);
-    const {layouts} = get();
+    const { layouts } = get();
     const filteredLayouts = Object.values(layouts).filter((v) => {
       return !v.parentPage || (v.parentPage && v.parentPage == currentPageId);
     });

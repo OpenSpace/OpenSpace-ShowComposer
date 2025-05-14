@@ -23,7 +23,8 @@ import {
   // loadStoreImageSeperately,
   loadStoreToServer,
   Project,
-  saveProject} from '@/utils/saveProject';
+  saveProject
+} from '@/utils/saveProject';
 
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -110,7 +111,7 @@ export function GlobalMenuBar() {
 
   return (
     <>
-      <Menubar className={"border-0 p-2"}>
+      <Menubar className={'border-0 p-2'}>
         <MenubarMenu>
           <MenubarTrigger>
             {/* <PlusCircleIcon size={20} /> */}
@@ -126,7 +127,7 @@ export function GlobalMenuBar() {
             <MenubarItem onClick={exportProject}>Export</MenubarItem>
             <MenubarItem
               onClick={() => setIsDeleteAllModalOpen(true)}
-              className={"text-red-500"}
+              className={'text-red-500'}
             >
               Delete Show
             </MenubarItem>
@@ -177,31 +178,31 @@ export function GlobalMenuBar() {
                 ))}
               </MenubarSubContent>
             </MenubarSub>
-            <div className={"grid gap-2 p-2"}>
-              <div className={"space-between flex flex-row items-center gap-4"}>
-                <Label htmlFor={"port"}>{getCopy('PageButtonMenu', 'width')}</Label>
+            <div className={'grid gap-2 p-2'}>
+              <div className={'space-between flex flex-row items-center gap-4'}>
+                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'width')}</Label>
                 <Input
-                  id={"width"}
-                  className={"h-8 w-40"}
-                  type={"number"}
+                  id={'width'}
+                  className={'h-8 w-40'}
+                  type={'number'}
                   value={pageWidth}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     updatePageSize(parseInt(e.target.value), pageHeight);
                   }}
-                  placeholder={"Enter Page Width"}
+                  placeholder={'Enter Page Width'}
                 />
               </div>
-              <div className={"flex flex-row  items-center gap-4"}>
-                <Label htmlFor={"port"}>{getCopy('PageButtonMenu', 'height')}</Label>
+              <div className={'flex flex-row  items-center gap-4'}>
+                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'height')}</Label>
                 <Input
-                  id={"height"}
-                  className={"h-8 w-40"}
-                  type={"number"}
+                  id={'height'}
+                  className={'h-8 w-40'}
+                  type={'number'}
                   value={pageHeight}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     updatePageSize(pageWidth, parseInt(e.target.value));
                   }}
-                  placeholder={"Enter Page Height"}
+                  placeholder={'Enter Page Height'}
                 />
               </div>
             </div>
@@ -232,7 +233,9 @@ export function GlobalMenuBar() {
       />
       <DeleteConfirmationModal
         onConfirm={handleDeleteAllConfirm}
-        message={"This action cannot be undone. This will permanently delete the components from the project."}
+        message={
+          'This action cannot be undone. This will permanently delete the components from the project.'
+        }
         isOpen={isDeleteAllModalOpen}
         setOpen={setIsDeleteAllModalOpen}
       />

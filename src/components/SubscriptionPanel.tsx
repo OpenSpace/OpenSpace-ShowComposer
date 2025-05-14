@@ -30,33 +30,33 @@ const SubscriptionPanel = () => {
       <Tooltip>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
-            <div className={"mt-0 flex flex-row items-center justify-start px-4 pb-4"}>
-              <Button className={"w-auto gap-2"} variant={"outline"} size={"sm"}>
+            <div className={'mt-0 flex flex-row items-center justify-start px-4 pb-4'}>
+              <Button className={'w-auto gap-2'} variant={'outline'} size={'sm'}>
                 <AudioWaveform size={16} />{' '}
                 <Label>{getCopy('SubscriptionPanel', 'active_subscriptions')}</Label>
               </Button>
             </div>
           </PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent className={"bg-white"}>
+        <TooltipContent className={'bg-white'}>
           {getCopy('SubscriptionPanel', 'active_property_subscriptions')}
         </TooltipContent>
       </Tooltip>
 
-      <PopoverContent className={"w-auto"}>
-        <div className={"m-4 rounded-md border border-gray-300 p-4"}>
-          <h2 className={"mb-2 font-bold"}>
+      <PopoverContent className={'w-auto'}>
+        <div className={'m-4 rounded-md border border-gray-300 p-4'}>
+          <h2 className={'mb-2 font-bold'}>
             {getCopy('SubscriptionPanel', 'active_subscriptions')}
           </h2>
           {Object.keys(topics).length > 0 || Object.keys(subscriptions).length > 0 ? (
-            <div className={"flex flex-col justify-center gap-2"}>
+            <div className={'flex flex-col justify-center gap-2'}>
               <>
                 {Object.entries(topics).map(([topicName, { count }]) => (
                   <Fragment key={topicName}>
                     <Separator key={topicName} />
-                    <div key={topicName} className={"grid grid-cols-4 gap-2"}>
-                      <Label className={"col-span-3 "}>{topicName} </Label>
-                      <div className={"flex flex-row justify-end gap-2"}>
+                    <div key={topicName} className={'grid grid-cols-4 gap-2'}>
+                      <Label className={'col-span-3 '}>{topicName} </Label>
+                      <div className={'flex flex-row justify-end gap-2'}>
                         <Label>{getCopy('SubscriptionPanel', 'subscribers:')}</Label>
                         <Label>{count}</Label>
                       </div>
@@ -66,9 +66,9 @@ const SubscriptionPanel = () => {
                 {Object.entries(subscriptions).map(([topicName, { count }]) => (
                   <Fragment key={topicName}>
                     <Separator key={topicName} />
-                    <div key={topicName} className={"grid grid-cols-4 gap-2"}>
-                      <Label className={"col-span-3 "}>{topicName} </Label>
-                      <div className={"flex flex-row justify-end gap-2"}>
+                    <div key={topicName} className={'grid grid-cols-4 gap-2'}>
+                      <Label className={'col-span-3 '}>{topicName} </Label>
+                      <div className={'flex flex-row justify-end gap-2'}>
                         <Label>{getCopy('SubscriptionPanel', 'subscribers:')}</Label>
                         <Label>{count}</Label>
                       </div>

@@ -69,7 +69,7 @@ const SelectionTool: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className={"relative h-full w-full"}
+      className={'relative h-full w-full'}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -77,7 +77,9 @@ const SelectionTool: React.FC = () => {
     >
       {isSelecting && (
         <div
-          className={"absolute border-2 border-dashed border-blue-500 bg-blue-200 bg-opacity-25"}
+          className={
+            'absolute border-2 border-dashed border-blue-500 bg-blue-200 bg-opacity-25'
+          }
           style={{
             left: rect.x,
             top: rect.y,

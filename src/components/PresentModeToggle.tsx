@@ -33,7 +33,7 @@ const PresentModeToggle = () => {
 
       <TooltipTrigger asChild>
         <Button
-          size={"icon"}
+          size={'icon'}
           variant={'outline'}
           // pressed={isPresentMode}
           onClick={togglePresentMode}
@@ -43,11 +43,11 @@ const PresentModeToggle = () => {
           })}
         >
           {isPresentMode ? (
-            <Pencil strokeWidth={"1.5"} size={"32"} />
+            <Pencil strokeWidth={'1.5'} size={'32'} />
           ) : (
             <TvMinimalPlay
-              strokeWidth={"1.5"}
-              size={"32"}
+              strokeWidth={'1.5'}
+              size={'32'}
               // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
             />
           )}

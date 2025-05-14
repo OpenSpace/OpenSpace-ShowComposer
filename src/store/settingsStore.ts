@@ -1,7 +1,7 @@
 // Assuming your store file is something like store.js or store.ts
 import { throttle } from 'lodash';
 import { create } from 'zustand';
-import { devtools,persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 interface ProjectSettings {

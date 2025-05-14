@@ -1,5 +1,5 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { useEffect, useMemo, useRef,useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -89,7 +89,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
       )}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={"flex flex-row gap-2"}>
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>
@@ -286,9 +286,9 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   );
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <div className={"grid gap-2"}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid gap-2'}>
             <Label>{getCopy('FlyTo', 'target')}</Label>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
@@ -296,7 +296,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               selectedOption={
                 Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
               }
-              searchPlaceholder={"Search the Scene..."}
+              searchPlaceholder={'Search the Scene...'}
               presets={
                 options?.map((v) => ({
                   value: v.name,
@@ -306,28 +306,28 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             />
           </div>
         </div>
-        <div className={"my-4 grid grid-cols-3 justify-start gap-4"}>
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"duration"}>{getCopy('FlyTo', 'flight_duration')}</Label>
+        <div className={'my-4 grid grid-cols-3 justify-start gap-4'}>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'duration'}>{getCopy('FlyTo', 'flight_duration')}</Label>
             <Input
-              id={"duration"}
-              placeholder={"Duration to Flight"}
-              type={"number"}
+              id={'duration'}
+              placeholder={'Duration to Flight'}
+              type={'number'}
               // className=""
               value={intDuration}
               onChange={(e) => setIntDuration(parseFloat(e.target.value))}
             />
           </div>
           <Button
-            size={"sm"}
+            size={'sm'}
             onClick={setFromOpenspace}
-            className={"mt-6 whitespace-normal text-xs"}
+            className={'mt-6 whitespace-normal text-xs'}
           >
             {getCopy('FlyTo', 'set_target_from_openspace')}
           </Button>
           {/* <div className="flex items-center space-x-2"> */}
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"duration"}>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'duration'}>
               {getCopy('FlyTo', 'set_coordinates/altitude')}
             </Label>
             <Toggle
@@ -341,33 +341,33 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         {hasGeoOption && (
           <>
             {geo == true && (
-              <div className={"grid grid-cols-3 gap-4"}>
-                <div className={"grid gap-2"}>
-                  <Label htmlFor={"alt"}>{getCopy('FlyTo', 'alt')}</Label>
+              <div className={'grid grid-cols-3 gap-4'}>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'alt'}>{getCopy('FlyTo', 'alt')}</Label>
                   <Input
-                    id={"alt"}
-                    placeholder={"Altitude"}
-                    type={"number"}
+                    id={'alt'}
+                    placeholder={'Altitude'}
+                    type={'number'}
                     value={alt}
                     onChange={(e) => setAlt(parseFloat(e.target.value))}
                   />
                 </div>
-                <div className={"grid gap-2"}>
-                  <Label htmlFor={"lat"}>{getCopy('FlyTo', 'latitude')}</Label>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'lat'}>{getCopy('FlyTo', 'latitude')}</Label>
                   <Input
-                    id={"lat"}
+                    id={'lat'}
                     placeholder={getCopy('FlyTo', 'latitude')}
-                    type={"number"}
+                    type={'number'}
                     value={lat}
                     onChange={(e) => setLat(parseFloat(e.target.value))}
                   />
                 </div>
-                <div className={"grid gap-2"}>
-                  <Label htmlFor={"long"}>{getCopy('FlyTo', 'longitude')}</Label>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'long'}>{getCopy('FlyTo', 'longitude')}</Label>
                   <Input
-                    id={"long"}
+                    id={'long'}
                     placeholder={getCopy('FlyTo', 'longitude')}
-                    type={"number"}
+                    type={'number'}
                     value={long}
                     onChange={(e) => setLong(parseFloat(e.target.value))}
                   />
@@ -376,46 +376,46 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             )}
           </>
         )}
-        <div className={"grid grid-cols-4 "}>
-          <div className={"col-span-3 grid grid-cols-3 gap-4"}>
-            <div className={"col-span-2 grid gap-2"}>
-              <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 '}>
+          <div className={'col-span-3 grid grid-cols-3 gap-4'}>
+            <div className={'col-span-2 grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id={"guiname"}
-                placeholder={"Name of Component"}
-                type={"text"}
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className={"col-span-1 mt-6 grid gap-2"}>
+            <div className={'col-span-1 mt-6 grid gap-2'}>
               <ToggleComponent
-                label={"Lock Name"}
+                label={'Lock Name'}
                 value={lockName}
                 setValue={setLockName}
               />
             </div>
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('FlyTo', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('FlyTo', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -423,4 +423,4 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     </>
   );
 };
-export { FlyToGUIComponent,FlyToModal };
+export { FlyToGUIComponent, FlyToModal };

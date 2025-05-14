@@ -22,7 +22,8 @@ import {
   SetTimeComponent,
   TitleComponent,
   TriggerComponent,
-  VideoComponent} from '@/store';
+  VideoComponent
+} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import {
   ActionTriggerComponent,
@@ -32,7 +33,8 @@ import {
   PageComponent,
   ScriptComponent,
   SessionPlaybackComponent,
-  SetNavComponent} from '@/store/ComponentTypes';
+  SetNavComponent
+} from '@/store/ComponentTypes';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { ActionTriggerModal } from './types/preset/ActionTrigger';
@@ -332,11 +334,15 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   }
   if (!isOpen) return null;
   return (
-    <div className={"fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"}>
-      <Card className={"w-[510px] bg-white"}>
+    <div
+      className={
+        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
+      }
+    >
+      <Card className={'w-[510px] bg-white'}>
         <CardHeader>
           <CardTitle>
-            <div className={"flex flex-row gap-2"}>
+            <div className={'flex flex-row gap-2'}>
               {icon}
               {component
                 ? `Edit ${
@@ -352,7 +358,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         </CardHeader>
         <CardContent>{content}</CardContent>
         <CardFooter>
-          <div className={"flex w-full flex-row justify-end gap-2"}>
+          <div className={'flex w-full flex-row justify-end gap-2'}>
             <Button variant={'outline'} onClick={handleCancel}>
               {getCopy('ComponentModal', 'cancel')}
             </Button>

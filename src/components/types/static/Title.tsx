@@ -1,4 +1,4 @@
-import React, { useEffect, useRef,useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 
 import Toggle from '@/components/common/Toggle';
@@ -112,10 +112,12 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
   return (
     <div
       ref={containerRef}
-      className={"absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center"}
+      className={
+        'absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center'
+      }
     >
       <h1
-        className={"dark:text-white"}
+        className={'dark:text-white'}
         style={{
           fontSize: textStyle.fontSize,
           lineHeight: textStyle.lineHeight
@@ -177,10 +179,10 @@ const TitleModal: React.FC<TitleModalProps> = ({
     }
   }, [isOpen, setText]);
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
+    <div className={'grid grid-cols-1 gap-4'}>
       <Label>{getCopy('Title', 'title')}</Label>
       <Input value={text} onChange={(e) => setText(e.target.value)} />
-      <div className={"flex items-center gap-2"}>
+      <div className={'flex items-center gap-2'}>
         <Label>{getCopy('Title', 'pageTitle')}</Label>
         <Toggle
           value={setFromPageTitle}
@@ -190,4 +192,4 @@ const TitleModal: React.FC<TitleModalProps> = ({
     </div>
   );
 };
-export { TitleGUIComponent,TitleModal };
+export { TitleGUIComponent, TitleModal };

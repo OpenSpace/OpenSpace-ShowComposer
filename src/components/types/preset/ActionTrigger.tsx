@@ -71,10 +71,10 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
   ]);
 
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid gap-2"}>
-          <div className={"text-sm font-medium text-black"}>
+    <div className={'grid grid-cols-1 gap-4'}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid gap-2'}>
+          <div className={'text-sm font-medium text-black'}>
             {getCopy('Action', 'action')}
           </div>
           <VirtualizedCombobox
@@ -83,26 +83,26 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
             selectedOption={
               Object.keys(actions).find((key) => actions[key].Identifier === action) || ''
             }
-            searchPlaceholder={"Search the Actions..."}
-            delimiter={"/"}
+            searchPlaceholder={'Search the Actions...'}
+            delimiter={'/'}
           />
         </div>
       </div>
-      <div className={"grid grid-cols-2 gap-2 "}>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"gioname"}>{getCopy('Fade', 'component_name')}</Label>
+      <div className={'grid grid-cols-2 gap-2 '}>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
           <Input
-            id={"guiname"}
-            placeholder={"Name of Component"}
-            type={"text"}
+            id={'guiname'}
+            placeholder={'Name of Component'}
+            type={'text'}
             value={gui_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setGuiName(e.target.value)
             }
           />
         </div>
-        <div className={"mt-6 grid gap-2"}>
-          <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+        <div className={'mt-6 grid gap-2'}>
+          <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
         </div>
       </div>
       <BackgroundHolder
@@ -113,17 +113,17 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
           setBackgroundImage(v);
         }}
       />
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid gap-2"}>
-          <Label htmlFor={"description"}>{getCopy('Focus', 'gui_description')}</Label>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid gap-2'}>
+          <Label htmlFor={'description'}>{getCopy('Focus', 'gui_description')}</Label>
           <Textarea
-            className={"w-full"}
-            id={"description"}
+            className={'w-full'}
+            id={'description'}
             value={gui_description}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setGuiDescription(e.target.value)
             }
-            placeholder={"Type your descriptionhere."}
+            placeholder={'Type your descriptionhere.'}
           />
         </div>
       </div>
@@ -171,7 +171,7 @@ const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={"flex flex-row gap-2"}>
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>

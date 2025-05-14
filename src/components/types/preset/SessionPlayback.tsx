@@ -120,10 +120,10 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
       case SessionStateIdle:
         return file ? (
           <Button
-            variant={"outline"}
+            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={"gap-2"}
+            className={'gap-2'}
             onClick={() => togglePlayback()}
           >
             <Play />
@@ -134,22 +134,22 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         return null;
       case SessionStatePlaying:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
+          <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={togglePlaybackPaused}
             >
               <Pause />
               {getCopy('SessionPlayback', 'pause')}
             </Button>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -159,22 +159,22 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         );
       case SessionStatePaused:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
+          <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={togglePlaybackPaused}
             >
               <Play />
               {getCopy('SessionPlayback', 'resume')}
             </Button>
             <Button
-              variant={"outline"}
+              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={"gap-2"}
+              className={'gap-2'}
               onClick={() => togglePlayback()}
             >
               <Square />
@@ -187,32 +187,34 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     }
   }, [recordingState, file]);
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid gap-2"}>
-          <Label className={"flex items-center justify-start gap-2"}>
+    <div className={'grid grid-cols-1 gap-4'}>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid gap-2'}>
+          <Label className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPlayback', 'play_session')}
           </Label>
-          <div className={"grid gap-2"}>
-            <div className={"flex items-center space-x-2"}>
+          <div className={'grid gap-2'}>
+            <div className={'flex items-center space-x-2'}>
               <Checkbox
-                id={"loop"}
+                id={'loop'}
                 checked={loop}
                 onCheckedChange={(checked: boolean | 'indeterminate') => {
                   if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
                 }}
               />
-              <Label htmlFor={"loop"}>{getCopy('SessionPlayback', 'loop_playback')}</Label>
+              <Label htmlFor={'loop'}>
+                {getCopy('SessionPlayback', 'loop_playback')}
+              </Label>
             </div>
           </div>
-          <div className={"grid grid-cols-1 gap-2"}>
-            <Label htmlFor={"playback"}>
+          <div className={'grid grid-cols-1 gap-2'}>
+            <Label htmlFor={'playback'}>
               {getCopy('SessionPlayback', 'playback_file')}
             </Label>
-            <div className={"flex w-full flex-col gap-2"}>
+            <div className={'flex w-full flex-col gap-2'}>
               {/* <div className="grow"> */}
               <SelectableDropdown
-                placeholder={"Select playback file..."}
+                placeholder={'Select playback file...'}
                 options={fileList}
                 setSelected={(value: string) => handleFileChange(value)}
                 selected={file}
@@ -221,44 +223,48 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             </div>
           </div>
         </div>
-        <div className={"grid grid-cols-4 gap-4"}>
-          <div className={"col-span-3 grid gap-2"}>
-            <Label htmlFor={"gioname"}>
+        <div className={'grid grid-cols-4 gap-4'}>
+          <div className={'col-span-3 grid gap-2'}>
+            <Label htmlFor={'gioname'}>
               {getCopy('SessionPlayback', 'component_name')}
             </Label>
             <Input
-              id={"guiname"}
-              placeholder={"Name of Component"}
-              type={"text"}
+              id={'guiname'}
+              placeholder={'Name of Component'}
+              type={'text'}
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
               }
             />
           </div>
-          <div className={"col-span-1 mt-6 grid gap-2"}>
-            <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+          <div className={'col-span-1 mt-6 grid gap-2'}>
+            <ToggleComponent
+              label={'Lock Name'}
+              value={lockName}
+              setValue={setLockName}
+            />
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>
               {getCopy('SessionPlayback', 'gui_description')}
             </Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -331,7 +337,11 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     switch (recordingState) {
       case SessionStateIdle:
         return file ? (
-          <Button variant={"outline"} className={"gap-2"} onClick={() => togglePlayback()}>
+          <Button
+            variant={'outline'}
+            className={'gap-2'}
+            onClick={() => togglePlayback()}
+          >
             <Play />
             {getCopy('SessionPlayback', 'play')}
           </Button>
@@ -340,12 +350,20 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
         return null;
       case SessionStatePlaying:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
-            <Button variant={"outline"} className={"gap-2"} onClick={togglePlaybackPaused}>
+          <div className={'grid grid-cols-2 gap-2'}>
+            <Button
+              variant={'outline'}
+              className={'gap-2'}
+              onClick={togglePlaybackPaused}
+            >
               <Pause />
               {getCopy('SessionPlayback', 'pause')}
             </Button>
-            <Button variant={"outline"} className={"gap-2"} onClick={() => togglePlayback()}>
+            <Button
+              variant={'outline'}
+              className={'gap-2'}
+              onClick={() => togglePlayback()}
+            >
               <Square />
               {getCopy('SessionPlayback', 'stop')}
             </Button>
@@ -353,12 +371,20 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
         );
       case SessionStatePaused:
         return (
-          <div className={"grid grid-cols-2 gap-2"}>
-            <Button variant={"outline"} className={"gap-2"} onClick={togglePlaybackPaused}>
+          <div className={'grid grid-cols-2 gap-2'}>
+            <Button
+              variant={'outline'}
+              className={'gap-2'}
+              onClick={togglePlaybackPaused}
+            >
               <Play />
               {getCopy('SessionPlayback', 'resume')}
             </Button>
-            <Button variant={"outline"} className={"gap-2"} onClick={() => togglePlayback()}>
+            <Button
+              variant={'outline'}
+              className={'gap-2'}
+              onClick={() => togglePlayback()}
+            >
               <Square />
               {getCopy('SessionPlayback', 'stop')}
             </Button>
@@ -373,7 +399,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
     >
-      <div className={"flex flex-col items-center justify-center gap-2"}>
+      <div className={'flex flex-col items-center justify-center gap-2'}>
         {gui_name || gui_description ? (
           <ButtonLabel>
             {gui_name}
@@ -385,4 +411,4 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     </ComponentContainer>
   ) : null;
 };
-export { SessionPlaybackGUIComponent,SessionPlaybackModal };
+export { SessionPlaybackGUIComponent, SessionPlaybackModal };

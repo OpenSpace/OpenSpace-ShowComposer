@@ -49,7 +49,7 @@ const Placeholder = ({
       }}
     >
       <Plus
-        className={"text-gray-400"}
+        className={'text-gray-400'}
         style={{
           width: '100%',
           height: '100%',

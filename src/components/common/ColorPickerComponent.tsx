@@ -25,7 +25,7 @@ const ColorPickerComponent: React.FC<ColorPickerComponentProps> = ({
     <Popover>
       <PopoverTrigger>
         <div
-          className={"h-16 w-16 rounded-full"}
+          className={'h-16 w-16 rounded-full'}
           style={{ backgroundColor: colorState.hex }}
         ></div>
       </PopoverTrigger>

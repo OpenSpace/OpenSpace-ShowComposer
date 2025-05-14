@@ -36,7 +36,7 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({ component, shouldRender = tr
       }}
     >
       <ButtonLabel>
-        <div className={"flex flex-row gap-2"}>
+        <div className={'flex flex-row gap-2'}>
           {/* {property?.value * 100} */}
           {component.gui_name}
           <Information content={component.gui_description} />
@@ -96,9 +96,9 @@ const PageModal: React.FC<PageModalProps> = ({
   ]);
   return (
     <>
-      <div className={"grid grid-cols-1 gap-4"}>
-        <div className={"grid grid-cols-1 gap-4"}>
-          <Label htmlFor={"page"}>{getCopy('Page', 'page_number')}</Label>
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <Label htmlFor={'page'}>{getCopy('Page', 'page_number')}</Label>
           <SelectableDropdown
             options={pages.map((v, i) => ({
               value: (i + 1).toString(),
@@ -108,40 +108,44 @@ const PageModal: React.FC<PageModalProps> = ({
             setSelected={(v: string) => handlePageChange(parseInt(v))}
           />
         </div>
-        <div className={"grid grid-cols-4 gap-2"}>
-          <div className={"col-span-3 grid gap-2"}>
-            <Label htmlFor={"gioname"}>{getCopy('Page', 'component_name')}</Label>
+        <div className={'grid grid-cols-4 gap-2'}>
+          <div className={'col-span-3 grid gap-2'}>
+            <Label htmlFor={'gioname'}>{getCopy('Page', 'component_name')}</Label>
             <Input
-              id={"guiname"}
-              placeholder={"Name of Component"}
-              type={"text"}
+              id={'guiname'}
+              placeholder={'Name of Component'}
+              type={'text'}
               value={gui_name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGuiName(e.target.value)
               }
             />
           </div>
-          <div className={"cols-span-1 mt-6 grid gap-2"}>
-            <ToggleComponent label={"Lock Name"} value={lockName} setValue={setLockName} />
+          <div className={'cols-span-1 mt-6 grid gap-2'}>
+            <ToggleComponent
+              label={'Lock Name'}
+              value={lockName}
+              setValue={setLockName}
+            />
           </div>
         </div>
-        <div className={"grid grid-cols-1 gap-4"}>
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className={"grid gap-2"}>
-            <Label htmlFor={"description"}>{getCopy('Page', 'gui_description')}</Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('Page', 'gui_description')}</Label>
             <Textarea
-              className={"w-full"}
-              id={"description"}
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder={"Type your message here."}
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -149,4 +153,4 @@ const PageModal: React.FC<PageModalProps> = ({
     </>
   );
 };
-export { PageGUIComponent,PageModal };
+export { PageGUIComponent, PageModal };

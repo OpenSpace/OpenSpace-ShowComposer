@@ -103,105 +103,107 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             {getCopy('NewProjectModal', 'project_details')}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <h4 className={"my-2 text-xl font-semibold dark:text-slate-200"}>Show Settings</h4>
-        <div className={"grid gap-2"}>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"projectName"}>
+        <h4 className={'my-2 text-xl font-semibold dark:text-slate-200'}>
+          Show Settings
+        </h4>
+        <div className={'grid gap-2'}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
             </Label>
             <Input
-              id={"projectName"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'projectName'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
-              placeholder={"Enter Project Name"}
+              placeholder={'Enter Project Name'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"projectDescription"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'projectDescription'}>
               {getCopy('NewProjectModal', 'project_description')}
             </Label>
             <Textarea
-              className={"col-span-2 h-8"}
-              id={"description"}
+              className={'col-span-2 h-8'}
+              id={'description'}
               value={projectDescription}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setProjectDescription(e.target.value)
               }
-              placeholder={"Type your description here."}
+              placeholder={'Type your description here.'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"showPagination"}>Show Pagination</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'showPagination'}>Show Pagination</Label>
             <Toggle
-              label={"Show Pagination"}
+              label={'Show Pagination'}
               value={showPagination}
               setValue={handleShowPagination}
             />
           </div>
-          <h4 className={"my-2 text-xl font-semibold dark:text-slate-200"}>
+          <h4 className={'my-2 text-xl font-semibold dark:text-slate-200'}>
             Workspace Settings
           </h4>
-          <h4 className={"text-sm font-semibold dark:text-slate-200"}>
+          <h4 className={'text-sm font-semibold dark:text-slate-200'}>
             {getCopy('ConnectionSettings', 'openspace_connection')}
           </h4>
-          <p className={"text-sm text-slate-500 dark:text-slate-400"}>
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             {getCopy('ConnectionSettings', 'address_copy')}
           </p>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"ip"}>{getCopy('NewProjectModal', 'ip_address')}</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'ip'}>{getCopy('NewProjectModal', 'ip_address')}</Label>
             <Input
-              id={"ip"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'ip'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={ip}
               onChange={(e) => setIp(e.target.value)}
-              placeholder={"Enter IP"}
+              placeholder={'Enter IP'}
             />
           </div>
 
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"port"}>{getCopy('NewProjectModal', 'port')}</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</Label>
             <Input
-              id={"port"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'port'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={port}
               onChange={(e) => setPort(e.target.value)}
-              placeholder={"Enter Port"}
+              placeholder={'Enter Port'}
             />
           </div>
-          <h4 className={"text-sm font-semibold dark:text-slate-200"}>
+          <h4 className={'text-sm font-semibold dark:text-slate-200'}>
             {getCopy('NewProjectModal', 'default_page_size')}
           </h4>
-          <p className={"text-sm text-slate-500 dark:text-slate-400"}>
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             {getCopy('NewProjectModal', 'default_page_size_copy')}
           </p>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"defaultPageSize"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
             </Label>
             <Input
-              id={"defaultPageSize"}
-              className={"col-span-2 h-8"}
-              type={"number"}
+              id={'defaultPageSize'}
+              className={'col-span-2 h-8'}
+              type={'number'}
               value={pageWidth}
               onChange={(e) => setPageWidth(parseInt(e.target.value))}
-              placeholder={"Enter Default Page Width"}
+              placeholder={'Enter Default Page Width'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"defaultPageSize"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
             </Label>
             <Input
-              id={"defaultPageSize"}
-              className={"col-span-2 h-8"}
-              type={"number"}
+              id={'defaultPageSize'}
+              className={'col-span-2 h-8'}
+              type={'number'}
               value={pageHeight}
               onChange={(e) => setPageHeight(parseInt(e.target.value))}
-              placeholder={"Enter Default Page Height"}
+              placeholder={'Enter Default Page Height'}
             />
           </div>
           {/* <div className="grid grid-cols-3 items-center gap-4 text-white">
@@ -298,39 +300,41 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
             {getCopy('NewProjectModal', 'project_details')}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <h4 className={"my-2 text-xl font-semibold dark:text-slate-200"}>Show Settings</h4>
-        <div className={"grid gap-2"}>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"projectName"}>
+        <h4 className={'my-2 text-xl font-semibold dark:text-slate-200'}>
+          Show Settings
+        </h4>
+        <div className={'grid gap-2'}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
             </Label>
             <Input
-              id={"projectName"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'projectName'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
-              placeholder={"Enter Project Name"}
+              placeholder={'Enter Project Name'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"projectDescription"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'projectDescription'}>
               {getCopy('NewProjectModal', 'project_description')}
             </Label>
             <Textarea
-              className={"col-span-2 h-8"}
-              id={"description"}
+              className={'col-span-2 h-8'}
+              id={'description'}
               value={projectDescription}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setProjectDescription(e.target.value)
               }
-              placeholder={"Type your description here."}
+              placeholder={'Type your description here.'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"showPagination"}>Show Pagination</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'showPagination'}>Show Pagination</Label>
             <Toggle
-              label={"Show Pagination"}
+              label={'Show Pagination'}
               value={showPagination}
               setValue={handleShowPagination}
             />
@@ -410,66 +414,66 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             Update your workspace settings here
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className={"grid gap-2"}>
-          <h4 className={"text-sm font-semibold dark:text-slate-200"}>
+        <div className={'grid gap-2'}>
+          <h4 className={'text-sm font-semibold dark:text-slate-200'}>
             {getCopy('ConnectionSettings', 'openspace_connection')}
           </h4>
-          <p className={"text-sm text-slate-500 dark:text-slate-400"}>
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             {getCopy('ConnectionSettings', 'address_copy')}
           </p>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"ip"}>{getCopy('NewProjectModal', 'ip_address')}</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'ip'}>{getCopy('NewProjectModal', 'ip_address')}</Label>
             <Input
-              id={"ip"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'ip'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={ip}
               onChange={(e) => setIp(e.target.value)}
-              placeholder={"Enter IP"}
+              placeholder={'Enter IP'}
             />
           </div>
 
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"port"}>{getCopy('NewProjectModal', 'port')}</Label>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</Label>
             <Input
-              id={"port"}
-              className={"col-span-2 h-8"}
-              type={"text"}
+              id={'port'}
+              className={'col-span-2 h-8'}
+              type={'text'}
               value={port}
               onChange={(e) => setPort(e.target.value)}
-              placeholder={"Enter Port"}
+              placeholder={'Enter Port'}
             />
           </div>
-          <h4 className={"text-sm font-semibold dark:text-slate-200"}>
+          <h4 className={'text-sm font-semibold dark:text-slate-200'}>
             {getCopy('NewProjectModal', 'default_page_size')}
           </h4>
-          <p className={"text-sm text-slate-500 dark:text-slate-400"}>
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             {getCopy('NewProjectModal', 'default_page_size_copy')}
           </p>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"defaultPageSize"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
             </Label>
             <Input
-              id={"defaultPageSize"}
-              className={"col-span-2 h-8"}
-              type={"number"}
+              id={'defaultPageSize'}
+              className={'col-span-2 h-8'}
+              type={'number'}
               value={pageWidth}
               onChange={(e) => setPageWidth(parseInt(e.target.value))}
-              placeholder={"Enter Default Page Width"}
+              placeholder={'Enter Default Page Width'}
             />
           </div>
-          <div className={"grid grid-cols-3 items-center gap-4 text-white"}>
-            <Label htmlFor={"defaultPageSize"}>
+          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+            <Label htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
             </Label>
             <Input
-              id={"defaultPageSize"}
-              className={"col-span-2 h-8"}
-              type={"number"}
+              id={'defaultPageSize'}
+              className={'col-span-2 h-8'}
+              type={'number'}
               value={pageHeight}
               onChange={(e) => setPageHeight(parseInt(e.target.value))}
-              placeholder={"Enter Default Page Height"}
+              placeholder={'Enter Default Page Height'}
             />
           </div>
         </div>

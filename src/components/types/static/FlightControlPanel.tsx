@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { RefreshCcwDot,Rotate3d, ZoomIn } from 'lucide-react';
+import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 
 import Information from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
@@ -102,7 +102,7 @@ const FlightControlPanel = () => {
         <b>{getCopy('FlightControlPanel', 'mouse_controls:')}</b>
       </p>
       <p>{getCopy('FlightControlPanel', 'click_and_drag_to_rotate._hold')}</p>
-      <ul className={"list-inside"}>
+      <ul className={'list-inside'}>
         <li>{getCopy('FlightControlPanel', 'shift_to_pan')}</li>
         <li>{getCopy('FlightControlPanel', 'control_info')}</li>
       </ul>
@@ -110,7 +110,7 @@ const FlightControlPanel = () => {
       <p>
         <b>{getCopy('FlightControlPanel', 'touch_controls:')}</b>
       </p>
-      <ul className={"list-inside"}>
+      <ul className={'list-inside'}>
         <li>{getCopy('FlightControlPanel', '1_finger_to_rotate')}</li>
         <li>{getCopy('FlightControlPanel', '2_fingers_to_pan')}</li>
         <li>
@@ -218,16 +218,18 @@ const FlightControlPanel = () => {
   }
   return (
     <div
-      id={"flightPanel"}
-      className={"z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4"}
+      id={'flightPanel'}
+      className={
+        'z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4'
+      }
     >
-      <div className={"flex w-full flex-col gap-2 px-4"}>
+      <div className={'flex w-full flex-col gap-2 px-4'}>
         {/* <div className="flex w-full flex-row justify-start"></div> */}
-        <Label className={"flex w-full justify-start"}>
+        <Label className={'flex w-full justify-start'}>
           {getCopy('FlightControlPanel', 'camera_friction')}
         </Label>
-        <div className={"flex w-full flex-row justify-center gap-2"}>
-          <div className={"grid grid-cols-3 gap-2"}>
+        <div className={'flex w-full flex-row justify-center gap-2'}>
+          <div className={'grid grid-cols-3 gap-2'}>
             <Tooltip>
               <TooltipContent>
                 {getCopy('FlightControlPanel', 'rotation_friction')}
@@ -274,17 +276,19 @@ const FlightControlPanel = () => {
               </TooltipTrigger>
             </Tooltip>
           </div>
-          <Information content={"Controls to disable friction for different camera movements"} />
+          <Information
+            content={'Controls to disable friction for different camera movements'}
+          />
         </div>
         {/* </div> */}
       </div>
-      <div className={"flex w-full flex-col items-center gap-2 px-4"}>
-        <div className={"flex w-full flex-row justify-start gap-2"}>
+      <div className={'flex w-full flex-col items-center gap-2 px-4'}>
+        <div className={'flex w-full flex-row justify-start gap-2'}>
           <Label>{getCopy('FlightControlPanel', 'control_area')}</Label>
           <Information content={infoBoxContent} />
         </div>
         <div
-          className={"bg-slate-800/40"}
+          className={'bg-slate-800/40'}
           style={{
             height: '180px',
             width: '180px',
@@ -303,7 +307,7 @@ const FlightControlPanel = () => {
           onTouchEnd={touchUp}
           onTouchCancel={touchUp}
           onTouchMove={touchMove}
-          id={"controlArea"}
+          id={'controlArea'}
         />
       </div>
     </div>

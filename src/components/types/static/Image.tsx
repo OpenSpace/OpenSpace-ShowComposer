@@ -10,7 +10,9 @@ interface ImageGUIProps {
 const ImageGUIComponent: React.FC<ImageGUIProps> = ({ component }) => {
   return (
     <div
-      className={"absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer"}
+      className={
+        'absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer'
+      }
       style={{
         //cover and center the background image
         backgroundSize: 'cover',
@@ -32,7 +34,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData 
     });
   }, [url, handleComponentData]);
   return (
-    <div className={"grid grid-cols-1 gap-4"}>
+    <div className={'grid grid-cols-1 gap-4'}>
       <Label>{getCopy('Image', 'image')}</Label>
       <ImageUpload
         value={url}
@@ -43,4 +45,4 @@ const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData 
     </div>
   );
 };
-export { ImageGUIComponent,ImageModal };
+export { ImageGUIComponent, ImageModal };
