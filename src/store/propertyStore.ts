@@ -10,7 +10,7 @@ import { updateTime } from '@/utils/time';
 
 import { useOpenSpaceApiStore } from './apiStore';
 
-type subscription = {
+type Subscription = {
   count: number;
   subscription: Topic;
 };
@@ -22,8 +22,8 @@ export enum ConnectionState {
 }
 //need to work this out
 interface State {
-  propertySubscriptions: Record<string, subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
-  topicSubscriptions: Record<string, subscription>;
+  propertySubscriptions: Record<string, Subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
+  topicSubscriptions: Record<string, Subscription>;
   properties: Record<string, any>;
   time: any;
   sessionRecording: any;
@@ -161,7 +161,7 @@ export const usePropertyStore = create<State>()(
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
-              const {subscribeToTopic} = useOpenSpaceApiStore.getState();
+              const { subscribeToTopic } = useOpenSpaceApiStore.getState();
               const topic = subscribeToTopic(topicName, properties, settings);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
@@ -224,7 +224,7 @@ export const usePropertyStore = create<State>()(
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
-              const {connectToTopic} = useOpenSpaceApiStore.getState();
+              const { connectToTopic } = useOpenSpaceApiStore.getState();
               const topic = connectToTopic(topicName);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
