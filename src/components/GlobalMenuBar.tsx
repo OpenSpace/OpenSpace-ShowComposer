@@ -12,8 +12,9 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from '@/components/ui/menubar';
-import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
+import { useBoundStore, useBoundStoreTemporal, BoundStoreState } from '@/store/boundStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { SettingsStoreState } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   // loadStore,
@@ -39,8 +40,14 @@ import {
   WorkspaceSettingsModal
 } from './NewProjectModal';
 
+interface LoadedStore {
+  boundStore: BoundStoreState;
+  settingsStore: SettingsStoreState;
+  _tempImportId: string;
+}
+
 export function GlobalMenuBar() {
-  const [loadedStore, setLoadedStore] = useState<any>(null);
+  const [loadedStore, setLoadedStore] = useState<LoadedStore | null>(null);
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
@@ -81,7 +88,7 @@ export function GlobalMenuBar() {
 
   const handleLoadStore = async () => {
     try {
-      const store = await loadStoreToServer();
+      const store = (await loadStoreToServer()) as LoadedStore;
       setLoadedStore(store); // Store the loaded data
       setIsImportShowModalOpen(true); // Open the import modal
     } catch (error) {
@@ -227,9 +234,9 @@ export function GlobalMenuBar() {
         </MenubarMenu>
       </Menubar>
       <ImportShowModal
-        isOpen={isImportShowModalOpen}
+        isOpen={isImportShowModalOpen && loadedStore !== null}
         onClose={() => setIsImportShowModalOpen(false)}
-        store={loadedStore} // Pass the loaded store to the modal
+        store={loadedStore!}
       />
       <DeleteConfirmationModal
         onConfirm={handleDeleteAllConfirm}
@@ -271,7 +278,7 @@ export function GlobalMenuBar() {
       />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
-        onConfirm={() => {}}
+        onConfirm={() => { }}
         message={'Project has been saved!'}
         setOpen={setIsConfirmationModalOpen}
       />

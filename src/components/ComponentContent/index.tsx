@@ -18,7 +18,7 @@ import {
   TriggerComponent,
   VideoComponent
 } from '@/store';
-import { ActionTriggerComponent, ScriptComponent } from '@/store/ComponentTypes';
+import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { ActionTriggerGUIComponent } from '../types/preset/ActionTrigger';

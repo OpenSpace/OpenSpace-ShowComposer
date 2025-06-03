@@ -2,103 +2,55 @@
 // @ts-ignore
 
 import { EnginePropertyVisibilityKey } from '@/store/apiStore';
+import { PropertyVisibilityNumber } from '@/types/enums';
+import { AnyProperty } from '@/types/Property/property';
+import { OpenSpacePropertyOwner, PropertyOwner } from '@/types/types';
+// import { PropertyOwner, PropertyOwners } from '@/types/types';
+export const InterestingTag = '';
 
-export const InterestingTag = 'GUI.Interesting';
+// type PropertyVisibility = keyof typeof PropertyVisibilityNumber;
 
-const PropertyVisibilityNumber = {
-  Hidden: 5,
-  Developer: 4,
-  AdvancedUser: 3,
-  User: 2,
-  NoviceUser: 1,
-  Always: 0
-};
+// export interface Property {
+//   metaData: {
+//     description: string;
+//     type?: ActionType;
+//     isReadOnly: boolean;
+//     visibility: PropertyVisibility;
+//     additionalData?: {};
+//   };
+//   value: string | number | boolean;
+//   uri: string;
+// }
 
-type PropertyVisibility = keyof typeof PropertyVisibilityNumber;
-
-export interface Property {
-  metaData: {
-    description: string;
-    type?: ActionType;
-    isReadOnly: boolean;
-    visibility: PropertyVisibility;
-    additionalData?: {};
-  };
-  value: string | number | boolean;
-  uri: string;
-}
-
-export interface PropertyOwner {
-  identifier: string;
-  guiName: string;
-  properties: Property[];
-  subowners: PropertyOwner[];
-  tag: string[];
-  description: string;
-  uri: string;
-}
-
-export const flattenPropertyTree = (
-  propertyOwner: PropertyOwner,
-  baseUri?: string | null
-): {
-  propertyOwners: PropertyOwner[];
-  properties: Property[];
-} => {
+export const flattenPropertyTree = (propertyOwner: OpenSpacePropertyOwner) => {
   let propertyOwners: PropertyOwner[] = [];
-  let properties: Property[] = [];
-  // const groups = {};
+  let properties: AnyProperty[] = [];
 
-  propertyOwner.subowners?.forEach((subowner: PropertyOwner) => {
-    const uri = baseUri ? `${baseUri}.${subowner.identifier}` : subowner.identifier;
-
+  if (propertyOwner.uri) {
     propertyOwners.push({
-      uri,
-      identifier: subowner.identifier,
-      guiName: subowner.guiName,
-      properties: [...subowner.properties],
-      subowners: [...subowner.subowners],
-      tag: subowner.tag,
-      description: subowner.description
+      uri: propertyOwner.uri,
+      identifier: propertyOwner.identifier,
+      name: propertyOwner.guiName ?? propertyOwner.identifier,
+      properties: propertyOwner.properties.map((p) => p.uri),
+      subowners: propertyOwner.subowners.map((p) => p.uri),
+      tags: propertyOwner.tag,
+      description: propertyOwner.description
     });
-    const childData = flattenPropertyTree(subowner, uri);
+  }
+
+  // Recursively flatten subowners of incoming propertyOwner
+  propertyOwner.subowners.forEach((subowner) => {
+    const childData = flattenPropertyTree(subowner);
+
     propertyOwners = propertyOwners.concat(childData.propertyOwners);
     properties = properties.concat(childData.properties);
   });
 
-  properties.push(...propertyOwner.properties);
+  propertyOwner.properties.forEach((property) => {
+    properties.push(property);
+  });
 
-  return {
-    // favorites,
-    propertyOwners,
-    properties
-    // groups,
-  };
-};
-
-// findByUri = (uri, propertyOwners) => {
-//   return propertyOwners.find((p) => p.uri === uri);
-// };
-
-export const findFavorites = (propertyOwners: PropertyOwner[]): PropertyOwner[] => {
-  function hasInterestingTag(uri: string): boolean {
-    const owner = propertyOwners.find((p: PropertyOwner) => p.uri === uri);
-    if (!owner) {
-      return false;
-    }
-
-    return owner.tag.some((tag: string) => tag.includes(InterestingTag));
-  }
-
-  // Find interesting nodes
-  const scene = propertyOwners.find((p) => p.uri === 'Scene');
-  if (!scene) {
-    return [];
-  }
-
-  const favorites = scene.subowners.filter((owner) => hasInterestingTag(owner.uri));
-
-  return favorites;
+  return { propertyOwners, properties };
 };
 
 //regex for finding something in this format "Scene.<SceneName>.Fade" exactly, nothing trailing Fade
@@ -135,13 +87,13 @@ const RegexLibrary = {
 type PropertyType = keyof typeof RegexLibrary;
 
 export const getRenderables: (
-  properties: Property[],
+  properties: AnyProperty[],
   propertyType: PropertyType
-) => Record<string, any> = (properties, propertyType) => {
+) => Record<string, AnyProperty> = (properties, propertyType) => {
   const { regex } = RegexLibrary[propertyType];
   const values = Object.values(properties);
-  const renderables: Record<string, any> = values
-    .filter((p: Property) => {
+  const renderables: Record<string, AnyProperty> = values
+    .filter((p: AnyProperty) => {
       return (
         regex.exec(p.uri) &&
         // p.description.Type === 'FloatProperty' &&
@@ -150,7 +102,7 @@ export const getRenderables: (
     })
     .sort((a, b) => a.uri?.localeCompare(b.uri))
     //reduce this array into an object with the key being the value of the regex match and the value is the property
-    .reduce((acc: Record<string, Property>, p: Property) => {
+    .reduce((acc: Record<string, AnyProperty>, p: AnyProperty) => {
       // let key = regex.exec(p.uri)[1];
       const key = p.uri;
       acc[key] = p;
@@ -160,37 +112,39 @@ export const getRenderables: (
   return renderables;
 };
 
+type ActionType = 'Bool' | 'Number' | 'Trigger';
+
 const actionTypes = {
   Bool: 'BoolProperty',
   Number: 'FloatProperty',
   Trigger: 'TriggerProperty'
-};
-type ActionType = keyof typeof actionTypes;
+} as const;
 
-export const getActionSceneNodes = (properties: Property[], type: ActionType) => {
+export const getActionSceneNodes = (
+  properties: AnyProperty[],
+  type: ActionType
+): Record<string, AnyProperty> => {
   const { regex } = RegexLibrary['SettingsProperty'];
-
-  const sortedProps = properties
-    .filter(
-      (p) =>
-        regex.exec(p.uri) &&
-        p.metaData.type === actionTypes[type] &&
-        !p.metaData.isReadOnly
-    )
-    .sort((a, b) => a.uri?.localeCompare(b.uri))
-    .reduce((acc: Record<string, Property>, p: Property) => {
-      // let key = regex.exec(p.uri)[1];
-      const key = p.uri;
-      acc[key] = {
-        ...p,
-        metaData: {
-          ...p.metaData,
-          type: type
-        }
-      };
-      return acc;
-    }, {});
-  return sortedProps;
+  console.log('ACTION TYPE', type);
+  console.log('ACTION TYPES', actionTypes[type]);
+  return (
+    properties
+      .filter(
+        (p) =>
+          regex.exec(p.uri) &&
+          p.metaData.type === actionTypes[type] &&
+          !p.metaData.isReadOnly
+      )
+      .sort((a, b) => a.uri?.localeCompare(b.uri))
+      .sort((a, b) => a.uri?.localeCompare(b.uri))
+      //reduce this array into an object with the key being the value of the regex match and the value is the property
+      .reduce((acc: Record<string, AnyProperty>, p: AnyProperty) => {
+        // let key = regex.exec(p.uri)[1];
+        const key = p.uri;
+        acc[key] = p;
+        return acc;
+      }, {})
+  );
 };
 
 // functio
@@ -227,50 +181,10 @@ export function formatName(name: string) {
 }
 
 // Returns whether a property should be visible in the gui
-export function isPropertyVisible(property: Property, visibility: Property | undefined) {
-  if (!visibility || visibility.value === undefined) return false;
-
-  // console.log(property);
+export function isPropertyVisible(property: AnyProperty, visibility: number | undefined) {
+  if (!visibility || visibility === undefined) return false;
 
   const propertyVisibility = PropertyVisibilityNumber[property.metaData.visibility];
 
-  return (visibility.value as number) >= propertyVisibility;
-}
-
-export function isPropertyOwnerVisible(
-  propertyOwner: PropertyOwner,
-  visibility: Property | undefined
-) {
-  if (!visibility || visibility.value === undefined) {
-    return false;
-  }
-
-  return hasVisibleChildren(propertyOwner, visibility);
-}
-
-function hasVisibleChildren(
-  propertyOwner: PropertyOwner,
-  visibilitySetting: Property | undefined
-) {
-  let queue: PropertyOwner[] = [propertyOwner];
-
-  while (queue.length > 0) {
-    const currentOwner = queue.shift();
-
-    if (!currentOwner) continue;
-
-    // Check if any of the owner's properties are visible
-    if (
-      currentOwner.properties?.some((property) =>
-        isPropertyVisible(property, visibilitySetting)
-      )
-    ) {
-      return true;
-    }
-
-    // Add subowners to the queue for further checking
-    if (currentOwner.subowners) {
-      queue = queue.concat(currentOwner.subowners as PropertyOwner[]);
-    }
-  }
+  return (visibility as number) >= propertyVisibility;
 }

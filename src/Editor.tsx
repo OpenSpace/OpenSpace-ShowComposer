@@ -50,8 +50,8 @@ import { ThemeProvider } from './components/ThemeProvider';
 import ToggleButton from './components/ToggleButton';
 import Undo from './components/Undo';
 import { useBoundStore } from './store/boundStore';
-import { MultiComponent } from './store/ComponentTypes';
 import { Position } from './store/positionSlice';
+import { MultiComponent } from './types/components';
 import { getCopy } from './utils/copyHelpers';
 import {
   ComponentType,

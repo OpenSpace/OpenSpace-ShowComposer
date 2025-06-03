@@ -3,26 +3,28 @@ import { useEffect, useState } from 'react';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Label } from '@/components/ui/label';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
-
-interface LogEntry {
-  category: string;
-  dateStamp: string;
-  level: number;
-  message: string;
-  timeStamp: string;
-}
+import { ErrorLog } from '@/types/types';
 
 const getLevelString = (level: number): string => {
   switch (level) {
-    case 0: return 'NoLogging';
-    case 1: return 'Trace';
-    case 2: return 'Debug';
-    case 3: return 'Info';
-    case 4: return 'Warning';
-    case 5: return 'Error';
-    case 6: return 'Fatal';
-    case 7: return 'AllLogging';
-    default: return 'Unknown';
+    case 0:
+      return 'NoLogging';
+    case 1:
+      return 'Trace';
+    case 2:
+      return 'Debug';
+    case 3:
+      return 'Info';
+    case 4:
+      return 'Warning';
+    case 5:
+      return 'Error';
+    case 6:
+      return 'Fatal';
+    case 7:
+      return 'AllLogging';
+    default:
+      return 'Unknown';
   }
 };
 
@@ -55,10 +57,6 @@ const LogPanel = () => {
       logLevel: value
     });
   };
-
-  useEffect(() => {
-    console.log('errorLog', errorLog);
-  }, [errorLog]);
 
   useEffect(() => {
     // return;
@@ -106,7 +104,7 @@ const LogPanel = () => {
             <div>Source</div>
             <div>Message</div>
           </div>
-          {errorLog.map((log: LogEntry, index) => {
+          {errorLog.map((log: ErrorLog, index) => {
             const levelString = getLevelString(log.level);
 
             return (
@@ -116,20 +114,21 @@ const LogPanel = () => {
               >
                 <span className={'text-gray-500'}>{log.timeStamp}</span>
                 <span
-                  className={`font-semibold ${levelString === 'Trace'
-                    ? 'text-gray-400'
-                    : levelString === 'Debug'
-                      ? 'text-blue-500'
-                      : levelString === 'Info'
-                        ? 'text-green-500'
-                        : levelString === 'Warning'
-                          ? 'text-yellow-500'
-                          : levelString === 'Error'
-                            ? 'text-red-500'
-                            : levelString === 'Fatal'
-                              ? 'text-red-700'
-                              : 'text-gray-500'
-                    }`}
+                  className={`font-semibold ${
+                    levelString === 'Trace'
+                      ? 'text-gray-400'
+                      : levelString === 'Debug'
+                        ? 'text-blue-500'
+                        : levelString === 'Info'
+                          ? 'text-green-500'
+                          : levelString === 'Warning'
+                            ? 'text-yellow-500'
+                            : levelString === 'Error'
+                              ? 'text-red-500'
+                              : levelString === 'Fatal'
+                                ? 'text-red-700'
+                                : 'text-gray-500'
+                  }`}
                 >
                   [{levelString}]
                 </span>

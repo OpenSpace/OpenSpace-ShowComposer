@@ -89,6 +89,7 @@ Object.freeze(Steps);
 Object.freeze(StepSizes);
 Object.freeze(StepPrecisions);
 Object.freeze(Limits);
+
 const TimeDatePicker = () => {
   const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
@@ -99,7 +100,7 @@ const TimeDatePicker = () => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const targetDeltaTime = usePropertyStore((state) => state.time?.targetDeltaTime);
   const isPaused = usePropertyStore((state) => state.time?.isPaused);
-  const [paused, setPaused] = useState<boolean>(isPaused);
+  const [paused, setPaused] = useState<boolean>(isPaused || false);
   const hasNextDeltaTimeStep = usePropertyStore((state) => state.time?.hasNextStep);
   const hasPrevDeltaTimeStep = usePropertyStore((state) => state.time?.hasPrevStep);
   const nextDeltaTimeStep = usePropertyStore((state) => state.time?.nextStep);
@@ -117,7 +118,7 @@ const TimeDatePicker = () => {
     luaApi?.time.togglePause();
   }
   useEffect(() => {
-    setPaused(isPaused);
+    setPaused(isPaused || false);
   }, [isPaused]);
   function setDate(newTime: Date) {
     // Spice, that is handling the time parsing in OpenSpace does not support
@@ -127,12 +128,12 @@ const TimeDatePicker = () => {
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
     } catch {
-      luaApi?.time.setTime(time);
+      luaApi?.time.setTime(time || '');
     }
   }
   function setDateRelative(delta: number) {
     try {
-      const newTime = new Date(time);
+      const newTime = new Date(time || '');
       newTime.setSeconds(newTime.getSeconds() + delta);
       // Spice, that is handling the time parsing in OpenSpace does not support
       // ISO 8601-style time zones (the Z). It does, however, always assume that UTC
@@ -140,7 +141,7 @@ const TimeDatePicker = () => {
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
     } catch {
-      luaApi?.time.setTime(time);
+      luaApi?.time.setTime(time || '');
     }
   }
   function interpolateDate(newTime: Date) {
@@ -185,10 +186,15 @@ const TimeDatePicker = () => {
       unsubscribeFromTopic('time');
     };
   }, [connectionState]);
+
   const timeLabel = useMemo(() => {
     if (time) {
       try {
-        return formatDate(time);
+        if (typeof time === 'string') {
+          return time;
+        } else {
+          return formatDate(time);
+        }
       } catch {
         return time;
       }
@@ -205,7 +211,7 @@ const TimeDatePicker = () => {
     return value;
   };
   const adjustedDelta = round10(
-    targetDeltaTime / StepSizes[stepSize],
+    targetDeltaTime ? targetDeltaTime / StepSizes[stepSize] : 0,
     StepPrecisions[stepSize]
   );
   function setDeltaTime(value: number) {
@@ -227,11 +233,11 @@ const TimeDatePicker = () => {
   }
   function deltaTimeStepsContol() {
     const adjustedNextDelta = round10(
-      nextDeltaTimeStep / StepSizes[stepSize],
+      nextDeltaTimeStep ? nextDeltaTimeStep / StepSizes[stepSize] : 0,
       StepPrecisions[stepSize]
     );
     const adjustedPrevDelta = round10(
-      prevDeltaTimeStep / StepSizes[stepSize],
+      prevDeltaTimeStep ? prevDeltaTimeStep / StepSizes[stepSize] : 0,
       StepPrecisions[stepSize]
     );
     const nextLabel = hasNextDeltaTimeStep

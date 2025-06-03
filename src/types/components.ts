@@ -283,7 +283,7 @@ export const multiOptions = [
 ];
 
 //create typeguard to determing if opbject is of type MultiOption
-export const isMultiOption = (option: any): option is MultiOption => {
+export const isMultiOption = (option: Component): option is MultiOption => {
   return (
     option.type === 'trigger' ||
     option.type === 'boolean' ||

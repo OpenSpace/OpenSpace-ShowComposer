@@ -17,8 +17,9 @@ import {
   usePropertyStore
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
-import { formatName, Property } from '@/utils/apiHelpers';
+import { ComponentBaseColors } from '@/types/components';
+import { AnyProperty } from '@/types/Property/property';
+import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerTrigger } from '@/utils/triggerHelpers';
 
@@ -104,7 +105,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   );
 
   useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property] as Property;
+    const propertyData = usePropertyStore.getState().properties[property] as AnyProperty;
     if (!propertyData || lockName) return;
     setGuiName(formatName(propertyData.uri));
     setGuiDescription(propertyData.metaData.description);
@@ -132,7 +133,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].metaData?.type === 'Trigger')
+    .filter((a) => properties[a].metaData?.type === 'TriggerProperty')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

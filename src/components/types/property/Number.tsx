@@ -17,7 +17,8 @@ import {
   usePropertyStore
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { ComponentBaseColors } from '@/types/components';
+import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerNumber } from '@/utils/triggerHelpers';
@@ -34,25 +35,25 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     (state) => state.unsubscribeFromProperty
   );
   const property = usePropertyStore((state) => state.properties[component.property]);
-  const [tempValue, setTempValue] = useState(property?.value);
+  const [tempValue, setTempValue] = useState<number>(Number(property?.value));
   const [triggeredByArrowKey, setTriggeredByArrowKey] = useState(false);
   useEffect(() => {
-    setTempValue(property?.value);
+    setTempValue(Number(property?.value));
   }, [property?.value]);
   const handleBlur = () => {
-    component.triggerAction?.(parseFloat(tempValue));
+    component.triggerAction?.(tempValue);
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (triggeredByArrowKey) {
       component.triggerAction?.(parseFloat(e.target.value));
       setTriggeredByArrowKey(false); // Reset the flag
     } else {
-      setTempValue(e.target.value);
+      setTempValue(Number(e.target.value));
     }
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      component.triggerAction?.(parseFloat(tempValue));
+      component.triggerAction?.(tempValue);
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       setTriggeredByArrowKey(true); // Set the flag when arrow keys are pressed
     }
@@ -63,7 +64,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   };
 
   const handleMouseUp = (_e: React.MouseEvent) => {
-    component.triggerAction?.(parseFloat(tempValue));
+    component.triggerAction?.(tempValue);
   };
 
   useEffect(() => {
@@ -101,7 +102,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         </div>
 
         <Slider
-          value={property?.value || 0}
+          value={Number(property?.value) || 0}
           min={component.min}
           max={component.max}
           step={component.step}
@@ -152,10 +153,13 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
   useEffect(() => {
     const propertyData = usePropertyStore.getState().properties[property];
     if (!propertyData || !propertyData.metaData) return;
-    setMax(parseFloat(propertyData.metaData.additionalData.max));
-    setMin(parseFloat(propertyData.metaData.additionalData.min));
-    setStep(propertyData.metaData.additionalData.step);
-    setExponent(propertyData.metaData.additionalData.exponent);
+    const { additionalData } = propertyData.metaData as {
+      additionalData: AdditionalDataNumber;
+    };
+    setMax(additionalData.max);
+    setMin(additionalData.min);
+    setStep(additionalData.step);
+    setExponent(additionalData.exponent);
     if (!lockName) {
       setGuiName(formatName(propertyData.uri));
       setGuiDescription(propertyData.metaData.description);
@@ -194,7 +198,9 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].metaData?.type === 'Number' && !a.includes('.Fade'))
+    .filter(
+      (a) => properties[a].metaData?.type === 'FloatProperty' && !a.includes('.Fade')
+    )
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

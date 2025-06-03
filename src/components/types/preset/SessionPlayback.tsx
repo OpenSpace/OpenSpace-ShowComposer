@@ -14,8 +14,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { SessionPlaybackComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { SessionPlaybackComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
+import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 //set up recording state
 export const SessionStateIdle = 'idle';
@@ -48,6 +49,12 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
       unsubscribeFromTopic('sessionRecording');
     };
   }, [connectionState]);
+
+  useEffect(() => {
+    console.log('recordingState', recordingState);
+    console.log('fileList', fileList);
+  }, [recordingState, fileList]);
+
   const [file, setFile] = useState<string>(component?.file || '');
   const [loop, setLoop] = useState<boolean>(component?.loop || false);
 
@@ -99,9 +106,13 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
       setLoop(newLoopPlayback);
     }
   }
+
   function startPlayback() {
-    luaApi?.sessionRecording.startPlayback(file, loop);
+    luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
+      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+    });
   }
+
   function stopPlayback() {
     luaApi?.sessionRecording.stopPlayback();
   }
@@ -298,12 +309,17 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     };
   }, [connectionState]);
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
+
   function startPlayback() {
-    luaApi?.sessionRecording.startPlayback(file, loop);
+    luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
+      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+    });
   }
+
   function stopPlayback() {
     luaApi?.sessionRecording.stopPlayback();
   }
+
   function togglePlayback() {
     if (isIdle) {
       startPlayback();

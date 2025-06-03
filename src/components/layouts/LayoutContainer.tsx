@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 // import { createIcon } from 'lucide-react';
-import { LayoutBase } from '@/store/ComponentTypes';
+import { LayoutBase } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
 
@@ -88,10 +88,18 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
     });
   };
   const handleResize = (
-    _e: any,
-    _direction: any,
+    _e: DraggableEvent,
+    _direction:
+      | 'top'
+      | 'right'
+      | 'bottom'
+      | 'left'
+      | 'topRight'
+      | 'bottomRight'
+      | 'bottomLeft'
+      | 'topLeft',
     ref: HTMLElement,
-    _delta: any,
+    _delta: { width: number; height: number },
     position: { x: number; y: number }
   ) => {
     let newWidth = roundToNearest(parseInt(ref.style.width), 25);

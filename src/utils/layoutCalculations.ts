@@ -1,4 +1,4 @@
-import { LayoutBase } from '@/store/ComponentTypes';
+import { LayoutBase } from '@/types/components';
 
 export function calculateTotalLayoutWidth(
   layout: LayoutBase,

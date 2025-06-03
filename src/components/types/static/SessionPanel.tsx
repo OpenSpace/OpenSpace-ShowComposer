@@ -15,6 +15,7 @@ export const SessionStateIdle = 'idle';
 export const SessionStateRecording = 'recording';
 export const SessionStatePlaying = 'playing';
 export const SessionStatePaused = 'playing-paused';
+import { RecordingsFolderKey } from '@/types/types';
 
 //flush out recordingSessionState
 
@@ -85,20 +86,27 @@ const SessionPanel = () => {
       startRecording();
     } else {
       const format = useTextFormat ? 'Ascii' : 'Binary';
-      luaApi?.sessionRecording.stopRecording(filenameRecording, format);
+      // luaApi?.sessionRecording.stopRecording(filenameRecording, format);
+      luaApi?.absPath(`${RecordingsFolderKey}${filenameRecording}`).then((value) => {
+        luaApi?.sessionRecording.stopRecording(value['1'], format);
+      });
     }
   }
 
   function startPlayback() {
     if (shouldOutputFrames) {
-      luaApi?.sessionRecording.startPlayback(
-        filenamePlayback,
-        loopPlayback,
-        true,
-        outputFramerate
-      );
+      luaApi?.absPath(`${RecordingsFolderKey}${filenamePlayback}`).then((value) => {
+        luaApi?.sessionRecording.startPlayback(
+          value['1'],
+          loopPlayback,
+          true,
+          outputFramerate
+        );
+      });
     } else {
-      luaApi?.sessionRecording.startPlayback(filenamePlayback, loopPlayback);
+      luaApi?.absPath(`${RecordingsFolderKey}${filenamePlayback}`).then((value) => {
+        luaApi?.sessionRecording.startPlayback(value['1'], loopPlayback);
+      });
     }
   }
 

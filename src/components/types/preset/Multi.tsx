@@ -30,8 +30,8 @@ import {
   multiOptions as MultiOptions,
   SetFocusComponent,
   TriggerComponent
-} from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+} from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { BoolGUIComponent } from '../property/Boolean';

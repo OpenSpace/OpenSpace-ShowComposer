@@ -1,4 +1,3 @@
-export { ConnectionState, useOpenSpaceApiStore } from './apiStore';
 export type {
   BooleanComponent,
   Component,
@@ -21,7 +20,8 @@ export type {
   Toggle,
   TriggerComponent,
   VideoComponent
-} from './ComponentTypes';
+} from '../types/components';
+export { ConnectionState, useOpenSpaceApiStore } from './apiStore';
 export type { Position } from './positionSlice';
 export { selectFilteredProperties, usePropertyStore } from './propertyStore';
 export { useSettingsStore } from './settingsStore';

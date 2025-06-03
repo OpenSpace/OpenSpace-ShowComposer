@@ -27,7 +27,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }
   }, [initialUrl, initialPort]);
   const enhancedTriggerButton = triggerButton
     ? cloneElement(triggerButton, {
-        onClick: (...args: any[]) => {
+        onClick: (...args: React.MouseEvent<HTMLElement>[]) => {
           setOpen(true); // Open the dialog
           // If the triggerButton had its own onClick handler, call it
           if (triggerButton.props.onClick) {

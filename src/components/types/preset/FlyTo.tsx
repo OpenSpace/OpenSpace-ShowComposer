@@ -17,8 +17,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
-import { FlyToComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { FlyToComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
+import { AnyProperty } from '@/types/Property/property';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -98,6 +99,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     </ComponentContainer>
   ) : null;
 };
+
 interface FlyToModalProps {
   component: FlyToComponent | null;
   handleComponentData: (data: Partial<FlyToComponent>) => void;
@@ -111,7 +113,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
   const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
-  const camera = usePropertyStore((state) => state.properties['camera'] || false);
+  const camera = usePropertyStore((state) => state.camera);
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey]
   );
@@ -120,30 +122,42 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     shouldGeo: boolean;
   };
   const [options, setOptions] = useState<Option[]>();
+
+  const profile = usePropertyStore((state) => state.profile);
+  const setFavorites = usePropertyStore((state) => state.setFavorites);
+  // console.log("PROFILE", profile);
   const favorites = usePropertyStore((state) => state.favorites);
   // const properties = usePropertyStore((state) => state.properties);
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
         .filter((a) => a.includes('.Renderable'))
-        .reduce((acc: Record<string, any>, key: string) => {
-          acc[key] = state.properties[key];
-          return acc;
-        }, {})
+        .reduce(
+          (acc: Record<string, AnyProperty>, key: string) => {
+            acc[key] = state.properties[key];
+            return acc;
+          },
+          {} as Record<string, AnyProperty>
+        )
     )
   );
 
   useEffect(() => {
+    setFavorites(profile.markNodes);
+  }, [profile, properties]);
+  // FIX FAVORITESSSSSSS
+  useEffect(() => {
     setOptions(
       favorites.map((favorite) => {
         return {
-          name: favorite.guiName,
-          shouldGeo: !favorite.tag.includes('earth_satellite')
+          name: favorite,
+          shouldGeo: true
+          // !favorites[favorite].tags.includes('earth_satellite')
         };
       })
     );
   }, [favorites]);
-
+  //
   //in array of ooptiosn, find current option and check if it should be geo
 
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
@@ -152,12 +166,16 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty
   );
+  const cancelTopic = usePropertyStore((state) => state.cancelTopic);
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     subscribeToTopic('camera', 500);
+    subscribeToTopic('profile', 1000);
     subscribeToProperty(NavigationAnchorKey, 1000);
     return () => {
       unsubscribeFromTopic('camera');
+      cancelTopic('profile');
       unsubscribeFromProperty(NavigationAnchorKey);
     };
   }, [connectionState]);
@@ -166,6 +184,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       setGeo(component?.geo || false);
     }
   }, [component]);
+
   const [geo, setGeo] = useState<boolean>(component?.geo || false);
   const [long, setLong] = useState<number>(component?.long || 0);
   const [lat, setLat] = useState<number>(component?.lat || 0);
@@ -191,6 +210,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     }
     return shouldGeo || false;
   }, [target, options]);
+
   const unitMultiplier = (unit: string) => {
     switch (unit) {
       case 'km':
@@ -211,11 +231,13 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const setFromOpenspace = () => {
     const shouldGeo = options?.find((option) => option.name === CurrentAnchor.value)
       ?.shouldGeo;
-    setTarget(CurrentAnchor.value);
+    setTarget(String(CurrentAnchor.value));
     if (shouldGeo) {
-      setLat(camera?.latitude || 0);
-      setLong(camera?.longitude || 0);
-      setAlt(Math.round(camera?.altitude * unitMultiplier(camera.altitudeUnit)) || 0);
+      setLat(camera.latitude || 0);
+      setLong(camera.longitude || 0);
+      setAlt(
+        Math.round(camera.altitude || 0) * unitMultiplier(camera.altitudeUnit || 'm')
+      );
       setGeo(true);
     }
   };
@@ -260,14 +282,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        // // .filter((a) => a.includes('.Renderable'))
-        // .filter(
-        //   (a) =>
-        //     Visibility?.value + 2 >=
-        //     Visibility?.description.AdditionalData.Options.map(
-        //       (obj: Record<number, string>) => Object.values(obj)[0],
-        //     ).indexOf(a),
-        // )
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;

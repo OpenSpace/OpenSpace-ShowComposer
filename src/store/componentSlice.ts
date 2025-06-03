@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { roundToNearest } from '@/utils/math';
 
-import { Component, LayoutBase, LogComponent, Page } from './ComponentTypes';
+import { Component, LayoutBase, LogComponent, Page } from '../types/components';
 import {
   ImmerStateCreator,
   MultiComponent,
@@ -11,7 +11,8 @@ import {
   RecordComponent,
   StatusComponent,
   TimeComponent
-} from './ComponentTypes';
+} from '../types/components';
+
 import { LayoutSlice } from './layoutSlice';
 import { PageSlice } from './pageSlice';
 import { Position, PositionSlice } from './positionSlice';

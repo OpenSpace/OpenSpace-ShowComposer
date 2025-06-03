@@ -1,7 +1,8 @@
 import { debounce } from 'lodash';
 
+import { ImmerStateCreator } from '../types/components';
+
 import { ComponentSlice } from './componentSlice';
-import { ImmerStateCreator } from './ComponentTypes';
 import { LayoutSlice } from './layoutSlice';
 import { PageSlice } from './pageSlice';
 

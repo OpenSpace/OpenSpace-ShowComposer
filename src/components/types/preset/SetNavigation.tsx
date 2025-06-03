@@ -14,8 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { SetNavComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { SetNavComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
 import { NavigationState } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
@@ -64,13 +64,14 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   const timeLabel = useMemo(() => {
     if (componentTime) {
       try {
-        return formatDate(time);
+        return formatDate(new Date(time || ''));
       } catch {
         return componentTime;
       }
     }
     return componentTime;
-  }, [componentTime]);
+  }, [componentTime, time]);
+
   useEffect(() => {
     if (component) {
       // setFadeScene(component.fadeScene);
@@ -156,7 +157,9 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
             <Clock size={14} />
             {getCopy('SetNavigation', 'navigation_state_time')}
           </Label>
-          <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
+          <ButtonLabel className={'border bg-transparent'}>
+            {timeLabel as string}
+          </ButtonLabel>
         </div>
         <div className={'grid gap-2'}>
           <Label />
@@ -286,7 +289,6 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
     backgroundImage,
     color
   } = component;
-  console.log('navigationState', navigationState);
 
   useEffect(() => {
     if (luaApi) {

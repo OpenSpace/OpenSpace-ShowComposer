@@ -9,7 +9,7 @@
     "lint": "npx prettier . --check & eslint .",
     "lint-fix": "npx prettier . --write & eslint . --fix",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --base=/showcomposer/"
   },
   "dependencies": {
     "@hello-pangea/dnd": "16.6.0",

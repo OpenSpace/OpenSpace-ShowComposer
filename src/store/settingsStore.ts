@@ -14,7 +14,7 @@ interface ProjectSettings {
   showPagination: boolean;
 }
 
-interface State {
+export interface SettingsStoreState {
   presentMode: boolean;
   togglePresentMode: () => void;
   ip: string; // New property for URL
@@ -37,7 +37,7 @@ interface State {
   setProjectSettings: (settings: Partial<ProjectSettings>) => void;
 }
 
-export const useSettingsStore = create<State>()(
+export const useSettingsStore = create<SettingsStoreState>()(
   devtools(
     persist(
       immer((set) => {

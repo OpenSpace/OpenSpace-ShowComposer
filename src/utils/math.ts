@@ -27,21 +27,21 @@ export function restrictNumbersToDecimalPlaces<T>(
   };
 
   // Recursively process the object
-  const processObject = (item: any): void => {
+  const processObject = (item: RecursivePartial<T>): void => {
     for (const key in item) {
       if (typeof item[key] === 'number') {
         // Format number to specified decimal places
-        item[key] = formatNumber(item[key], decimalPlaces);
+        (item[key] as any) = formatNumber(item[key] as number, decimalPlaces);
       } else if (item[key] !== null && typeof item[key] === 'object') {
         // Recursively process nested objects and arrays
-        processObject(item[key]);
+        processObject(item[key] as RecursivePartial<T>);
       }
     }
   };
 
   // Clone the object to avoid mutating the original
   const clonedObj: T = JSON.parse(JSON.stringify(obj));
-  processObject(clonedObj);
+  processObject(clonedObj as RecursivePartial<T>);
 
   return clonedObj as RecursivePartial<T>;
 }

@@ -14,7 +14,7 @@ import { createPositionSlice, PositionSlice } from './positionSlice';
 // import isDeepEqual from 'fast-deep-equal';
 // import { isEmpty } from 'lodash';
 // Define the combined state type
-type BoundStoreState = PageSlice & LayoutSlice & PositionSlice & ComponentSlice;
+export type BoundStoreState = PageSlice & LayoutSlice & PositionSlice & ComponentSlice;
 
 export const useBoundStore = create<BoundStoreState>()(
   devtools(

@@ -4,7 +4,16 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { PropertyOwner } from '@/utils/apiHelpers';
+import { RecordingState } from '@/types/enums';
+import { AnyProperty } from '@/types/Property/property';
+import {
+  Action,
+  CameraState,
+  OpenSpaceTimeState,
+  ProfileState,
+  SessionRecordingState
+} from '@/types/types';
+import { ErrorLog } from '@/types/types';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
 import { updateTime } from '@/utils/time';
 
@@ -24,15 +33,17 @@ export enum ConnectionState {
 interface State {
   propertySubscriptions: Record<string, Subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
   topicSubscriptions: Record<string, Subscription>;
-  properties: Record<string, any>;
-  time: any;
-  sessionRecording: any;
-  favorites: Array<PropertyOwner>;
-  actions: Record<string, any>;
-  errorLog: Array<any>;
-  setProperty: (name: string, value: any) => void;
-  setProperties: (properties: Record<string, any>) => void;
-  setFavorites: (favorites: Array<PropertyOwner>) => void;
+  properties: Record<string, AnyProperty>;
+  time: OpenSpaceTimeState;
+  sessionRecording: SessionRecordingState;
+  camera: CameraState;
+  profile: ProfileState;
+  favorites: string[];
+  actions: Record<string, Action>;
+  errorLog: Array<ErrorLog>;
+  setProperty: (name: string, value: AnyProperty) => void;
+  setProperties: (properties: Record<string, AnyProperty>) => void;
+  setFavorites: (favorites: string[]) => void;
   refreshTopic: (name: string, properties?: string[]) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
@@ -43,10 +54,39 @@ interface State {
     settings?: any
   ) => void;
   unsubscribeFromTopic: (topicName: string) => void;
+  cancelTopic: (topicName: string) => void;
   connectToTopic: (topicName: string) => void;
   disconnectFromTopic: (topicName: string) => void;
   getActions: () => void;
 }
+const initialSessionRecordingState: SessionRecordingState = {
+  files: [],
+  state: RecordingState.Idle,
+  settings: {
+    recordingFileName: '',
+    format: 'Ascii',
+    overwriteFile: false
+  }
+};
+const initialCameraState: CameraState = {
+  latitude: undefined,
+  longitude: undefined,
+  altitude: undefined,
+  altitudeUnit: undefined
+};
+
+const initialProfileState: ProfileState = {
+  initalized: false,
+  uiPanelVisibility: {},
+  markNodes: [],
+  name: undefined,
+  author: undefined,
+  description: undefined,
+  license: undefined,
+  url: undefined,
+  version: undefined,
+  filePath: ''
+};
 
 export const usePropertyStore = create<State>()(
   devtools(
@@ -56,7 +96,9 @@ export const usePropertyStore = create<State>()(
       properties: {}, // New properties state
       time: {},
       errorLog: [],
-      sessionRecording: {},
+      sessionRecording: initialSessionRecordingState,
+      camera: initialCameraState,
+      profile: initialProfileState,
       favorites: [],
       actions: {},
       // Function to update a property's value
@@ -75,6 +117,10 @@ export const usePropertyStore = create<State>()(
               if (state.errorLog.length > 10) {
                 state.errorLog = state.errorLog.slice(-10);
               }
+            } else if (name == 'camera') {
+              state.camera = { ...state.camera, ...value };
+            } else if (name == 'profile') {
+              state.profile = value;
             } else {
               state.properties[name] = { ...state.properties[name], ...value };
             }
@@ -82,7 +128,7 @@ export const usePropertyStore = create<State>()(
           false,
           'property/set'
         ),
-      setProperties: (properties: Record<string, any>) =>
+      setProperties: (properties: Record<string, AnyProperty>) =>
         set(
           (state: any) => {
             state.properties = { ...state.properties, ...properties };
@@ -90,7 +136,7 @@ export const usePropertyStore = create<State>()(
           false,
           'property/setProperties'
         ),
-      setFavorites: (favorites: Array<any>) =>
+      setFavorites: (favorites: string[]) =>
         set(
           (state: any) => {
             state.favorites = favorites;
@@ -99,7 +145,7 @@ export const usePropertyStore = create<State>()(
           'property/setFavorites'
         ),
       // Function to manage subscription counts
-      subscribeToProperty: (name: string, _throttleAmt: number = 0) =>
+      subscribeToProperty: (name: string, throttleAmt: number = 200) =>
         set(
           (state: any) => {
             if (!state.propertySubscriptions[name]) {
@@ -110,22 +156,20 @@ export const usePropertyStore = create<State>()(
                 count: 0,
                 subscription
               };
-              const testSetProperty = (propName: string, value: any) => {
+              const setProperty = (propName: string, value: any) => {
                 usePropertyStore.getState().setProperty(propName, value);
               };
-              // const throttledHandleUpdates = throttle(
-              //   testSetProperty,
-              //   throttleAmt,
-              // );
+              const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription.iterator()) {
                   // throttledHandleUpdates(
-                  testSetProperty(
-                    name,
-                    // data,
-                    restrictNumbersToDecimalPlaces(data, 4)
-                  );
+                  throttledHandleUpdates(name, restrictNumbersToDecimalPlaces(data, 4));
+                  // testSetProperty(
+                  //   name,
+                  //   // data,
+                  //   restrictNumbersToDecimalPlaces(data, 4)
+                  // );
                 }
               })();
               console.log('Subscribed to Property: ', name);
@@ -154,7 +198,7 @@ export const usePropertyStore = create<State>()(
         ),
       subscribeToTopic: (
         topicName: string,
-        _throttleAmt: number = 200,
+        throttleAmt: number = 200,
         properties,
         settings
       ) =>
@@ -168,13 +212,10 @@ export const usePropertyStore = create<State>()(
                 count: 0,
                 subscription: topic
               };
-              const testSetProperty = (propName: string, value: any) => {
+              const setProperty = (propName: string, value: any) => {
                 usePropertyStore.getState().setProperty(propName, value);
               };
-              // const throttledHandleUpdates = throttle(
-              //   testSetProperty,
-              //   throttleAmt,
-              // );
+              const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of topic.iterator()) {
@@ -182,7 +223,11 @@ export const usePropertyStore = create<State>()(
                     // console.log('errorLog', data);
                     usePropertyStore.getState().setProperty('errorLog', data);
                   }
-                  testSetProperty(topicName, restrictNumbersToDecimalPlaces(data, 4));
+                  // testSetProperty(topicName, restrictNumbersToDecimalPlaces(data, 4));
+                  throttledHandleUpdates(
+                    topicName,
+                    restrictNumbersToDecimalPlaces(data, 4)
+                  );
                 }
               })();
               console.log('Subscribed to topic: ', topicName);
@@ -256,8 +301,6 @@ export const usePropertyStore = create<State>()(
             if (state.topicSubscriptions[topicName].count > 1) {
               state.topicSubscriptions[topicName].count -= 1;
             } else {
-              // console.log(state.topicSubscriptions[topicName].subscription);
-              // console.log(state.topicSubscriptions[topicName]);
               const apiDisconnect = useOpenSpaceApiStore.getState().disconnectFromTopic;
               apiDisconnect(state.topicSubscriptions[topicName].subscription);
               console.log('Unsubscribed from topic: ', topicName);
@@ -285,18 +328,33 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/unsubscribe'
         ),
+      cancelTopic: (topicName: string) =>
+        set(
+          (state) => {
+            if (!state.topicSubscriptions[topicName]) return;
+            const apiCancel = useOpenSpaceApiStore.getState().cancelTopic;
+            apiCancel(state.topicSubscriptions[topicName].subscription);
+            console.log('Cancelled topic: ', topicName);
+            delete state.topicSubscriptions[topicName];
+          },
+          false,
+          'topic/cancel'
+        ),
       getActions: () => {
         (async () => {
           const actions = await useOpenSpaceApiStore.getState().luaApi?.action.actions();
           if (!actions) return;
+          // console.log(actions);
           const reducedActions = Object.values(actions['1']).reduce(
-            (acc: Record<string, any>, action: any) => {
-              const newKey = action.Name.concat(` ${action.GuiPath}`);
+            (acc: Record<string, Action>, action: Action) => {
+              console.log(action);
+              const newKey = action?.Name?.concat(` ${action?.GuiPath}`);
               acc[newKey] = action;
               return acc;
             },
             {}
           );
+          // console.log(reducedActions);
           set((state) => {
             state.actions = reducedActions;
           });

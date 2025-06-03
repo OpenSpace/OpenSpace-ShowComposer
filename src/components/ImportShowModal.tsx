@@ -23,14 +23,28 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { Position, useSettingsStore } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { ComponentBase, LayoutBase, Page } from '@/store/ComponentTypes';
-import { allComponentLabels } from '@/store/ComponentTypes';
+import { BoundStoreState, useBoundStore } from '@/store/boundStore';
+import { SettingsStoreState } from '@/store/settingsStore';
+import { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
+import { allComponentLabels } from '@/types/components';
 import { confirmStoreImport } from '@/utils/saveProject';
+
+type MultiOption = {
+  component: MultiComponent['id'];
+  buffer: number;
+  startTime: number;
+  endTime: number;
+  chained: boolean;
+};
+
 interface ImportShowModalProps {
   isOpen: boolean;
   onClose: () => void;
-  store: any; // Replace with the appropriate type for your store
+  store: {
+    boundStore: BoundStoreState;
+    settingsStore: SettingsStoreState;
+    _tempImportId: string;
+  }; // Replace with the appropriate type for your store
 }
 type SelectedPage = {
   name: string;
@@ -53,7 +67,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
   useEffect(() => {
     if (store && store.boundStore) {
-      const parsedPages = store.boundStore.pages.map((page: any, index: number) => {
+      const parsedPages = store.boundStore.pages.map((page: Page, index: number) => {
         return {
           name: page.name ? page.name : `${index + 1}`,
           components: page.components,
@@ -104,12 +118,12 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
     const idMap: Record<string, string> = {};
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.boundStore.pages.find(
+      const page: Page | undefined = store.boundStore.pages.find(
         (p: Page) => p.id === selectedPage.id
       );
-      idMap[page.id] = uuidv4();
-      selectedFullPages.add(page);
       if (page) {
+        idMap[page.id] = uuidv4();
+        selectedFullPages.add(page);
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
           const component = store.boundStore.components[componentId];
@@ -119,10 +133,10 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
-              component.components.forEach((childId: string) => {
-                const component = store.boundStore.components[childId];
+              (component as MultiComponent).components.forEach((child: MultiOption) => {
+                const component = store.boundStore.components[child.component];
                 if (component) {
-                  idMap[childId] = uuidv4();
+                  idMap[child.component] = uuidv4();
                   selectedComponents.add(component);
                 }
                 //   selectedComponents.add(childId);
@@ -145,7 +159,9 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
     });
 
     // Function to replace old IDs with new IDs based on the idMap
-    const replaceIdsInString = (items: any[]) => {
+    const replaceIdsInString = (
+      items: ComponentBase[] | Position[] | LayoutBase[] | Page[]
+    ) => {
       const jsonString = JSON.stringify(items);
       let updatedString = jsonString;
 
@@ -188,11 +204,11 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
     const selectedFullPages = new Set<Page>();
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.boundStore.pages.find(
+      const page: Page | undefined = store.boundStore.pages.find(
         (p: Page) => p.id === selectedPage.id
       );
-      selectedFullPages.add(page);
       if (page) {
+        selectedFullPages.add(page);
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
           const component = store.boundStore.components[componentId];
@@ -201,8 +217,8 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
-              component.components.forEach((childId: string) => {
-                const component = store.boundStore.components[childId];
+              (component as MultiComponent).components.forEach((child: MultiOption) => {
+                const component = store.boundStore.components[child.component];
                 if (component) {
                   selectedComponents.add(component);
                 }

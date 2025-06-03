@@ -13,7 +13,7 @@ import {
   RecordComponent,
   StatusComponent,
   TimeComponent
-} from '@/store/ComponentTypes';
+} from '@/types/components';
 import { roundToNearest } from '@/utils/math';
 
 import FlightControlPanel from './types/static/FlightControlPanel';

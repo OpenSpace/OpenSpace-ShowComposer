@@ -17,8 +17,8 @@ import {
   RetargetAnchorKey
 } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
-import { SetFocusComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { SetFocusComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 

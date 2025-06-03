@@ -34,7 +34,7 @@ import {
   ScriptComponent,
   SessionPlaybackComponent,
   SetNavComponent
-} from '@/store/ComponentTypes';
+} from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { ActionTriggerModal } from './types/preset/ActionTrigger';

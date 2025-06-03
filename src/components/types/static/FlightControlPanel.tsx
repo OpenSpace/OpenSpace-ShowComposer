@@ -77,13 +77,9 @@ const FlightControlPanel = () => {
     // subscribeToTopic('camera', 500);
   }, [connectionState]);
   function sendFlightControlInput(payload: InputStatePayload) {
-    console.log(payload);
-    // console.log('Sending flight control input');
-    // console.log(flightControlTopic);
     flightControlTopic && flightControlTopic.talk(payload);
   }
   function toggleRotation() {
-    // console.log('IS THIS HAPPENING? ');
     luaApi?.setPropertyValue(RotationalFrictionKey, !rotationFriction);
   }
   function toggleZoom() {

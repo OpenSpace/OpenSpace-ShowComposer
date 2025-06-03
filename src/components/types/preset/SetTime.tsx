@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate, jumpToTime } from '@/utils/time';
 
@@ -120,7 +120,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   const timeLabel = useMemo(() => {
     if (componentTime) {
       try {
-        return formatDate(componentTime);
+        return formatDate(componentTime as Date);
       } catch {
         return componentTime;
       }
@@ -170,7 +170,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       <div className={'grid grid-cols-1 gap-4'}>
         {time && (
           <DateComponent
-            date={componentTime}
+            date={componentTime as Date}
             onChange={(data: {
               time: Date | string;
               interpolate: boolean;

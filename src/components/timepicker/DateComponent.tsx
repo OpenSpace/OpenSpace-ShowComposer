@@ -14,7 +14,7 @@ type DateData = {
 };
 
 type DateComponentProps = {
-  date: Date;
+  date: Date | string;
   onChange: (data: DateData) => void;
 };
 

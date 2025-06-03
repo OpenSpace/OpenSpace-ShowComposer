@@ -19,7 +19,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
     (state) => state.properties[NavigationAnchorKey]
   );
   const time = usePropertyStore((state) => state.time?.['timeCapped']);
-  const camera = usePropertyStore((state) => state.properties['camera']);
+  const camera = usePropertyStore((state) => state.camera);
   const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
@@ -44,7 +44,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
   const timeLabel = useMemo(() => {
     if (time) {
       try {
-        return formatDate(time);
+        return formatDate(new Date(time));
       } catch {
         return time;
       }
@@ -92,7 +92,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 resize={false}
                 className={'border bg-transparent px-2 text-xs'}
               >
-                {Math.round(camera.latitude * 100) / 100}&deg;
+                {camera?.latitude ? Math.round(camera.latitude * 100) / 100 : '-'}&deg;
               </ButtonLabel>
             </div>
             <div className={'flex flex-col gap-2'}>
@@ -104,7 +104,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 resize={false}
                 className={'border bg-transparent px-2 text-xs'}
               >
-                {Math.round(camera.longitude * 100) / 100}&deg;
+                {camera?.longitude ? Math.round(camera.longitude * 100) / 100 : '-'}&deg;
               </ButtonLabel>
             </div>
             <div className={'flex flex-col gap-2'}>
@@ -116,7 +116,8 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
                 resize={false}
                 className={'text-nowrap border bg-transparent px-2 text-xs'}
               >
-                {Math.round(camera.altitude * 1) / 1} {camera.altitudeUnit}
+                {camera?.altitude ? Math.round(camera.altitude * 1) / 1 : '-'}{' '}
+                {camera?.altitudeUnit || ''}
               </ButtonLabel>
             </div>
           </div>

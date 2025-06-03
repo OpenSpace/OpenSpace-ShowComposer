@@ -14,8 +14,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
-import { Page } from '@/store/ComponentTypes';
+import { ComponentBaseColors } from '@/types/components';
+import { Page } from '@/types/components';
 
 interface NewPageModalProps {
   isOpen: boolean;

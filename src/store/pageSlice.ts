@@ -1,7 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  ComponentBase,
+  ComponentBaseColors,
+  ImmerStateCreator
+} from '../types/components';
+
 import { ComponentSlice } from './componentSlice';
-import { ComponentBase, ComponentBaseColors, ImmerStateCreator } from './ComponentTypes';
 import { LayoutSlice } from './layoutSlice';
 import { PositionSlice } from './positionSlice';
 

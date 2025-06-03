@@ -12,8 +12,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useOpenSpaceApiStore } from '@/store';
 import { usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ActionTriggerComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { ActionTriggerComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
+import { Action } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerAction } from '@/utils/triggerHelpers';
 
@@ -42,7 +43,7 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
 
   const actions = usePropertyStore((state) => state.actions);
 
-  const handleActionChange = (action: Record<string, any>) => {
+  const handleActionChange = (action: Action) => {
     console.log(action);
     setAction(action.Identifier);
     if (!lockName) {

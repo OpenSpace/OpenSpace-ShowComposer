@@ -6,7 +6,7 @@ import RichTextEditor from '@/components/inputs/RichTextEditor';
 import { Label } from '@/components/ui/label';
 import { RichTextComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { ComponentBaseColors } from '@/types/components';
 
 interface RichTextGUIProps {
   component: RichTextComponent;

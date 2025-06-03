@@ -7,7 +7,7 @@ import { GripHorizontal, Lock, LockOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { Page } from '@/store/ComponentTypes';
+import { Page } from '@/types/components';
 
 import ButtonLabel from './common/ButtonLabel';
 import { Button } from './ui/button';

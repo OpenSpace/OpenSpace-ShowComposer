@@ -187,6 +187,7 @@ export function viteUploadPlugin() {
             );
           } else if (pathname == '/api/images') {
             const uploadsDir = path.resolve(__dirname, 'uploads');
+            console.log('UPLOADS DIR', uploadsDir);
             fs.readdir(uploadsDir, (err, files) => {
               if (err) {
                 console.error('Error reading uploads directory:', err);

@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useBoundStore } from '@/store/boundStore';
-import { PageComponent } from '@/store/ComponentTypes';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { PageComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 interface PageGUIProps {
   component: PageComponent;

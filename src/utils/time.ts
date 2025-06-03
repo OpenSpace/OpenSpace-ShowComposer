@@ -47,7 +47,7 @@ interface TimeState {
   hasNextDeltaTimeStep?: boolean;
   hasPrevDeltaTimeStep?: boolean;
 }
-function isDate(date: any): date is Date {
+function isDate(date: Date | string): date is Date {
   return date instanceof Date;
 }
 const updateTime = (newTimeState: TimeState) => {
@@ -95,46 +95,51 @@ async function jumpToTime(
   fadeTime: number,
   fadeScene: boolean
 ) {
-  let timeNow = usePropertyStore.getState().time?.['timeCapped'];
+  const timeNow = usePropertyStore.getState().time?.['timeCapped'];
   const { luaApi } = useOpenSpaceApiStore.getState();
-  // console.log('NEW TIME: ', newTime);
-  if (!isDate(timeNow)) {
-    timeNow = new Date(timeNow);
-  }
-  if (!isDate(newTime)) {
-    newTime = new Date(newTime);
-  }
-  const timeDiffSeconds = Math.round(
-    Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000
-  );
+  if (timeNow) {
+    // console.log('NEW TIME: ', newTime);
+    const timeNowAsDate: Date = new Date(timeNow);
+    // if (!isDate(timeNow)) {
+    //   timeNowAsDate = new Date(timeNow);
+    // }
 
-  // console.log(timeDiffSeconds);
-  const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
-  if (fadeScene && diffBiggerThanADay && interpolate) {
-    const promise = new Promise((resolve) => {
+    // let newTimeAsDate: Date = new Date(newTime);
+    // if (!isDate(newTime)) {
+    //   newTimeAsDate = new Date(newTime);
+    // }
+    const timeDiffSeconds = Math.round(
+      Math.abs(timeNowAsDate.getTime() - newTime.getTime()) / 1000
+    );
+
+    // console.log(timeDiffSeconds);
+    const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
+    if (fadeScene && diffBiggerThanADay && interpolate) {
+      const promise = new Promise((resolve) => {
+        luaApi?.setPropertyValueSingle(
+          'RenderEngine.BlackoutFactor',
+          0,
+          fadeTime / 2.0,
+          'QuadraticEaseOut'
+        );
+        setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
+      });
+      await promise;
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.setTime(fixedTimeString);
       luaApi?.setPropertyValueSingle(
         'RenderEngine.BlackoutFactor',
-        0,
+        1,
         fadeTime / 2.0,
-        'QuadraticEaseOut'
+        'QuadraticEaseIn'
       );
-      setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
-    });
-    await promise;
-    const fixedTimeString = newTime.toJSON().replace('Z', '');
-    luaApi?.time.setTime(fixedTimeString);
-    luaApi?.setPropertyValueSingle(
-      'RenderEngine.BlackoutFactor',
-      1,
-      fadeTime / 2.0,
-      'QuadraticEaseIn'
-    );
-  } else if (!interpolate) {
-    const fixedTimeString = newTime.toJSON().replace('Z', '');
-    luaApi?.time.setTime(fixedTimeString);
-  } else {
-    const fixedTimeString = newTime.toJSON().replace('Z', '');
-    luaApi?.time.interpolateTime(fixedTimeString, fadeTime);
+    } else if (!interpolate) {
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.setTime(fixedTimeString);
+    } else {
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.interpolateTime(fixedTimeString, fadeTime);
+    }
   }
 }
 

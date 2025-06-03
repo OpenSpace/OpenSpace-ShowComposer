@@ -20,8 +20,9 @@ import {
   usePropertyStore
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
-import { formatName, Property } from '@/utils/apiHelpers';
+import { ComponentBaseColors } from '@/types/components';
+import { AnyProperty } from '@/types/Property/property';
+import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerBool } from '@/utils/triggerHelpers';
 interface BoolGUIProps {
@@ -122,7 +123,8 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
   );
   useEffect(() => {
     // console.log(properties);
-    const propertyData = usePropertyStore.getState().properties[property] as Property;
+    const propertyData = usePropertyStore.getState().properties[property] as AnyProperty;
+    console.log('PROPERTY DATA', propertyData);
     if (!propertyData || lockName) return;
     setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
     setGuiDescription(propertyData.metaData.description);
@@ -152,7 +154,7 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
     if (connectionState !== ConnectionState.CONNECTED) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
-    .filter((a) => properties[a].metaData?.type === 'Bool')
+    .filter((a) => properties[a].metaData?.type === 'BoolProperty')
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;
       const periodCountB = (b.match(/\./g) || []).length;

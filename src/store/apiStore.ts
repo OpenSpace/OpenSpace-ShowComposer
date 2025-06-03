@@ -7,15 +7,13 @@ export enum ConnectionState {
 }
 import OpenSpaceApi, { OpenSpaceApi as OSApiClass, Topic } from 'openspace-api-js';
 
+import { AnyProperty } from '@/types/Property/property';
+import { OpenSpacePropertyOwner, PropertyOwner } from '@/types/types';
 import {
-  findFavorites,
   flattenPropertyTree,
   getActionSceneNodes,
   getRenderables,
-  isPropertyOwnerVisible,
-  isPropertyVisible,
-  Property,
-  PropertyOwner
+  isPropertyVisible
 } from '@/utils/apiHelpers';
 
 import { usePropertyStore } from './propertyStore';
@@ -58,6 +56,7 @@ interface OpenSpaceApiState {
   ) => Topic | null; // Define parameters as needed
   unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
   connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
+  cancelTopic: (topic: Topic) => void; // Define parameters as needed
   // subscribeToSessionRecording: () => Topic | null;
   // unsubscribeFromSessionRecording: (topic: Topic) => void;
   disconnectFromTopic: (topic: Topic) => void;
@@ -112,48 +111,45 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         set({ luaApi, connectionState: ConnectionState.CONNECTED });
         const value = await apiInstance.getProperty(rootOwnerKey);
         const {
+          // @ts-ignore
           propertyOwners,
           properties
-        }: { propertyOwners: PropertyOwner[]; properties: Property[] } =
-          flattenPropertyTree(value as PropertyOwner);
+        }: {
+          propertyOwners: PropertyOwner[];
+          properties: AnyProperty[];
+        } = flattenPropertyTree(value as OpenSpacePropertyOwner);
         usePropertyStore.getState().getActions();
-        const Visibility = properties.find((p) => p.uri === EnginePropertyVisibilityKey);
+        const Visibility: AnyProperty | undefined = properties.find(
+          (p) => p.uri === EnginePropertyVisibilityKey
+        );
         const FadeDuration = properties.find((p) => p.uri === EngineFadeDurationKey);
 
         // Set the inital properties to the store
-        const initData: Record<string, any> = {};
-        initData[EngineFadeDurationKey as string] = FadeDuration;
-        initData[EnginePropertyVisibilityKey as string] = Visibility;
+        const initData: Record<string, AnyProperty> = {};
+        initData[EngineFadeDurationKey as string] = FadeDuration as AnyProperty;
+        initData[EnginePropertyVisibilityKey as string] = Visibility as AnyProperty;
         usePropertyStore.getState().setProperties(initData);
 
         // Filter the properties based on the visibility
-        const filteredProperties = properties.filter((p) =>
-          isPropertyVisible(p, Visibility)
+        const filteredProperties = properties.filter((p: AnyProperty) =>
+          isPropertyVisible(p, Visibility?.value as number)
         );
-        const filteredPropertyOwners = propertyOwners.filter((p) =>
-          isPropertyOwnerVisible(p, Visibility)
-        );
-
-        // Find the favorites
-        const favorites = findFavorites(filteredPropertyOwners);
-        usePropertyStore.getState().setFavorites(favorites);
-
         // Get the renderables
-        const fadeables: Record<string, any> = getRenderables(
-          filteredProperties as Property[],
+        const fadeables: Record<string, AnyProperty> = getRenderables(
+          filteredProperties,
           'Opacity'
         );
-
         usePropertyStore.getState().setProperties(fadeables);
 
-        const boolProps = getActionSceneNodes(properties as Property[], 'Bool');
-
+        const boolProps: Record<string, any> = getActionSceneNodes(
+          filteredProperties,
+          'Bool'
+        );
         usePropertyStore.getState().setProperties(boolProps);
-        const triggerProps = getActionSceneNodes(properties as Property[], 'Trigger');
+        const triggerProps = getActionSceneNodes(filteredProperties, 'Trigger');
 
         usePropertyStore.getState().setProperties(triggerProps);
-        const numberProps = getActionSceneNodes(properties as Property[], 'Number');
-
+        const numberProps = getActionSceneNodes(filteredProperties, 'Number');
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);
@@ -199,12 +195,9 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   },
   subscribeToProperty: (propertyName: string) => {
     const { connectionState, apiInstance } = get();
-    // console.log('Connection State: ', connectionState);
-    // console.log('API Instance: ', apiInstance);
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return null;
     try {
       const subscription = apiInstance.subscribeToProperty(propertyName);
-      // console.log(subscription);
       return subscription;
     } catch (e) {
       console.error('Cannot subscribe to property, API instance is not connected.');
@@ -214,12 +207,12 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   unsubscribeFromProperty: (subscription: Topic) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
-    subscription.talk({
-      event: 'stop_subscription'
-    });
+    // subscription.talk({
+    //   event: 'stop_subscription'
+    // });
     subscription.cancel();
   },
-  subscribeToTopic: (topicName: string, properties?: string[], settings?: any) => {
+  subscribeToTopic: (topicName: string, properties?: string[], settings?: object) => {
     const { connectionState, apiInstance } = get();
 
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
@@ -261,6 +254,11 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     topic.talk({
       event: 'stop_subscription'
     });
+    topic.cancel();
+  },
+  cancelTopic: (topic: Topic) => {
+    const { connectionState, apiInstance } = get();
+    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.cancel();
   },
   disconnectFromTopic: (topic: Topic) => {

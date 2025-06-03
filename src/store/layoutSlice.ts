@@ -8,8 +8,9 @@ import {
 } from '@/utils/layoutCalculations';
 import { roundToNearest } from '@/utils/math';
 
+import { ImmerStateCreator, LayoutBase } from '../types/components';
+
 import { ComponentSlice, isComponentOverlappingPage } from './componentSlice';
-import { ImmerStateCreator, LayoutBase } from './ComponentTypes';
 // import { StateCreator } from 'zustand';
 import { PageSlice } from './pageSlice';
 import { PositionSlice } from './positionSlice';

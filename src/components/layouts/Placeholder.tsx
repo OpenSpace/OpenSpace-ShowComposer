@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react';
 
-import { LayoutType } from '@/store/ComponentTypes';
+import { LayoutType } from '@/types/components';
 
 const Placeholder = ({
   childWidth,

@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors, ScriptComponent } from '@/store/ComponentTypes';
+import { ComponentBaseColors, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 import { sendLuaScript } from '@/utils/triggerHelpers';
 

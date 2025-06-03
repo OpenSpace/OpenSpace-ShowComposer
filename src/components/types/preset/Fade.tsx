@@ -21,7 +21,8 @@ import {
 } from '@/store';
 import { Toggle } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
+import { ComponentBaseColors } from '@/types/components';
+import { AnyProperty } from '@/types/Property/property';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
@@ -105,7 +106,10 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
       }}
     >
       {fadeProperty ? (
-        <StatusBarControlled progress={fadeProperty?.value} debounceDuration={0} />
+        <StatusBarControlled
+          progress={Number(fadeProperty?.value)}
+          debounceDuration={0}
+        />
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
@@ -134,7 +138,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
     useShallow((state) =>
       Object.keys(state.properties)
         .filter((a) => a.endsWith('.Opacity'))
-        .reduce((acc: Record<string, any>, key: string) => {
+        .reduce((acc: Record<string, AnyProperty>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
         }, {})
