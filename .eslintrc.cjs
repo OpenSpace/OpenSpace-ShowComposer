@@ -3,19 +3,19 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    es2021: true,
+    es2021: true
   },
   settings: {
     react: {
-      version: 'detect',
-    },
+      version: 'detect'
+    }
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true,
-    },
+      jsx: true
+    }
   },
   plugins: [
     'react',
@@ -23,7 +23,7 @@ module.exports = {
     'prettier',
     '@typescript-eslint',
     'react-refresh',
-    'import',
+    'import'
   ],
   extends: [
     'eslint:recommended',
@@ -32,7 +32,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
-    'eslint-config-prettier',
+    'eslint-config-prettier'
   ],
   rules: {
     'react/prop-types': 0,
@@ -46,16 +46,16 @@ module.exports = {
         'ts-ignore': false, // Allow @ts-ignore comments
         'ts-expect-error': true, // Still enforce @ts-expect-error comments
         'ts-nocheck': true,
-        'ts-check': true,
-      },
+        'ts-check': true
+      }
     ],
-    'react/display-name': 'off',
+    'react/display-name': 'off'
   },
   ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs', 'eslint.config.js'],
   globals: {
     Edit: 'writable',
     console: 'writable',
     _: 'writable',
-    $: 'writable',
-  },
+    $: 'writable'
+  }
 };

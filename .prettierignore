@@ -1,13 +1,2 @@
-**/*.md
-**/*.svg
-**/*.ejs
-**/*.html
-
-/config
-/pnpm-lock.yaml
-/pnpm-workspace.yaml
-build
-dist
-node_modules
-
-.DS_Store
+README.md
+openspace-api-js.d.ts

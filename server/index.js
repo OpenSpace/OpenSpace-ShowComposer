@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  },
+  }
 });
 
 const upload = multer({ storage: storage });
@@ -32,7 +32,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
   const filePath = req.file.path;
   res.json({
     message: 'File uploaded successfully',
-    filePath: filePath.replace('../', ''),
+    filePath: filePath.replace('../', '')
   });
 });
 app.get('/uploads/:filename', (req, res) => {
@@ -47,15 +47,11 @@ app.get('/uploads', (req, res) => {
   fs.readdir(uploadsDir, (err, files) => {
     if (err) {
       console.error('Error reading uploads directory:', err);
-      return res
-        .status(500)
-        .json({ message: 'Failed to read uploads directory' });
+      return res.status(500).json({ message: 'Failed to read uploads directory' });
     }
 
     // Optional: Filter for image files only (e.g., .jpg, .png)
-    const imageFiles = files.filter((file) =>
-      /\.(jpg|jpeg|png|gif)$/i.test(file),
-    );
+    const imageFiles = files.filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file));
 
     res.json({ images: imageFiles });
   });

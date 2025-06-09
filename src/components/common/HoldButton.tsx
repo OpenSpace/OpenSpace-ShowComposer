@@ -1,6 +1,7 @@
-import { VariantProps } from 'class-variance-authority';
-import { Button, buttonVariants } from '../ui/button';
 import { useRef } from 'react';
+import { VariantProps } from 'class-variance-authority';
+
+import { Button, buttonVariants } from '../ui/button';
 
 interface HoldButtonProps extends VariantProps<typeof buttonVariants> {
   onClick: () => void;
@@ -11,7 +12,7 @@ const HoldButton: React.FC<HoldButtonProps> = ({
   variant,
   size,
   onClick,
-  children,
+  children
 }: HoldButtonProps) => {
   const clickInterval = useRef<NodeJS.Timeout | null>(null);
   const handleMouseDown = () => {

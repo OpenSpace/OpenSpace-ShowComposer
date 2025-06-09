@@ -1,6 +1,6 @@
 // DeleteConfirmationModal.tsx
 import React, { ReactElement, useState } from 'react';
-import { getCopy } from '@/utils/copyHelpers';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,8 +9,9 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { getCopy } from '@/utils/copyHelpers';
 interface DeleteConfirmationModalProps {
   onConfirm: () => void;
   message: string;
@@ -24,7 +25,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   message,
   isOpen: externalIsOpen,
   setOpen: externalSetOpen,
-  onClose,
+  onClose
 }) => {
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;

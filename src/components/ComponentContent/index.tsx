@@ -1,54 +1,50 @@
 import React from 'react';
+
 import {
+  BooleanComponent,
   Component,
-  TitleComponent,
-  SetTimeComponent as SetTimeType,
   FadeComponent,
   FlyToComponent,
-  SetFocusComponent,
-  BooleanComponent,
-  TriggerComponent,
-  NumberComponent,
-  VideoComponent,
-  RichTextComponent,
-  MultiComponent,
   ImageComponent,
+  MultiComponent,
+  NumberComponent,
   PageComponent,
+  RichTextComponent,
   SessionPlaybackComponent,
+  SetFocusComponent,
   SetNavComponent,
+  SetTimeComponent as SetTimeType,
+  TitleComponent,
+  TriggerComponent,
+  VideoComponent
 } from '@/store';
+import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
+import { getCopy } from '@/utils/copyHelpers';
 
-import { TitleGUIComponent } from '../types/static/Title';
-import TimeDatePicker from '../types/static/TimeDatePicker';
-import { SetTimeComponent } from '../types/preset/SetTime';
-import FlightControlPanel from '../types/static/FlightControlPanel';
-import { FlyToGUIComponent } from '../types/preset/FlyTo';
+import { ActionTriggerGUIComponent } from '../types/preset/ActionTrigger';
 import { FadeGUIComponent } from '../types/preset/Fade';
+import { FlyToGUIComponent } from '../types/preset/FlyTo';
 import { FocusComponent } from '../types/preset/Focus';
-import { BoolGUIComponent } from '../types/property/Boolean';
-import { TriggerGUIComponent } from '../types/property/Trigger';
-import { NumberGUIComponent } from '../types/property/Number';
-import { VideoGUIComponent } from '../types/static/Video';
-import { RichTextGUIComponent } from '../types/static/RichText';
 import { MultiGUIComponent } from '../types/preset/Multi';
-import { ImageGUIComponent } from '../types/static/Image';
+import { PageGUIComponent } from '../types/preset/Page';
+import { ScriptGUIComponent } from '../types/preset/Script';
 import { SessionPlaybackGUIComponent } from '../types/preset/SessionPlayback';
 import { SetNavGUIComponent } from '../types/preset/SetNavigation';
-import { PageGUIComponent } from '../types/preset/Page';
-import { getCopy } from '@/utils/copyHelpers';
-import { ActionTriggerGUIComponent } from '../types/preset/ActionTrigger';
-import {
-  ActionTriggerComponent,
-  ScriptComponent,
-} from '@/store/ComponentTypes';
-import { ScriptGUIComponent } from '../types/preset/Script';
+import { SetTimeComponent } from '../types/preset/SetTime';
+import { BoolGUIComponent } from '../types/property/Boolean';
+import { NumberGUIComponent } from '../types/property/Number';
+import { TriggerGUIComponent } from '../types/property/Trigger';
+import FlightControlPanel from '../types/static/FlightControlPanel';
+import { ImageGUIComponent } from '../types/static/Image';
+import { RichTextGUIComponent } from '../types/static/RichText';
+import TimeDatePicker from '../types/static/TimeDatePicker';
+import { TitleGUIComponent } from '../types/static/Title';
+import { VideoGUIComponent } from '../types/static/Video';
 interface ComponentContentProps {
   component: Component;
 }
 
-export const ComponentContent: React.FC<ComponentContentProps> = ({
-  component,
-}) => {
+export const ComponentContent: React.FC<ComponentContentProps> = ({ component }) => {
   switch (component?.type) {
     case 'title':
       return <TitleGUIComponent component={component as TitleComponent} />;
@@ -57,9 +53,7 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({
     case 'image':
       return <ImageGUIComponent component={component as ImageComponent} />;
     case 'richtext':
-      return (
-        <RichTextGUIComponent component={component as RichTextComponent} />
-      );
+      return <RichTextGUIComponent component={component as RichTextComponent} />;
     case 'timepanel':
       return <TimeDatePicker />;
     case 'settime':
@@ -68,9 +62,7 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({
       return <FlightControlPanel />;
     case 'sessionplayback':
       return (
-        <SessionPlaybackGUIComponent
-          component={component as SessionPlaybackComponent}
-        />
+        <SessionPlaybackGUIComponent component={component as SessionPlaybackComponent} />
       );
     case 'setnavstate':
       return <SetNavGUIComponent component={component as SetNavComponent} />;
@@ -92,15 +84,11 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({
       return <PageGUIComponent component={component as PageComponent} />;
     case 'action':
       return (
-        <ActionTriggerGUIComponent
-          component={component as ActionTriggerComponent}
-        />
+        <ActionTriggerGUIComponent component={component as ActionTriggerComponent} />
       );
     case 'script':
       return <ScriptGUIComponent component={component as ScriptComponent} />;
     default:
-      return (
-        <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>
-      );
+      return <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>;
   }
 };

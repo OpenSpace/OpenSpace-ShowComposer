@@ -15,13 +15,13 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
   backgroundImage,
   backgroundColor,
   className,
-  style,
+  style
 }) => {
   return (
     <div
       className={clsx(
         'absolute right-0 top-0 flex h-full w-full cursor-pointer items-center justify-center rounded-md',
-        className,
+        className
       )}
       style={{
         //cover and center the background image
@@ -29,7 +29,7 @@ const ComponentContainer: React.FC<ComponentContainerProps> = ({
         backgroundPosition: 'center',
         backgroundImage: `url(${backgroundImage})`,
         backgroundColor: backgroundColor,
-        ...style,
+        ...style
       }}
       onClick={onClick}
     >

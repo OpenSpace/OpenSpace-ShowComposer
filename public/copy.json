@@ -1,7 +1,7 @@
 {
   "Main": {
     "project_name": "Current Show:  ",
-    "interface_name": "OpenSpace Showbuilder",
+    "interface_name": "OpenSpace Showcomposer",
     "static_components": "Static Components",
     "preset_components": "Preset Components",
     "multi": "Multi",

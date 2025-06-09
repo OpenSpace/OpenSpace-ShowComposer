@@ -1,7 +1,9 @@
+import React from 'react';
+import { ZoomIn, ZoomOut } from 'lucide-react';
+
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
-import { ZoomIn, ZoomOut } from 'lucide-react';
-import React from 'react';
+
 import HoldButton from './common/HoldButton';
 import { Input } from './ui/input';
 const ScaleGUI: React.FC = () => {
@@ -14,17 +16,17 @@ const ScaleGUI: React.FC = () => {
     setScale((prevScale) => Math.min(2.0, Math.max(0.5, prevScale - 0.01)));
   };
   return (
-    <div className="flex w-16 flex-col items-center justify-center gap-2">
-      <HoldButton variant="outline" size="icon" onClick={zoomIn}>
-        <ZoomIn size="16" />
+    <div className={'flex w-16 flex-col items-center justify-center gap-2'}>
+      <HoldButton variant={'outline'} size={'icon'} onClick={zoomIn}>
+        <ZoomIn size={'16'} />
       </HoldButton>
       <Input
         value={Math.round(scale * 100)}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setScale(() => parseFloat(e.target.value) / 100)
         }
-        type="number"
-        className="no-arrows  bg-transparent text-right "
+        type={'number'}
+        className={'no-arrows  bg-transparent text-right '}
         max={200}
         min={75}
       />
@@ -33,10 +35,10 @@ const ScaleGUI: React.FC = () => {
                     ml-10 flex  
                     items-center"
       >
-        <span className="text-sm">{getCopy('ScaleGUI', '%')}</span>
+        <span className={'text-sm'}>{getCopy('ScaleGUI', '%')}</span>
       </div>
-      <HoldButton variant="outline" size="icon" onClick={zoomOut}>
-        <ZoomOut size="16" />
+      <HoldButton variant={'outline'} size={'icon'} onClick={zoomOut}>
+        <ZoomOut size={'16'} />
       </HoldButton>
     </div>
   );

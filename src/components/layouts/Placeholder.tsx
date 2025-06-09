@@ -1,5 +1,6 @@
-import { LayoutType } from '@/store/ComponentTypes';
 import { Plus } from 'lucide-react';
+
+import { LayoutType } from '@/types/components';
 
 const Placeholder = ({
   childWidth,
@@ -8,7 +9,7 @@ const Placeholder = ({
   padding,
   hidden = false,
   columns = 1,
-  index = 0,
+  index = 0
 }: {
   childWidth: number;
   childHeight: number;
@@ -44,16 +45,16 @@ const Placeholder = ({
         left: left,
         right: right,
         bottom: bottom,
-        visibility: hidden ? 'hidden' : 'visible',
+        visibility: hidden ? 'hidden' : 'visible'
       }}
     >
       <Plus
-        className="text-gray-400"
+        className={'text-gray-400'}
         style={{
           width: '100%',
           height: '100%',
           maxWidth: '64px',
-          maxHeight: '64px',
+          maxHeight: '64px'
         }}
       />
     </div>

@@ -1,7 +1,7 @@
 // Assuming your store file is something like store.js or store.ts
 import { throttle } from 'lodash';
 import { create } from 'zustand';
-import { persist, devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 interface ProjectSettings {
@@ -14,7 +14,7 @@ interface ProjectSettings {
   showPagination: boolean;
 }
 
-interface State {
+export interface SettingsStoreState {
   presentMode: boolean;
   togglePresentMode: () => void;
   ip: string; // New property for URL
@@ -37,7 +37,7 @@ interface State {
   setProjectSettings: (settings: Partial<ProjectSettings>) => void;
 }
 
-export const useSettingsStore = create<State>()(
+export const useSettingsStore = create<SettingsStoreState>()(
   devtools(
     persist(
       immer((set) => {
@@ -46,11 +46,11 @@ export const useSettingsStore = create<State>()(
           set(
             (_state) => {
               return {
-                pageScaleThrottled: newScale,
+                pageScaleThrottled: newScale
               };
             },
             false,
-            'settings/setScaleThrottled',
+            'settings/setScaleThrottled'
           );
         }, 1000); // Adjust the throttle delay as needed
 
@@ -65,19 +65,19 @@ export const useSettingsStore = create<State>()(
             set(
               (_state) => ({ showPagination: show }),
               false,
-              'settings/setShowPagination',
+              'settings/setShowPagination'
             ),
           setPresentLocked: (locked: boolean) =>
             set(
               (_state) => ({ presentLocked: locked }),
               false,
-              'settings/setPresentLocked',
+              'settings/setPresentLocked'
             ),
           togglePresentMode: () =>
             set(
               (state) => ({ presentMode: !state.presentMode }),
               false,
-              'settings/togglePresent',
+              'settings/togglePresent'
             ),
           pageWidth: 1000,
           pageHeight: 500,
@@ -91,7 +91,7 @@ export const useSettingsStore = create<State>()(
                 return { pageScale: newScale };
               },
               false,
-              'settings/setScale',
+              'settings/setScale'
             );
           },
           ip: '', // Initial URL state
@@ -102,7 +102,7 @@ export const useSettingsStore = create<State>()(
                 return { pageWidth: width, pageHeight: height };
               },
               false,
-              'settings/updatePageSize',
+              'settings/updatePageSize'
             ),
           setConnectionSettings: (ip: string, port: string) =>
             set(
@@ -110,7 +110,7 @@ export const useSettingsStore = create<State>()(
                 return { ip, port };
               },
               false,
-              'settings/setConnectionSettings',
+              'settings/setConnectionSettings'
             ),
           gridSize: { rows: 3, columns: 3 },
           setGridSize: (size: { rows: number; columns: number }) =>
@@ -118,16 +118,16 @@ export const useSettingsStore = create<State>()(
           setProjectSettings: (settings: Partial<ProjectSettings>) =>
             set(
               () => ({
-                ...settings,
+                ...settings
               }),
               false,
-              'settings/setProjectSettings',
-            ),
+              'settings/setProjectSettings'
+            )
         };
       }),
       {
-        name: 'settings-storage', // name of the storage
-      },
-    ),
-  ),
+        name: 'settings-storage' // name of the storage
+      }
+    )
+  )
 );

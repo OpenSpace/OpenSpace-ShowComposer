@@ -1,11 +1,12 @@
 import { useOpenSpaceApiStore } from '@/store';
+import { NavigationState } from '@/types/types';
 
 const triggerFade = async (
   property: string,
   intDuration: number,
-  action: 'on' | 'off' | 'toggle',
+  action: 'on' | 'off' | 'toggle'
 ) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -35,11 +36,8 @@ const triggerFade = async (
   }
 };
 
-const triggerBool = async (
-  property: string,
-  action: 'on' | 'off' | 'toggle',
-) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+const triggerBool = async (property: string, action: 'on' | 'off' | 'toggle') => {
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
@@ -52,50 +50,41 @@ const triggerBool = async (
       luaApi.setPropertyValueSingle(property, false);
       break;
     case 'toggle': {
-      const value = await luaApi.getPropertyValue(property);
-      luaApi.setPropertyValueSingle(property, !value[1]);
+      luaApi.invertBooleanProperty(property);
       break;
     }
   }
 };
 
 const triggerTrigger = async (property: string) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
   }
-  luaApi.setPropertyValueSingle(property, true);
+  luaApi.setPropertyValueSingle(property, null);
 };
 
 const triggerNumber = async (property: string, newValue: number) => {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const { luaApi } = useOpenSpaceApiStore.getState();
   // console.log('triggerNumber', property, newValue);
-  luaApi.setPropertyValueSingle(property, newValue);
+  luaApi?.setPropertyValueSingle(property, newValue);
 };
-type NavigationState = {
-  Anchor: string;
-  Pitch: number;
-  Position: [number, number, number];
-  ReferenceFrame: string;
-  Timestamp?: number;
-  Up: [number, number, number];
-  Yaw: number;
-};
+
 async function jumpToNavState(
   navigationState: NavigationState,
   setTime: boolean,
   mode: 'jump' | 'fade' | 'fly',
-  fadeTime: number,
+  fadeTime: number
 ) {
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
+  const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
     return;
   }
 
-  let navState = {
-    ...navigationState,
+  const navState = {
+    ...navigationState
   };
   switch (mode) {
     case 'jump':
@@ -105,33 +94,31 @@ async function jumpToNavState(
       if (!setTime) {
         delete navState.Timestamp;
       }
-      luaApi.pathnavigation.jumpToNavigationState(navState, fadeTime / 2.0);
+      luaApi.navigation.jumpToNavigationState(navState, false, fadeTime / 2.0);
       break;
     case 'fly':
       if (!setTime) {
         delete navState.Timestamp;
       }
-      luaApi.pathnavigation.flyToNavigationState(navState, fadeTime);
+      luaApi.navigation.flyToNavigationState(navState, fadeTime);
       break;
   }
 }
 
 const triggerAction = (actionName: string) => {
-  useOpenSpaceApiStore.getState().luaApi.action.triggerAction(actionName);
+  useOpenSpaceApiStore.getState().luaApi?.action.triggerAction(actionName);
 };
 
 const sendLuaScript = (script: string) => {
-  useOpenSpaceApiStore
-    .getState()
-    .apiInstance?.executeLuaScript(script, false, false);
+  useOpenSpaceApiStore.getState().apiInstance?.executeLuaScript(script, false, false);
 };
 
 export {
-  triggerFade,
-  triggerBool,
-  triggerTrigger,
-  triggerAction,
-  triggerNumber,
   jumpToNavState,
   sendLuaScript,
+  triggerAction,
+  triggerBool,
+  triggerFade,
+  triggerNumber,
+  triggerTrigger
 };

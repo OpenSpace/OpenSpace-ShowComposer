@@ -1,51 +1,45 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { getCopy } from '@/utils/copyHelpers';
-import ComponentModal from '@/components/ComponentModal';
-import SelectableDropdown from '@/components/common/SelectableDropdown';
-import {
-  MultiOption,
-  isMultiOption,
-  Component,
-  MultiComponent,
-  ComponentType,
-  multiOptions as MultiOptions,
-  TriggerComponent,
-  FlyToComponent,
-  FadeComponent,
-  SetFocusComponent,
-  BooleanComponent,
-} from '@/store/ComponentTypes';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from '@hello-pangea/dnd';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { FlyToGUIComponent } from './FlyTo';
-import { FadeGUIComponent } from './Fade';
-import { FocusComponent } from './Focus';
+
+import ButtonLabel from '@/components/common/ButtonLabel';
+import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import ImageUpload from '@/components/common/ImageUpload';
+import Information from '@/components/common/Information';
+import SelectableDropdown from '@/components/common/SelectableDropdown';
+import ComponentModal from '@/components/ComponentModal';
+import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Toggle } from '@/components/ui/toggle';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useBoundStore } from '@/store/boundStore';
+import {
+  BooleanComponent,
+  Component,
+  ComponentType,
+  FadeComponent,
+  FlyToComponent,
+  isMultiOption,
+  MultiComponent,
+  MultiOption,
+  multiOptions as MultiOptions,
+  SetFocusComponent,
+  TriggerComponent
+} from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
+import { getCopy } from '@/utils/copyHelpers';
+
 import { BoolGUIComponent } from '../property/Boolean';
 import { TriggerGUIComponent } from '../property/Trigger';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Edit2, XIcon, Link, Unlink } from 'lucide-react';
-import { Toggle } from '@/components/ui/toggle';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Textarea } from '@/components/ui/textarea';
-import ImageUpload from '@/components/common/ImageUpload';
-import ButtonLabel from '@/components/common/ButtonLabel';
-import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Information from '@/components/common/Information';
-import ComponentContainer from '@/components/common/ComponentContainer';
-import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
-import ColorPickerComponent from '@/components/common/ColorPickerComponent';
+
+import { FadeGUIComponent } from './Fade';
+import { FlyToGUIComponent } from './FlyTo';
+import { FocusComponent } from './Focus';
 // // Define the type for list items
 // set up chained v paralell data handling
 interface MultiType {
@@ -61,24 +55,19 @@ interface MultiModalProps {
   handleComponentData: (data: Partial<MultiComponent>) => void;
 }
 // MultiModal Component
-const MultiModal: React.FC<MultiModalProps> = ({
-  component,
-  handleComponentData,
-}) => {
+const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData }) => {
   const [items, setItems] = useState<MultiType[]>(
     component
       ? component.components.map((v) => ({
           ...v,
-          id: v.component,
+          id: v.component
         }))
-      : [],
+      : []
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || '',
+    component?.backgroundImage || ''
   );
-  const [availableOptions, setAvailableOptions] = useState<Component['id'][]>(
-    [],
-  );
+  const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const copyComponent = useBoundStore((state) => state.copyComponent);
@@ -86,31 +75,29 @@ const MultiModal: React.FC<MultiModalProps> = ({
   // only return components that can be type MultiOption
   const multiOptions: Component['id'][] = useBoundStore((state) =>
     Object.keys(state.components).filter((c: Component['id']) =>
-      isMultiOption(getComponentById(c)),
-    ),
+      isMultiOption(getComponentById(c))
+    )
   );
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || '',
+    component?.gui_description || ''
   );
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.multi,
+    component?.color || ComponentBaseColors.multi
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState('');
-  const [currentComponentType, setCurrentComponentType] = useState<
-    ComponentType | ''
-  >('');
-  const [cancelCallback, setCancelCallback] = useState<() => void>(
-    () => () => {},
+  const [currentComponentType, setCurrentComponentType] = useState<ComponentType | ''>(
+    ''
   );
+  const [cancelCallback, setCancelCallback] = useState<() => void>(() => () => {});
   const [initalData, setInitialData] = useState<Partial<MultiOption>>({
-    isMulti: 'pendingSave',
+    isMulti: 'pendingSave'
   });
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
     setInitialData({
-      isMulti: 'pendingSave',
+      isMulti: 'pendingSave'
     });
     setCurrentComponentType(type);
     setCurrentComponentId(newId);
@@ -123,7 +110,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
 
   function sortAdjacentUnchainedItems(tempItems: MultiType[]) {
     // Identify and sort unchained items that are adjacent to other unchained items
-    let unchainedGroups: MultiType[][] = [];
+    const unchainedGroups: MultiType[][] = [];
     let currentGroup: MultiType[] = [];
     for (let i = 0; i < tempItems.length; i++) {
       if (!tempItems[i].chained) {
@@ -143,10 +130,10 @@ const MultiModal: React.FC<MultiModalProps> = ({
     unchainedGroups.forEach((group) => {
       group.sort((a, b) => {
         const componentA = getComponentById(a.component) ?? {
-          intDuration: 0,
+          intDuration: 0
         };
         const componentB = getComponentById(b.component) ?? {
-          intDuration: 0,
+          intDuration: 0
         };
         //@ts-ignore
         const durationA = (componentA.intDuration || 0) + a.buffer;
@@ -171,7 +158,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
   }
   function recalculateOffsets(tempItems: MultiType[]) {
     // let totalDelay = 0;
-    let originalOrder = tempItems.map((v) => v.id);
+    const originalOrder = tempItems.map((v) => v.id);
     sortAdjacentUnchainedItems(tempItems);
     let lastStartTime = 0;
     let lastEndTime = 0;
@@ -209,8 +196,8 @@ const MultiModal: React.FC<MultiModalProps> = ({
       multiOptions.filter(
         (component) =>
           // getComponentById(component)?.isMulti != 'false' &&
-          !items.some((item) => item.id === component),
-      ),
+          !items.some((item) => item.id === component)
+      )
     );
     handleComponentData({
       components: items.map((v) => ({
@@ -218,12 +205,12 @@ const MultiModal: React.FC<MultiModalProps> = ({
         startTime: v.startTime,
         endTime: v.endTime,
         buffer: v.buffer,
-        chained: v.chained,
+        chained: v.chained
       })),
       backgroundImage,
       gui_description,
       gui_name,
-      color,
+      color
     });
   }, [items, backgroundImage, gui_name, gui_description, color]);
 
@@ -248,11 +235,11 @@ const MultiModal: React.FC<MultiModalProps> = ({
       startTime: 0,
       endTime: 0,
       // totalOffset: 0,
-      chained: items.length > 0 ? true : false,
+      chained: items.length > 0 ? true : false
     };
     setItems([...items, newItem]);
     updateComponent(newComponent, {
-      isMulti: 'pendingSave',
+      isMulti: 'pendingSave'
     });
   };
   const removeItem = (id: string) => {
@@ -264,26 +251,22 @@ const MultiModal: React.FC<MultiModalProps> = ({
     // });
   };
   return (
-    <Tabs defaultValue="multi" className="w-auto">
-      <TabsList className="mb-4">
-        <TabsTrigger value="multi">
-          {getCopy('Multi', 'multi_settings')}
-        </TabsTrigger>
-        <TabsTrigger value="visual">
-          {getCopy('Multi', 'visual_settings')}
-        </TabsTrigger>
+    <Tabs defaultValue={'multi'} className={'w-auto'}>
+      <TabsList className={'mb-4'}>
+        <TabsTrigger value={'multi'}>{getCopy('Multi', 'multi_settings')}</TabsTrigger>
+        <TabsTrigger value={'visual'}>{getCopy('Multi', 'visual_settings')}</TabsTrigger>
       </TabsList>
-      <TabsContent value="multi">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
+      <TabsContent value={'multi'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid grid-cols-2 gap-4'}>
+            <div className={'grid gap-2'}>
               {/* <Label>Add Existing Component</Label> */}
               <SelectableDropdown
-                placeholder="Add Existing Component"
+                placeholder={'Add Existing Component'}
                 shouldClear={true}
                 options={availableOptions.map((component) => ({
                   value: component,
-                  label: getComponentById(component)?.gui_name,
+                  label: getComponentById(component)?.gui_name
                 }))}
                 selected={undefined}
                 setSelected={(id: string) => {
@@ -291,17 +274,15 @@ const MultiModal: React.FC<MultiModalProps> = ({
                 }}
               />
             </div>
-            <div className="grid gap-2">
+            <div className={'grid gap-2'}>
               {/* <Label>Add New Component</Label> */}
 
               <SelectableDropdown
-                placeholder="Add New Component"
+                placeholder={'Add New Component'}
                 options={MultiOptions}
                 selected={undefined}
                 shouldClear={true}
-                setSelected={(type: string) =>
-                  handleAddComponent(type as ComponentType)
-                }
+                setSelected={(type: string) => handleAddComponent(type as ComponentType)}
               />
             </div>
           </div>
@@ -310,12 +291,12 @@ const MultiModal: React.FC<MultiModalProps> = ({
            Add {getComponentById(component).type}
            </button>
            ))} */}
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
             <b>{getCopy('Multi', 'delay:')}</b>
             {getCopy('Multi', 'delay_copy')}
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
+            <Droppable droppableId={'droppable'}>
               {(provided) => (
                 <div
                   {...provided.droppableProps}
@@ -323,19 +304,17 @@ const MultiModal: React.FC<MultiModalProps> = ({
                   //   className="flex flex-row"
                 >
                   {items.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id}
-                      index={index}
-                    >
+                    <Draggable key={item.id} draggableId={item.id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className="mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2"
+                          className={
+                            'mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2'
+                          }
                         >
-                          <div className="w-[40%] overflow-hidden whitespace-nowrap">
+                          <div className={'w-[40%] overflow-hidden whitespace-nowrap'}>
                             {getComponentById(item.id)?.gui_name}
                           </div>
                           <Tooltip>
@@ -349,50 +328,44 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                   recalculateOffsets(newItems);
                                   setItems(newItems);
                                 }}
-                                className="p-1"
+                                className={'p-1'}
                               >
-                                {item.chained ? (
-                                  <Link size={20} />
-                                ) : (
-                                  <Unlink size={20} />
-                                )}
+                                {item.chained ? <Link size={20} /> : <Unlink size={20} />}
                               </Toggle>
                             </TooltipTrigger>
-                            <TooltipContent className="w-[200px] bg-white">
+                            <TooltipContent className={'w-[200px] bg-white'}>
                               <b>{getCopy('Multi', 'chained_items:')}</b>
                               {getCopy(
                                 'Multi',
-                                'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.',
+                                'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
                               )}
                               <br />
                               <b>{getCopy('Multi', 'unchained_items:')}</b>
                               {getCopy(
                                 'Multi',
-                                'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.',
+                                'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
                               )}
                             </TooltipContent>
                           </Tooltip>
-                          <div className="flex items-center gap-1">
+                          <div className={'flex items-center gap-1'}>
                             <Label>{getCopy('Multi', 'delay')}</Label>
                             <Input
-                              type="number"
-                              className="w-20"
-                              name="delay"
-                              min="0"
-                              max="20"
-                              step="0.2"
+                              type={'number'}
+                              className={'w-20'}
+                              name={'delay'}
+                              min={'0'}
+                              max={'20'}
+                              step={'0.2'}
                               value={item.buffer}
-                              onChange={(
-                                e: React.FormEvent<HTMLInputElement>,
-                              ) => {
-                                const value = e.currentTarget.value;
+                              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                                const { value } = e.currentTarget;
                                 const newItems = Array.from(items);
                                 newItems[index].buffer = parseFloat(value);
                                 setItems(newItems);
                               }}
                             />
                           </div>
-                          <div className="flex-0 grid grid-cols-2 gap-2">
+                          <div className={'flex-0 grid grid-cols-2 gap-2'}>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Toggle
@@ -401,14 +374,14 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                     setInitialData({});
                                     setCurrentComponentId(item.id);
                                     setCurrentComponentType(
-                                      getComponentById(item.id)?.type,
+                                      getComponentById(item.id)?.type
                                     );
                                     setCancelCallback(() => () => {
                                       setItems(items);
                                     });
                                     setIsModalOpen(true);
                                   }}
-                                  className="p-1"
+                                  className={'p-1'}
                                 >
                                   <Edit2
                                     size={20} // Adjust size as needed
@@ -417,7 +390,7 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                       setInitialData({});
                                       setCurrentComponentId(item.id);
                                       setCurrentComponentType(
-                                        getComponentById(item.id)?.type,
+                                        getComponentById(item.id)?.type
                                       );
                                       setCancelCallback(() => () => {
                                         setItems(items);
@@ -425,12 +398,12 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                       setIsModalOpen(true);
                                     }}
                                     style={{
-                                      cursor: 'pointer',
+                                      cursor: 'pointer'
                                     }} // Makes the icon behave like a button
                                   />
                                 </Toggle>
                               </TooltipTrigger>
-                              <TooltipContent className="bg-white">
+                              <TooltipContent className={'bg-white'}>
                                 {getCopy('Multi', 'edit_component')}
                               </TooltipContent>
                             </Tooltip>
@@ -439,14 +412,14 @@ const MultiModal: React.FC<MultiModalProps> = ({
                                 <Toggle
                                   pressed={undefined}
                                   onClick={() => removeItem(item.id)}
-                                  className="p-1"
+                                  className={'p-1'}
                                 >
                                   <XIcon
                                     size={20} // Adjust size as needed
                                   />
                                 </Toggle>
                               </TooltipTrigger>
-                              <TooltipContent className="bg-white">
+                              <TooltipContent className={'bg-white'}>
                                 {getCopy('Multi', 'remove_from_component')}
                               </TooltipContent>
                             </Tooltip>
@@ -462,17 +435,15 @@ const MultiModal: React.FC<MultiModalProps> = ({
           </DragDropContext>
         </div>
       </TabsContent>
-      <TabsContent value="visual">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid grid-cols-1 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="gioname">
-                {getCopy('Multi', 'component_name')}
-              </Label>
+      <TabsContent value={'visual'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid grid-cols-1 gap-4'}>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Multi', 'component_name')}</Label>
               <Input
-                id="guiname"
-                placeholder="Name of Component"
-                type="text"
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
@@ -480,15 +451,15 @@ const MultiModal: React.FC<MultiModalProps> = ({
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="description">Background Color</Label>
-              <div className="flex flex-row gap-2">
+          <div className={'grid grid-cols-1 gap-4'}>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>Background Color</Label>
+              <div className={'flex flex-row gap-2'}>
                 <ColorPickerComponent color={color} setColor={setColor} />
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>
                 {getCopy('Multi', 'background_image')}
               </Label>
               <ImageUpload
@@ -496,18 +467,16 @@ const MultiModal: React.FC<MultiModalProps> = ({
                 onChange={(v) => setBackgroundImage(v)}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">
-                {getCopy('Multi', 'gui_description')}
-              </Label>
+            <div className={'grid gap-2'}>
+              <Label htmlFor={'description'}>{getCopy('Multi', 'gui_description')}</Label>
               <Textarea
-                className="w-full"
-                id="description"
+                className={'w-full'}
+                id={'description'}
                 value={gui_description}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setGuiDescription(e.target.value)
                 }
-                placeholder="Type your message here."
+                placeholder={'Type your message here.'}
               />
             </div>
           </div>
@@ -616,9 +585,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     setTrigger(true);
     component.components.forEach((item, index) => {
       const triggerComponent = () => {
-        const tempComponent = getComponentById(item.component) as
-          | MultiOption
-          | undefined;
+        const tempComponent = getComponentById(item.component) as MultiOption | undefined;
         if (tempComponent) {
           // console.log(
           //   `Triggering ${tempComponent.gui_name} after ${item.startTime} seconds`,
@@ -632,11 +599,10 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
                 //   `Removing ${tempComponent.gui_name} after ${item.endTime} seconds`,
                 // );
                 setCurrentItems((items) =>
-                  items.filter((i) => i !== tempComponent.gui_name),
+                  items.filter((i) => i !== tempComponent.gui_name)
                 );
               },
-              ((item.endTime == 0 ? 0.5 : item.endTime) - item.startTime) *
-                1000,
+              ((item.endTime == 0 ? 0.5 : item.endTime) - item.startTime) * 1000
             );
             timeoutIds.current.push(intDurationTimeoutId);
           }
@@ -650,10 +616,7 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           timeoutIds.current.push(finalDelayTimeoutId);
         }
       };
-      const totalOffsetTimeoutId = setTimeout(
-        triggerComponent,
-        item.startTime * 1000,
-      );
+      const totalOffsetTimeoutId = setTimeout(triggerComponent, item.startTime * 1000);
       timeoutIds.current.push(totalOffsetTimeoutId);
     });
   }, [component.components]);
@@ -680,10 +643,10 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
         fadeOutDuration={fadeOutDuration}
       />
       <ButtonLabel>
-        <div className="flex flex-col gap-2">
+        <div className={'flex flex-col gap-2'}>
           <p>{component.gui_name}</p>
           {currentItems.length > 0 && (
-            <div className="grid-rows grid gap-1">
+            <div className={'grid-rows grid gap-1'}>
               <Label>{getCopy('Multi', 'current_items:')}</Label>
               {currentItems.map((v) => (
                 <Label key={v}>{v}</Label>
@@ -701,4 +664,4 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
     </ComponentContainer>
   );
 };
-export { MultiModal, MultiGUIComponent };
+export { MultiGUIComponent, MultiModal };

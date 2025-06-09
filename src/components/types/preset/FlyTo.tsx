@@ -1,31 +1,27 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
-import { getCopy } from '@/utils/copyHelpers';
-import Information from '@/components/common/Information';
-import { formatName, getStringBetween } from '@/utils/apiHelpers';
-import {
-  ConnectionState,
-  useOpenSpaceApiStore,
-  usePropertyStore,
-} from '@/store';
-import { FlyToComponent } from '@/store/ComponentTypes';
-import { useEffect, useState, useMemo, useRef } from 'react';
-import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import ToggleComponent from '@/components/common/Toggle';
-
-import { NavigationAnchorKey } from '@/store/apiStore';
-import ButtonLabel from '@/components/common/ButtonLabel';
-import Toggle from '@/components/common/Toggle';
-import ComponentContainer from '@/components/common/ComponentContainer';
-import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/store/ComponentTypes';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
+import ButtonLabel from '@/components/common/ButtonLabel';
+import ComponentContainer from '@/components/common/ComponentContainer';
+import Information from '@/components/common/Information';
+import ToggleComponent from '@/components/common/Toggle';
+import Toggle from '@/components/common/Toggle';
+import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
+import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { NavigationAnchorKey } from '@/store/apiStore';
+import { useBoundStore } from '@/store/boundStore';
+import { FlyToComponent } from '@/types/components';
+import { ComponentBaseColors } from '@/types/components';
+import { AnyProperty } from '@/types/Property/property';
+import { formatName, getStringBetween } from '@/utils/apiHelpers';
+import { getCopy } from '@/utils/copyHelpers';
 
 interface FlyToGUIProps {
   component: FlyToComponent;
@@ -33,7 +29,7 @@ interface FlyToGUIProps {
 }
 const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   component,
-  shouldRender = true,
+  shouldRender = true
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
@@ -47,24 +43,25 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     if (luaApi) {
       updateComponent(component.id, {
         triggerAction: () => {
-          component.geo
-            ? luaApi.globebrowsing.flyToGeo(
-                component.target,
-                component.lat,
-                component.long,
-                component.alt,
-                component.intDuration,
-              )
-            : luaApi.pathnavigation.flyTo(
-                component.target,
-                component.intDuration,
-              );
+          const { target, geo, lat, long, alt, intDuration } = component;
+          if (!target) {
+            return;
+          }
+
+          if (geo) {
+            if (lat === undefined || long === undefined || alt === undefined) {
+              return;
+            }
+            luaApi.navigation.flyToGeo(target, lat, long, alt, intDuration);
+          } else {
+            luaApi.navigation.flyTo(target, component.intDuration);
+          }
         },
-        isDisabled: false,
+        isDisabled: false
       });
     } else {
       updateComponent(component.id, {
-        isDisabled: true,
+        isDisabled: true
       });
     }
   }, [
@@ -73,7 +70,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     component.target,
     component.long,
     component.intDuration,
-    luaApi,
+    luaApi
   ]);
   return shouldRender ? (
     <ComponentContainer
@@ -93,7 +90,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
       )}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className="flex flex-row gap-2">
+          <div className={'flex flex-row gap-2'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </div>
@@ -102,6 +99,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     </ComponentContainer>
   ) : null;
 };
+
 interface FlyToModalProps {
   component: FlyToComponent | null;
   handleComponentData: (data: Partial<FlyToComponent>) => void;
@@ -109,67 +107,75 @@ interface FlyToModalProps {
 }
 const FlyToModal: React.FC<FlyToModalProps> = ({
   component,
-  handleComponentData,
+  handleComponentData
   //   isOpen,
 }) => {
   // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
-  const camera = usePropertyStore(
-    (state) => state.properties['camera'] || false,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const camera = usePropertyStore((state) => state.camera);
   const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey],
+    (state) => state.properties[NavigationAnchorKey]
   );
   type Option = {
     name: string;
     shouldGeo: boolean;
   };
   const [options, setOptions] = useState<Option[]>();
+
+  const profile = usePropertyStore((state) => state.profile);
+  const setFavorites = usePropertyStore((state) => state.setFavorites);
+  // console.log("PROFILE", profile);
   const favorites = usePropertyStore((state) => state.favorites);
   // const properties = usePropertyStore((state) => state.properties);
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
         .filter((a) => a.includes('.Renderable'))
-        .reduce((acc: Record<string, any>, key: string) => {
-          acc[key] = state.properties[key];
-          return acc;
-        }, {}),
-    ),
+        .reduce(
+          (acc: Record<string, AnyProperty>, key: string) => {
+            acc[key] = state.properties[key];
+            return acc;
+          },
+          {} as Record<string, AnyProperty>
+        )
+    )
   );
 
+  useEffect(() => {
+    setFavorites(profile.markNodes);
+  }, [profile, properties]);
+  // FIX FAVORITESSSSSSS
   useEffect(() => {
     setOptions(
       favorites.map((favorite) => {
         return {
-          name: favorite.name,
-          shouldGeo: !favorite.tags.includes('earth_satellite'),
+          name: favorite,
+          shouldGeo: true
+          // !favorites[favorite].tags.includes('earth_satellite')
         };
-      }),
+      })
     );
   }, [favorites]);
-
+  //
   //in array of ooptiosn, find current option and check if it should be geo
 
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromTopic = usePropertyStore(
-    (state) => state.unsubscribeFromTopic,
-  );
-  const subscribeToProperty = usePropertyStore(
-    (state) => state.subscribeToProperty,
-  );
+  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
+  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty,
+    (state) => state.unsubscribeFromProperty
   );
+  const cancelTopic = usePropertyStore((state) => state.cancelTopic);
+
   useEffect(() => {
     if (connectionState !== ConnectionState.CONNECTED) return;
     subscribeToTopic('camera', 500);
+    subscribeToTopic('profile', 1000);
     subscribeToProperty(NavigationAnchorKey, 1000);
     return () => {
       unsubscribeFromTopic('camera');
+      cancelTopic('profile');
       unsubscribeFromProperty(NavigationAnchorKey);
     };
   }, [connectionState]);
@@ -178,37 +184,33 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       setGeo(component?.geo || false);
     }
   }, [component]);
+
   const [geo, setGeo] = useState<boolean>(component?.geo || false);
   const [long, setLong] = useState<number>(component?.long || 0);
   const [lat, setLat] = useState<number>(component?.lat || 0);
   const [alt, setAlt] = useState<number>(component?.alt || 0);
-  const [intDuration, setIntDuration] = useState<number>(
-    component?.intDuration || 4,
-  );
+  const [intDuration, setIntDuration] = useState<number>(component?.intDuration || 4);
   const [target, setTarget] = useState<string>(component?.target || '');
-  const [lockName, setLockName] = useState<boolean>(
-    component?.lockName || false,
-  );
+  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || '',
+    component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || '',
+    component?.backgroundImage || ''
   );
   const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.flyto,
+    component?.color || ComponentBaseColors.flyto
   );
   const hasGeoOption: boolean = useMemo(() => {
     const shouldGeo =
-      options &&
-      target &&
-      options.find((option) => option.name === target)?.shouldGeo;
+      options && target && options.find((option) => option.name === target)?.shouldGeo;
     if (!shouldGeo) {
       setGeo(false);
     }
     return shouldGeo || false;
   }, [target, options]);
+
   const unitMultiplier = (unit: string) => {
     switch (unit) {
       case 'km':
@@ -227,15 +229,14 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   };
 
   const setFromOpenspace = () => {
-    const shouldGeo = options?.find(
-      (option) => option.name === CurrentAnchor.value,
-    )?.shouldGeo;
-    setTarget(CurrentAnchor.value);
+    const shouldGeo = options?.find((option) => option.name === CurrentAnchor.value)
+      ?.shouldGeo;
+    setTarget(String(CurrentAnchor.value));
     if (shouldGeo) {
-      setLat(camera?.latitude || 0);
-      setLong(camera?.longitude || 0);
+      setLat(camera.latitude || 0);
+      setLong(camera.longitude || 0);
       setAlt(
-        Math.round(camera?.altitude * unitMultiplier(camera.altitudeUnit)) || 0,
+        Math.round(camera.altitude || 0) * unitMultiplier(camera.altitudeUnit || 'm')
       );
       setGeo(true);
     }
@@ -261,7 +262,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       gui_name,
       gui_description,
       backgroundImage,
-      color,
+      color
     });
   }, [
     geo,
@@ -275,20 +276,12 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     gui_description,
     backgroundImage,
     color,
-    handleComponentData,
+    handleComponentData
   ]);
 
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        // // .filter((a) => a.includes('.Renderable'))
-        // .filter(
-        //   (a) =>
-        //     Visibility?.value + 2 >=
-        //     Visibility?.description.AdditionalData.Options.map(
-        //       (obj: Record<number, string>) => Object.values(obj)[0],
-        //     ).indexOf(a),
-        // )
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;
@@ -300,63 +293,55 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         .reduce((acc: Record<string, string>, key) => {
           const newValue = getStringBetween(key, 'Scene.', '.Renderable');
           // console.log(newValue);
-          acc[formatName(newValue)] = getStringBetween(
-            key,
-            'Scene.',
-            '.Renderable',
-          );
+          acc[formatName(newValue)] = getStringBetween(key, 'Scene.', '.Renderable');
           return acc;
         }, {}),
-    [properties],
+    [properties]
   );
   return (
     <>
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid gap-2">
+      <div className={'grid grid-cols-1 gap-4'}>
+        <div className={'grid grid-cols-1 gap-4'}>
+          <div className={'grid gap-2'}>
             <Label>{getCopy('FlyTo', 'target')}</Label>
             <VirtualizedCombobox
               options={Object.keys(sortedKeys)}
               selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
               selectedOption={
-                Object.keys(sortedKeys).find(
-                  (key) => sortedKeys[key] === target,
-                ) || ''
+                Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
               }
-              searchPlaceholder="Search the Scene..."
+              searchPlaceholder={'Search the Scene...'}
               presets={
                 options?.map((v) => ({
                   value: v.name,
-                  label: v.name,
+                  label: v.name
                 })) || null
               }
             />
           </div>
         </div>
-        <div className="my-4 grid grid-cols-3 justify-start gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="duration">
-              {getCopy('FlyTo', 'flight_duration')}
-            </Label>
+        <div className={'my-4 grid grid-cols-3 justify-start gap-4'}>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'duration'}>{getCopy('FlyTo', 'flight_duration')}</Label>
             <Input
-              id="duration"
-              placeholder="Duration to Flight"
-              type="number"
+              id={'duration'}
+              placeholder={'Duration to Flight'}
+              type={'number'}
               // className=""
               value={intDuration}
               onChange={(e) => setIntDuration(parseFloat(e.target.value))}
             />
           </div>
           <Button
-            size="sm"
+            size={'sm'}
             onClick={setFromOpenspace}
-            className="mt-6 whitespace-normal text-xs"
+            className={'mt-6 whitespace-normal text-xs'}
           >
             {getCopy('FlyTo', 'set_target_from_openspace')}
           </Button>
           {/* <div className="flex items-center space-x-2"> */}
-          <div className="grid gap-2">
-            <Label htmlFor="duration">
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'duration'}>
               {getCopy('FlyTo', 'set_coordinates/altitude')}
             </Label>
             <Toggle
@@ -370,33 +355,33 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         {hasGeoOption && (
           <>
             {geo == true && (
-              <div className="grid grid-cols-3 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="alt">{getCopy('FlyTo', 'alt')}</Label>
+              <div className={'grid grid-cols-3 gap-4'}>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'alt'}>{getCopy('FlyTo', 'alt')}</Label>
                   <Input
-                    id="alt"
-                    placeholder="Altitude"
-                    type="number"
+                    id={'alt'}
+                    placeholder={'Altitude'}
+                    type={'number'}
                     value={alt}
                     onChange={(e) => setAlt(parseFloat(e.target.value))}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="lat">{getCopy('FlyTo', 'latitude')}</Label>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'lat'}>{getCopy('FlyTo', 'latitude')}</Label>
                   <Input
-                    id="lat"
+                    id={'lat'}
                     placeholder={getCopy('FlyTo', 'latitude')}
-                    type="number"
+                    type={'number'}
                     value={lat}
                     onChange={(e) => setLat(parseFloat(e.target.value))}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="long">{getCopy('FlyTo', 'longitude')}</Label>
+                <div className={'grid gap-2'}>
+                  <Label htmlFor={'long'}>{getCopy('FlyTo', 'longitude')}</Label>
                   <Input
-                    id="long"
+                    id={'long'}
                     placeholder={getCopy('FlyTo', 'longitude')}
-                    type="number"
+                    type={'number'}
                     value={long}
                     onChange={(e) => setLong(parseFloat(e.target.value))}
                   />
@@ -405,50 +390,46 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             )}
           </>
         )}
-        <div className="grid grid-cols-4 ">
-          <div className="col-span-3 grid grid-cols-3 gap-4">
-            <div className="col-span-2 grid gap-2">
-              <Label htmlFor="gioname">
-                {getCopy('Fade', 'component_name')}
-              </Label>
+        <div className={'grid grid-cols-4 '}>
+          <div className={'col-span-3 grid grid-cols-3 gap-4'}>
+            <div className={'col-span-2 grid gap-2'}>
+              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
               <Input
-                id="guiname"
-                placeholder="Name of Component"
-                type="text"
+                id={'guiname'}
+                placeholder={'Name of Component'}
+                type={'text'}
                 value={gui_name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setGuiName(e.target.value)
                 }
               />
             </div>
-            <div className="col-span-1 mt-6 grid gap-2">
+            <div className={'col-span-1 mt-6 grid gap-2'}>
               <ToggleComponent
-                label="Lock Name"
+                label={'Lock Name'}
                 value={lockName}
                 setValue={setLockName}
               />
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className={'grid grid-cols-1 gap-4'}>
           <BackgroundHolder
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
           />
-          <div className="grid gap-2">
-            <Label htmlFor="description">
-              {getCopy('FlyTo', 'gui_description')}
-            </Label>
+          <div className={'grid gap-2'}>
+            <Label htmlFor={'description'}>{getCopy('FlyTo', 'gui_description')}</Label>
             <Textarea
-              className="w-full"
-              id="description"
+              className={'w-full'}
+              id={'description'}
               value={gui_description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setGuiDescription(e.target.value)
               }
-              placeholder="Type your message here."
+              placeholder={'Type your message here.'}
             />
           </div>
         </div>
@@ -456,4 +437,4 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     </>
   );
 };
-export { FlyToModal, FlyToGUIComponent };
+export { FlyToGUIComponent, FlyToModal };

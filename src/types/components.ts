@@ -1,5 +1,7 @@
 import { StateCreator } from 'zustand';
 
+import { NavigationState } from '@/types/types';
+
 export type LayoutType = 'row' | 'column' | 'grid';
 
 export type ComponentType =
@@ -70,7 +72,7 @@ export const ComponentBaseColors = {
   flyto: '#f59e0b',
   settime: '#f97316',
   sessionplayback: '#ef4444',
-  script: '#0ea5e9',
+  script: '#0ea5e9'
 };
 
 export interface TimeComponent extends ComponentBase {
@@ -113,7 +115,6 @@ export interface SessionPlaybackComponent extends ComponentBase {
   type: 'sessionplayback';
   file: string;
   loop: boolean;
-  forceTime: boolean;
   backgroundImage: string;
   triggerAction: () => void;
 }
@@ -151,7 +152,7 @@ export interface SetTimeComponent extends ComponentBase {
 
 export interface SetNavComponent extends ComponentBase {
   type: 'setnavstate';
-  navigationState: any;
+  navigationState: NavigationState;
   time: Date | string;
   setTime: boolean;
   // fadeScene: boolean;
@@ -240,7 +241,7 @@ export const staticComponents = [
   { value: 'richtext', label: 'Rich Text' },
   { value: 'title', label: 'Title' },
   { value: 'video', label: 'Video' },
-  { value: 'image', label: 'Image' },
+  { value: 'image', label: 'Image' }
 ];
 export const presetComponents = [
   { value: 'fade', label: 'Fade' },
@@ -252,19 +253,19 @@ export const presetComponents = [
   { value: 'sessionplayback', label: 'Session Playback' },
   { value: 'page', label: 'Go To Page' },
   { value: 'action', label: 'Trigger Action' },
-  { value: 'script', label: 'Lua Script' },
+  { value: 'script', label: 'Lua Script' }
 ];
 
 export const propertyComponents = [
   { value: 'boolean', label: 'Boolean' },
   { value: 'number', label: 'Number' },
-  { value: 'trigger', label: 'Trigger' },
+  { value: 'trigger', label: 'Trigger' }
 ];
 
 export const allComponentLabels = [
   ...presetComponents,
   ...staticComponents,
-  ...propertyComponents,
+  ...propertyComponents
 ];
 
 export const multiOptions = [
@@ -278,11 +279,11 @@ export const multiOptions = [
   { value: 'setnavstate', label: 'Set Navigation' },
   { value: 'action', label: 'Trigger Action' },
   { value: 'page', label: 'Go To Page' },
-  { value: 'script', label: 'Lua Script' },
+  { value: 'script', label: 'Lua Script' }
 ];
 
 //create typeguard to determing if opbject is of type MultiOption
-export const isMultiOption = (option: any): option is MultiOption => {
+export const isMultiOption = (option: Component): option is MultiOption => {
   return (
     option.type === 'trigger' ||
     option.type === 'boolean' ||

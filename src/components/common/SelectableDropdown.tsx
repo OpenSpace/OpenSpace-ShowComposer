@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@/components/ui/select';
 
 type Option = {
@@ -30,7 +31,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
   placeholder = 'Select an option',
   selected,
   shouldClear = false,
-  setSelected,
+  setSelected
 }) => {
   const handleSelect = (item: string) => {
     setSelected(item);
@@ -47,7 +48,7 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
       }}
       disabled={options.length === 0}
     >
-      <SelectTrigger className="w-auto">
+      <SelectTrigger className={'w-auto'}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

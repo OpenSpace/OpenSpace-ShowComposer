@@ -1,24 +1,33 @@
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
+
 import basePath from './basePath';
 
 //save out the store to a json file that is saved to drive
 export const saveProject = async () => {
-  const settingsStore = useSettingsStore.getState();
-  const boundStore = useBoundStore.getState();
-  const store = { boundStore, settingsStore };
-  const storeString = JSON.stringify(store);
-  const response = await fetch(`${basePath}api/projects/save`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: storeString,
-  });
-  if (response.ok) {
+  try {
+    const settingsStore = useSettingsStore.getState();
+    const boundStore = useBoundStore.getState();
+    const store = { boundStore, settingsStore };
+    const storeString = JSON.stringify(store);
+    const response = await fetch(`${basePath}api/projects/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: storeString
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to save project');
+    }
+
     return true;
+  } catch (error) {
+    console.error('Error saving project:', error);
+    throw error; // Re-throw to let the caller handle it
   }
-  return false;
 };
 
 export const loadStore = async () => {
@@ -35,14 +44,15 @@ export const loadStore = async () => {
           if (e.target?.result) {
             try {
               const store = JSON.parse(e.target.result as string);
-              // Assuming you want to set the state in your stores
-              // useBoundStore.setState(store.componentStore);
-              // useSettingsStore.setState(store.settingsStore);
-
-              // Return the parsed store
+              // Return the parsed storeE
               resolve(store);
-            } catch (error: any) {
-              reject(new Error('Failed to parse JSON: ' + error.message));
+            } catch (error: unknown) {
+              reject(
+                new Error(
+                  'Failed to parse JSON: ' +
+                    (error instanceof Error ? error.message : String(error))
+                )
+              );
             }
           }
         };
@@ -83,7 +93,7 @@ export const loadStoreImageSeperately = async () => {
         try {
           const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
-            body: formData, // Send the JSON file and images to the server
+            body: formData // Send the JSON file and images to the server
           });
 
           if (!response.ok) {
@@ -92,8 +102,13 @@ export const loadStoreImageSeperately = async () => {
 
           const store = await response.json(); // Get the parsed store from the server
           resolve(store);
-        } catch (error: any) {
-          reject(new Error('Error loading project: ' + error.message));
+        } catch (error: unknown) {
+          reject(
+            new Error(
+              'Error loading project: ' +
+                (error instanceof Error ? error.message : String(error))
+            )
+          );
         }
       } else {
         reject(new Error('No JSON file selected'));
@@ -124,7 +139,7 @@ export const loadStoreToServer = async () => {
         try {
           const response = await fetch(`${basePath}api/projects/load`, {
             method: 'POST',
-            body: formData, // Send the ZIP file to the server
+            body: formData // Send the ZIP file to the server
           });
 
           if (!response.ok) {
@@ -133,8 +148,13 @@ export const loadStoreToServer = async () => {
 
           const store = await response.json(); // Get the parsed store from the server
           resolve(store);
-        } catch (error: any) {
-          reject(new Error('Error loading project: ' + error.message));
+        } catch (error: unknown) {
+          reject(
+            new Error(
+              'Error loading project: ' +
+                (error instanceof Error ? error.message : String(error))
+            )
+          );
         }
       } else {
         reject(new Error('No file selected'));
@@ -148,9 +168,9 @@ export const confirmStoreImport = async (confirm: boolean, tempId: string) => {
   const response = await fetch(`${basePath}api/projects/confirm-import`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ tempId, confirm }), // New fields
+    body: JSON.stringify({ tempId, confirm }) // New fields
   });
 
   if (!response.ok) {
@@ -168,9 +188,9 @@ export const exportProject = () => {
   fetch(`${basePath}api/package`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: storeString,
+    body: storeString
   })
     .then((response) => response.blob())
     .then((blob) => {
@@ -178,10 +198,7 @@ export const exportProject = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${settingsStore.projectName.replace(
-        / /g,
-        '_',
-      )}-${Date.now()}.zip`;
+      a.download = `${settingsStore.projectName.replace(/ /g, '_')}-${Date.now()}.zip`;
       a.click();
       window.URL.revokeObjectURL(url);
     });
@@ -220,9 +237,7 @@ export const fetchGalleryImages = async () => {
   const data = await response.json();
   // remomve trailing slash from basePath
   const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
-  return data.images.map(
-    (image: any) => `${basePathWithoutTrailingSlash}${image}`,
-  );
+  return data.images.map((image: string) => `${basePathWithoutTrailingSlash}${image}`);
 };
 
 export const uploadImage = async (file: File) => {
@@ -231,7 +246,7 @@ export const uploadImage = async (file: File) => {
 
   const response = await fetch(`${basePath}api/upload`, {
     method: 'POST',
-    body: formData, // Send formData
+    body: formData // Send formData
   });
   if (!response.ok) {
     throw new Error('Failed to save image');

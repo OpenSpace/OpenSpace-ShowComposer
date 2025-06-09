@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Menubar,
   MenubarContent,
@@ -8,50 +10,56 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-  MenubarTrigger,
+  MenubarTrigger
 } from '@/components/ui/menubar';
-import { Label } from './ui/label';
+import { useBoundStore, useBoundStoreTemporal, BoundStoreState } from '@/store/boundStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { SettingsStoreState } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
-import { Input } from './ui/input';
-import ImportShowModal from './ImportShowModal';
 import {
   // loadStore,
   exportProject,
-  saveProject,
-  loadProjects,
-  Project,
   loadProject,
+  loadProjects,
   // loadStoreImageSeperately,
   loadStoreToServer,
+  Project,
+  saveProject
 } from '@/utils/saveProject';
-import { useState } from 'react';
+
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import ConfirmationModal from './ConfirmationModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
+import ImportShowModal from './ImportShowModal';
+import LoadProjectModal from './LoadProjectModal';
+import NewPageModal from './NewPageModal';
 import {
   NewProjectModal,
   ProjectSettingsModal,
-  WorkspaceSettingsModal,
+  WorkspaceSettingsModal
 } from './NewProjectModal';
-import { useSettingsStore } from '@/store/settingsStore';
-import NewPageModal from './NewPageModal';
-import LoadProjectModal from './LoadProjectModal';
-import ConfirmationModal from './ConfirmationModal';
+
+interface LoadedStore {
+  boundStore: BoundStoreState;
+  settingsStore: SettingsStoreState;
+  _tempImportId: string;
+}
 
 export function GlobalMenuBar() {
-  const [loadedStore, setLoadedStore] = useState<any>(null);
+  const [loadedStore, setLoadedStore] = useState<LoadedStore | null>(null);
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [isNewPageModalOpen, setIsNewPageModalOpen] = useState(false);
   const [isNewPage, setIsNewPage] = useState(false);
-  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] =
-    useState(false);
+  const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false);
   const [isConnectionSettingsModalOpen, setIsConnectionSettingsModalOpen] =
     useState(false);
   const [isLoadProjectModalOpen, setIsLoadProjectModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
-    (state) => state,
+    (state) => state
   );
   const deletePage = useBoundStore((state) => state.deletePage);
   const currentPage = useBoundStore((state) => state.currentPage);
@@ -62,27 +70,25 @@ export function GlobalMenuBar() {
     {
       name: '1080',
       width: 1920,
-      height: 1080,
+      height: 1080
     },
     {
       name: 'iPad Landscape',
       width: 1366,
-      height: 1024,
+      height: 1024
     },
     {
       name: 'iPad Portrait',
       width: 1024,
-      height: 1366,
-    },
+      height: 1366
+    }
   ];
 
-  const removeAllComponents = useBoundStore(
-    (state) => state.removeAllComponents,
-  );
+  const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
 
   const handleLoadStore = async () => {
     try {
-      const store = await loadStoreToServer();
+      const store = (await loadStoreToServer()) as LoadedStore;
       setLoadedStore(store); // Store the loaded data
       setIsImportShowModalOpen(true); // Open the import modal
     } catch (error) {
@@ -112,7 +118,7 @@ export function GlobalMenuBar() {
 
   return (
     <>
-      <Menubar className="border-0 p-2">
+      <Menubar className={'border-0 p-2'}>
         <MenubarMenu>
           <MenubarTrigger>
             {/* <PlusCircleIcon size={20} /> */}
@@ -128,7 +134,7 @@ export function GlobalMenuBar() {
             <MenubarItem onClick={exportProject}>Export</MenubarItem>
             <MenubarItem
               onClick={() => setIsDeleteAllModalOpen(true)}
-              className="text-red-500"
+              className={'text-red-500'}
             >
               Delete Show
             </MenubarItem>
@@ -164,9 +170,7 @@ export function GlobalMenuBar() {
             >
               Edit Page
             </MenubarItem>
-            <MenubarItem onClick={() => deletePage(currentPage)}>
-              Delete Page
-            </MenubarItem>
+            <MenubarItem onClick={() => deletePage(currentPage)}>Delete Page</MenubarItem>
             <MenubarSeparator />
             <MenubarSub>
               <MenubarSubTrigger>Page Presets</MenubarSubTrigger>
@@ -181,35 +185,31 @@ export function GlobalMenuBar() {
                 ))}
               </MenubarSubContent>
             </MenubarSub>
-            <div className="grid gap-2 p-2">
-              <div className="space-between flex flex-row items-center gap-4">
-                <Label htmlFor="port">
-                  {getCopy('PageButtonMenu', 'width')}
-                </Label>
+            <div className={'grid gap-2 p-2'}>
+              <div className={'space-between flex flex-row items-center gap-4'}>
+                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'width')}</Label>
                 <Input
-                  id="width"
-                  className="h-8 w-40"
-                  type="number"
+                  id={'width'}
+                  className={'h-8 w-40'}
+                  type={'number'}
                   value={pageWidth}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     updatePageSize(parseInt(e.target.value), pageHeight);
                   }}
-                  placeholder="Enter Page Width"
+                  placeholder={'Enter Page Width'}
                 />
               </div>
-              <div className="flex flex-row  items-center gap-4">
-                <Label htmlFor="port">
-                  {getCopy('PageButtonMenu', 'height')}
-                </Label>
+              <div className={'flex flex-row  items-center gap-4'}>
+                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'height')}</Label>
                 <Input
-                  id="height"
-                  className="h-8 w-40"
-                  type="number"
+                  id={'height'}
+                  className={'h-8 w-40'}
+                  type={'number'}
                   value={pageHeight}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     updatePageSize(pageWidth, parseInt(e.target.value));
                   }}
-                  placeholder="Enter Page Height"
+                  placeholder={'Enter Page Height'}
                 />
               </div>
             </div>
@@ -234,13 +234,15 @@ export function GlobalMenuBar() {
         </MenubarMenu>
       </Menubar>
       <ImportShowModal
-        isOpen={isImportShowModalOpen}
+        isOpen={isImportShowModalOpen && loadedStore !== null}
         onClose={() => setIsImportShowModalOpen(false)}
-        store={loadedStore} // Pass the loaded store to the modal
+        store={loadedStore!}
       />
       <DeleteConfirmationModal
         onConfirm={handleDeleteAllConfirm}
-        message="This action cannot be undone. This will permanently delete the components from the project."
+        message={
+          'This action cannot be undone. This will permanently delete the components from the project.'
+        }
         isOpen={isDeleteAllModalOpen}
         setOpen={setIsDeleteAllModalOpen}
       />
@@ -276,7 +278,7 @@ export function GlobalMenuBar() {
       />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
-        onConfirm={() => {}}
+        onConfirm={() => { }}
         message={'Project has been saved!'}
         setOpen={setIsConfirmationModalOpen}
       />

@@ -1,64 +1,64 @@
 import { useEffect, useRef, useState } from 'react';
-import { ThemeProvider } from './components/ThemeProvider';
-import favicon from './assets/images/favicon.png';
-import ComponentModal from './components/ComponentModal';
-import DraggableComponent from './components/DraggableComponent';
-import DroppableWorkspace from './components/DroppableWorkspace';
+import { ImperativePanelHandle } from 'react-resizable-panels';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import {
+  AlignJustify,
+  BookOpenCheck,
+  CirclePlay,
+  Clock,
+  Code,
+  Compass,
+  Group,
+  Hash,
+  History,
+  Image,
+  LetterText,
+  MessageSquareWarning,
+  Plane,
+  SunMoon,
+  Telescope,
+  ToggleRight,
+  Video,
+  View
+} from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
+
 import { Button } from '@/components/ui/button';
 import {
   ResizableHandle,
   ResizablePanel,
-  ResizablePanelGroup,
+  ResizablePanelGroup
 } from '@/components/ui/resizable';
-
-import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Group,
-  Telescope,
-  SunMoon,
-  Plane,
-  History,
-  LetterText,
-  AlignJustify,
-  Video,
-  Image,
-  Clock,
-  Compass,
-  ToggleRight,
-  CirclePlay,
-  Hash,
-  View,
-  BookOpenCheck,
-  Code,
-  MessageSquareWarning,
-} from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
+import favicon from './assets/images/favicon.png';
+import ComponentModal from './components/ComponentModal';
+import { ConnectionStatus } from './components/ConnectionSettings';
+import DraggableComponent from './components/DraggableComponent';
+import DraggablePanel from './components/DraggablePanel';
+import DroppableWorkspace from './components/DroppableWorkspace';
+import FeedbackPanel from './components/FeedbackPanel';
+import GlobalMenuBar from './components/GlobalMenuBar';
+import { LayoutContainer } from './components/layouts/LayoutContainer';
+import LayoutEditModal from './components/layouts/LayoutEditModal';
+import { LayoutToolbar } from './components/layouts/LayoutToolbar';
+import Pagination from './components/Pagination';
+// import PageButtonMenu from './components/PageButtonMenu';
+import PresentModeToggle from './components/PresentModeToggle';
+import { ThemeProvider } from './components/ThemeProvider';
+import ToggleButton from './components/ToggleButton';
+import Undo from './components/Undo';
+import { useBoundStore } from './store/boundStore';
+import { Position } from './store/positionSlice';
+import { MultiComponent } from './types/components';
+import { getCopy } from './utils/copyHelpers';
 import {
   ComponentType,
   ConnectionState,
   useOpenSpaceApiStore,
-  useSettingsStore,
+  useSettingsStore
 } from './store';
-import { v4 as uuidv4 } from 'uuid';
-import { ConnectionStatus } from './components/ConnectionSettings';
-import Pagination from './components/Pagination';
-import DraggablePanel from './components/DraggablePanel';
-import { MultiComponent } from './store/ComponentTypes';
-import { ImperativePanelHandle } from 'react-resizable-panels';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
-import FeedbackPanel from './components/FeedbackPanel';
-// import PageButtonMenu from './components/PageButtonMenu';
-import PresentModeToggle from './components/PresentModeToggle';
-import { getCopy } from './utils/copyHelpers';
-import { LayoutToolbar } from './components/layouts/LayoutToolbar';
-import { Position } from './store/positionSlice';
-import { LayoutContainer } from './components/layouts/LayoutContainer';
-import LayoutEditModal from './components/layouts/LayoutEditModal';
-import { useBoundStore } from './store/boundStore';
-import Undo from './components/Undo';
-import ToggleButton from './components/ToggleButton';
-import GlobalMenuBar from './components/GlobalMenuBar';
 // import { useNavigate } from 'react-router-dom';
 // import TooltipHolder from './components/common/TooltipHolder';
 
@@ -85,13 +85,11 @@ const Editor = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const [currentComponentId, setCurrentComponentId] = useState<string | null>(
-    null,
-  );
+  const [currentComponentId, setCurrentComponentId] = useState<string | null>(null);
   const [currentLayoutId, setCurrentLayoutId] = useState<string | null>(null);
-  const [currentComponentType, setCurrentComponentType] = useState<
-    ComponentType | ''
-  >('');
+  const [currentComponentType, setCurrentComponentType] = useState<ComponentType | ''>(
+    ''
+  );
 
   const components = useBoundStore((state) => {
     return state.components;
@@ -102,25 +100,15 @@ const Editor = () => {
   const removeComponent = useBoundStore((state) => state.removeComponent);
   const createStaticPanels = useBoundStore((state) => state.createPanels);
   const NavPanel = useBoundStore((state) => state.navpanel);
-  const NavPosition = useBoundStore(
-    (state) => state.positions[NavPanel?.id || ''],
-  );
+  const NavPosition = useBoundStore((state) => state.positions[NavPanel?.id || '']);
   const TimePanel = useBoundStore((state) => state.timepanel);
-  const TimePosition = useBoundStore(
-    (state) => state.positions[TimePanel?.id || ''],
-  );
+  const TimePosition = useBoundStore((state) => state.positions[TimePanel?.id || '']);
   const StatusPanel = useBoundStore((state) => state.statuspanel);
-  const StatusPosition = useBoundStore(
-    (state) => state.positions[StatusPanel?.id || ''],
-  );
+  const StatusPosition = useBoundStore((state) => state.positions[StatusPanel?.id || '']);
   const RecordPanel = useBoundStore((state) => state.recordpanel);
-  const RecordPosition = useBoundStore(
-    (state) => state.positions[RecordPanel?.id || ''],
-  );
+  const RecordPosition = useBoundStore((state) => state.positions[RecordPanel?.id || '']);
   const LogPanel = useBoundStore((state) => state.logpanel);
-  const LogPosition = useBoundStore(
-    (state) => state.positions[LogPanel?.id || ''],
-  );
+  const LogPosition = useBoundStore((state) => state.positions[LogPanel?.id || '']);
 
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const copyComponent = useBoundStore((state) => state.copyComponent);
@@ -135,9 +123,7 @@ const Editor = () => {
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
   const projectName = useSettingsStore((state) => state.projectName);
 
-  const connectionState = useOpenSpaceApiStore(
-    (state) => state.connectionState,
-  );
+  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const connect = useOpenSpaceApiStore((state) => state.connect);
 
   useEffect(() => {
@@ -168,7 +154,7 @@ const Editor = () => {
     {
       type: 'setfocus',
       name: getCopy('Main', 'setfocus'),
-      icon: <Telescope />,
+      icon: <Telescope />
     },
     { type: 'fade', name: getCopy('Main', 'fade'), icon: <SunMoon /> },
     { type: 'flyto', name: getCopy('Main', 'flyto'), icon: <Plane /> },
@@ -176,20 +162,20 @@ const Editor = () => {
     {
       type: 'setnavstate',
       name: getCopy('Main', 'setnav'),
-      icon: <Compass />,
+      icon: <Compass />
     },
     {
       type: 'sessionplayback',
       name: getCopy('Main', 'playback'),
-      icon: <Video />,
+      icon: <Video />
     },
     {
       type: 'action',
       name: getCopy('Main', 'action'),
-      icon: <CirclePlay className="h-5 w-5" />,
+      icon: <CirclePlay className={'h-5 w-5'} />
     },
     { type: 'page', name: getCopy('Main', 'page'), icon: <BookOpenCheck /> },
-    { type: 'script', name: getCopy('Main', 'script'), icon: <Code /> },
+    { type: 'script', name: getCopy('Main', 'script'), icon: <Code /> }
   ];
 
   const propertyComponentTypes: Array<ComponentTypeData> = [
@@ -197,60 +183,60 @@ const Editor = () => {
     {
       type: 'boolean',
       name: getCopy('Main', 'boolean'),
-      icon: <ToggleRight />,
+      icon: <ToggleRight />
     },
     {
       type: 'trigger',
       name: getCopy('Main', 'trigger'),
-      icon: <CirclePlay className="h-5 w-5" />,
-    },
+      icon: <CirclePlay className={'h-5 w-5'} />
+    }
   ];
 
   const staticComponentTypes: Array<ComponentTypeData> = [
     {
       type: 'richtext',
       name: getCopy('Main', 'richtext'),
-      icon: <AlignJustify />,
+      icon: <AlignJustify />
     },
     { type: 'title', name: getCopy('Main', 'title'), icon: <LetterText /> },
     { type: 'video', name: getCopy('Main', 'video'), icon: <Video /> },
-    { type: 'image', name: getCopy('Main', 'image'), icon: <Image /> },
+    { type: 'image', name: getCopy('Main', 'image'), icon: <Image /> }
   ];
 
   const timeType = {
     type: 'timepanel',
     name: getCopy('Main', 'timepanel'),
-    icon: <Clock className="h-5 w-5" />,
+    icon: <Clock className={'h-5 w-5'} />
   };
 
   const navType = {
     type: 'navpanel',
     name: getCopy('Main', 'navpanel'),
-    icon: <Compass className="h-5 w-5" />,
+    icon: <Compass className={'h-5 w-5'} />
   };
 
   const statusType = {
     type: 'statuspanel',
     name: getCopy('Main', 'statuspanel'),
-    icon: <View className="h-5 w-5" />,
+    icon: <View className={'h-5 w-5'} />
   };
 
   const recordType = {
     type: 'recordpanel',
     name: getCopy('Main', 'recordpanel'),
-    icon: <Video className="h-5 w-5" />,
+    icon: <Video className={'h-5 w-5'} />
   };
 
   const logType = {
     type: 'logpanel',
     name: getCopy('Main', 'logpanel'),
-    icon: <MessageSquareWarning className="h-5 w-5" />,
+    icon: <MessageSquareWarning className={'h-5 w-5'} />
   };
 
   const allComponentTypes = [
     ...presetComponentTypes,
     ...propertyComponentTypes,
-    ...staticComponentTypes,
+    ...staticComponentTypes
   ];
 
   const handleAddComponent = (type: ComponentType) => {
@@ -261,7 +247,7 @@ const Editor = () => {
   };
   const minimize = (position: Position | null) => {
     updatePosition(position?.id || '', {
-      minimized: !position?.minimized,
+      minimized: !position?.minimized
     });
   };
 
@@ -326,11 +312,13 @@ const Editor = () => {
   }, [isPresentMode]);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
       <TooltipProvider delayDuration={250}>
         <ResizablePanelGroup
-          direction="horizontal"
-          className=" flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50"
+          direction={'horizontal'}
+          className={
+            ' flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
+          }
           onLayout={(newSizes: number[]) => setSizes(newSizes)}
         >
           <ResizablePanel
@@ -340,13 +328,17 @@ const Editor = () => {
             onResize={(size) => handleResize(0, size)}
             collapsedSize={0}
             maxSize={35}
-            className="h-screen max-w-[320px]"
+            className={'h-screen max-w-[320px]'}
           >
-            <div className="h-full w-full  p-4 pr-2 ">
-              <div className="flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800">
-                <div className=" flex-0 felx flex flex-row items-center gap-2 p-2 px-3">
-                  <img src={favicon} width={20} className="p-0" />
-                  <h2 className=" scroll-m-20 text-xs font-bold tracking-tight">
+            <div className={'h-full w-full  p-4 pr-2 '}>
+              <div
+                className={
+                  'flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800'
+                }
+              >
+                <div className={' flex-0 felx flex flex-row items-center gap-2 p-2 px-3'}>
+                  <img src={favicon} width={20} className={'p-0'} />
+                  <h2 className={' scroll-m-20 text-xs font-bold tracking-tight'}>
                     {getCopy('Main', 'interface_name')}
                   </h2>
                 </div>
@@ -360,13 +352,15 @@ const Editor = () => {
                   <div className="text-sm font-normal">{projectName}</div>
                 </div>
                 <Separator /> */}
-                <div className="flex  flex-col gap-2 px-4 py-2 @container">
+                <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
                   <ConnectionStatus />
-                  <div className="flex flex-row items-center gap-2  ">
-                    <div className="text-xs font-bold ">
+                  <div className={'flex flex-row items-center gap-2  '}>
+                    <div className={'text-xs font-bold '}>
                       {getCopy('Main', 'project_name')}
                     </div>
-                    <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    <div
+                      className={'text-sm font-normal text-gray-500 dark:text-gray-400'}
+                    >
                       {projectName}
                     </div>
                   </div>
@@ -375,73 +369,73 @@ const Editor = () => {
                   <Separator />
                 </div>
 
-                <div className="grid gap-2 p-2 @[167px]:gap-2">
-                  <h2 className="ml-2 text-xs font-bold ">
+                <div className={'grid gap-2 p-2 @[167px]:gap-2'}>
+                  <h2 className={'ml-2 text-xs font-bold '}>
                     {getCopy('Main', 'layout')}
                   </h2>
                   <LayoutToolbar />
                   <Separator />
                 </div>
-                <ScrollArea className="flex-0 @container" type="always">
-                  <div className="grid gap-2 p-4 @[167px]:gap-4">
-                    <h2 className="text-xs font-bold ">
+                <ScrollArea className={'flex-0 @container'} type={'always'}>
+                  <div className={'grid gap-2 p-4 @[167px]:gap-4'}>
+                    <h2 className={'text-xs font-bold '}>
                       {getCopy('Main', 'static_components')}
                     </h2>
-                    <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
+                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
                       {staticComponentTypes.map((v, _i) => (
                         <Button
                           key={v.type}
                           size={'sm'}
                           variant={'outline'}
-                          className="flex flex-row items-center justify-between @container"
+                          className={
+                            'flex flex-row items-center justify-between @container'
+                          }
                           onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
-                          <span className="hidden @[40px]:inline">
-                            {v.name}
-                          </span>
+                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}
                     </div>
-                    <h2 className=" text-xs font-bold">
+                    <h2 className={' text-xs font-bold'}>
                       {getCopy('Main', 'preset_components')}
                     </h2>
-                    <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
+                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
                       {presetComponentTypes.map((v, _i) => (
                         <Button
                           key={v.type}
                           size={'sm'}
                           variant={'secondary'}
-                          className="flex flex-row items-center justify-between @container"
+                          className={
+                            'flex flex-row items-center justify-between @container'
+                          }
                           onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
-                          <span className="hidden @[40px]:inline">
-                            {v.name}
-                          </span>
+                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}
                     </div>
-                    <div className="col-2 grid grid-cols-2 gap-2 @[167px]:gap-4">
+                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
                       {propertyComponentTypes.map((v, _i) => (
                         <Button
                           key={v.type}
                           size={'sm'}
                           variant={'default'}
-                          className="flex  flex-row items-center justify-between @container"
+                          className={
+                            'flex  flex-row items-center justify-between @container'
+                          }
                           onClick={() => handleAddComponent(v.type)}
                         >
                           {v.icon}
-                          <span className="hidden @[40px]:inline">
-                            {v.name}
-                          </span>
+                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}
                     </div>
                   </div>
                 </ScrollArea>
                 <Separator />
-                <FeedbackPanel className="p-4" />
+                <FeedbackPanel className={'p-4'} />
               </div>
             </div>
           </ResizablePanel>
@@ -457,7 +451,7 @@ const Editor = () => {
                 className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
                   isPresentMode ? 'p-0' : 't p-4 pl-2'
                 } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
-                id="workspace"
+                id={'workspace'}
               >
                 <DroppableWorkspace>
                   {/* Static Panels */}
@@ -507,10 +501,9 @@ const Editor = () => {
                     if (
                       !component ||
                       Object.values(layouts).some((layout) =>
-                        layout.children.includes(componentId),
+                        layout.children.includes(componentId)
                       ) ||
-                      (component.parentPage &&
-                        component.parentPage != currentPage)
+                      (component.parentPage && component.parentPage != currentPage)
                     ) {
                       return null;
                     }
@@ -528,7 +521,7 @@ const Editor = () => {
                   })}
                 </DroppableWorkspace>
               </div>
-              <div className="absolute bottom-7 left-6 flex flex-row gap-2">
+              <div className={'absolute bottom-7 left-6 flex flex-row gap-2'}>
                 <ToggleButton
                   tooltipText={getCopy('Main', 'navpanel')}
                   icon={navType.icon}
@@ -572,7 +565,7 @@ const Editor = () => {
                   setIndex={goToPage}
                 />
               )}
-              <div className="absolute bottom-7 right-6 flex flex-row gap-2">
+              <div className={'absolute bottom-7 right-6 flex flex-row gap-2'}>
                 {/* <PageButtonMenu /> */}
                 <PresentModeToggle />
               </div>
@@ -582,10 +575,7 @@ const Editor = () => {
               onClose={handleModalClose}
               componentId={currentComponentId}
               type={currentComponentType}
-              icon={
-                allComponentTypes.find((v) => v.type == currentComponentType)
-                  ?.icon
-              }
+              icon={allComponentTypes.find((v) => v.type == currentComponentType)?.icon}
             />
             <LayoutEditModal
               isOpen={showEditModal}

@@ -1,27 +1,27 @@
-export { useSettingsStore } from './settingsStore';
-export { usePropertyStore, selectFilteredProperties } from './propertyStore';
-export { useOpenSpaceApiStore, ConnectionState } from './apiStore';
-export type { Position } from './positionSlice';
 export type {
-  ComponentType,
-  NavComponent,
-  TimeComponent,
-  FadeComponent,
-  SetTimeComponent,
-  RichTextComponent,
-  TitleComponent,
-  VideoComponent,
-  ImageComponent,
-  Component,
   BooleanComponent,
-  TriggerComponent,
-  NumberComponent,
-  SetFocusComponent,
+  Component,
+  ComponentType,
+  FadeComponent,
   FlyToComponent,
-  Toggle,
-  MultiComponent,
+  ImageComponent,
   LayoutType,
+  MultiComponent,
+  NavComponent,
+  NumberComponent,
   PageComponent,
+  RichTextComponent,
   SessionPlaybackComponent,
+  SetFocusComponent,
   SetNavComponent,
-} from './ComponentTypes';
+  SetTimeComponent,
+  TimeComponent,
+  TitleComponent,
+  Toggle,
+  TriggerComponent,
+  VideoComponent
+} from '../types/components';
+export { ConnectionState, useOpenSpaceApiStore } from './apiStore';
+export type { Position } from './positionSlice';
+export { selectFilteredProperties, usePropertyStore } from './propertyStore';
+export { useSettingsStore } from './settingsStore';

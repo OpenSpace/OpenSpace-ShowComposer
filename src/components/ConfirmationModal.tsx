@@ -1,13 +1,14 @@
 import React from 'react';
-import { getCopy } from '@/utils/copyHelpers';
+
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
+  AlertDialogHeader
 } from '@/components/ui/alert-dialog';
+import { getCopy } from '@/utils/copyHelpers';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onConfirm,
   message,
-  setOpen,
+  setOpen
 }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={setOpen}>

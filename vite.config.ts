@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite';
 import eslintPlugin from '@nabla/vite-plugin-eslint';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
+import { defineConfig } from 'vite';
+
 import { viteUploadPlugin } from './vite-plugin-upload';
 
 /**
@@ -16,8 +17,8 @@ export default defineConfig(({ command }) => {
     plugins: [viteUploadPlugin(), react(), eslintPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve('./src'),
-      },
+        '@': path.resolve('./src')
+      }
     },
     build: {
       rollupOptions: {
@@ -26,9 +27,9 @@ export default defineConfig(({ command }) => {
             if (id.includes('node_modules/lodash')) return 'lodash'; // Split Lodash into its own chunk
             if (id.includes('node_modules')) return 'vendor'; // Other node modules go into the vendor chunk
             // Optionally, add more conditions here to split your own code into chunks.
-          },
-        },
-      },
-    },
+          }
+        }
+      }
+    }
   };
 });

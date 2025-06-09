@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { getCopy } from '@/utils/copyHelpers';
+import { useRef } from 'react';
 import { Upload } from 'lucide-react';
+
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
   CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components//ui/card';
 import Image from '@/components/common/Image';
+import { useBoundStore } from '@/store/boundStore';
+import { getCopy } from '@/utils/copyHelpers';
+
+import Pagination from '../Pagination';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
-import Pagination from '../Pagination';
-import { useRef } from 'react';
-import { useBoundStore } from '@/store/boundStore';
 interface GalleryProps {
   images: Array<string>;
   selectedImage: string;
@@ -27,12 +29,12 @@ const ImageGallery: React.FC<GalleryProps> = ({
   selectedImage: initialImage,
   onSelectImage,
   handleClose,
-  setUploadFile,
+  setUploadFile
 }) => {
   // State for modal visibility, pagination, and selected image
   // const [modalVisible, setModalVisible] = useState(false);
   const resetAsyncPreSubmitOperation = useBoundStore(
-    (state) => state.resetAsyncPreSubmitOperation,
+    (state) => state.resetAsyncPreSubmitOperation
   );
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 6; // Adjust based on your preference
@@ -43,8 +45,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
     setSelectedImage(initialImage);
   }, [initialImage]);
   const handleButtonClick = () => {
-    if (fileInputRef?.current)
-      (fileInputRef.current as HTMLInputElement).click();
+    if (fileInputRef?.current) (fileInputRef.current as HTMLInputElement).click();
   };
   // Function to toggle modal visibility
   // function toggleModal() {
@@ -72,8 +73,12 @@ const ImageGallery: React.FC<GalleryProps> = ({
   // Modal component with pagination and image selection
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <Card className="w-[510px] bg-white">
+      <div
+        className={
+          'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
+        }
+      >
+        <Card className={'w-[510px] bg-white'}>
           <CardHeader>
             <CardTitle>{getCopy('ImageGallery', 'image_gallery')}</CardTitle>
             <CardDescription>
@@ -81,69 +86,73 @@ const ImageGallery: React.FC<GalleryProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="grid grid-rows-1 gap-2">
+            <div className={'grid gap-2'}>
+              <div className={'grid grid-cols-3 gap-2'}>
+                <div className={'grid grid-rows-1 gap-2'}>
                   <Label>{getCopy('ImageGallery', 'seleted_image:')}</Label>
                   <Image
-                    alt="Selected image"
-                    className="aspect-square w-full rounded-md border border-dashed  border-black object-cover"
-                    height="150"
+                    alt={'Selected image'}
+                    className={
+                      'aspect-square w-full rounded-md border border-dashed  border-black object-cover'
+                    }
+                    height={'150'}
                     src={selectedImage || initialImage}
-                    width="150"
+                    width={'150'}
                   />
                 </div>
                 <div />
-                <div className="grid grid-rows-1 gap-2">
+                <div className={'grid grid-rows-1 gap-2'}>
                   <Label>{getCopy('ImageGallery', 'upload_new_image:')}</Label>
                   <button
                     onClick={handleButtonClick}
-                    className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed hover:border-black"
+                    className={
+                      'flex aspect-square w-full items-center justify-center rounded-md border border-dashed hover:border-black'
+                    }
                   >
                     <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
+                      type={'file'}
+                      className={'hidden'}
+                      accept={'image/*'}
                       onChange={handleFileChange}
                       ref={fileInputRef}
                       // {...props}
                     />
-                    <Upload className="text-muted-foreground h-8 w-8" />
-                    <span className="sr-only">
-                      {getCopy('ImageGallery', 'upload')}
-                    </span>
+                    <Upload className={'text-muted-foreground h-8 w-8'} />
+                    <span className={'sr-only'}>{getCopy('ImageGallery', 'upload')}</span>
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className={'grid grid-cols-3 gap-2'}>
                 {imagesToDisplay.map((image, _index) => (
                   <button key={image} onClick={() => setSelectedImage(image)}>
                     <Image
-                      alt="Uploaded image"
-                      className="aspect-square w-full rounded-md object-cover"
-                      height="60"
+                      alt={'Uploaded image'}
+                      className={'aspect-square w-full rounded-md object-cover'}
+                      height={'60'}
                       src={image}
-                      width="60"
+                      width={'60'}
                     />
                   </button>
                 ))}
                 {Array.from(
                   {
-                    length: itemsPerPage - imagesToDisplay.length,
+                    length: itemsPerPage - imagesToDisplay.length
                   },
                   (_, index) => (
                     <div
                       key={`placeholder-${index}`}
-                      className="aspect-square w-full rounded-md border-[1.5px] border-dashed border-black/40 bg-white object-cover"
+                      className={
+                        'aspect-square w-full rounded-md border-[1.5px] border-dashed border-black/40 bg-white object-cover'
+                      }
                     ></div>
-                  ),
+                  )
                 )}
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex flex-row justify-end gap-2">
+          <CardFooter className={'flex flex-row justify-end gap-2'}>
             <Button
-              variant="outline"
+              variant={'outline'}
               onClick={() => {
                 resetAsyncPreSubmitOperation();
                 handleClose();
@@ -162,7 +171,7 @@ const ImageGallery: React.FC<GalleryProps> = ({
               {getCopy('ImageGallery', 'add_image')}
             </Button>
           </CardFooter>
-          <div className="relative flex h-24 w-full items-center justify-center ">
+          <div className={'relative flex h-24 w-full items-center justify-center '}>
             <Pagination
               currentIndex={currentPage}
               length={totalPages}

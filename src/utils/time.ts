@@ -1,5 +1,6 @@
 import { throttle } from 'lodash';
-import { usePropertyStore, useOpenSpaceApiStore } from '@/store';
+
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
 export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   // Ensure we don't have white spaces
@@ -46,7 +47,7 @@ interface TimeState {
   hasNextDeltaTimeStep?: boolean;
   hasPrevDeltaTimeStep?: boolean;
 }
-function isDate(date: any): date is Date {
+function isDate(date: Date | string): date is Date {
   return date instanceof Date;
 }
 const updateTime = (newTimeState: TimeState) => {
@@ -61,7 +62,7 @@ const updateTime = (newTimeState: TimeState) => {
     if (isDate(newTime)) {
       newState.time = newTime;
     } else {
-      let ztime = new Date(dateStringWithTimeZone(newTime));
+      const ztime = new Date(dateStringWithTimeZone(newTime));
 
       if (!isNaN(ztime as any)) {
         newState.time = ztime;
@@ -92,45 +93,53 @@ async function jumpToTime(
   newTime: Date,
   interpolate: boolean,
   fadeTime: number,
-  fadeScene: boolean,
+  fadeScene: boolean
 ) {
-  let timeNow = usePropertyStore.getState().time?.['timeCapped'];
-  const luaApi = useOpenSpaceApiStore.getState().luaApi;
-  // console.log('NEW TIME: ', newTime);
-  if (!isDate(timeNow)) {
-    timeNow = new Date(timeNow);
-  }
-  if (!isDate(newTime)) {
-    newTime = new Date(newTime);
-  }
-  const timeDiffSeconds = Math.round(
-    Math.abs((timeNow as Date).getTime() - (newTime as Date).getTime()) / 1000,
-  );
+  const timeNow = usePropertyStore.getState().time?.['timeCapped'];
+  const { luaApi } = useOpenSpaceApiStore.getState();
+  if (timeNow) {
+    // console.log('NEW TIME: ', newTime);
+    const timeNowAsDate: Date = new Date(timeNow);
+    // if (!isDate(timeNow)) {
+    //   timeNowAsDate = new Date(timeNow);
+    // }
 
-  // console.log(timeDiffSeconds);
-  const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
-  if (fadeScene && diffBiggerThanADay && interpolate) {
-    const promise = new Promise((resolve) => {
-      luaApi.setPropertyValueSingle(
-        'RenderEngine.BlackoutFactor',
-        0,
-        fadeTime / 2.0,
-        'QuadraticEaseOut',
-      );
-      setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
-    });
-    await promise;
-    luaApi.time.setTime(newTime);
-    luaApi.setPropertyValueSingle(
-      'RenderEngine.BlackoutFactor',
-      1,
-      fadeTime / 2.0,
-      'QuadraticEaseIn',
+    // let newTimeAsDate: Date = new Date(newTime);
+    // if (!isDate(newTime)) {
+    //   newTimeAsDate = new Date(newTime);
+    // }
+    const timeDiffSeconds = Math.round(
+      Math.abs(timeNowAsDate.getTime() - newTime.getTime()) / 1000
     );
-  } else if (!interpolate) {
-    luaApi.time.setTime(newTime);
-  } else {
-    luaApi.time.interpolateTime(newTime, fadeTime);
+
+    // console.log(timeDiffSeconds);
+    const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
+    if (fadeScene && diffBiggerThanADay && interpolate) {
+      const promise = new Promise((resolve) => {
+        luaApi?.setPropertyValueSingle(
+          'RenderEngine.BlackoutFactor',
+          0,
+          fadeTime / 2.0,
+          'QuadraticEaseOut'
+        );
+        setTimeout(() => resolve('done!'), (fadeTime / 2.0) * 1000);
+      });
+      await promise;
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.setTime(fixedTimeString);
+      luaApi?.setPropertyValueSingle(
+        'RenderEngine.BlackoutFactor',
+        1,
+        fadeTime / 2.0,
+        'QuadraticEaseIn'
+      );
+    } else if (!interpolate) {
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.setTime(fixedTimeString);
+    } else {
+      const fixedTimeString = newTime.toJSON().replace('Z', '');
+      luaApi?.time.interpolateTime(fixedTimeString, fadeTime);
+    }
   }
 }
 
@@ -149,4 +158,4 @@ function formatDate(date: Date) {
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-export { updateTime, jumpToTime, isDate, formatDate };
+export { formatDate, isDate, jumpToTime, updateTime };

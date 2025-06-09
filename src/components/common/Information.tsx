@@ -1,10 +1,7 @@
-import { Info } from 'lucide-react';
 import { ReactNode } from 'react';
-import {
-  TooltipTrigger,
-  Tooltip,
-  TooltipContent,
-} from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
+
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const Information = ({ content }: { content: ReactNode | string }) => {
   return (
@@ -15,8 +12,8 @@ const Information = ({ content }: { content: ReactNode | string }) => {
             <Info size={16} />
           </TooltipTrigger>
           <TooltipContent
-            sticky="always"
-            className="z-[999999] max-w-[200px] bg-white"
+            sticky={'always'}
+            className={'z-[999999] max-w-[200px] bg-white'}
           >
             {content}
           </TooltipContent>

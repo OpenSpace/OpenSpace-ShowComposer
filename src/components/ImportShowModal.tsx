@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useBoundStore } from '@/store/boundStore';
+import { v4 as uuidv4 } from 'uuid';
+
+import ToggleComponent from '@/components/common/Toggle';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,28 +10,41 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
-import ToggleComponent from '@/components/common/Toggle';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Position, useSettingsStore } from '@/store';
 import { cn } from '@/lib/utils';
-import { ComponentBase, LayoutBase, Page } from '@/store/ComponentTypes';
-import { v4 as uuidv4 } from 'uuid';
-import { allComponentLabels } from '@/store/ComponentTypes';
+import { Position, useSettingsStore } from '@/store';
+import { BoundStoreState, useBoundStore } from '@/store/boundStore';
+import { SettingsStoreState } from '@/store/settingsStore';
+import { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
+import { allComponentLabels } from '@/types/components';
 import { confirmStoreImport } from '@/utils/saveProject';
+
+type MultiOption = {
+  component: MultiComponent['id'];
+  buffer: number;
+  startTime: number;
+  endTime: number;
+  chained: boolean;
+};
+
 interface ImportShowModalProps {
   isOpen: boolean;
   onClose: () => void;
-  store: any; // Replace with the appropriate type for your store
+  store: {
+    boundStore: BoundStoreState;
+    settingsStore: SettingsStoreState;
+    _tempImportId: string;
+  }; // Replace with the appropriate type for your store
 }
 type SelectedPage = {
   name: string;
@@ -37,11 +52,7 @@ type SelectedPage = {
   components: string[];
 };
 
-const ImportShowModal: React.FC<ImportShowModalProps> = ({
-  isOpen,
-  onClose,
-  store,
-}) => {
+const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, store }) => {
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
@@ -52,23 +63,17 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
   };
 
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();
-  const setProjectSettings = useSettingsStore(
-    (state) => state.setProjectSettings,
-  );
-  const removeAllComponents = useBoundStore(
-    (state) => state.removeAllComponents,
-  );
+  const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
+  const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
   useEffect(() => {
     if (store && store.boundStore) {
-      const parsedPages = store.boundStore.pages.map(
-        (page: any, index: number) => {
-          return {
-            name: page.name ? page.name : `${index + 1}`,
-            components: page.components,
-            id: page.id,
-          };
-        },
-      );
+      const parsedPages = store.boundStore.pages.map((page: Page, index: number) => {
+        return {
+          name: page.name ? page.name : `${index + 1}`,
+          components: page.components,
+          id: page.id
+        };
+      });
       setPages(parsedPages);
     }
   }, [store]);
@@ -80,7 +85,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
         newSelectedPages.push({
           name: `${index + 1}`,
           id: page.id,
-          components: page.components,
+          components: page.components
         });
       });
     }
@@ -113,12 +118,12 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     const idMap: Record<string, string> = {};
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.boundStore.pages.find(
-        (p: Page) => p.id === selectedPage.id,
+      const page: Page | undefined = store.boundStore.pages.find(
+        (p: Page) => p.id === selectedPage.id
       );
-      idMap[page.id] = uuidv4();
-      selectedFullPages.add(page);
       if (page) {
+        idMap[page.id] = uuidv4();
+        selectedFullPages.add(page);
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
           const component = store.boundStore.components[componentId];
@@ -128,10 +133,10 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
-              component.components.forEach((childId: string) => {
-                const component = store.boundStore.components[childId];
+              (component as MultiComponent).components.forEach((child: MultiOption) => {
+                const component = store.boundStore.components[child.component];
                 if (component) {
-                  idMap[childId] = uuidv4();
+                  idMap[child.component] = uuidv4();
                   selectedComponents.add(component);
                 }
                 //   selectedComponents.add(childId);
@@ -154,7 +159,9 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     });
 
     // Function to replace old IDs with new IDs based on the idMap
-    const replaceIdsInString = (items: any[]) => {
+    const replaceIdsInString = (
+      items: ComponentBase[] | Position[] | LayoutBase[] | Page[]
+    ) => {
       const jsonString = JSON.stringify(items);
       let updatedString = jsonString;
 
@@ -170,9 +177,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
 
     // Replace IDs in the arrays before adding to the store
     const updatedFullPages = replaceIdsInString(Array.from(selectedFullPages));
-    const updatedComponents = replaceIdsInString(
-      Array.from(selectedComponents),
-    );
+    const updatedComponents = replaceIdsInString(Array.from(selectedComponents));
     const updatedPositions = replaceIdsInString(Array.from(selectedPositions));
     const updatedLayouts = replaceIdsInString(Array.from(selectedLayouts));
 
@@ -189,7 +194,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     pageHeight: state.pageHeight || 1920,
     pageWidth: state.pageWidth || 1080,
     projectName: '',
-    projectDescription: '',
+    projectDescription: ''
   }));
 
   const handleImportToNewShow = async () => {
@@ -199,11 +204,11 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     const selectedFullPages = new Set<Page>();
 
     selectedPages.forEach((selectedPage) => {
-      const page: Page = store.boundStore.pages.find(
-        (p: Page) => p.id === selectedPage.id,
+      const page: Page | undefined = store.boundStore.pages.find(
+        (p: Page) => p.id === selectedPage.id
       );
-      selectedFullPages.add(page);
       if (page) {
+        selectedFullPages.add(page);
         // Add components from the selected page
         page.components.forEach((componentId: string) => {
           const component = store.boundStore.components[componentId];
@@ -212,8 +217,8 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
             selectedComponents.add(component);
             if (component.type === 'multi') {
               // If it's a multi-component, add its child components
-              component.components.forEach((childId: string) => {
-                const component = store.boundStore.components[childId];
+              (component as MultiComponent).components.forEach((child: MultiOption) => {
+                const component = store.boundStore.components[child.component];
                 if (component) {
                   selectedComponents.add(component);
                 }
@@ -240,7 +245,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     useBoundStore.setState({
       pages: Array.from(selectedFullPages),
       currentPage: selectedFullPages.values().next().value?.id || '',
-      currentPageIndex: 0,
+      currentPageIndex: 0
     });
 
     // addPages(Array.from(selectedFullPages));
@@ -251,7 +256,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
     setProjectSettings({
       ...initialState,
       projectName: '',
-      projectDescription: '',
+      projectDescription: ''
     });
     //open new project settings
 
@@ -264,12 +269,12 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
       {/* <AlertDialogTrigger asChild>
         <Button variant="secondary">Import Show</Button>
       </AlertDialogTrigger> */}
-      <AlertDialogContent className="w-full max-w-3xl">
+      <AlertDialogContent className={'w-full max-w-3xl'}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-gray-900 dark:text-gray-100">
+          <AlertDialogTitle className={'text-gray-900 dark:text-gray-100'}>
             Import Show
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-700 dark:text-gray-300">
+          <AlertDialogDescription className={'text-gray-700 dark:text-gray-300'}>
             Select Pages you want to add to current Show.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -301,41 +306,34 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
                 // selected={selectedPages.has(page.name)}
                 className={cn(
                   selectedPages.find((p) => p.id === page.id) &&
-                    'bg-gray-100 dark:bg-gray-800',
+                    'bg-gray-100 dark:bg-gray-800'
                 )}
               >
                 <TableCell>
                   <Checkbox
-                    className="peer"
-                    checked={
-                      selectedPages.find((p) => p.id === page.id) !== undefined
-                    }
+                    className={'peer'}
+                    checked={selectedPages.find((p) => p.id === page.id) !== undefined}
                     onCheckedChange={() => handlePageSelect(page)}
                   />
                 </TableCell>
-                <TableCell className="dark:text-gray-100">
-                  {page.name}
-                </TableCell>
+                <TableCell className={'dark:text-gray-100'}>{page.name}</TableCell>
                 <TableCell>
                   {page.components
                     .filter((v) => !store.boundStore.layouts[v])
                     .map((componentId, index) => {
-                      const component =
-                        store.boundStore.components[componentId];
+                      const component = store.boundStore.components[componentId];
                       return (
                         <span
                           key={componentId}
-                          className="text-gray-700 dark:text-gray-300"
+                          className={'text-gray-700 dark:text-gray-300'}
                         >
                           {component && component.gui_name?.length > 0
                             ? component.gui_name
-                            : allComponentLabels.find(
-                                (v) => v.value === component?.type,
-                              )?.label}
+                            : allComponentLabels.find((v) => v.value === component?.type)
+                                ?.label}
                           {index <
-                          page.components.filter(
-                            (v) => !store.boundStore.layouts[v],
-                          ).length -
+                          page.components.filter((v) => !store.boundStore.layouts[v])
+                            .length -
                             1
                             ? ', '
                             : ''}
@@ -362,9 +360,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({
           <AlertDialogAction onClick={handleImportToCurrentShow}>
             Import Pages To Current Show
           </AlertDialogAction>
-          <AlertDialogAction onClick={handleImport}>
-            Import Full Show
-          </AlertDialogAction>
+          <AlertDialogAction onClick={handleImport}>Import Full Show</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

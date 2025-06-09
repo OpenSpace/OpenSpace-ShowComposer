@@ -1,59 +1,59 @@
 // ComponentModal.tsx
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  ComponentType,
-  TitleComponent,
-  Component,
-  SetTimeComponent,
-  BooleanComponent,
-  FlyToComponent,
-  SetFocusComponent,
-  TriggerComponent,
-  FadeComponent,
-  NumberComponent,
-  VideoComponent,
-  RichTextComponent,
-} from '@/store';
-import { TitleModal } from './types/static/Title';
-import { RichTextModal } from './types/static/RichText';
-import { SetTimeModal } from './types/preset/SetTime';
-import { FlyToModal } from './types/preset/FlyTo';
-import { FadeModal } from './types/preset/Fade';
-import { FocusModal } from './types/preset/Focus';
-import { BoolModal } from './types/property/Boolean';
-import { TriggerModal } from './types/property/Trigger';
-import { NumberModal } from './types/property/Number';
-import { VideoModal } from './types/static/Video';
-import { MultiModal } from './types/preset/Multi';
-import { ImageModal } from './types/static/Image';
-import { ScriptModal } from './types/preset/Script';
-import { SessionPlaybackModal } from './types/preset/SessionPlayback';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardFooter,
-  CardTitle,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
-
+import {
+  BooleanComponent,
+  Component,
+  ComponentType,
+  FadeComponent,
+  FlyToComponent,
+  NumberComponent,
+  RichTextComponent,
+  SetFocusComponent,
+  SetTimeComponent,
+  TitleComponent,
+  TriggerComponent,
+  VideoComponent
+} from '@/store';
+import { useBoundStore } from '@/store/boundStore';
 import {
   ActionTriggerComponent,
+  allComponentLabels,
   ImageComponent,
   MultiComponent,
   PageComponent,
   ScriptComponent,
   SessionPlaybackComponent,
-  SetNavComponent,
-  allComponentLabels,
-} from '@/store/ComponentTypes';
-
-import { SetNavModal } from './types/preset/SetNavigation';
-import { PageModal } from './types/preset/Page';
+  SetNavComponent
+} from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
+
 import { ActionTriggerModal } from './types/preset/ActionTrigger';
-import { useBoundStore } from '@/store/boundStore';
+import { FadeModal } from './types/preset/Fade';
+import { FlyToModal } from './types/preset/FlyTo';
+import { FocusModal } from './types/preset/Focus';
+import { MultiModal } from './types/preset/Multi';
+import { PageModal } from './types/preset/Page';
+import { ScriptModal } from './types/preset/Script';
+import { SessionPlaybackModal } from './types/preset/SessionPlayback';
+import { SetNavModal } from './types/preset/SetNavigation';
+import { SetTimeModal } from './types/preset/SetTime';
+import { BoolModal } from './types/property/Boolean';
+import { NumberModal } from './types/property/Number';
+import { TriggerModal } from './types/property/Trigger';
+import { ImageModal } from './types/static/Image';
+import { RichTextModal } from './types/static/RichText';
+import { TitleModal } from './types/static/Title';
+import { VideoModal } from './types/static/Video';
 
 interface ComponentModalProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ interface ComponentModalProps {
 enum AsyncStatus {
   False = 'false',
   True = 'true',
-  Pending = 'pending',
+  Pending = 'pending'
 }
 const ComponentModal: React.FC<ComponentModalProps> = ({
   isOpen,
@@ -77,29 +77,27 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   componentId,
   type,
   initialData = {},
-  icon,
+  icon
 }) => {
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const removeComponent = useBoundStore((state) => state.removeComponent);
-  const asyncPreSubmitOperation = useBoundStore(
-    (state) => state.asyncPreSubmitOperation,
-  );
+  const asyncPreSubmitOperation = useBoundStore((state) => state.asyncPreSubmitOperation);
   const resetAsyncPreSubmitOperation = useBoundStore(
-    (state) => state.resetAsyncPreSubmitOperation,
+    (state) => state.resetAsyncPreSubmitOperation
   );
 
   const executeAndResetAsyncPreSubmitOperation = useBoundStore(
-    (state) => state.executeAndResetAsyncPreSubmitOperation,
+    (state) => state.executeAndResetAsyncPreSubmitOperation
   );
   const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
-    AsyncStatus.False,
+    AsyncStatus.False
   );
 
   const components = useBoundStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
   const [componentData, setComponentData] = useState<Partial<Component>>({
-    ...initialData,
+    ...initialData
   });
 
   useEffect(() => {
@@ -118,13 +116,11 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       if (component) {
         if (component.type == 'multi') {
           Object.entries(components)
-            .filter(
-              ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
-            )
+            .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
             .forEach(([id, c]) => {
               if (c.isMulti === 'pendingSave') {
                 updateComponent(id, {
-                  isMulti: 'true',
+                  isMulti: 'true'
                 });
               } else if (c.isMulti === 'pendingDelete') {
                 removeComponent(id);
@@ -132,7 +128,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             });
         }
         updateComponent(componentId, {
-          ...componentData,
+          ...componentData
         });
       } else {
         addComponent({
@@ -142,18 +138,16 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
           isMulti: initialData.isMulti || 'false',
           gui_description: '',
           gui_name: '',
-          ...componentData,
+          ...componentData
         });
 
         if (type == 'multi') {
           Object.entries(components)
-            .filter(
-              ([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true',
-            )
+            .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
             .forEach(([id, c]) => {
               if (c.isMulti === 'pendingSave') {
                 updateComponent(id, {
-                  isMulti: 'true',
+                  isMulti: 'true'
                 });
               } else if (c.isMulti === 'pendingDelete') {
                 removeComponent(id);
@@ -184,7 +178,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
             // });
           } else if (c.isMulti === 'pendingDelete') {
             updateComponent(id, {
-              isMulti: 'true',
+              isMulti: 'true'
             });
           }
         });
@@ -336,36 +330,35 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       );
       break;
     default:
-      content = (
-        <div>{getCopy('ComponentModal', 'unknown_component_type')}</div>
-      );
+      content = <div>{getCopy('ComponentModal', 'unknown_component_type')}</div>;
   }
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <Card className="w-[510px] bg-white">
+    <div
+      className={
+        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
+      }
+    >
+      <Card className={'w-[510px] bg-white'}>
         <CardHeader>
           <CardTitle>
-            <div className="flex flex-row gap-2">
+            <div className={'flex flex-row gap-2'}>
               {icon}
               {component
                 ? `Edit ${
-                    allComponentLabels.find((c) => c.value == component.type)
-                      ?.label || 'Component'
+                    allComponentLabels.find((c) => c.value == component.type)?.label ||
+                    'Component'
                   } Component`
                 : `Create ${
-                    allComponentLabels.find((c) => c.value == type)?.label ||
-                    'Component'
+                    allComponentLabels.find((c) => c.value == type)?.label || 'Component'
                   } Component`}
             </div>
           </CardTitle>
-          <CardDescription>
-            {getCopy('ComponentModal', 'configure_copy')}
-          </CardDescription>
+          <CardDescription>{getCopy('ComponentModal', 'configure_copy')}</CardDescription>
         </CardHeader>
         <CardContent>{content}</CardContent>
         <CardFooter>
-          <div className="flex w-full flex-row justify-end gap-2">
+          <div className={'flex w-full flex-row justify-end gap-2'}>
             <Button variant={'outline'} onClick={handleCancel}>
               {getCopy('ComponentModal', 'cancel')}
             </Button>
