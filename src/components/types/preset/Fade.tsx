@@ -19,7 +19,8 @@ import {
   FadeComponent,
   Toggle,
   useOpenSpaceApiStore,
-  usePropertyStore} from '@/store';
+  usePropertyStore
+} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';

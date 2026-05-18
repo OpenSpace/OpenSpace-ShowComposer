@@ -17,7 +17,7 @@ import {
   useBoundStore,
   useBoundStoreTemporal
 } from '@/store/boundStore';
-import { SettingsStoreState,useSettingsStore } from '@/store/settingsStore';
+import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   // loadStore,

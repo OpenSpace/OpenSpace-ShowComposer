@@ -27,6 +27,7 @@ const LogPanel = () => {
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   const errorLog = usePropertyStore((state) => state.errorLog);
+  const topic = usePropertyStore((state) => state.topicSubscriptions.errorLog);
 
   const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
 
@@ -36,15 +37,20 @@ const LogPanel = () => {
     }
 
     setLogLevel(value);
-    subscribeToTopic('errorLog', undefined, {
-      settings: {
-        timeStamping: true,
-        dateStamping: true,
-        categoryStamping: true,
-        logLevelStamping: true,
-        logLevel: value
-      }
-    });
+
+    if (topic) {
+      topic.subscription.talk({ event: 'update_log_level', logLevel: value });
+    } else {
+      subscribeToTopic('errorLog', undefined, {
+        settings: {
+          timeStamping: true,
+          dateStamping: true,
+          categoryStamping: true,
+          logLevelStamping: true,
+          logLevel: value
+        }
+      });
+    }
   };
 
   useEffect(() => {

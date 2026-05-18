@@ -196,7 +196,7 @@ export const usePropertyStore = create<State>()(
       subscribeToTopic: <T extends TopicId>(
         topicName: T,
         throttleAmt: number = 200,
-        payload?: TopicPayload<T>
+        payload?: Partial<TopicPayload<T>>
       ) =>
         set(
           (state) => {

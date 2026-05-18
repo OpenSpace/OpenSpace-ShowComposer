@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown,ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
 

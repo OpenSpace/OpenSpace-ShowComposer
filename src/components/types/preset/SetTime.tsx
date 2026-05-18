@@ -16,7 +16,8 @@ import {
   ConnectionState,
   SetTimeComponent as SetTimeType,
   useOpenSpaceApiStore,
-  usePropertyStore} from '@/store';
+  usePropertyStore
+} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
