@@ -294,7 +294,8 @@ export const isMultiOption = (option: Component): option is MultiOption => {
     option.type === 'sessionplayback' ||
     option.type === 'setnavstate' ||
     option.type === 'action' ||
-    option.type === 'page'
+    option.type === 'page' ||
+    option.type === 'script'
   );
 };
 
