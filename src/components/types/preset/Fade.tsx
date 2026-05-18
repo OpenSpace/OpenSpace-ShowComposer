@@ -17,10 +17,9 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   ConnectionState,
   FadeComponent,
+  Toggle,
   useOpenSpaceApiStore,
-  usePropertyStore
-} from '@/store';
-import { Toggle } from '@/store';
+  usePropertyStore} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';

@@ -3,7 +3,6 @@
 
 import { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
 
-import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { PropertyVisibilityNumber } from '@/types/enums';
 import { PropertyOwnerRedux } from '@/types/types';
 // import { PropertyOwner, PropertyOwners } from '@/types/types';

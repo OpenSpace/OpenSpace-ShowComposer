@@ -1,5 +1,4 @@
-import { Fragment } from 'react';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { AudioWaveform } from 'lucide-react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

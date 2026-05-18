@@ -21,6 +21,7 @@ import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
   Component,
+  ComponentBaseColors,
   ComponentType,
   FadeComponent,
   FlyToComponent,
@@ -29,9 +30,7 @@ import {
   MultiOption,
   multiOptions as MultiOptions,
   SetFocusComponent,
-  TriggerComponent
-} from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+  TriggerComponent} from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { BoolGUIComponent } from '../property/Boolean';

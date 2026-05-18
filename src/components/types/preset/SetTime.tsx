@@ -12,8 +12,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { SetTimeComponent as SetTimeType } from '@/store';
+import {
+  ConnectionState,
+  SetTimeComponent as SetTimeType,
+  useOpenSpaceApiStore,
+  usePropertyStore} from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';

@@ -14,8 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { SessionPlaybackComponent } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 //set up recording state

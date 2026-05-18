@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useOpenSpaceApiStore, useSettingsStore } from '@/store'; // Adjust the import path accordingly
-import { ConnectionState } from '@/store';
+import { ConnectionState,useOpenSpaceApiStore, useSettingsStore } from '@/store'; // Adjust the import path accordingly
 import { getCopy } from '@/utils/copyHelpers';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';

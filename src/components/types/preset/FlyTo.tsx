@@ -8,7 +8,6 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import Information from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
-import Toggle from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Button } from '@/components/ui/button';
@@ -344,7 +343,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             <Label htmlFor={'duration'}>
               {getCopy('FlyTo', 'set_coordinates/altitude')}
             </Label>
-            <Toggle
+            <ToggleComponent
               value={geo}
               disabled={!hasGeoOption}
               setValue={setGeo}

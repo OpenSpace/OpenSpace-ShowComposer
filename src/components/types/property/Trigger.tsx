@@ -18,7 +18,6 @@ import {
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-import { AnyProperty } from '@/types/Property/property';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerTrigger } from '@/utils/triggerHelpers';
@@ -105,7 +104,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
   );
 
   useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property] as AnyProperty;
+    const propertyData = usePropertyStore.getState().properties[property];
     if (!propertyData || lockName) return;
     setGuiName(formatName(propertyData.uri));
     setGuiDescription(propertyData.metaData.description);

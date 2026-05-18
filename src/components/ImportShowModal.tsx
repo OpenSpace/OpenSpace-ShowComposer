@@ -25,8 +25,13 @@ import { cn } from '@/lib/utils';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
 import { SettingsStoreState } from '@/store/settingsStore';
-import { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
-import { allComponentLabels } from '@/types/components';
+import {
+  allComponentLabels,
+  ComponentBase,
+  LayoutBase,
+  MultiComponent,
+  Page
+} from '@/types/components';
 import { confirmStoreImport } from '@/utils/saveProject';
 
 type MultiOption = {

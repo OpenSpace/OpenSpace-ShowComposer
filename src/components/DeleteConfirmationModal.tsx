@@ -53,7 +53,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           <AlertDialogCancel
             onClick={() => {
               setOpen(false);
-              onClose && onClose();
+              if (onClose) {
+                onClose();
+              }
             }}
           >
             {getCopy('DeleteConfirmationModal', 'cancel')}
