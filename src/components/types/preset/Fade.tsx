@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { capitalize } from 'lodash';
+import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -22,7 +23,6 @@ import {
 import { Toggle } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-import { AnyProperty } from '@/types/Property/property';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';

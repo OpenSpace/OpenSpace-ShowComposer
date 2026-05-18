@@ -1,11 +1,11 @@
 import { throttle } from 'lodash';
-import { Topic } from 'openspace-api-js';
+import { Topic } from 'openspace-api-js/topics';
+import { AnyProperty, LogMessage, TopicId, TopicPayload } from 'openspace-api-js/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { RecordingState } from '@/types/enums';
-import { AnyProperty } from '@/types/Property/property';
 import {
   Action,
   CameraState,
@@ -13,7 +13,6 @@ import {
   ProfileState,
   SessionRecordingState
 } from '@/types/types';
-import { ErrorLog } from '@/types/types';
 import { restrictNumbersToDecimalPlaces } from '@/utils/math';
 import { updateTime } from '@/utils/time';
 
@@ -21,7 +20,7 @@ import { useOpenSpaceApiStore } from './apiStore';
 
 type Subscription = {
   count: number;
-  subscription: Topic;
+  subscription: Topic<TopicId>;
 };
 
 export enum ConnectionState {
@@ -32,7 +31,7 @@ export enum ConnectionState {
 //need to work this out
 interface State {
   propertySubscriptions: Record<string, Subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
-  topicSubscriptions: Record<string, Subscription>;
+  topicSubscriptions: Partial<Record<TopicId, Subscription>>;
   properties: Record<string, AnyProperty>;
   time: OpenSpaceTimeState;
   sessionRecording: SessionRecordingState;
@@ -40,23 +39,21 @@ interface State {
   profile: ProfileState;
   favorites: string[];
   actions: Record<string, Action>;
-  errorLog: Array<ErrorLog>;
-  setProperty: (name: string, value: AnyProperty) => void;
+  errorLog: Array<LogMessage>;
+  setProperty: (name: string, value: any) => void;
   setProperties: (properties: Record<string, AnyProperty>) => void;
   setFavorites: (favorites: string[]) => void;
-  refreshTopic: (name: string, properties?: string[]) => void;
   subscribeToProperty: (name: string, throttleAmt?: number) => void;
   unsubscribeFromProperty: (name: string) => void;
-  subscribeToTopic: (
-    topicName: string,
+  subscribeToTopic: <T extends TopicId>(
+    topicName: T,
     throttleAmt?: number,
-    properties?: string[],
-    settings?: any
+    payload?: Partial<TopicPayload<T>>
   ) => void;
-  unsubscribeFromTopic: (topicName: string) => void;
-  cancelTopic: (topicName: string) => void;
-  connectToTopic: (topicName: string) => void;
-  disconnectFromTopic: (topicName: string) => void;
+  unsubscribeFromTopic: <T extends TopicId>(topicName: T) => void;
+  cancelTopic: <T extends TopicId>(topicName: T) => void;
+  connectToTopic: <T extends TopicId>(topicName: T) => void;
+  disconnectFromTopic: <T extends TopicId>(topicName: T) => void;
   getActions: () => void;
 }
 const initialSessionRecordingState: SessionRecordingState = {
@@ -162,7 +159,7 @@ export const usePropertyStore = create<State>()(
               const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
                 // @ts-ignore eslint-disable-next-line no-restricted-syntax
-                for await (const data of subscription.iterator()) {
+                for await (const data of subscription) {
                   // throttledHandleUpdates(
                   throttledHandleUpdates(name, restrictNumbersToDecimalPlaces(data, 4));
                   // testSetProperty(
@@ -196,17 +193,16 @@ export const usePropertyStore = create<State>()(
           false,
           'property/unsubscribe'
         ),
-      subscribeToTopic: (
-        topicName: string,
+      subscribeToTopic: <T extends TopicId>(
+        topicName: T,
         throttleAmt: number = 200,
-        properties,
-        settings
+        payload?: TopicPayload<T>
       ) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
               const { subscribeToTopic } = useOpenSpaceApiStore.getState();
-              const topic = subscribeToTopic(topicName, properties, settings);
+              const topic = subscribeToTopic(topicName, payload);
               if (!topic) return;
               state.topicSubscriptions[topicName] = {
                 count: 0,
@@ -217,8 +213,7 @@ export const usePropertyStore = create<State>()(
               };
               const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
-                // @ts-ignore eslint-disable-next-line no-restricted-syntax
-                for await (const data of topic.iterator()) {
+                for await (const data of topic) {
                   if (topicName == 'errorLog') {
                     // console.log('errorLog', data);
                     usePropertyStore.getState().setProperty('errorLog', data);
@@ -237,35 +232,7 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/subscribe'
         ),
-      refreshTopic: (topicName: string, properties) =>
-        set(
-          (state) => {
-            if (!state.topicSubscriptions[topicName]) {
-              const topic = useOpenSpaceApiStore
-                .getState()
-                .apiInstance?.startTopic('sessionRecording', {
-                  event: 'refresh',
-                  properties: properties
-                });
-              (async () => {
-                if (topic) {
-                  // @ts-ignore eslint-disable-next-line no-restricted-syntax
-                  for await (const data of topic.iterator()) {
-                    usePropertyStore.getState().setProperty(topicName, data);
-                    topic?.cancel();
-                  }
-                }
-              })();
-            } else {
-              state.topicSubscriptions[topicName].subscription.talk({
-                event: 'refresh'
-              });
-            }
-          },
-          false,
-          'topic/refresh'
-        ),
-      connectToTopic: (topicName: string) =>
+      connectToTopic: <T extends TopicId>(topicName: T) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) {
@@ -282,8 +249,7 @@ export const usePropertyStore = create<State>()(
               };
               const throttledHandleUpdates = throttle(testSetProperty, 200);
               (async () => {
-                // @ts-ignore eslint-disable-next-line no-restricted-syntax
-                for await (const data of topic.iterator()) {
+                for await (const data of topic) {
                   throttledHandleUpdates(topicName, data);
                 }
               })();
@@ -294,7 +260,7 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/connect'
         ),
-      disconnectFromTopic: (topicName: string) =>
+      disconnectFromTopic: <T extends TopicId>(topicName: T) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) return;
@@ -302,7 +268,9 @@ export const usePropertyStore = create<State>()(
               state.topicSubscriptions[topicName].count -= 1;
             } else {
               const apiDisconnect = useOpenSpaceApiStore.getState().disconnectFromTopic;
-              apiDisconnect(state.topicSubscriptions[topicName].subscription);
+              const subscription = state.topicSubscriptions[topicName]
+                .subscription as unknown as Topic<TopicId>;
+              apiDisconnect(subscription);
               console.log('Unsubscribed from topic: ', topicName);
               delete state.topicSubscriptions[topicName];
             }
@@ -310,7 +278,7 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/disconnect'
         ),
-      unsubscribeFromTopic: (topicName: string) =>
+      unsubscribeFromTopic: <T extends TopicId>(topicName: T) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) return;
@@ -320,7 +288,9 @@ export const usePropertyStore = create<State>()(
               // console.log(state.topicSubscriptions[topicName].subscription);
               // console.log(state.topicSubscriptions[topicName]);
               const apiUnsubscribe = useOpenSpaceApiStore.getState().unsubscribeFromTopic;
-              apiUnsubscribe(state.topicSubscriptions[topicName].subscription);
+              const subscription = state.topicSubscriptions[topicName]
+                .subscription as unknown as Topic<TopicId>;
+              apiUnsubscribe(subscription);
               console.log('Unsubscribed from topic: ', topicName);
               delete state.topicSubscriptions[topicName];
             }
@@ -328,12 +298,14 @@ export const usePropertyStore = create<State>()(
           false,
           'topic/unsubscribe'
         ),
-      cancelTopic: (topicName: string) =>
+      cancelTopic: <T extends TopicId>(topicName: T) =>
         set(
           (state) => {
             if (!state.topicSubscriptions[topicName]) return;
             const apiCancel = useOpenSpaceApiStore.getState().cancelTopic;
-            apiCancel(state.topicSubscriptions[topicName].subscription);
+            const subscription = state.topicSubscriptions[topicName]
+              .subscription as unknown as Topic<TopicId>;
+            apiCancel(subscription);
             console.log('Cancelled topic: ', topicName);
             delete state.topicSubscriptions[topicName];
           },

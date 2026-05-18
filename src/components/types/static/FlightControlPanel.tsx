@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
+import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
 import Information from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
@@ -15,20 +16,7 @@ export const RotationalFrictionKey =
   'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction';
 export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.ZoomFriction';
 export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
-type InputState = {
-  values: {
-    orbitX?: number;
-    orbitY?: number;
-    panX?: number;
-    panY?: number;
-    zoomIn?: number;
-    localRollX?: number;
-  };
-};
-type InputStatePayload = {
-  type: 'inputState';
-  inputState: InputState;
-};
+
 const FlightControlPanel = () => {
   const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
@@ -76,8 +64,10 @@ const FlightControlPanel = () => {
     };
     // subscribeToTopic('camera', 500);
   }, [connectionState]);
-  function sendFlightControlInput(payload: InputStatePayload) {
-    flightControlTopic && flightControlTopic.talk(payload);
+  function sendFlightControlInput(payload: FlightControllerInputStateCommand) {
+    if (flightControlTopic) {
+      flightControlTopic.talk(payload);
+    }
   }
   function toggleRotation() {
     luaApi?.setPropertyValue(RotationalFrictionKey, !rotationFriction);
@@ -131,38 +121,34 @@ const FlightControlPanel = () => {
       const scaleFactor = 300;
       deltaX /= scaleFactor;
       deltaY /= scaleFactor;
-      const inputState: InputState = {
-        values: {}
+      const input: FlightControllerInputStateCommand = {
+        event: 'inputState',
+        inputState: {}
       };
       if (event.touches.length === 1) {
-        inputState.values.orbitX = -deltaX;
-        inputState.values.orbitY = -deltaY;
+        input.inputState.orbitX = -deltaX;
+        input.inputState.orbitY = -deltaY;
       } else if (event.touches.length === 2) {
-        inputState.values.panX = -deltaX;
-        inputState.values.panY = -deltaY;
+        input.inputState.panX = -deltaX;
+        input.inputState.panY = -deltaY;
       } else if (event.touches.length === 3) {
-        inputState.values.zoomIn = -deltaY;
-        inputState.values.localRollX = -deltaX;
+        input.inputState.zoomIn = -deltaY;
+        input.inputState.localRollX = -deltaX;
       }
-      sendFlightControlInput({
-        type: 'inputState',
-        inputState
-      });
+      sendFlightControlInput(input);
     }
   }
   function touchUp() {
     touchStartX = 0;
     sendFlightControlInput({
-      type: 'inputState',
+      event: 'inputState',
       inputState: {
-        values: {
-          zoomIn: 0.0,
-          orbitX: 0.0,
-          orbitY: 0.0,
-          panX: 0.0,
-          panY: 0.0,
-          localRollX: 0.0
-        }
+        zoomIn: 0.0,
+        orbitX: 0.0,
+        orbitY: 0.0,
+        panX: 0.0,
+        panY: 0.0,
+        localRollX: 0.0
       }
     });
   }
@@ -172,16 +158,14 @@ const FlightControlPanel = () => {
     }
     mouseIsDown = false;
     sendFlightControlInput({
-      type: 'inputState',
+      event: 'inputState',
       inputState: {
-        values: {
-          zoomIn: 0.0,
-          orbitX: 0.0,
-          orbitY: 0.0,
-          panX: 0.0,
-          panY: 0.0,
-          localRollX: 0.0
-        }
+        zoomIn: 0.0,
+        orbitX: 0.0,
+        orbitY: 0.0,
+        panX: 0.0,
+        panY: 0.0,
+        localRollX: 0.0
       }
     });
   }
@@ -192,25 +176,23 @@ const FlightControlPanel = () => {
     }
     const deltaX = event.movementX / 20;
     const deltaY = -event.movementY / 20;
-    const inputState: InputState = {
-      values: {}
+    const input: FlightControllerInputStateCommand = {
+      event: 'inputState',
+      inputState: {}
     };
     if (event.shiftKey) {
-      inputState.values.panX = -deltaX;
-      inputState.values.panY = deltaY;
+      input.inputState.panX = -deltaX;
+      input.inputState.panY = deltaY;
     } else if (event.altKey) {
-      inputState.values.zoomIn = deltaY;
-      inputState.values.localRollX = -deltaX;
+      input.inputState.zoomIn = deltaY;
+      input.inputState.localRollX = -deltaX;
     } else {
-      inputState.values.orbitX = -deltaX;
-      inputState.values.orbitY = deltaY;
+      input.inputState.orbitX = -deltaX;
+      input.inputState.orbitY = deltaY;
     }
     // console.log('Sending input state', inputState);
 
-    sendFlightControlInput({
-      type: 'inputState',
-      inputState
-    });
+    sendFlightControlInput(input);
   }
   return (
     <div

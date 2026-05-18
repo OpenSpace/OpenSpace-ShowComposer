@@ -47,7 +47,7 @@ const SessionPanel = () => {
 
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('sessionRecording', 0, ['state', 'files']);
+    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };

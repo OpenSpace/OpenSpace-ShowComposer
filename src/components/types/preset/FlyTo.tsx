@@ -1,5 +1,6 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -19,7 +20,6 @@ import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
 import { ComponentBaseColors } from '@/types/components';
-import { AnyProperty } from '@/types/Property/property';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 

@@ -42,12 +42,6 @@ export const PropertyVisibilityNumber = {
   Always: 0
 };
 
-export enum EngineMode {
-  UserControl = 'user_control',
-  SessionRecordingPlayback = 'session_recording_playback',
-  CameraPath = 'camera_path'
-}
-
 export enum LogLevel {
   Info = 'Info',
   Warning = 'Warning',

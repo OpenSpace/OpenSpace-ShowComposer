@@ -44,7 +44,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('sessionRecording', 0, ['state', 'files']);
+    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
@@ -303,7 +303,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('sessionRecording', 0, ['state', 'files']);
+    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };

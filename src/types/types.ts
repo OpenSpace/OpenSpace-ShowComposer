@@ -12,13 +12,7 @@ export interface NavigationState {
   Timestamp?: number | string; // The timestamp for when the navigation state was captured or is valid. Specified either as seconds past the J2000 epoch, or as a date string in ISO 8601 format: ‘YYYY MM DD HH:mm:ss.xxx’
   Up?: [number, number, number]; // The up vector expressed in the coordinate system of the reference frame
 }
-export interface ErrorLog {
-  category: string;
-  dateStamp: string;
-  level: number;
-  message: string;
-  timeStamp: string;
-}
+
 export interface OpenSpaceTimeState {
   time?: string;
   timeCapped?: string;
@@ -70,20 +64,10 @@ export interface Action {
   Color?: [number, number, number, number]; // rgba color, [0, 1]
 }
 
-export type OpenSpacePropertyOwner = {
-  description: string;
-  guiName: string;
-  identifier: Identifier;
-  properties: AnyProperty[];
-  subowners: OpenSpacePropertyOwner[];
-  tag: string[];
-  uri: Uri;
-};
-
 export interface Properties {
   [key: Uri]: AnyProperty | undefined;
 }
-export interface PropertyOwner {
+export interface PropertyOwnerRedux {
   description: string;
   name: string;
   identifier: Identifier;
@@ -94,5 +78,5 @@ export interface PropertyOwner {
 }
 
 export interface PropertyOwners {
-  [key: Uri]: PropertyOwner | undefined;
+  [key: Uri]: PropertyOwnerRedux | undefined;
 }

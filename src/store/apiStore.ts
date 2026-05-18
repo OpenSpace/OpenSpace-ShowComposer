@@ -5,10 +5,17 @@ export enum ConnectionState {
   CONNECTED,
   DISCONNECTED
 }
-import OpenSpaceApi, { OpenSpaceApi as OSApiClass, Topic } from 'openspace-api-js';
 
-import { AnyProperty } from '@/types/Property/property';
-import { OpenSpacePropertyOwner, PropertyOwner } from '@/types/types';
+import OpenSpaceApi from 'openspace-api-js';
+import { OpenSpaceApi as OpenSpaceApiClass } from 'openspace-api-js/api';
+import { Topic } from 'openspace-api-js/topics';
+import {
+  AnyProperty,
+  OpenSpaceLibrary,
+  TopicId,
+  TopicPayload
+} from 'openspace-api-js/types';
+
 import {
   flattenPropertyTree,
   getActionSceneNodes,
@@ -35,8 +42,8 @@ export const EnginePropertyVisibilityKey = 'OpenSpaceEngine.PropertyVisibility';
 export const EngineFadeDurationKey = 'OpenSpaceEngine.FadeDuration';
 
 interface OpenSpaceApiState {
-  apiInstance: null | OSApiClass; // Consider using a more specific type if possible
-  luaApi: OpenSpace.openspace | undefined; // Consider using a more specific type if possible
+  apiInstance: null | OpenSpaceApiClass; // Consider using a more specific type if possible
+  luaApi: OpenSpaceLibrary | undefined; // Consider using a more specific type if possible
   error: string | null;
   connectionState: ConnectionState;
   cancelReconnect: boolean;
@@ -44,22 +51,21 @@ interface OpenSpaceApiState {
   connect: () => void;
   disconnect: () => void;
   forceRefresh: () => void;
-  setLuaApi: (luaApi: OpenSpace.openspace) => void;
+  setLuaApi: (luaApi: OpenSpaceLibrary) => void;
   setError: (error: string) => void;
   setConnectionState: (state: ConnectionState) => void;
-  subscribeToProperty: (property: string) => Topic | null; // Define parameters as needed
-  unsubscribeFromProperty: (topic: Topic) => void; // Define parameters as needed
-  subscribeToTopic: (
-    topic: string,
-    properties?: string[],
-    settings?: any
-  ) => Topic | null; // Define parameters as needed
-  unsubscribeFromTopic: (topic: Topic) => void; // Define parameters as needed
-  connectToTopic: (topic: string) => Topic | null; // Define parameters as needed
-  cancelTopic: (topic: Topic) => void; // Define parameters as needed
+  subscribeToProperty: (property: string) => Topic<'subscribe'> | null; // Define parameters as needed
+  unsubscribeFromProperty: (topic: Topic<'subscribe'>) => void; // Define parameters as needed
+  subscribeToTopic: <T extends TopicId>(
+    topic: T,
+    payload?: TopicPayload<T>
+  ) => Topic<T> | null; // Define parameters as needed
+  unsubscribeFromTopic: (topic: Topic<TopicId>) => void; // Define parameters as needed
+  connectToTopic: (topic: TopicId) => Topic<TopicId> | null; // Define parameters as needed
+  cancelTopic: (topic: Topic<TopicId>) => void; // Define parameters as needed
   // subscribeToSessionRecording: () => Topic | null;
   // unsubscribeFromSessionRecording: (topic: Topic) => void;
-  disconnectFromTopic: (topic: Topic) => void;
+  disconnectFromTopic: (topic: Topic<TopicId>) => void;
 }
 
 let reconnectTimeout: NodeJS.Timeout | null;
@@ -94,7 +100,9 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     )
       return;
     const host = useSettingsStore.getState().ip;
+    console.log(host);
     const { port } = useSettingsStore.getState();
+    console.log(port);
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionState(ConnectionState.CONNECTING);
@@ -109,15 +117,14 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         console.log('OpenSpace connected');
         const luaApi = await apiInstance.library();
         set({ luaApi, connectionState: ConnectionState.CONNECTED });
-        const value = await apiInstance.getProperty(rootOwnerKey);
-        const {
-          // @ts-ignore
-          propertyOwners,
-          properties
-        }: {
-          propertyOwners: PropertyOwner[];
-          properties: AnyProperty[];
-        } = flattenPropertyTree(value as OpenSpacePropertyOwner);
+        const response = await apiInstance.getProperty(rootOwnerKey);
+
+        if (response.type !== 'propertyOwner') {
+          throw new Error('Root property owner not found');
+        }
+
+        const { properties } = flattenPropertyTree(response.value);
+
         usePropertyStore.getState().getActions();
         const Visibility: AnyProperty | undefined = properties.find(
           (p) => p.uri === EnginePropertyVisibilityKey
@@ -204,7 +211,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       return null;
     }
   },
-  unsubscribeFromProperty: (subscription: Topic) => {
+  unsubscribeFromProperty: (subscription: Topic<'subscribe'>) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     // subscription.talk({
@@ -212,7 +219,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     // });
     subscription.cancel();
   },
-  subscribeToTopic: (topicName: string, properties?: string[], settings?: object) => {
+  subscribeToTopic: <T extends TopicId>(topicName: T, payload?: TopicPayload<T>) => {
     const { connectionState, apiInstance } = get();
 
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
@@ -222,8 +229,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     try {
       const topic = apiInstance.startTopic(topicName, {
         event: 'start_subscription',
-        properties: properties || [],
-        settings: settings || {}
+        ...payload
       });
       return topic;
     } catch (e) {
@@ -231,7 +237,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       return null;
     }
   },
-  connectToTopic: (topicName: string) => {
+  connectToTopic: (topicName: TopicId) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
       console.error('Cannot subscribe to topic, API instance is not connected.');
@@ -240,7 +246,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
     try {
       const topic = apiInstance.startTopic(topicName, {
-        type: 'connect'
+        event: 'connect'
       });
       return topic;
     } catch (e) {
@@ -248,7 +254,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       return null;
     }
   },
-  unsubscribeFromTopic: (topic: Topic) => {
+  unsubscribeFromTopic: (topic: Topic<TopicId>) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.talk({
@@ -256,16 +262,16 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     });
     topic.cancel();
   },
-  cancelTopic: (topic: Topic) => {
+  cancelTopic: (topic: Topic<TopicId>) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.cancel();
   },
-  disconnectFromTopic: (topic: Topic) => {
+  disconnectFromTopic: (topic: Topic<TopicId>) => {
     const { connectionState, apiInstance } = get();
     if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
     topic.talk({
-      type: 'disconnect'
+      event: 'disconnect'
     });
     topic.cancel();
   }
