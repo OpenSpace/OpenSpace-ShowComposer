@@ -116,20 +116,22 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
         <div className={'grid grid-cols-4 items-center gap-4'}>
           <div className={'col-span-4 grid gap-2'}>
             <Label htmlFor={'gioname'}>{getCopy('Script', 'script')}</Label>
-            <CodeEditor
-              value={script}
-              language={'lua'}
-              placeholder={'Please enter Lua code.'}
-              onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setScript(evn.target.value)
-              }
-              padding={15}
-              style={{
-                // backgroundColor: '#f5f55',
-                fontFamily:
-                  'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
-              }}
-            />
+            <div style={{ maxHeight: '300px', overflowY: 'auto', resize: 'vertical' }}>
+              <CodeEditor
+                value={script}
+                language={'lua'}
+                placeholder={'Please enter Lua code.'}
+                onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setScript(evn.target.value)
+                }
+                padding={15}
+                style={{
+                  // backgroundColor: '#f5f55',
+                  fontFamily:
+                    'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
+                }}
+              />
+            </div>
           </div>
           <div className={'col-span-3 grid grid-cols-3  gap-2 '}>
             <div className={'col-span-2 grid gap-2'}>
