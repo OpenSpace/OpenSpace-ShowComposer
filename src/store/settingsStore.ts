@@ -94,8 +94,8 @@ export const useSettingsStore = create<SettingsStoreState>()(
               'settings/setScale'
             );
           },
-          ip: '', // Initial URL state
-          port: '', // Initial Port state
+          ip: 'localhost', // Initial URL state
+          port: '4682', // Initial Port state
           updatePageSize: (width: number, height: number) =>
             set(
               () => {
