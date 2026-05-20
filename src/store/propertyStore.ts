@@ -69,7 +69,13 @@ const initialCameraState: CameraState = {
   latitude: undefined,
   longitude: undefined,
   altitude: undefined,
-  altitudeUnit: undefined
+  altitudeUnit: undefined,
+  viewLatitude: undefined,
+  viewLongitude: undefined,
+  subSolarLatitude: undefined,
+  subSolarLongitude: undefined,
+  viewLength: undefined,
+  altitudeMeters: undefined
 };
 
 const initialProfileState: ProfileState = {

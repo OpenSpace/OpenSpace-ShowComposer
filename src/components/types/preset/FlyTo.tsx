@@ -210,23 +210,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     return shouldGeo || false;
   }, [target, options]);
 
-  const unitMultiplier = (unit: string) => {
-    switch (unit) {
-      case 'km':
-        return 1000;
-      case 'm':
-        return 1;
-      case 'ft':
-        return 0.3048;
-      case 'mi':
-        return 1609.34;
-      case 'nmi':
-        return 1852;
-      default:
-        return 1;
-    }
-  };
-
   const setFromOpenspace = () => {
     const shouldGeo = options?.find((option) => option.name === CurrentAnchor.value)
       ?.shouldGeo;
@@ -234,9 +217,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     if (shouldGeo) {
       setLat(camera.latitude || 0);
       setLong(camera.longitude || 0);
-      setAlt(
-        Math.round(camera.altitude || 0) * unitMultiplier(camera.altitudeUnit || 'm')
-      );
+      setAlt(Math.round(camera.altitudeMeters || 0));
       setGeo(true);
     }
   };

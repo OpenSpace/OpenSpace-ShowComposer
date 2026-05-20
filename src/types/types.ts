@@ -41,6 +41,12 @@ export interface CameraState {
   longitude: number | undefined;
   altitude: number | undefined;
   altitudeUnit: string | undefined;
+  viewLatitude: number | undefined;
+  viewLongitude: number | undefined;
+  subSolarLatitude: number | undefined;
+  subSolarLongitude: number | undefined;
+  viewLength: number | undefined;
+  altitudeMeters: number | undefined;
 }
 export interface ProfileState {
   initalized: boolean;
