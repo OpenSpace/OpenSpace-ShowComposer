@@ -45,7 +45,7 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
       updateComponent(component.id, {
         triggerAction: () => {
           jumpToTime(
-            component.time as Date,
+            new Date(component.time),
             component.interpolate,
             component.intDuration,
             component.fadeScene
