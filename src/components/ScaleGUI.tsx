@@ -30,7 +30,11 @@ const ScaleGUI: React.FC = () => {
         max={200}
         min={75}
       />
-      <div className={"pointer-events-none absolute inset-y-0 left-0 ml-10 flex  items-center"}>
+      <div
+        className={
+          'pointer-events-none absolute inset-y-0 left-0 ml-10 flex items-center'
+        }
+      >
         <span className={'text-sm'}>{getCopy('ScaleGUI', '%')}</span>
       </div>
       <HoldButton variant={'outline'} size={'icon'} onClick={zoomOut}>
