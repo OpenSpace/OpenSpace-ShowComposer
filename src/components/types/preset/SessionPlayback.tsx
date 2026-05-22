@@ -108,7 +108,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
-      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+      luaApi?.sessionRecording.startPlayback(value, loop);
     });
   }
 
@@ -311,7 +311,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
-      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+      luaApi?.sessionRecording.startPlayback(value, loop);
     });
   }
 

@@ -323,9 +323,8 @@ export const usePropertyStore = create<State>()(
           const actions = await useOpenSpaceApiStore.getState().luaApi?.action.actions();
           if (!actions) return;
           // console.log(actions);
-          const reducedActions = Object.values(actions['1']).reduce(
-            (acc: Record<string, Action>, action: Action) => {
-              console.log(action);
+          const reducedActions = Object.values(actions).reduce(
+            (acc: Record<string, Action>, action: any) => {
               const newKey = action?.Name?.concat(` ${action?.GuiPath}`);
               acc[newKey] = action;
               return acc;

@@ -107,9 +107,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
 
   const getNavigationState = async () => {
     if (!luaApi) return;
-    const { 1: navState } = (await luaApi.navigation.getNavigationState()) as {
-      ['1']: NavigationState;
-    };
+    const navState = (await luaApi.navigation.getNavigationState()) as NavigationState;
 
     setNavigationState(navState);
     setCompontentTime(time);

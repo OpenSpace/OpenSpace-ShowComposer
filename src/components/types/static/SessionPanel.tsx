@@ -88,7 +88,7 @@ const SessionPanel = () => {
       const format = useTextFormat ? 'Ascii' : 'Binary';
       // luaApi?.sessionRecording.stopRecording(filenameRecording, format);
       luaApi?.absPath(`${RecordingsFolderKey}${filenameRecording}`).then((value) => {
-        luaApi?.sessionRecording.stopRecording(value['1'], format);
+        luaApi?.sessionRecording.stopRecording(value, format);
       });
     }
   }
@@ -97,7 +97,7 @@ const SessionPanel = () => {
     if (shouldOutputFrames) {
       luaApi?.absPath(`${RecordingsFolderKey}${filenamePlayback}`).then((value) => {
         luaApi?.sessionRecording.startPlayback(
-          value['1'],
+          value,
           loopPlayback,
           true,
           outputFramerate
@@ -105,7 +105,7 @@ const SessionPanel = () => {
       });
     } else {
       luaApi?.absPath(`${RecordingsFolderKey}${filenamePlayback}`).then((value) => {
-        luaApi?.sessionRecording.startPlayback(value['1'], loopPlayback);
+        luaApi?.sessionRecording.startPlayback(value, loopPlayback);
       });
     }
   }
