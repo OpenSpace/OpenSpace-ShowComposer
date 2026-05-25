@@ -151,6 +151,9 @@ export const usePropertyStore = create<State>()(
       subscribeToProperty: (name: string, throttleAmt: number = 200) =>
         set(
           (state: any) => {
+            if (!name) {
+              return;
+            }
             if (!state.propertySubscriptions[name]) {
               const apiSubscription = useOpenSpaceApiStore.getState().subscribeToProperty;
               const subscription = apiSubscription(name);
