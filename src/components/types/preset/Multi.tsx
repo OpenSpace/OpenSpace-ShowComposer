@@ -21,6 +21,7 @@ import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
   Component,
+  ComponentBaseColors,
   ComponentType,
   FadeComponent,
   FlyToComponent,
@@ -31,7 +32,6 @@ import {
   SetFocusComponent,
   TriggerComponent
 } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { BoolGUIComponent } from '../property/Boolean';

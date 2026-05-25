@@ -2,12 +2,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { roundToNearest } from '@/utils/math';
 
-import { Component, LayoutBase, LogComponent, Page } from '../types/components';
 import {
+  Component,
   ImmerStateCreator,
+  LayoutBase,
+  LogComponent,
   MultiComponent,
   MultiState,
   NavComponent,
+  Page,
   RecordComponent,
   StatusComponent,
   TimeComponent

@@ -14,8 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { SessionPlaybackComponent } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 //set up recording state
@@ -44,7 +43,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('sessionRecording', 0, ['state', 'files']);
+    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
@@ -109,7 +108,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
-      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+      luaApi?.sessionRecording.startPlayback(value, loop);
     });
   }
 
@@ -303,7 +302,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('sessionRecording', 0, ['state', 'files']);
+    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
@@ -312,7 +311,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
-      luaApi?.sessionRecording.startPlayback(value['1'], loop);
+      luaApi?.sessionRecording.startPlayback(value, loop);
     });
   }
 

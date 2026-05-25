@@ -1,5 +1,6 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -7,7 +8,6 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import Information from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
-import Toggle from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,6 @@ import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
 import { ComponentBaseColors } from '@/types/components';
-import { AnyProperty } from '@/types/Property/property';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -211,23 +210,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     return shouldGeo || false;
   }, [target, options]);
 
-  const unitMultiplier = (unit: string) => {
-    switch (unit) {
-      case 'km':
-        return 1000;
-      case 'm':
-        return 1;
-      case 'ft':
-        return 0.3048;
-      case 'mi':
-        return 1609.34;
-      case 'nmi':
-        return 1852;
-      default:
-        return 1;
-    }
-  };
-
   const setFromOpenspace = () => {
     const shouldGeo = options?.find((option) => option.name === CurrentAnchor.value)
       ?.shouldGeo;
@@ -235,9 +217,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     if (shouldGeo) {
       setLat(camera.latitude || 0);
       setLong(camera.longitude || 0);
-      setAlt(
-        Math.round(camera.altitude || 0) * unitMultiplier(camera.altitudeUnit || 'm')
-      );
+      setAlt(Math.round(camera.altitudeMeters || 0));
       setGeo(true);
     }
   };
@@ -344,7 +324,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             <Label htmlFor={'duration'}>
               {getCopy('FlyTo', 'set_coordinates/altitude')}
             </Label>
-            <Toggle
+            <ToggleComponent
               value={geo}
               disabled={!hasGeoOption}
               setValue={setGeo}

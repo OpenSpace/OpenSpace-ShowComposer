@@ -1,72 +1,69 @@
 import { useEffect, useState } from 'react';
+import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Label } from '@/components/ui/label';
 import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { ErrorLog } from '@/types/types';
 
-const getLevelString = (level: number): string => {
-  switch (level) {
-    case 0:
-      return 'NoLogging';
-    case 1:
-      return 'Trace';
-    case 2:
-      return 'Debug';
-    case 3:
-      return 'Info';
-    case 4:
-      return 'Warning';
-    case 5:
-      return 'Error';
-    case 6:
-      return 'Fatal';
-    case 7:
-      return 'AllLogging';
-    default:
-      return 'Unknown';
-  }
-};
+const logLevelOptions: { value: LogLevel; label: string }[] = [
+  { value: LogLevel.All, label: 'All Logging' },
+  { value: LogLevel.Trace, label: 'Trace' },
+  { value: LogLevel.Debug, label: 'Debug' },
+  { value: LogLevel.Info, label: 'Info' },
+  { value: LogLevel.Warning, label: 'Warning' },
+  { value: LogLevel.Error, label: 'Error' },
+  { value: LogLevel.Fatal, label: 'Fatal' },
+  { value: LogLevel.NoLogging, label: 'No Logging' }
+];
+
+const logLevelValueSet = new Set<string>(Object.values(LogLevel));
+
+function isLogLevel(value: string): value is LogLevel {
+  return logLevelValueSet.has(value);
+}
 
 const LogPanel = () => {
   const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   const errorLog = usePropertyStore((state) => state.errorLog);
+  const topic = usePropertyStore((state) => state.topicSubscriptions.errorLog);
 
-  const [logLevel, setLogLevel] = useState('AllLogging');
-
-  const logLevelOptions = [
-    { value: 'AllLogging', label: 'All Logging' },
-    { value: 'Trace', label: 'Trace' },
-    { value: 'Debug', label: 'Debug' },
-    { value: 'Info', label: 'Info' },
-    { value: 'Warning', label: 'Warning' },
-    { value: 'Error', label: 'Error' },
-    { value: 'Fatal', label: 'Fatal' },
-    { value: 'NoLogging', label: 'No Logging' }
-  ];
+  const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
 
   const handleLogLevelChange = (value: string) => {
+    if (!isLogLevel(value)) {
+      return;
+    }
+
     setLogLevel(value);
-    subscribeToTopic('errorLog', undefined, undefined, {
-      timeStamping: true,
-      dateStamping: true,
-      categoryStamping: true,
-      logLevelStamping: true,
-      logLevel: value
-    });
+
+    if (topic) {
+      topic.subscription.talk({ event: 'update_log_level', logLevel: value });
+    } else {
+      subscribeToTopic('errorLog', undefined, {
+        settings: {
+          timeStamping: true,
+          dateStamping: true,
+          categoryStamping: true,
+          logLevelStamping: true,
+          logLevel: value
+        }
+      });
+    }
   };
 
   useEffect(() => {
     // return;
     if (connectionState != ConnectionState.CONNECTED) return;
-    subscribeToTopic('errorLog', undefined, undefined, {
-      timeStamping: true,
-      dateStamping: true,
-      categoryStamping: true,
-      logLevelStamping: true,
-      logLevel: 'All'
+    subscribeToTopic('errorLog', undefined, {
+      settings: {
+        timeStamping: true,
+        dateStamping: true,
+        categoryStamping: true,
+        logLevelStamping: true,
+        logLevel: LogLevel.All
+      }
     });
 
     return () => {
@@ -104,8 +101,8 @@ const LogPanel = () => {
             <div>Source</div>
             <div>Message</div>
           </div>
-          {errorLog.map((log: ErrorLog, index) => {
-            const levelString = getLevelString(log.level);
+          {errorLog.map((log: LogMessage, index) => {
+            const levelString = log.level;
 
             return (
               <div

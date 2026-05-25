@@ -12,9 +12,12 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from '@/components/ui/menubar';
-import { useBoundStore, useBoundStoreTemporal, BoundStoreState } from '@/store/boundStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { SettingsStoreState } from '@/store/settingsStore';
+import {
+  BoundStoreState,
+  useBoundStore,
+  useBoundStoreTemporal
+} from '@/store/boundStore';
+import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
 import {
   // loadStore,
@@ -278,7 +281,7 @@ export function GlobalMenuBar() {
       />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
-        onConfirm={() => { }}
+        onConfirm={() => {}}
         message={'Project has been saved!'}
         setOpen={setIsConfirmationModalOpen}
       />

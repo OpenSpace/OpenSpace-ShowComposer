@@ -1,10 +1,10 @@
 //ignore ts errors for this file as well es lint typescript errors
 // @ts-ignore
 
-import { EnginePropertyVisibilityKey } from '@/store/apiStore';
+import { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
+
 import { PropertyVisibilityNumber } from '@/types/enums';
-import { AnyProperty } from '@/types/Property/property';
-import { OpenSpacePropertyOwner, PropertyOwner } from '@/types/types';
+import { PropertyOwnerRedux } from '@/types/types';
 // import { PropertyOwner, PropertyOwners } from '@/types/types';
 export const InterestingTag = '';
 
@@ -22,8 +22,8 @@ export const InterestingTag = '';
 //   uri: string;
 // }
 
-export const flattenPropertyTree = (propertyOwner: OpenSpacePropertyOwner) => {
-  let propertyOwners: PropertyOwner[] = [];
+export const flattenPropertyTree = (propertyOwner: PropertyOwner) => {
+  let propertyOwners: PropertyOwnerRedux[] = [];
   let properties: AnyProperty[] = [];
 
   if (propertyOwner.uri) {
@@ -33,7 +33,7 @@ export const flattenPropertyTree = (propertyOwner: OpenSpacePropertyOwner) => {
       name: propertyOwner.guiName ?? propertyOwner.identifier,
       properties: propertyOwner.properties.map((p) => p.uri),
       subowners: propertyOwner.subowners.map((p) => p.uri),
-      tags: propertyOwner.tag,
+      tags: propertyOwner.tags,
       description: propertyOwner.description
     });
   }

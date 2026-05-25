@@ -14,8 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { SetNavComponent } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, SetNavComponent } from '@/types/components';
 import { NavigationState } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
@@ -108,9 +107,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
 
   const getNavigationState = async () => {
     if (!luaApi) return;
-    const { 1: navState } = (await luaApi.navigation.getNavigationState()) as {
-      ['1']: NavigationState;
-    };
+    const navState = (await luaApi.navigation.getNavigationState()) as NavigationState;
 
     setNavigationState(navState);
     setCompontentTime(time);

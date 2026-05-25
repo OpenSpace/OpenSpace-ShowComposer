@@ -21,7 +21,6 @@ import {
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-import { AnyProperty } from '@/types/Property/property';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerBool } from '@/utils/triggerHelpers';
@@ -123,7 +122,7 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
   );
   useEffect(() => {
     // console.log(properties);
-    const propertyData = usePropertyStore.getState().properties[property] as AnyProperty;
+    const propertyData = usePropertyStore.getState().properties[property];
     console.log('PROPERTY DATA', propertyData);
     if (!propertyData || lockName) return;
     setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
