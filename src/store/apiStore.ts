@@ -100,9 +100,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     )
       return;
     const host = useSettingsStore.getState().ip;
-    console.log(host);
     const { port } = useSettingsStore.getState();
-    console.log(port);
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionState(ConnectionState.CONNECTING);

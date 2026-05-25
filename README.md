@@ -11,7 +11,7 @@ A visual drag-and-drop interface for creating and managing shows in OpenSpace. T
 - Zustand (State Management)
 - [Shadcn](https://ui.shadcn.com/docs)
 - ESLint & Prettier
-- OpenSpace js api (v0.1.6)
+- OpenSpace js api (v0.9.11)
 
 ## Prerequisites
 
