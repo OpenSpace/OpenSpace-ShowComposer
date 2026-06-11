@@ -99,8 +99,18 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       get().connectionState === ConnectionState.CONNECTING
     )
       return;
-    const host = useSettingsStore.getState().ip;
-    const { port } = useSettingsStore.getState();
+    let { ip: host } = useSettingsStore.getState();
+    let { port } = useSettingsStore.getState();
+
+    // Set default values if host or port were previously undefined or empty. Due to
+    // settings possibly being cached, the initialr `settingsStore` default values might
+    // not be applied
+    if (host === undefined || host === '') {
+      host = 'localhost';
+    }
+    if (port === undefined || port === '') {
+      port = '4682';
+    }
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionState(ConnectionState.CONNECTING);
