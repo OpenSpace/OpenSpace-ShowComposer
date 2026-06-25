@@ -16,7 +16,7 @@ A visual drag-and-drop interface for creating and managing shows in OpenSpace. T
 ## Prerequisites
 
 - Node.js (Latest LTS version recommended)
-- Package manager (npm, yarn, or pnpm)
+- npm
 - OpenSpace instance running 
 
 ## Installation
@@ -28,8 +28,6 @@ cd OpenSpace-ShowComposer
 
 # Install dependencies
 npm install
-# or
-yarn install
 ```
 
 ## Development Setup
@@ -37,8 +35,6 @@ yarn install
 1. Start the development server:
 ```sh
 npm run dev
-# or
-yarn dev
 ```
 
 ### Development Environment Notes
@@ -54,8 +50,6 @@ This is because these features expect specific API endpoints that are only avail
 1. Build the application:
 ```sh
 npm run build
-# or
-yarn build
 ```
 
 2. The built application should be placed in the `user/showcomposer` folder in the production environment.
