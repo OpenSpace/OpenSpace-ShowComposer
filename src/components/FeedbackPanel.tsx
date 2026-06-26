@@ -1,11 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ArrowUpFromDot, Clock, Globe, Telescope } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
+import { usePropertyValue, useSubscribeToProperty } from '@/hooks/properties';
+import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { cn } from '@/lib/utils';
-// import { useComponentStore } from '@/store';
-import { ConnectionState, usePropertyStore } from '@/store';
-import { NavigationAnchorKey, useOpenSpaceApiStore } from '@/store/apiStore';
+import { NavigationAnchorKey } from '@/store/apiStore';
 import { formatDate } from '@/utils/time';
 
 import ButtonLabel from './common/ButtonLabel';
@@ -15,31 +15,10 @@ type FeedbackPanelProps = {
 };
 
 const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
-  const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey]
-  );
-  const time = usePropertyStore((state) => state.time?.['timeCapped']);
-  const camera = usePropertyStore((state) => state.camera);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
-  const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty
-  );
-
-  useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
-    subscribeToTopic('camera', 500);
-    subscribeToProperty(NavigationAnchorKey, 1000);
-    subscribeToTopic('time', 1000);
-
-    return () => {
-      unsubscribeFromTopic('camera');
-      unsubscribeFromTopic('time');
-      unsubscribeFromProperty(NavigationAnchorKey);
-    };
-  }, [connectionState]);
+  const currentAnchor = usePropertyValue('StringProperty', NavigationAnchorKey);
+  useSubscribeToProperty(NavigationAnchorKey, 1000);
+  const { timeCapped: time } = useSubscribeToTime(1000);
+  const camera = useSubscribeToCamera(500);
 
   const timeLabel = useMemo(() => {
     if (time) {
@@ -69,17 +48,15 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
         <div />
         <div
           className={cn('grid gap-2', {
-            'opacity-100': CurrentAnchor,
-            'opacity-50': !CurrentAnchor
+            'opacity-100': currentAnchor,
+            'opacity-50': !currentAnchor
           })}
         >
           <Label className={'flex items-center justify-start gap-2'}>
             <Telescope size={14} />
             Current Focus
           </Label>
-          <ButtonLabel className={'border bg-transparent'}>
-            {CurrentAnchor?.value}
-          </ButtonLabel>
+          <ButtonLabel className={'border bg-transparent'}>{currentAnchor}</ButtonLabel>
         </div>
         {camera && (
           <div className={'mt-2 grid grid-cols-3 gap-2'}>
