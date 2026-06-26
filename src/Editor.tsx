@@ -124,13 +124,11 @@ const Editor = () => {
   const projectName = useSettingsStore((state) => state.projectName);
 
   const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
-  const connect = useOpenSpaceApiStore((state) => state.connect);
 
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {
       addPage();
     }
-    connect();
   }, []);
 
   useEffect(() => {
