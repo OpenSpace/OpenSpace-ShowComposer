@@ -1,11 +1,3 @@
-import { create } from 'zustand';
-export enum ConnectionState {
-  UNCONNECTED,
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTED
-}
-
 import OpenSpaceApi from 'openspace-api-js';
 import { OpenSpaceApi as OpenSpaceApiClass } from 'openspace-api-js/api';
 import { Topic } from 'openspace-api-js/topics';
@@ -15,7 +7,9 @@ import {
   TopicId,
   TopicPayload
 } from 'openspace-api-js/types';
+import { create } from 'zustand';
 
+import { ConnectionStatus } from '@/types/enums';
 import {
   flattenPropertyTree,
   getActionSceneNodes,
@@ -45,7 +39,7 @@ interface OpenSpaceApiState {
   apiInstance: null | OpenSpaceApiClass; // Consider using a more specific type if possible
   luaApi: OpenSpaceLibrary | undefined; // Consider using a more specific type if possible
   error: string | null;
-  connectionState: ConnectionState;
+  connectionStatus: ConnectionStatus;
   cancelReconnect: boolean;
   // reconnectTimeout: NodeJS.Timeout | null;
   connect: () => void;
@@ -53,7 +47,7 @@ interface OpenSpaceApiState {
   forceRefresh: () => void;
   setLuaApi: (luaApi: OpenSpaceLibrary) => void;
   setError: (error: string) => void;
-  setConnectionState: (state: ConnectionState) => void;
+  setConnectionStatus: (state: ConnectionStatus) => void;
   subscribeToProperty: (property: string) => Topic<'subscribe'> | null; // Define parameters as needed
   unsubscribeFromProperty: (topic: Topic<'subscribe'>) => void; // Define parameters as needed
   subscribeToTopic: <T extends TopicId>(
@@ -76,10 +70,10 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   error: null,
   cancelReconnect: false,
   // reconnectTimeout: null,
-  connectionState: ConnectionState.UNCONNECTED,
+  connectionStatus: ConnectionStatus.Disconnected,
   setLuaApi: (luaApi) => set(() => ({ luaApi })),
   setError: (error) => set(() => ({ error })),
-  setConnectionState: (connectionState) => set(() => ({ connectionState })),
+  setConnectionStatus: (connectionStatus) => set(() => ({ connectionStatus })),
   forceRefresh: () => {
     const { apiInstance } = get();
     if (apiInstance) {
@@ -95,8 +89,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     console.log('connect');
 
     if (
-      get().connectionState === ConnectionState.CONNECTED ||
-      get().connectionState === ConnectionState.CONNECTING
+      get().connectionStatus === ConnectionStatus.Connected ||
+      get().connectionStatus === ConnectionStatus.Connecting
     )
       return;
     let { ip: host } = useSettingsStore.getState();
@@ -113,18 +107,18 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
 
     const apiInstance = OpenSpaceApi(host, parseInt(port));
-    get().setConnectionState(ConnectionState.CONNECTING);
+    get().setConnectionStatus(ConnectionStatus.Connecting);
     get().apiInstance = apiInstance;
     get().cancelReconnect = false;
 
     apiInstance.onConnect(async () => {
       console.log('onConnect');
-      if (get().connectionState === ConnectionState.CONNECTED) return;
+      if (get().connectionStatus === ConnectionStatus.Connected) return;
 
       try {
         console.log('OpenSpace connected');
         const luaApi = await apiInstance.library();
-        set({ luaApi, connectionState: ConnectionState.CONNECTED });
+        set({ luaApi, connectionStatus: ConnectionStatus.Connected });
         const response = await apiInstance.getProperty(rootOwnerKey);
 
         if (response.type !== 'propertyOwner') {
@@ -170,7 +164,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         console.error('OpenSpace library could not be loaded:', e);
         set({
           error: 'OpenSpace library could not be loaded',
-          connectionState: ConnectionState.UNCONNECTED
+          connectionStatus: ConnectionStatus.Disconnected
         });
       }
     });
@@ -185,14 +179,14 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         reconnectTimeout = setTimeout(() => {
           console.log('Reconnecting to OpenSpace');
           apiInstance?.connect();
-          get().setConnectionState(ConnectionState.CONNECTING);
+          get().setConnectionStatus(ConnectionStatus.Connecting);
           reconnectionInterval += 1000;
         }, reconnectionInterval);
       }
 
       set({
         luaApi: undefined,
-        connectionState: ConnectionState.UNCONNECTED
+        connectionStatus: ConnectionStatus.Disconnected
       });
     });
     apiInstance.connect();
@@ -205,12 +199,12 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     set({
       // // reconnectTimeout: newTimeout,
       luaApi: undefined,
-      connectionState: ConnectionState.UNCONNECTED
+      connectionStatus: ConnectionStatus.Disconnected
     });
   },
   subscribeToProperty: (propertyName: string) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return null;
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return null;
     try {
       const subscription = apiInstance.subscribeToProperty(propertyName);
       return subscription;
@@ -220,17 +214,17 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   unsubscribeFromProperty: (subscription: Topic<'subscribe'>) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
     // subscription.talk({
     //   event: 'stop_subscription'
     // });
     subscription.cancel();
   },
   subscribeToTopic: <T extends TopicId>(topicName: T, payload?: TopicPayload<T>) => {
-    const { connectionState, apiInstance } = get();
+    const { connectionStatus, apiInstance } = get();
 
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) {
       console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }
@@ -246,8 +240,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   connectToTopic: (topicName: TopicId) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) {
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) {
       console.error('Cannot subscribe to topic, API instance is not connected.');
 
       return null;
@@ -263,21 +257,21 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   unsubscribeFromTopic: (topic: Topic<TopicId>) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
     topic.talk({
       event: 'stop_subscription'
     });
     topic.cancel();
   },
   cancelTopic: (topic: Topic<TopicId>) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
     topic.cancel();
   },
   disconnectFromTopic: (topic: Topic<TopicId>) => {
-    const { connectionState, apiInstance } = get();
-    if (!apiInstance || connectionState != ConnectionState.CONNECTED) return;
+    const { connectionStatus, apiInstance } = get();
+    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
     topic.talk({
       event: 'disconnect'
     });

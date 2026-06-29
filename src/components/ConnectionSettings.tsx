@@ -1,11 +1,11 @@
 import React, { cloneElement, ReactElement, useEffect, useState } from 'react';
-import { CheckCircle, HelpCircle, Radio, XCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ConnectionState, useOpenSpaceApiStore, useSettingsStore } from '@/store'; // Adjust the import path accordingly
+import { useOpenSpaceApiStore, useSettingsStore } from '@/store'; // Adjust the import path accordingly
+import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -41,7 +41,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }
   const connect = useOpenSpaceApiStore((state) => state.connect);
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   // const disconnect = useOpenSpaceApiStore((state) => state.disconnect);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const [prevPort, setPrevPort] = useState<string>(port);
   const [prevUrl, setPrevUrl] = useState<string>(url);
   const [open, setOpen] = useState<boolean>(false);
@@ -52,10 +52,10 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }
     setOpen(false);
   };
   useEffect(() => {
-    if (connectionState == ConnectionState.UNCONNECTED) {
+    if (connectionStatus == ConnectionStatus.Disconnected) {
       connect();
     }
-  }, [connectionState]);
+  }, [connectionStatus]);
 
   useEffect(() => {
     if (prevPort !== initialPort || prevUrl !== initialUrl) {
@@ -138,63 +138,5 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }
     </Popover>
   );
 };
-const ConnectionStatus = () => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
-  // const connect = useOpenSpaceApiStore((state) => state.connect);
 
-  // useEffect(() => {
-  //   console.log('connectionState', connectionState);
-  //   // if (connectionState === ConnectionState.UNCONNECTED) {
-  //   //   connect();
-  //   // }
-  // }, [connectionState]);
-
-  function renderConnectionState(size: number) {
-    switch (connectionState) {
-      case ConnectionState.CONNECTED:
-        return (
-          <div className={'flex items-center gap-1'}>
-            <CheckCircle size={size} stroke={'green'} strokeWidth={2} />
-            <Label className={'text-xs'}>
-              {getCopy('ConnectionSettings', 'connected')}
-            </Label>
-          </div>
-        );
-      case ConnectionState.CONNECTING:
-        return (
-          <div className={'flex items-center gap-1'}>
-            <Radio
-              size={size}
-              className={'animate-pulse'}
-              stroke={'orange'}
-              strokeWidth={2}
-            />
-            <Label className={'animate-pulse text-xs'}>
-              {getCopy('ConnectionSettings', 'connecting')}
-            </Label>
-          </div>
-        );
-      case ConnectionState.UNCONNECTED:
-        return (
-          <div className={'flex items-center gap-1'}>
-            <XCircle size={size} stroke={'red'} strokeWidth={2} />{' '}
-            <Label className={'text-xs'}>
-              {getCopy('ConnectionSettings', 'disconnected')}
-            </Label>
-          </div>
-        );
-      default:
-        return <HelpCircle size={size} color={'black'} />;
-    }
-  }
-  return (
-    <div className={'flex flex-row items-center gap-3'}>
-      <h2 className={' text-xs font-bold'}>
-        {getCopy('ConnectionSettings', 'openspace_status:')}
-      </h2>
-      {renderConnectionState(20)}
-    </div>
-  );
-};
-
-export { ConnectionSettings, ConnectionStatus };
+export { ConnectionSettings };

@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useThrottledCallback } from '@mantine/hooks';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import { ConnectionState, useOpenSpaceApiStore } from '@/store/apiStore';
+import { useOpenSpaceApiStore } from '@/store/apiStore';
 import { usePropertyStore } from '@/store/propertyStore';
+import { ConnectionStatus } from '@/types/enums';
 import { PropertyOrPropertyGroup, PropertyTypeKey } from '@/types/Property/property';
 import { PropertyGroupsRuntime } from '@/types/Property/propertyGroups';
 
@@ -57,21 +58,21 @@ function useStoredProperty<T extends PropertyTypeKey>(
  * for several components to subscribe to the same property at once.
  */
 export function useSubscribeToProperty(uri: string, throttleMs: number = 200): void {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
     (state) => state.unsubscribeFromProperty
   );
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED || !uri) {
+    if (connectionStatus !== ConnectionStatus.Connected || !uri) {
       return;
     }
     subscribeToProperty(uri, throttleMs);
     return () => {
       unsubscribeFromProperty(uri);
     };
-  }, [uri, throttleMs, connectionState, subscribeToProperty, unsubscribeFromProperty]);
+  }, [uri, throttleMs, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 }
 
 /**

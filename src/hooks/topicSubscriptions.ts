@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { TopicId, TopicPayload } from 'openspace-api-js/types';
 
-import { ConnectionState, useOpenSpaceApiStore } from '@/store/apiStore';
+import { useOpenSpaceApiStore } from '@/store/apiStore';
 import { usePropertyStore } from '@/store/propertyStore';
+import { ConnectionStatus } from '@/types/enums';
 import {
   CameraState,
   OpenSpaceTimeState,
@@ -29,12 +30,12 @@ function useSubscribeToTopic<T extends TopicId>(
   throttleMs?: number,
   payload?: Partial<TopicPayload<T>>
 ): void {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) {
+    if (connectionStatus !== ConnectionStatus.Connected) {
       return;
     }
     subscribeToTopic(topicName, throttleMs, payload);
@@ -45,7 +46,7 @@ function useSubscribeToTopic<T extends TopicId>(
     topicName,
     throttleMs,
     payload,
-    connectionState,
+    connectionStatus,
     subscribeToTopic,
     unsubscribeFromTopic
   ]);

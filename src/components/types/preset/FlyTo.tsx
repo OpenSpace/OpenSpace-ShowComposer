@@ -14,11 +14,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
 import { ComponentBaseColors } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -111,7 +112,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
 }) => {
   // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const camera = usePropertyStore((state) => state.camera);
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey]
@@ -168,7 +169,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const cancelTopic = usePropertyStore((state) => state.cancelTopic);
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
     subscribeToTopic('camera', 500);
     subscribeToTopic('profile', 1000);
     subscribeToProperty(NavigationAnchorKey, 1000);
@@ -177,7 +178,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       cancelTopic('profile');
       unsubscribeFromProperty(NavigationAnchorKey);
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
   useEffect(() => {
     if (component) {
       setGeo(component?.geo || false);

@@ -12,9 +12,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 //set up recording state
@@ -32,7 +33,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const fileList = usePropertyStore((state) => state.sessionRecording.files || []);
   const recordingState = usePropertyStore(
@@ -42,12 +43,12 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   // const refreshTopic = usePropertyStore((state) => state.refreshTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
 
   useEffect(() => {
     console.log('recordingState', recordingState);
@@ -294,19 +295,19 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
   const recordingState = usePropertyStore(
     (state) => state.sessionRecording.state || SessionStateIdle
   );
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   // const refreshTopic = usePropertyStore((state) => state.refreshTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   useEffect(() => {
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 
   function startPlayback() {

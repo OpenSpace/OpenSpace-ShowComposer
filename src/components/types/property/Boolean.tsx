@@ -14,13 +14,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
   BooleanComponent,
-  ConnectionState,
   Toggle,
   useOpenSpaceApiStore,
   usePropertyStore
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerBool } from '@/utils/triggerHelpers';
@@ -30,7 +30,7 @@ interface BoolGUIProps {
 }
 const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
@@ -39,13 +39,13 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = tr
   const property = usePropertyStore((state) => state.properties[component.property]);
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
     // console.log('Subscribing to property', component.property);
     subscribeToProperty(component.property, 500);
     return () => {
       unsubscribeFromProperty(component.property);
     };
-  }, [component.property, connectionState, subscribeToProperty, unsubscribeFromProperty]);
+  }, [component.property, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 
   useEffect(() => {
     if (luaApi) {
@@ -105,7 +105,7 @@ interface BoolModalProps {
   handleComponentData: (data: Partial<BooleanComponent>) => void;
 }
 const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData }) => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -150,7 +150,7 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
     color
   ]);
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].metaData?.type === 'BoolProperty')

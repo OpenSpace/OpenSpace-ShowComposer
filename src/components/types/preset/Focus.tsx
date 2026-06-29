@@ -10,7 +10,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import {
   NavigationAimKey,
   NavigationAnchorKey,
@@ -19,6 +19,7 @@ import {
 import { useBoundStore } from '@/store/boundStore';
 import { SetFocusComponent } from '@/types/components';
 import { ComponentBaseColors } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -28,7 +29,7 @@ interface FocusGUIProps {
 }
 const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
@@ -40,7 +41,7 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
   });
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
     console.log('Subscribing to property', component.property);
     subscribeToProperty(NavigationAnchorKey, 1000);
     //using this to check if the property exists
@@ -49,7 +50,7 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
       unsubscribeFromProperty(`Scene.${component.property}.Renderable.Enabled`);
       unsubscribeFromProperty(NavigationAnchorKey);
     };
-  }, [component.property, connectionState, subscribeToProperty, unsubscribeFromProperty]);
+  }, [component.property, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 
   useEffect(() => {
     if (luaApi) {
@@ -103,7 +104,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -126,12 +127,12 @@ const FocusModal: React.FC<FocusModalProps> = ({
     (state) => state.properties[NavigationAnchorKey]
   );
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
     subscribeToProperty(NavigationAnchorKey, 1000);
     return () => {
       unsubscribeFromProperty(NavigationAnchorKey);
     };
-  }, [connectionState, subscribeToProperty, unsubscribeFromProperty]);
+  }, [connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 
   const handlePropertyChange = (property: string) => {
     setProperty(property);
@@ -160,7 +161,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
     handleComponentData
   ]);
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => a.includes('.Renderable'))

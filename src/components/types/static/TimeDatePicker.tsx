@@ -8,7 +8,8 @@ import DateComponent from '@/components/timepicker/DateComponent';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 const updateDelayMs = 1000;
@@ -94,7 +95,7 @@ const TimeDatePicker = () => {
   const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
   const time = usePropertyStore((state) => state.time?.['timeCapped']);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
@@ -180,12 +181,12 @@ const TimeDatePicker = () => {
     setDate(new Date());
   }
   useEffect(() => {
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     subscribeToTopic('time', 1000);
     return () => {
       unsubscribeFromTopic('time');
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
 
   const timeLabel = useMemo(() => {
     if (time) {

@@ -9,9 +9,10 @@ import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ConnectionState, useOpenSpaceApiStore } from '@/store';
+import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 import { sendLuaScript } from '@/utils/triggerHelpers';
 
@@ -73,7 +74,7 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const [script, setScript] = useState<string>(component?.script || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
@@ -107,7 +108,7 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
   ]);
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
   }, []);
 
   return (

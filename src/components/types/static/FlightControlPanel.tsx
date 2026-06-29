@@ -6,7 +6,8 @@ import Information from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
@@ -18,7 +19,7 @@ export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.Zoom
 export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
 const FlightControlPanel = () => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const rotationFriction = usePropertyStore(
     (state) => state.properties[RotationalFrictionKey]?.value || false
@@ -48,14 +49,14 @@ const FlightControlPanel = () => {
   let touchStartY = 0;
   let mouseIsDown = false;
   useEffect(() => {
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     // console.log('Subscribing to flightcontroller');
     connectToTopic('flightcontroller');
     subscribeToProperty(RotationalFrictionKey);
     subscribeToProperty(ZoomFrictionKey);
     subscribeToProperty(RollFrictionKey);
     return () => {
-      if (connectionState != ConnectionState.CONNECTED) return;
+      if (connectionStatus != ConnectionStatus.Connected) return;
 
       disconnectFromTopic('flightcontroller');
       unsubscribeFromProperty(RotationalFrictionKey);
@@ -63,7 +64,7 @@ const FlightControlPanel = () => {
       unsubscribeFromProperty(RollFrictionKey);
     };
     // subscribeToTopic('camera', 500);
-  }, [connectionState]);
+  }, [connectionStatus]);
   function sendFlightControlInput(payload: FlightControllerInputStateCommand) {
     if (flightControlTopic) {
       flightControlTopic.talk(payload);

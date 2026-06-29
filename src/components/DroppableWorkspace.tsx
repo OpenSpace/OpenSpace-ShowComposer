@@ -9,7 +9,7 @@ import { getCopy } from '@/utils/copyHelpers';
 
 import { Badge } from './ui/badge';
 import AdjustablePage from './AdjustablePage';
-import { ConnectionStatus } from './ConnectionSettings';
+import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import ScaleGUI from './ScaleGUI';
 import { useTheme } from './ThemeProvider';
 
@@ -113,7 +113,7 @@ const DroppableWorkspace: React.FC<{
 
         {isPresentMode && (
           <div className={'absolute left-3 top-3'}>
-            <ConnectionStatus />
+            <ConnectionStatusIndicator />
           </div>
         )}
         {!isPresentMode && <SelectionTool />}

@@ -3,7 +3,8 @@ import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Label } from '@/components/ui/label';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { ConnectionStatus } from '@/types/enums';
 
 const logLevelOptions: { value: LogLevel; label: string }[] = [
   { value: LogLevel.All, label: 'All Logging' },
@@ -23,7 +24,7 @@ function isLogLevel(value: string): value is LogLevel {
 }
 
 const LogPanel = () => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   const errorLog = usePropertyStore((state) => state.errorLog);
@@ -55,7 +56,7 @@ const LogPanel = () => {
 
   useEffect(() => {
     // return;
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     subscribeToTopic('errorLog', undefined, {
       settings: {
         timeStamping: true,
@@ -70,7 +71,7 @@ const LogPanel = () => {
       unsubscribeFromTopic('errorLog');
       // useOpenSpaceApiStore.getState().unsubscribeFromTopic('errorLog');
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
 
   return (
     <div className={'flex flex-col'}>

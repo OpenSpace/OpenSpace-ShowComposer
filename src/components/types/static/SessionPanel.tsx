@@ -7,7 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { ConnectionState, useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 
 //set up recording state
@@ -38,7 +39,7 @@ const SessionPanel = () => {
     return fileList.map((v: string) => v.split('.')[0]).includes(filenameRecording);
   }, [fileList, filenameRecording]);
 
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
 
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
@@ -46,12 +47,12 @@ const SessionPanel = () => {
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
 
   useEffect(() => {
-    if (connectionState != ConnectionState.CONNECTED) return;
+    if (connectionStatus != ConnectionStatus.Connected) return;
     subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
     return () => {
       unsubscribeFromTopic('sessionRecording');
     };
-  }, [connectionState]);
+  }, [connectionStatus]);
 
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 

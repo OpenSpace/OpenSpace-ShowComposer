@@ -31,10 +31,11 @@ import {
 } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { ConnectionStatus } from '@/types/enums';
 
 import favicon from './assets/images/favicon.png';
 import ComponentModal from './components/ComponentModal';
-import { ConnectionStatus } from './components/ConnectionSettings';
+import { ConnectionStatusIndicator } from './components/ConnectionStatusIndicator';
 import DraggableComponent from './components/DraggableComponent';
 import DraggablePanel from './components/DraggablePanel';
 import DroppableWorkspace from './components/DroppableWorkspace';
@@ -55,7 +56,6 @@ import { MultiComponent } from './types/components';
 import { getCopy } from './utils/copyHelpers';
 import {
   ComponentType,
-  ConnectionState,
   useOpenSpaceApiStore,
   useSettingsStore
 } from './store';
@@ -123,7 +123,7 @@ const Editor = () => {
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
   const projectName = useSettingsStore((state) => state.projectName);
 
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
 
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {
@@ -351,7 +351,7 @@ const Editor = () => {
                 </div>
                 <Separator /> */}
                 <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
-                  <ConnectionStatus />
+                  <ConnectionStatusIndicator />
                   <div className={'flex flex-row items-center gap-2  '}>
                     <div className={'text-xs font-bold '}>
                       {getCopy('Main', 'project_name')}
@@ -525,35 +525,35 @@ const Editor = () => {
                   icon={navType.icon}
                   selected={NavPosition?.minimized}
                   onClick={() => minimize(NavPosition)}
-                  disabled={connectionState != ConnectionState.CONNECTED}
+                  disabled={connectionStatus != ConnectionStatus.Connected}
                 />
                 <ToggleButton
                   tooltipText={getCopy('Main', 'timepanel')}
                   icon={timeType.icon}
                   selected={TimePosition?.minimized}
                   onClick={() => minimize(TimePosition)}
-                  disabled={connectionState != ConnectionState.CONNECTED}
+                  disabled={connectionStatus != ConnectionStatus.Connected}
                 />
                 <ToggleButton
                   tooltipText={getCopy('Main', 'statuspanel')}
                   icon={statusType.icon}
                   selected={StatusPosition?.minimized}
                   onClick={() => minimize(StatusPosition)}
-                  disabled={connectionState != ConnectionState.CONNECTED}
+                  disabled={connectionStatus != ConnectionStatus.Connected}
                 />
                 <ToggleButton
                   tooltipText={getCopy('Main', 'recordpanel')}
                   icon={recordType.icon}
                   selected={RecordPosition?.minimized}
                   onClick={() => minimize(RecordPosition)}
-                  disabled={connectionState != ConnectionState.CONNECTED}
+                  disabled={connectionStatus != ConnectionStatus.Connected}
                 />
                 <ToggleButton
                   tooltipText={getCopy('Main', 'logpanel')}
                   icon={logType.icon}
                   selected={LogPosition?.minimized}
                   onClick={() => minimize(LogPosition)}
-                  disabled={connectionState != ConnectionState.CONNECTED}
+                  disabled={connectionStatus != ConnectionStatus.Connected}
                 />
               </div>
               {(!isPresentMode || (showPagination && isPresentMode)) && (

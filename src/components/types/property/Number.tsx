@@ -11,13 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  ConnectionState,
   NumberComponent,
   useOpenSpaceApiStore,
   usePropertyStore
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
+import { ConnectionStatus } from '@/types/enums';
 import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
@@ -28,7 +28,7 @@ interface NumberGUIProps {
 }
 const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
@@ -68,12 +68,12 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   };
 
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
     subscribeToProperty(component.property, 50);
     return () => {
       unsubscribeFromProperty(component.property);
     };
-  }, [component.property, connectionState, subscribeToProperty, unsubscribeFromProperty]);
+  }, [component.property, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 
   useEffect(() => {
     if (luaApi) {
@@ -132,7 +132,7 @@ interface NumberModalProps {
   handleComponentData: (data: Partial<NumberComponent>) => void;
 }
 const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentData }) => {
-  const connectionState = useOpenSpaceApiStore((state) => state.connectionState);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -195,7 +195,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
     handleComponentData
   ]);
   useEffect(() => {
-    if (connectionState !== ConnectionState.CONNECTED) return;
+    if (connectionStatus !== ConnectionStatus.Connected) return;
   }, []);
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter(

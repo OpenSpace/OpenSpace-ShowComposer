@@ -23,11 +23,6 @@ type Subscription = {
   subscription: Topic<TopicId>;
 };
 
-export enum ConnectionState {
-  UNCONNECTED = 'UNCONNECTED',
-  CONNECTED = 'CONNECTED',
-  CONNECTING = 'CONNECTING'
-}
 //need to work this out
 interface State {
   propertySubscriptions: Record<string, Subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
