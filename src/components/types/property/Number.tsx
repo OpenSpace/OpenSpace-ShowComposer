@@ -3,7 +3,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ComponentContainer from '@/components/common/ComponentContainer';
-import Information from '@/components/common/Information';
+import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import Slider from '@/components/inputs/Slider';

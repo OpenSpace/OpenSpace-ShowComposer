@@ -3,7 +3,7 @@ import Quill from 'quill';
 
 import { cn } from '@/lib/utils';
 
-import TooltipHolder from '../common/TooltipHolder';
+import { TooltipHolder } from '../common/TooltipHolder';
 // import { debounce } from 'lodash'; // Assuming lodash is available
 import { useTheme } from '../ThemeProvider';
 import { Button } from '../ui/button';

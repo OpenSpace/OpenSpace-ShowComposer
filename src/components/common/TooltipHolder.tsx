@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip } from '@mantine/core';
 
 interface TooltipHolderProps {
   children: React.ReactNode;
@@ -6,13 +6,10 @@ interface TooltipHolderProps {
   side?: 'top' | 'right' | 'bottom' | 'left';
 }
 
-const TooltipHolder: React.FC<TooltipHolderProps> = ({ children, content, side }) => (
-  <Tooltip>
-    <TooltipTrigger asChild>{children}</TooltipTrigger>
-    <TooltipContent className={'bg-white'} side={side}>
-      {content}
-    </TooltipContent>
-  </Tooltip>
-);
-
-export default TooltipHolder;
+export function TooltipHolder({ children, content, side }: TooltipHolderProps) {
+  return (
+    <Tooltip label={content} position={side}>
+      {children}
+    </Tooltip>
+  );
+}

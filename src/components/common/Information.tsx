@@ -1,26 +1,38 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import { ActionIcon, Popover } from '@mantine/core';
 import { Info } from 'lucide-react';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+interface InformationProps {
+  content: ReactNode | string;
+}
 
-const Information = ({ content }: { content: ReactNode | string }) => {
+export function Information({ content }: InformationProps) {
+  const [opened, setOpened] = useState(false);
+
+  if (!content) {
+    return null;
+  }
+
   return (
-    <>
-      {content ? (
-        <Tooltip>
-          <TooltipTrigger>
-            <Info size={16} />
-          </TooltipTrigger>
-          <TooltipContent
-            sticky={'always'}
-            className={'z-[999999] max-w-[200px] bg-white'}
-          >
-            {content}
-          </TooltipContent>
-        </Tooltip>
-      ) : null}
-    </>
-  );
-};
+    <Popover
+      opened={opened}
+      onDismiss={() => setOpened(false)}
+      position={'top'}
+      trapFocus
+      withArrow
+    >
+      <Popover.Target>
+        <ActionIcon
+          radius={'xl'}
+          size={'xs'}
+          aria-label={'More information'}
+          onClick={() => setOpened((o) => !o)}
+        >
+          <Info size={14} />
+        </ActionIcon>
+      </Popover.Target>
 
-export default Information;
+      <Popover.Dropdown maw={200}>{content}</Popover.Dropdown>
+    </Popover>
+  );
+}

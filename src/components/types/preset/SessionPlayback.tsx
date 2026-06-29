@@ -4,7 +4,7 @@ import { Pause, Play, Square } from 'lucide-react';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
-import Information from '@/components/common/Information';
+import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
 import { Button } from '@/components/ui/button';

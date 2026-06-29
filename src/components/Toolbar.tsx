@@ -6,7 +6,7 @@ import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import TooltipHolder from './common/TooltipHolder';
+import { TooltipHolder } from './common/TooltipHolder';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 interface ToolbarProps {

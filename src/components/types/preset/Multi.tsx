@@ -7,7 +7,7 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import ImageUpload from '@/components/common/ImageUpload';
-import Information from '@/components/common/Information';
+import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ComponentModal from '@/components/ComponentModal';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
-import Information from '@/components/common/Information';
+import { Information } from '@/components/common/Information';
 import Toggle from '@/components/common/Toggle';
 import ToggleComponent from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';

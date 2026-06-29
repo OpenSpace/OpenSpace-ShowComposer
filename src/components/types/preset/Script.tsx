@@ -4,7 +4,7 @@ import CodeEditor from '@uiw/react-textarea-code-editor';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
-import Information from '@/components/common/Information';
+import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
