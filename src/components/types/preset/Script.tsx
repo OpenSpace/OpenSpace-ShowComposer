@@ -12,7 +12,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
-import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 import { sendLuaScript } from '@/utils/triggerHelpers';
 
@@ -74,7 +73,6 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const [script, setScript] = useState<string>(component?.script || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
@@ -106,10 +104,6 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
     color,
     handleComponentData
   ]);
-
-  useEffect(() => {
-    if (connectionStatus !== ConnectionStatus.Connected) return;
-  }, []);
 
   return (
     <>

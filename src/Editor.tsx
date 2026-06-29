@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { useConnectionStatus } from '@/hooks/util';
 import { ConnectionStatus } from '@/types/enums';
 
 import favicon from './assets/images/favicon.png';
@@ -54,11 +55,7 @@ import { useBoundStore } from './store/boundStore';
 import { Position } from './store/positionSlice';
 import { MultiComponent } from './types/components';
 import { getCopy } from './utils/copyHelpers';
-import {
-  ComponentType,
-  useOpenSpaceApiStore,
-  useSettingsStore
-} from './store';
+import { ComponentType, useSettingsStore } from './store';
 // import { useNavigate } from 'react-router-dom';
 // import TooltipHolder from './components/common/TooltipHolder';
 
@@ -123,7 +120,7 @@ const Editor = () => {
   const goToPage = useBoundStore((state) => state.goToPage); // Get the global state
   const projectName = useSettingsStore((state) => state.projectName);
 
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const connectionStatus = useConnectionStatus();
 
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {

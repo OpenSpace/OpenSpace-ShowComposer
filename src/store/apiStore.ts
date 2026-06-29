@@ -106,6 +106,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
       port = '4682';
     }
 
+    console.log('Creating API');
     const apiInstance = OpenSpaceApi(host, parseInt(port));
     get().setConnectionStatus(ConnectionStatus.Connecting);
     get().apiInstance = apiInstance;
@@ -214,12 +215,17 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   unsubscribeFromProperty: (subscription: Topic<'subscribe'>) => {
-    const { connectionStatus, apiInstance } = get();
-    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
-    // subscription.talk({
-    //   event: 'stop_subscription'
-    // });
-    subscription.cancel();
+    // A property subscription's cancel() first sends 'stop_subscription' over the socket,
+    // so on a dead socket it throws ("Cannot send: socket is not connected"). Unlike WebGui
+    // — which unsubscribes synchronously inside the socket onclose (client still set) — our
+    // per-component teardown runs in React effect cleanup, after the socket is already
+    // nulled. Swallow the throw so it can't escape into React's cleanup and crash the tree;
+    // when the socket is gone the server-side subscription is gone too.
+    try {
+      subscription.cancel();
+    } catch {
+      // socket already closed — nothing left to tear down server-side
+    }
   },
   subscribeToTopic: <T extends TopicId>(topicName: T, payload?: TopicPayload<T>) => {
     const { connectionStatus, apiInstance } = get();
@@ -257,24 +263,38 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   unsubscribeFromTopic: (topic: Topic<TopicId>) => {
-    const { connectionStatus, apiInstance } = get();
-    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
-    topic.talk({
-      event: 'stop_subscription'
-    });
-    topic.cancel();
+    const { connectionStatus } = get();
+    // talk()/cancel() can send over the socket; guard the send on a live connection and
+    // swallow any throw so disconnect teardown can't crash React's effect cleanup.
+    try {
+      if (connectionStatus == ConnectionStatus.Connected) {
+        topic.talk({
+          event: 'stop_subscription'
+        });
+      }
+      topic.cancel();
+    } catch {
+      // socket already closed
+    }
   },
   cancelTopic: (topic: Topic<TopicId>) => {
-    const { connectionStatus, apiInstance } = get();
-    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
-    topic.cancel();
+    try {
+      topic.cancel();
+    } catch {
+      // socket already closed
+    }
   },
   disconnectFromTopic: (topic: Topic<TopicId>) => {
-    const { connectionStatus, apiInstance } = get();
-    if (!apiInstance || connectionStatus != ConnectionStatus.Connected) return;
-    topic.talk({
-      event: 'disconnect'
-    });
-    topic.cancel();
+    const { connectionStatus } = get();
+    try {
+      if (connectionStatus == ConnectionStatus.Connected) {
+        topic.talk({
+          event: 'disconnect'
+        });
+      }
+      topic.cancel();
+    } catch {
+      // socket already closed
+    }
   }
 }));

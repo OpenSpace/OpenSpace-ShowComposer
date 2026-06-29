@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useConnectionStatus } from '@/hooks/util';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store'; // Adjust the import path accordingly
 import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
@@ -41,7 +42,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({ triggerButton }
   const connect = useOpenSpaceApiStore((state) => state.connect);
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   // const disconnect = useOpenSpaceApiStore((state) => state.disconnect);
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const connectionStatus = useConnectionStatus();
   const [prevPort, setPrevPort] = useState<string>(port);
   const [prevUrl, setPrevUrl] = useState<string>(url);
   const [open, setOpen] = useState<boolean>(false);

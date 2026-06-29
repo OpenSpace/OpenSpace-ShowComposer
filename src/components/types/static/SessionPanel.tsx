@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import SelectableDropdown from '@/components/common/SelectableDropdown';
@@ -7,8 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { ConnectionStatus } from '@/types/enums';
+import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
+import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
 //set up recording state
@@ -30,29 +30,15 @@ const SessionPanel = () => {
   const [isInputFocused, setIsInputFocused] = useState(false); // State to track input focus
 
   //   const [nameIsTaken, setNameIsTaken] = useState(false);
-  const fileList = usePropertyStore((state) => state.sessionRecording.files || []);
-  const recordingState = usePropertyStore(
-    (state) => state.sessionRecording.state || SessionStateIdle
-  );
+  const sessionRecording = useSubscribeToSessionRecording();
+  const fileList = sessionRecording.files || [];
+  const recordingState = sessionRecording.state || SessionStateIdle;
 
   const nameIsTaken = useMemo(() => {
     return fileList.map((v: string) => v.split('.')[0]).includes(filenameRecording);
   }, [fileList, filenameRecording]);
 
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
-
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  //   const refreshTopic = usePropertyStore(state => state.refreshTopic);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
-
-  useEffect(() => {
-    if (connectionStatus != ConnectionStatus.Connected) return;
-    subscribeToTopic('sessionRecording', 0, { properties: ['state', 'files'] });
-    return () => {
-      unsubscribeFromTopic('sessionRecording');
-    };
-  }, [connectionStatus]);
 
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 

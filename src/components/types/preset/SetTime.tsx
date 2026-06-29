@@ -12,14 +12,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  SetTimeComponent as SetTimeType,
-  useOpenSpaceApiStore,
-  usePropertyStore
-} from '@/store';
+import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
+import { SetTimeComponent as SetTimeType, useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate, jumpToTime } from '@/utils/time';
 
@@ -27,17 +23,8 @@ interface SetTimeComponentProps {
   component: SetTimeType;
 }
 const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
-  useEffect(() => {
-    if (connectionStatus != ConnectionStatus.Connected) return;
-    subscribeToTopic('time');
-    return () => {
-      unsubscribeFromTopic('time');
-    };
-  }, [connectionStatus]);
+  useSubscribeToTime();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   useEffect(() => {
     if (luaApi) {
@@ -107,7 +94,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
   handleComponentData
   // isOpen,
 }) => {
-  const time = usePropertyStore((state) => state.time?.['timeCapped']);
+  const { timeCapped: time } = useSubscribeToTime();
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(component?.interpolate || false);
   const [intDuration, setIntDuration] = useState(component?.intDuration || 4);

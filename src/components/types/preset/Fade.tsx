@@ -14,6 +14,7 @@ import StatusBarControlled from '@/components/StatusBarControlled';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useSubscribeToProperty } from '@/hooks/properties';
 import {
   FadeComponent,
   Toggle,
@@ -22,7 +23,6 @@ import {
 } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-import { ConnectionStatus } from '@/types/enums';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
@@ -34,30 +34,17 @@ interface FadeGUIProps {
 }
 const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
-  const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty
-  );
+  const fadeUri = component?.property?.replace('.Opacity', '.Fade') ?? '';
   const property = usePropertyStore((state) => {
     return state.properties[component.property];
   });
-  const fadeProperty = usePropertyStore((state) => {
-    const uri = component?.property?.replace('.Opacity', '.Fade');
-    return uri ? state.properties[uri] : 0;
-  });
+  const fadeProperty = usePropertyStore((state) =>
+    fadeUri ? state.properties[fadeUri] : 0
+  );
 
-  useEffect(() => {
-    if (connectionStatus !== ConnectionStatus.Connected) return;
-    console.log('Subscribing to property', component.property);
-    const uri = component?.property?.replace('.Opacity', '.Fade');
-    if (!uri) return;
-    subscribeToProperty(component.property.replace('.Opacity', '.Fade'), 0);
-    return () => {
-      unsubscribeFromProperty(component.property.replace('.Opacity', '.Fade'));
-    };
-  }, [component.property, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
+  useSubscribeToProperty(fadeUri, 0);
+
   useEffect(() => {
     if (luaApi) {
       updateComponent(component.id, {
@@ -133,7 +120,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
@@ -214,10 +200,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
     color,
     handleComponentData
   ]);
-
-  useEffect(() => {
-    if (connectionStatus !== ConnectionStatus.Connected) return;
-  }, []);
 
   const sortedKeys: Record<string, string> = useMemo(
     () =>

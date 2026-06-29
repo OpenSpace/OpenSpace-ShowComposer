@@ -8,8 +8,8 @@ import DateComponent from '@/components/timepicker/DateComponent';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { ConnectionStatus } from '@/types/enums';
+import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
+import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 const updateDelayMs = 1000;
@@ -94,18 +94,17 @@ Object.freeze(Limits);
 const TimeDatePicker = () => {
   const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
-  const time = usePropertyStore((state) => state.time?.['timeCapped']);
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const targetDeltaTime = usePropertyStore((state) => state.time?.targetDeltaTime);
-  const isPaused = usePropertyStore((state) => state.time?.isPaused);
+  const {
+    timeCapped: time,
+    targetDeltaTime,
+    isPaused,
+    hasNextStep: hasNextDeltaTimeStep,
+    hasPrevStep: hasPrevDeltaTimeStep,
+    nextStep: nextDeltaTimeStep,
+    prevStep: prevDeltaTimeStep
+  } = useSubscribeToTime(1000);
   const [paused, setPaused] = useState<boolean>(isPaused || false);
-  const hasNextDeltaTimeStep = usePropertyStore((state) => state.time?.hasNextStep);
-  const hasPrevDeltaTimeStep = usePropertyStore((state) => state.time?.hasPrevStep);
-  const nextDeltaTimeStep = usePropertyStore((state) => state.time?.nextStep);
-  const prevDeltaTimeStep = usePropertyStore((state) => state.time?.prevStep);
   function setNextDeltaTimeStep() {
     updateDeltaTime.cancel();
     luaApi?.time.interpolateNextDeltaTimeStep();
@@ -180,13 +179,6 @@ const TimeDatePicker = () => {
   function now() {
     setDate(new Date());
   }
-  useEffect(() => {
-    if (connectionStatus != ConnectionStatus.Connected) return;
-    subscribeToTopic('time', 1000);
-    return () => {
-      unsubscribeFromTopic('time');
-    };
-  }, [connectionStatus]);
 
   const timeLabel = useMemo(() => {
     if (time) {

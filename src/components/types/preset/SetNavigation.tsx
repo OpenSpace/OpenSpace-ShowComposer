@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
+import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
 import { NavigationState } from '@/types/types';
@@ -32,7 +33,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   // isOpen,
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const time = usePropertyStore((state) => state.time?.['timeCapped']);
+  const { timeCapped: time } = useSubscribeToTime();
   const [navigationState, setNavigationState] = useState<NavigationState | undefined>(
     component?.navigationState
   );

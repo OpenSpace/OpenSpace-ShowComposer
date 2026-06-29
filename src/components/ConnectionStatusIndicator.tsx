@@ -1,12 +1,12 @@
 import { CheckCircle, HelpCircle, Radio, XCircle } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
-import { useOpenSpaceApiStore } from '@/store';
+import { useConnectionStatus } from '@/hooks/util';
 import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 
 export function ConnectionStatusIndicator() {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const connectionStatus = useConnectionStatus();
 
   function renderConnectionState(size: number) {
     switch (connectionStatus) {
