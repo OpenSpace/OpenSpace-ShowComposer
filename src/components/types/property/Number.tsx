@@ -10,7 +10,7 @@ import Slider from '@/components/inputs/Slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import {
   NumberComponent,
   useOpenSpaceApiStore,
@@ -29,15 +29,13 @@ interface NumberGUIProps {
 const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const property = usePropertyStore((state) => state.properties[component.property]);
-  const [tempValue, setTempValue] = useState<number>(Number(property?.value));
-
-  useSubscribeToProperty(component.property, 50);
+  const [value] = useProperty('FloatProperty', component.property);
+  const [tempValue, setTempValue] = useState<number>(value ?? 0);
 
   const [triggeredByArrowKey, setTriggeredByArrowKey] = useState(false);
   useEffect(() => {
-    setTempValue(Number(property?.value));
-  }, [property?.value]);
+    setTempValue(value ?? 0);
+  }, [value]);
   const handleBlur = () => {
     component.triggerAction?.(tempValue);
   };
@@ -72,14 +70,14 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         triggerAction: (_value: number) => {
           triggerNumber(component.property, _value);
         },
-        isDisabled: property ? false : true
+        isDisabled: value === undefined
       });
     } else {
       updateComponent(component.id, {
         isDisabled: true
       });
     }
-  }, [component.id, component.property, luaApi, property]);
+  }, [component.id, component.property, luaApi, value]);
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
@@ -92,7 +90,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
         </div>
 
         <Slider
-          value={Number(property?.value) || 0}
+          value={value ?? 0}
           min={component.min}
           max={component.max}
           step={component.step}

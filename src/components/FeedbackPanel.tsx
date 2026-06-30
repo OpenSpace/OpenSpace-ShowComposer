@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { ArrowUpFromDot, Clock, Globe, Telescope } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
-import { usePropertyValue, useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { cn } from '@/lib/utils';
 import { NavigationAnchorKey } from '@/store/apiStore';
@@ -15,8 +15,7 @@ type FeedbackPanelProps = {
 };
 
 const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
-  const currentAnchor = usePropertyValue('StringProperty', NavigationAnchorKey);
-  useSubscribeToProperty(NavigationAnchorKey, 1000);
+  const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const { timeCapped: time } = useSubscribeToTime(1000);
   const camera = useSubscribeToCamera(500);
 

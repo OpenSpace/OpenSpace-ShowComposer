@@ -52,12 +52,16 @@ function useStoredProperty<T extends PropertyTypeKey>(
   return prop;
 }
 
+// How often a property subscription is allowed to re-render. Only fast-changing numbers
+// really hit this, e.g. Fade values or other number types (normally)
+const SubscriptionThrottleMs = 50;
+
 /**
  * Subscribe to live updates for a property while the component is mounted. Does nothing
  * until we're connected to OpenSpace. The store keeps a count of subscribers, so it's fine
  * for several components to subscribe to the same property at once.
  */
-export function useSubscribeToProperty(uri: string, throttleMs: number = 200): void {
+export function useSubscribeToProperty(uri: string): void {
   const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
   const unsubscribeFromProperty = usePropertyStore(
@@ -68,11 +72,11 @@ export function useSubscribeToProperty(uri: string, throttleMs: number = 200): v
     if (connectionStatus !== ConnectionStatus.Connected || !uri) {
       return;
     }
-    subscribeToProperty(uri, throttleMs);
+    subscribeToProperty(uri, SubscriptionThrottleMs);
     return () => {
       unsubscribeFromProperty(uri);
     };
-  }, [uri, throttleMs, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
+  }, [uri, connectionStatus, subscribeToProperty, unsubscribeFromProperty]);
 }
 
 /**
@@ -102,8 +106,7 @@ export function usePropertyMetaData<T extends PropertyTypeKey>(
  */
 export function useProperty<T extends PropertyTypeKey>(
   type: T,
-  uri: string,
-  throttleMs: number = 200
+  uri: string
 ): [
   PropertyOrPropertyGroup<T>['value'] | undefined,
   (value: PropertyOrPropertyGroup<T>['value']) => void,
@@ -111,7 +114,7 @@ export function useProperty<T extends PropertyTypeKey>(
 ] {
   const luaApi = useOpenSpaceApi();
   const prop = useStoredProperty(type, uri);
-  useSubscribeToProperty(uri, throttleMs);
+  useSubscribeToProperty(uri);
 
   // Throttle outgoing writes at ~60fps, matching WebGui, so dragging a slider does not
   // flood the socket.

@@ -14,7 +14,7 @@ import StatusBarControlled from '@/components/StatusBarControlled';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import {
   FadeComponent,
   Toggle,
@@ -35,15 +35,13 @@ interface FadeGUIProps {
 const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const fadeUri = component?.property?.replace('.Opacity', '.Fade') ?? '';
   const property = usePropertyStore((state) => {
     return state.properties[component.property];
   });
-  const fadeProperty = usePropertyStore((state) =>
-    fadeUri ? state.properties[fadeUri] : 0
+  const [fadeValue] = useProperty(
+    'FloatProperty',
+    component?.property?.replace('.Opacity', '.Fade') ?? ''
   );
-
-  useSubscribeToProperty(fadeUri, 0);
 
   useEffect(() => {
     if (luaApi) {
@@ -92,11 +90,8 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
         component.triggerAction?.();
       }}
     >
-      {fadeProperty ? (
-        <StatusBarControlled
-          progress={Number(fadeProperty?.value)}
-          debounceDuration={0}
-        />
+      {fadeValue !== undefined ? (
+        <StatusBarControlled progress={Number(fadeValue)} debounceDuration={0} />
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>

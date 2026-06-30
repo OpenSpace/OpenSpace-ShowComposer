@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
@@ -114,10 +114,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
   const camera = useSubscribeToCamera(500);
-  const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey]
-  );
-  useSubscribeToProperty(NavigationAnchorKey, 1000);
+  const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   type Option = {
     name: string;
     shouldGeo: boolean;
@@ -194,9 +191,9 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   }, [target, options]);
 
   const setFromOpenspace = () => {
-    const shouldGeo = options?.find((option) => option.name === CurrentAnchor.value)
+    const shouldGeo = options?.find((option) => option.name === currentAnchor)
       ?.shouldGeo;
-    setTarget(String(CurrentAnchor.value));
+    setTarget(String(currentAnchor));
     if (shouldGeo) {
       setLat(camera.latitude || 0);
       setLong(camera.longitude || 0);

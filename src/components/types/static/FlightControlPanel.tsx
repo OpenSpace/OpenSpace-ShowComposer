@@ -5,9 +5,9 @@ import { Information } from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
@@ -20,19 +20,9 @@ export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.Roll
 
 const FlightControlPanel = () => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
-  const rotationFriction = usePropertyStore(
-    (state) => state.properties[RotationalFrictionKey]?.value || false
-  );
-  const zoomFriction = usePropertyStore(
-    (state) => state.properties[ZoomFrictionKey]?.value || false
-  );
-  const rollFriction = usePropertyStore(
-    (state) => state.properties[RollFrictionKey]?.value || false
-  );
-
-  useSubscribeToProperty(RotationalFrictionKey);
-  useSubscribeToProperty(ZoomFrictionKey);
-  useSubscribeToProperty(RollFrictionKey);
+  const [rotationFriction = false] = useProperty('BoolProperty', RotationalFrictionKey);
+  const [zoomFriction = false] = useProperty('BoolProperty', ZoomFrictionKey);
+  const [rollFriction = false] = useProperty('BoolProperty', RollFrictionKey);
   const sendFlightControlInput = useFlightController();
 
   let touchStartX = 0;

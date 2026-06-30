@@ -12,7 +12,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import {
   BooleanComponent,
   Toggle,
@@ -31,9 +31,7 @@ interface BoolGUIProps {
 const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const property = usePropertyStore((state) => state.properties[component.property]);
-
-  useSubscribeToProperty(component.property, 500);
+  const [value] = useProperty('BoolProperty', component.property);
 
   useEffect(() => {
     if (luaApi) {
@@ -42,7 +40,7 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = tr
         triggerAction: () => {
           triggerBool(component.property, component.action);
         },
-        isDisabled: property ? false : true
+        isDisabled: value === undefined
       });
     } else {
       updateComponent(component.id, {
@@ -54,16 +52,16 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = tr
     component.action,
     component.action,
     component.property,
-    property,
+    value,
     luaApi
   ]);
 
   return shouldRender ? (
     <ComponentContainer
       className={`${
-        property?.value == 1
+        value === true
           ? 'outline-green-500'
-          : property?.value == 0
+          : value === false
             ? 'outline-red-500'
             : 'outline-grey-500'
       } outline  outline-4 outline-offset-2 transition-[outline-color] duration-300 `}

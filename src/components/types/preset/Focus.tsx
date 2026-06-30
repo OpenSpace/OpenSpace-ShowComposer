@@ -10,7 +10,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import {
   NavigationAimKey,
@@ -30,12 +30,13 @@ interface FocusGUIProps {
 const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  // Subscribing to Renderable.Enabled lets us check whether the property exists.
-  const enabledUri = `Scene.${component.property}.Renderable.Enabled`;
-  const property = usePropertyStore((state) => state.properties[enabledUri]);
+  // Reading Renderable.Enabled lets us check whether the scene node exists.
+  const [enabledValue] = useProperty(
+    'BoolProperty',
+    `Scene.${component.property}.Renderable.Enabled`
+  );
 
-  useSubscribeToProperty(NavigationAnchorKey, 1000);
-  useSubscribeToProperty(enabledUri, 1000);
+  useSubscribeToProperty(NavigationAnchorKey);
 
   useEffect(() => {
     if (luaApi) {
@@ -45,14 +46,14 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
           luaApi.setPropertyValueSingle(NavigationAnchorKey, component.property);
           luaApi.setPropertyValueSingle(NavigationAimKey, '');
         },
-        isDisabled: property ? false : true
+        isDisabled: enabledValue === undefined
       });
     } else {
       updateComponent(component.id, {
         isDisabled: true
       });
     }
-  }, [component.id, component.property, luaApi, property]);
+  }, [component.id, component.property, luaApi, enabledValue]);
 
   if (!shouldRender) return null;
 
@@ -103,16 +104,13 @@ const FocusModal: React.FC<FocusModalProps> = ({
     component?.color || ComponentBaseColors.setfocus
   );
 
-  const CurrentAnchor = usePropertyStore(
-    (state) => state.properties[NavigationAnchorKey]
-  );
-  useSubscribeToProperty(NavigationAnchorKey, 1000);
+  const [, , currentAnchorMeta] = useProperty('StringProperty', NavigationAnchorKey);
 
   const handlePropertyChange = (property: string) => {
     setProperty(property);
     if (!lockName) {
       setGuiName(`Focus on ${property}`);
-      setGuiDescription(`Focus on ${property}. ${CurrentAnchor?.metaData.description}`);
+      setGuiDescription(`Focus on ${property}. ${currentAnchorMeta?.description}`);
     }
   };
 

@@ -10,7 +10,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useSubscribeToProperty } from '@/hooks/properties';
+import { useProperty } from '@/hooks/properties';
 import {
   TriggerComponent,
   useOpenSpaceApiStore,
@@ -32,9 +32,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
 }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const property = usePropertyStore((state) => state.properties[component.property]);
-
-  useSubscribeToProperty(component.property, 500);
+  const [, , meta] = useProperty('TriggerProperty', component.property);
 
   useEffect(() => {
     if (luaApi) {
@@ -43,14 +41,14 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
         triggerAction: () => {
           triggerTrigger(component.property);
         },
-        isDisabled: property ? false : true
+        isDisabled: meta === undefined
       });
     } else {
       updateComponent(component.id, {
         isDisabled: true
       });
     }
-  }, [component.id, component.property, luaApi, property]);
+  }, [component.id, component.property, luaApi, meta]);
 
   return shouldRender ? (
     <ComponentContainer
