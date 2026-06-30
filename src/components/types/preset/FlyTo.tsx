@@ -14,12 +14,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useSubscribeToProperty } from '@/hooks/properties';
+import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
 import { ComponentBaseColors } from '@/types/components';
-import { ConnectionStatus } from '@/types/enums';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -112,18 +113,18 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
 }) => {
   // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
-  const camera = usePropertyStore((state) => state.camera);
+  const camera = useSubscribeToCamera(500);
   const CurrentAnchor = usePropertyStore(
     (state) => state.properties[NavigationAnchorKey]
   );
+  useSubscribeToProperty(NavigationAnchorKey, 1000);
   type Option = {
     name: string;
     shouldGeo: boolean;
   };
   const [options, setOptions] = useState<Option[]>();
 
-  const profile = usePropertyStore((state) => state.profile);
+  const profile = useSubscribeToProfile();
   const setFavorites = usePropertyStore((state) => state.setFavorites);
   // console.log("PROFILE", profile);
   const favorites = usePropertyStore((state) => state.favorites);
@@ -160,25 +161,6 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   //
   //in array of ooptiosn, find current option and check if it should be geo
 
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
-  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
-  const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty
-  );
-  const cancelTopic = usePropertyStore((state) => state.cancelTopic);
-
-  useEffect(() => {
-    if (connectionStatus !== ConnectionStatus.Connected) return;
-    subscribeToTopic('camera', 500);
-    subscribeToTopic('profile', 1000);
-    subscribeToProperty(NavigationAnchorKey, 1000);
-    return () => {
-      unsubscribeFromTopic('camera');
-      cancelTopic('profile');
-      unsubscribeFromProperty(NavigationAnchorKey);
-    };
-  }, [connectionStatus]);
   useEffect(() => {
     if (component) {
       setGeo(component?.geo || false);

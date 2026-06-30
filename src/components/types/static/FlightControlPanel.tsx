@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
@@ -6,8 +5,9 @@ import { Information } from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSubscribeToProperty } from '@/hooks/properties';
+import { useFlightController } from '@/hooks/topicSubscriptions';
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
@@ -19,7 +19,6 @@ export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.Zoom
 export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
 const FlightControlPanel = () => {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const rotationFriction = usePropertyStore(
     (state) => state.properties[RotationalFrictionKey]?.value || false
@@ -30,46 +29,15 @@ const FlightControlPanel = () => {
   const rollFriction = usePropertyStore(
     (state) => state.properties[RollFrictionKey]?.value || false
   );
-  // const camera = usePropertyStore(
-  //   (state) => state.properties['camera'] || false,
-  // );
-  const flightControlTopic = usePropertyStore(
-    (state) => state.topicSubscriptions['flightcontroller']?.subscription
-  );
-  const subscribeToProperty = usePropertyStore((state) => state.subscribeToProperty);
-  // const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromProperty = usePropertyStore(
-    (state) => state.unsubscribeFromProperty
-  );
-  const connectToTopic = usePropertyStore((state) => state.connectToTopic);
-  const disconnectFromTopic = usePropertyStore((state) => state.disconnectFromTopic);
-  // const dispatch = useDispatch();
+
+  useSubscribeToProperty(RotationalFrictionKey);
+  useSubscribeToProperty(ZoomFrictionKey);
+  useSubscribeToProperty(RollFrictionKey);
+  const sendFlightControlInput = useFlightController();
 
   let touchStartX = 0;
   let touchStartY = 0;
   let mouseIsDown = false;
-  useEffect(() => {
-    if (connectionStatus != ConnectionStatus.Connected) return;
-    // console.log('Subscribing to flightcontroller');
-    connectToTopic('flightcontroller');
-    subscribeToProperty(RotationalFrictionKey);
-    subscribeToProperty(ZoomFrictionKey);
-    subscribeToProperty(RollFrictionKey);
-    return () => {
-      if (connectionStatus != ConnectionStatus.Connected) return;
-
-      disconnectFromTopic('flightcontroller');
-      unsubscribeFromProperty(RotationalFrictionKey);
-      unsubscribeFromProperty(ZoomFrictionKey);
-      unsubscribeFromProperty(RollFrictionKey);
-    };
-    // subscribeToTopic('camera', 500);
-  }, [connectionStatus]);
-  function sendFlightControlInput(payload: FlightControllerInputStateCommand) {
-    if (flightControlTopic) {
-      flightControlTopic.talk(payload);
-    }
-  }
   function toggleRotation() {
     luaApi?.setPropertyValue(RotationalFrictionKey, !rotationFriction);
   }

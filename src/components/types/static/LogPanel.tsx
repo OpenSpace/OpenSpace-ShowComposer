@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Label } from '@/components/ui/label';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
-import { ConnectionStatus } from '@/types/enums';
+import { useSubscribeToErrorLog } from '@/hooks/topicSubscriptions';
 
 const logLevelOptions: { value: LogLevel; label: string }[] = [
   { value: LogLevel.All, label: 'All Logging' },
@@ -24,54 +23,16 @@ function isLogLevel(value: string): value is LogLevel {
 }
 
 const LogPanel = () => {
-  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
-  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
-  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
-  const errorLog = usePropertyStore((state) => state.errorLog);
-  const topic = usePropertyStore((state) => state.topicSubscriptions.errorLog);
-
+  const { errorLog, setLogLevel: updateLogLevel } = useSubscribeToErrorLog();
   const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
 
   const handleLogLevelChange = (value: string) => {
     if (!isLogLevel(value)) {
       return;
     }
-
     setLogLevel(value);
-
-    if (topic) {
-      topic.subscription.talk({ event: 'update_log_level', logLevel: value });
-    } else {
-      subscribeToTopic('errorLog', undefined, {
-        settings: {
-          timeStamping: true,
-          dateStamping: true,
-          categoryStamping: true,
-          logLevelStamping: true,
-          logLevel: value
-        }
-      });
-    }
+    updateLogLevel(value);
   };
-
-  useEffect(() => {
-    // return;
-    if (connectionStatus != ConnectionStatus.Connected) return;
-    subscribeToTopic('errorLog', undefined, {
-      settings: {
-        timeStamping: true,
-        dateStamping: true,
-        categoryStamping: true,
-        logLevelStamping: true,
-        logLevel: LogLevel.All
-      }
-    });
-
-    return () => {
-      unsubscribeFromTopic('errorLog');
-      // useOpenSpaceApiStore.getState().unsubscribeFromTopic('errorLog');
-    };
-  }, [connectionStatus]);
 
   return (
     <div className={'flex flex-col'}>
