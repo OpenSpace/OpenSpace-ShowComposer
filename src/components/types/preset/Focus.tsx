@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -11,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { usePropertyStore } from '@/store';
 import {
   NavigationAimKey,
   NavigationAnchorKey,
@@ -28,7 +29,7 @@ interface FocusGUIProps {
   shouldRender?: boolean;
 }
 const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = true }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   // Reading Renderable.Enabled lets us check whether the scene node exists.
   const [enabledValue] = useProperty(

@@ -1,13 +1,13 @@
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import { Information } from '@/components/common/Information';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 export const NavigationAnchorKey = 'NavigationHandler.OrbitalNavigator.Anchor';
 export const NavigationAimKey = 'NavigationHandler.OrbitalNavigator.Aim';
@@ -19,7 +19,7 @@ export const ZoomFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.Zoom
 export const RollFrictionKey = 'NavigationHandler.OrbitalNavigator.Friction.RollFriction';
 
 const FlightControlPanel = () => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const [rotationFriction = false] = useProperty('BoolProperty', RotationalFrictionKey);
   const [zoomFriction = false] = useProperty('BoolProperty', ZoomFrictionKey);
   const [rollFriction = false] = useProperty('BoolProperty', RollFrictionKey);

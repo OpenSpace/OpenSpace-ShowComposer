@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -11,11 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
-import {
-  TriggerComponent,
-  useOpenSpaceApiStore,
-  usePropertyStore
-} from '@/store';
+import { TriggerComponent, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
@@ -30,7 +27,7 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
   component,
   shouldRender = true
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [, , meta] = useProperty('TriggerProperty', component.property);
 

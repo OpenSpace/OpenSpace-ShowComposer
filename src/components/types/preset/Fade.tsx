@@ -3,6 +3,7 @@ import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -15,12 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
-import {
-  FadeComponent,
-  Toggle,
-  useOpenSpaceApiStore,
-  usePropertyStore
-} from '@/store';
+import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 // import { EnginePropertyVisibilityKey } from '@/store/apiStore';
@@ -33,7 +29,7 @@ interface FadeGUIProps {
   shouldRender?: boolean;
 }
 const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = true }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [opacity] = useProperty('FloatProperty', component.property);
   const [fadeValue] = useProperty(

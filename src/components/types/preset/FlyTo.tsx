@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -16,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
@@ -32,7 +33,7 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
   component,
   shouldRender = true
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
@@ -191,8 +192,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   }, [target, options]);
 
   const setFromOpenspace = () => {
-    const shouldGeo = options?.find((option) => option.name === currentAnchor)
-      ?.shouldGeo;
+    const shouldGeo = options?.find((option) => option.name === currentAnchor)?.shouldGeo;
     setTarget(String(currentAnchor));
     if (shouldGeo) {
       setLat(camera.latitude || 0);

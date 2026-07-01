@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ComponentContainer from '@/components/common/ComponentContainer';
 import { Information } from '@/components/common/Information';
@@ -11,11 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
-import {
-  NumberComponent,
-  useOpenSpaceApiStore,
-  usePropertyStore
-} from '@/store';
+import { NumberComponent, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
@@ -27,7 +24,7 @@ interface NumberGUIProps {
   component: NumberComponent;
 }
 const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [value] = useProperty('FloatProperty', component.property);
   const [tempValue, setTempValue] = useState<number>(value ?? 0);

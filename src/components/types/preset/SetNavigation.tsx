@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Anchor, Clock } from 'lucide-react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -13,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
 import { NavigationState } from '@/types/types';
@@ -32,7 +32,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   handleComponentData
   // isOpen,
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const { timeCapped: time } = useSubscribeToTime();
   const [navigationState, setNavigationState] = useState<NavigationState | undefined>(
     component?.navigationState
@@ -274,7 +274,7 @@ const SetNavGUIComponent: React.FC<SetNavGUIComponentProps> = ({
   component,
   shouldRender = true
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const {
     navigationState,

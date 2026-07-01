@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -13,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { SetTimeComponent as SetTimeType, useOpenSpaceApiStore } from '@/store';
+import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
@@ -23,7 +24,7 @@ interface SetTimeComponentProps {
   component: SetTimeType;
 }
 const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   useSubscribeToTime();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   useEffect(() => {

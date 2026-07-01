@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pause, Play, Square } from 'lucide-react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -13,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingsFolderKey } from '@/types/types';
@@ -33,7 +33,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   handleComponentData
   //   isOpen,
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const sessionRecording = useSubscribeToSessionRecording();
   const fileList = sessionRecording.files || [];
   const recordingState = sessionRecording.state || SessionStateIdle;
@@ -281,7 +281,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
 }) => {
   const { file, loop, gui_name, gui_description } = component;
   const recordingState = useSubscribeToSessionRecording().state || SessionStateIdle;
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 

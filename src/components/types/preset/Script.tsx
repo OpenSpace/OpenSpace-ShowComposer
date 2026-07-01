@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -9,7 +10,6 @@ import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useOpenSpaceApiStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
@@ -23,7 +23,7 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
   component,
   shouldRender = true
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
 
   const updateComponent = useBoundStore((state) => state.updateComponent);
   useEffect(() => {

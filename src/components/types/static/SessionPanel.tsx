@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
 //set up recording state
@@ -38,7 +38,7 @@ const SessionPanel = () => {
     return fileList.map((v: string) => v.split('.')[0]).includes(filenameRecording);
   }, [fileList, filenameRecording]);
 
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
 
   const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
 

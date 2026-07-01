@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { throttle } from 'lodash';
 import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import DateComponent from '@/components/timepicker/DateComponent';
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { useOpenSpaceApiStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 const updateDelayMs = 1000;
@@ -94,7 +94,7 @@ Object.freeze(Limits);
 const TimeDatePicker = () => {
   const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
 
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
   const {
     timeCapped: time,
     targetDeltaTime,

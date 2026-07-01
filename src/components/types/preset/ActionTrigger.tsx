@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import ComponentContainer from '@/components/common/ComponentContainer';
@@ -9,7 +10,7 @@ import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
+import { usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ActionTriggerComponent, ComponentBaseColors } from '@/types/components';
 import { Action } from '@/types/types';
@@ -139,7 +140,7 @@ const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
   component,
   shouldRender = true
 }) => {
-  const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
+  const luaApi = useOpenSpaceApi();
 
   const updateComponent = useBoundStore((state) => state.updateComponent);
 
