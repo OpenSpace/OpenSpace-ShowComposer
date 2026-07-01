@@ -35,9 +35,7 @@ interface FadeGUIProps {
 const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = true }) => {
   const luaApi = useOpenSpaceApiStore((state) => state.luaApi);
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const property = usePropertyStore((state) => {
-    return state.properties[component.property];
-  });
+  const [opacity] = useProperty('FloatProperty', component.property);
   const [fadeValue] = useProperty(
     'FloatProperty',
     component?.property?.replace('.Opacity', '.Fade') ?? ''
@@ -49,7 +47,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
         triggerAction: () => {
           triggerFade(component.property, component.intDuration, component.action);
         },
-        isDisabled: property ? false : true
+        isDisabled: opacity === undefined
       });
     } else {
       updateComponent(component.id, {
@@ -62,19 +60,19 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
     component.intDuration,
     component.action,
     component.property,
-    property,
+    opacity,
     luaApi
   ]);
   return shouldRender ? (
     <ComponentContainer
       className={`${
-        property
-          ? property?.value == 1
+        opacity === undefined
+          ? '!outline-none !outline-0'
+          : opacity === 1
             ? 'outline-green-500'
-            : property?.value == 0
+            : opacity === 0
               ? 'outline-red-500'
               : 'outline-grey-500'
-          : '!outline-none !outline-0'
       }
       outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
       backgroundImage={component.backgroundImage}
@@ -91,7 +89,7 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
       }}
     >
       {fadeValue !== undefined ? (
-        <StatusBarControlled progress={Number(fadeValue)} debounceDuration={0} />
+        <StatusBarControlled progress={fadeValue} debounceDuration={0} />
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
