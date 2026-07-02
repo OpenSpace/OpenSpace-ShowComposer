@@ -1,10 +1,5 @@
 import React from 'react';
-
-import { cn } from '@/lib/utils';
-
-// import { Switch } from '../ui/switch';
-import { Checkbox } from '../ui/checkbox';
-import { Label } from '../ui/label';
+import { Checkbox } from '@mantine/core';
 
 interface ToggleComponentProps {
   value: boolean;
@@ -22,23 +17,13 @@ const Toggle: React.FC<ToggleComponentProps> = ({
   className = ''
 }) => {
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
-      <Checkbox
-        id={label}
-        disabled={disabled}
-        checked={value}
-        onCheckedChange={(checked: boolean | 'indeterminate') => {
-          if (checked !== 'indeterminate') setValue(checked);
-        }}
-      />
-      <Label htmlFor={label}>{label}</Label>
-    </div>
-    // <Switch
-    //   id="geo"
-    //   checked={value}
-    //   disabled={disabled}
-    //   onCheckedChange={setValue}
-    // />
+    <Checkbox
+      className={className}
+      label={label}
+      disabled={disabled}
+      checked={value}
+      onChange={(event) => setValue(event.currentTarget.checked)}
+    />
   );
 };
 
