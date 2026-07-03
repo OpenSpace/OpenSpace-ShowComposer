@@ -263,7 +263,6 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
               {/* <Label>Add Existing Component</Label> */}
               <SelectableDropdown
                 placeholder={'Add Existing Component'}
-                shouldClear={true}
                 options={availableOptions.map((component) => ({
                   value: component,
                   label: getComponentById(component)?.gui_name
@@ -281,7 +280,6 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                 placeholder={'Add New Component'}
                 options={MultiOptions}
                 selected={undefined}
-                shouldClear={true}
                 setSelected={(type: string) => handleAddComponent(type as ComponentType)}
               />
             </div>
