@@ -1,19 +1,12 @@
-import { useRef } from 'react';
-import { VariantProps } from 'class-variance-authority';
+import React, { useRef } from 'react';
+import { ActionIcon, ActionIconProps } from '@mantine/core';
 
-import { Button, buttonVariants } from '../ui/button';
-
-interface HoldButtonProps extends VariantProps<typeof buttonVariants> {
+interface HoldButtonProps extends ActionIconProps {
   onClick: () => void;
   children: React.ReactNode;
 }
 
-const HoldButton: React.FC<HoldButtonProps> = ({
-  variant,
-  size,
-  onClick,
-  children
-}: HoldButtonProps) => {
+const HoldButton: React.FC<HoldButtonProps> = ({ onClick, children, ...props }) => {
   const clickInterval = useRef<NodeJS.Timeout | null>(null);
   const handleMouseDown = () => {
     onClick();
@@ -27,16 +20,15 @@ const HoldButton: React.FC<HoldButtonProps> = ({
   };
 
   return (
-    <Button
-      variant={variant}
-      size={size}
+    <ActionIcon
+      {...props}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onClick={onClick}
     >
       {children}
-    </Button>
+    </ActionIcon>
   );
 };
 
