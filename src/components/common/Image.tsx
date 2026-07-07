@@ -1,39 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { Image as LucideImage } from 'lucide-react'; // Ensure you have the correct import path
+import { useEffect, useState } from 'react';
+import { Center, Image as MantineImage, type MantineStyleProps } from '@mantine/core';
 
-import { cn } from '@/lib/utils';
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+import { ImageIcon } from '@/icons/icons';
+
+interface Props extends MantineStyleProps {
   src: string;
+  alt?: string;
+  className?: string;
 }
-const Image: React.FC<ImageProps> = ({ src, alt, ...props }) => {
+
+function Image({ src, alt, className, ...props }: Props) {
   const [imageError, setImageError] = useState(false);
+
   useEffect(() => {
     setImageError(false);
   }, [src]);
-  const onError = () => {
-    setImageError(true);
-  };
+
+  if (imageError) {
+    return (
+      <Center
+        className={className}
+        style={{
+          borderRadius: 'var(--mantine-radius-md)',
+          border: '1px dashed var(--mantine-color-default-border)'
+        }}
+        {...props}
+      >
+        <ImageIcon size={24} />
+      </Center>
+    );
+  }
+
   return (
-    <>
-      {!imageError ? (
-        <img
-          className={props.className}
-          src={src}
-          alt={alt}
-          onError={onError}
-          {...props}
-        />
-      ) : (
-        <div
-          className={cn(
-            'flex aspect-square w-full items-center justify-center rounded-md border border-dashed',
-            props.className
-          )}
-        >
-          <LucideImage className={'text-muted-foreground h-8 h-8'} />
-        </div>
-      )}
-    </>
+    <MantineImage
+      className={className}
+      src={src}
+      alt={alt}
+      onError={() => setImageError(true)}
+      {...props}
+    />
   );
-};
+}
+
 export default Image;
