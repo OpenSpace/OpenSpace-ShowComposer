@@ -271,12 +271,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
                 Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
               }
               searchPlaceholder={'Search the Scene...'}
-              presets={
-                options?.map((v) => ({
-                  value: v.name,
-                  label: v.name
-                })) || null
-              }
+              presets={options?.map((v) => v.name) || null}
             />
           </div>
         </div>

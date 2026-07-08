@@ -1,248 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  Box,
+  Combobox,
+  Group,
+  Input,
+  InputBase,
+  Text,
+  useVirtualizedCombobox
+} from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Fuse from 'fuse.js';
-import { Check, ChevronsUpDown } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList
-} from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import { CheckIcon, ChevronsUpDownIcon, SearchIcon } from '@/icons/icons';
 import { getCopy } from '@/utils/copyHelpers';
-type Option = {
-  value: string;
-  label: string;
-};
-interface VirtualizedCommandProps {
-  width: string;
-  options: Option[];
-  placeholder: string;
-  selectedOption: string;
-  onSelectOption?: (option: string) => void;
-  presets?: Option[] | null;
-  delimiter?: string;
-}
-const breakAndColorString = (str: string, delimiter: string) => {
-  const values = [
-    'text-slate-950 dark:text-slate-50',
-    'text-slate-700 dark:text-slate-300',
-    'text-slate-600 dark:text-slate-400',
-    'text-slate-500 dark:text-slate-500'
-  ];
-  const segments = str.split(delimiter);
-  return segments.flatMap((segment, index) => [
-    <span
-      className={`${values[index % values.length]} text-nowrap`}
-      key={`${index}-segment`}
-    >
-      {segment}
-    </span>,
-    index < segments.length - 1 && (
-      <span
-        className={`${values[index % values.length]} text-nowrap`}
-        key={`${index}-delimiter`}
-      >
-        {delimiter}
-      </span>
-    )
-  ]);
-};
-const VirtualizedCommand = ({
-  width,
-  options,
-  placeholder,
-  selectedOption = '',
-  onSelectOption,
-  presets = [],
-  delimiter = '>'
-}: VirtualizedCommandProps) => {
-  const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
-  const parentRef = useRef(null);
-  const [showPresets, setShowPresets] = useState(presets ? true : false);
-  const [search, setSearch] = useState('');
-  const virtualizer = useVirtualizer({
-    count: filteredOptions.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 45,
-    overscan: 5
-  });
-  const focusElement = (index: number) => {
-    virtualizer.scrollToIndex(index, {
-      align: 'start'
-    });
-  };
-  useEffect(() => {
-    if (selectedOption && selectedOption !== '') {
-      const index = filteredOptions.findIndex(
-        (option) => option.value === selectedOption
-      );
-      setTimeout(() => {
-        focusElement(index);
-        // virtualizer.measure();
-      }, 0);
-      setShowPresets(false);
-      setSearch(selectedOption);
-    }
-  }, []);
-  const fuse = new Fuse(options, {
-    keys: ['value'],
-    // Specify the keys to search in
-    threshold: 0.5 // Adjust the threshold for fuzzy matching
-  });
 
-  const handleSearch = (search: string) => {
-    setSearch(search);
-    if (search.trim() === '') {
-      setFilteredOptions([]);
-      if (presets) setShowPresets(true);
-    } else {
-      const result = fuse.search(search);
-      setFilteredOptions(result.map(({ item }) => item));
-      if (presets) setShowPresets(false);
-    }
-  };
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault();
-    }
-  };
-  useEffect(() => {
-    // console.log(virtualOptions);
-    virtualizer.measure();
-
-    // virtualizer.
-  }, [filteredOptions]);
-  // useEffect(() => {
-  //   // console.log(virtualOptions);
-  //   // console.log(virtualizer.getTotalSize());
-  // }, const [virtualOptions]);
-
+// Renders a delimited path with the leading segment prominent and the rest dimmed
+function ColoredPath({ value, delimiter }: { value: string; delimiter: string }) {
+  const segments = value.split(delimiter);
   return (
-    <Command shouldFilter={false} onKeyDown={handleKeyDown}>
-      <CommandInput
-        // disabled={false}
-        // className="w-aut"
-        style={
-          {
-            // width: 'inherit!important',
-          }
-        }
-        value={search}
-        onValueChange={handleSearch}
-        placeholder={placeholder}
-      />
-
-      <CommandEmpty>{getCopy('VirtualizedCombobox', 'no_item_found.')}</CommandEmpty>
-      <CommandList>
-        <div
-          style={{
-            // height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative'
-          }}
-        >
-          <CommandGroup>
-            {showPresets &&
-              presets?.map((preset) => (
-                <CommandItem
-                  key={preset.value}
-                  value={preset.value}
-                  onSelect={(value: string) => {
-                    onSelectOption && onSelectOption(value);
-                  }}
-                  style={{
-                    height: '45px'
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      selectedOption === preset.value ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                  {preset.label}
-                </CommandItem>
-              ))}
-          </CommandGroup>
-        </div>
-      </CommandList>
-      {!showPresets && (
-        <CommandList ref={parentRef}>
-          <div
-            style={{
-              height: `${virtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative'
-            }}
-          >
-            <CommandGroup
-              // ref={parentRef}
-              style={{
-                // maxHeight: height,
-                width: 'inherit',
-                overflow: 'auto'
-              }}
-            >
-              {virtualizer.getVirtualItems().map((virtualOption) => (
-                <CommandItem
-                  // data-index={virtual÷åOption.index}
-                  // ref={virtualizer.measureElement}
-                  className={'w-max items-center'}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    minWidth: width,
-                    height: `${virtualOption.size}px`,
-                    transform: `translateY(${virtualOption.start}px)`
-                  }}
-                  key={virtualOption.key}
-                  // key={filteredOptions[virtualOption.index].value}
-                  value={filteredOptions[virtualOption.index].value}
-                  onSelect={(value: string) => {
-                    onSelectOption && onSelectOption(value);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 !h-4 !w-4',
-                      selectedOption === filteredOptions[virtualOption.index].value
-                        ? 'opacity-100'
-                        : 'opacity-0'
-                    )}
-                  />
-                  <span>
-                    {breakAndColorString(
-                      filteredOptions[virtualOption.index].label,
-                      delimiter
-                    )}
-                  </span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </div>
-        </CommandList>
-      )}
-      {/* </CommandGroup> */}
-    </Command>
+    <Box component={'span'} style={{ whiteSpace: 'nowrap' }}>
+      {segments.map((segment, index) => (
+        <Fragment key={index}>
+          <Text span inherit c={index === 0 ? undefined : 'dimmed'}>
+            {segment}
+          </Text>
+          {index < segments.length - 1 && (
+            <Text span inherit c={'dimmed'}>
+              {delimiter}
+            </Text>
+          )}
+        </Fragment>
+      ))}
+    </Box>
   );
-};
-interface VirtualizedComboboxProps {
+}
+
+interface Props {
   options: string[];
   selectedOption: string;
   selectOption: (option: string) => void;
   searchPlaceholder?: string;
   width?: string;
   height?: string;
-  presets?: Option[] | null;
+  presets?: string[] | null;
   delimiter?: string;
 }
+const ITEM_HEIGHT = 40;
+
 export function VirtualizedCombobox({
   options,
   selectedOption,
@@ -250,58 +54,165 @@ export function VirtualizedCombobox({
   searchPlaceholder = 'Search items...',
   width = '460px',
   delimiter = '>',
-  // height = '300px',
-
   presets = null
-}: VirtualizedComboboxProps) {
-  const [open, setOpen] = useState<boolean>(false);
+}: Props) {
+  const [search, setSearch] = useState('');
+  // The highlighted option is tracked by index so it stays correct even when the top
+  // rows are virtualized out of the DOM
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const optionIdBase = useId();
+  const fuse = useMemo(() => new Fuse(options, { threshold: 0.5 }), [options]);
+
+  // Empty search shows the presets (if any) or the full list; a query runs it through Fuse
+  const items: string[] = useMemo(() => {
+    if (search.trim() !== '') {
+      return fuse.search(search).map(({ item }) => item);
+    }
+    if (presets) {
+      return presets;
+    }
+    return options;
+  }, [search, fuse, presets, options]);
+
+  // Hook from mantine to manage the combobox in combination with tanstacks virtualizer.
+  // See example https://mantine.dev/combobox/?e=VirtualizedSearchableTanstack
+  const combobox = useVirtualizedCombobox({
+    totalOptionsCount: items.length,
+    getOptionId: (index) => `${optionIdBase}-${index}`,
+    selectedOptionIndex: activeIndex,
+    setSelectedOptionIndex: setActiveIndex,
+    onSelectedOptionSubmit: (index) => {
+      // Get the item via the index and select
+      const item = items[index];
+      if (item !== undefined) {
+        selectOption(item);
+      }
+      combobox.closeDropdown();
+    },
+    onDropdownOpen: () => combobox.focusSearchInput(),
+    onDropdownClose: () => {
+      combobox.resetSelectedOption();
+      combobox.focusTarget();
+      setSearch('');
+    }
+  });
+
+  // Tanstacks virtualizer hook
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ITEM_HEIGHT,
+    overscan: 5
+  });
+
+  // When the query changes or the dropdown opens, jump back to the top and highlight the best
+  // match (index 0) so Enter submits it. `virtualizer` is a stable instance from useVirtualizer.
+  const { dropdownOpened } = combobox;
+  useEffect(() => {
+    if (dropdownOpened) {
+      setActiveIndex(0);
+      virtualizer.scrollToIndex(0);
+    }
+  }, [search, dropdownOpened, virtualizer]);
+
+  // Keep the keyboard-highlighted option in view. Fires only when the highlighted index
+  // changes (arrow keys / the reset above), never on mouse-wheel scroll, so it does not fight
+  // manual scrolling. scrollToIndex does nothing when the option is already visible
+  useEffect(() => {
+    if (dropdownOpened && activeIndex >= 0) {
+      virtualizer.scrollToIndex(activeIndex);
+    }
+  }, [activeIndex, dropdownOpened, virtualizer]);
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className={'overflow-hidden'}>
-        <Button
-          variant={'outline'}
-          role={'combobox'}
-          aria-expanded={open}
-          className={'relative justify-between'}
-          style={{
-            width: width
+    <Combobox
+      store={combobox}
+      width={'target'}
+      onOptionSubmit={(value) => {
+        selectOption(value);
+        combobox.closeDropdown();
+      }}
+    >
+      <Combobox.Target targetType={'button'}>
+        <InputBase
+          component={'button'}
+          type={'button'}
+          pointer
+          rightSection={<ChevronsUpDownIcon />}
+          rightSectionPointerEvents={'none'}
+          onClick={() => combobox.toggleDropdown()}
+          style={{ width }}
+          styles={{
+            input: {
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap'
+            }
           }}
         >
-          <span>
-            {breakAndColorString(
-              selectedOption
-                ? options.find((option) => option === selectedOption) ?? ''
-                : searchPlaceholder,
-              delimiter
-            )}
-          </span>
-          <ChevronsUpDown
-            className={`absolute right-0 mr-2 h-4 w-4 shrink-0 opacity-50`}
-          />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className={' p-0'}
-        style={{
-          width: width
-        }}
-      >
-        <VirtualizedCommand
-          width={width}
-          options={options.map((option) => ({
-            value: option,
-            label: option
-          }))}
+          {selectedOption ? (
+            <ColoredPath value={selectedOption} delimiter={delimiter} />
+          ) : (
+            <Input.Placeholder>{searchPlaceholder}</Input.Placeholder>
+          )}
+        </InputBase>
+      </Combobox.Target>
+      <Combobox.Dropdown>
+        <Combobox.Search
+          value={search}
+          onChange={(event) => setSearch(event.currentTarget.value)}
           placeholder={searchPlaceholder}
-          selectedOption={selectedOption}
-          onSelectOption={(currentValue) => {
-            selectOption(currentValue === selectedOption ? '' : currentValue);
-            setOpen(false);
-          }}
-          presets={presets}
-          delimiter={delimiter}
+          leftSection={<SearchIcon style={{ marginRight: 8 }} />}
+          leftSectionWidth={42}
         />
-      </PopoverContent>
-    </Popover>
+        <Combobox.Options>
+          {items.length === 0 ? (
+            <Combobox.Empty>
+              {getCopy('VirtualizedCombobox', 'no_item_found.')}
+            </Combobox.Empty>
+          ) : (
+            <Box ref={scrollRef} mah={300} style={{ overflowY: 'auto' }}>
+              <Box pos={'relative'} h={virtualizer.getTotalSize()}>
+                {virtualizer.getVirtualItems().map((virtualRow) => {
+                  const item = items[virtualRow.index];
+                  return (
+                    <Combobox.Option
+                      key={item}
+                      value={item}
+                      id={`${optionIdBase}-${virtualRow.index}`}
+                      // `selected` drives the keyboard-highlight background
+                      // (data-combobox-selected); `active` marks the chosen value for aria.
+                      selected={virtualRow.index === activeIndex}
+                      active={selectedOption === item}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: virtualRow.size,
+                        transform: `translateY(${virtualRow.start}px)`
+                      }}
+                    >
+                      <Group gap={'xs'} wrap={'nowrap'} h={'100%'}>
+                        <CheckIcon
+                          size={16}
+                          style={{
+                            flexShrink: 0,
+                            opacity: selectedOption === item ? 1 : 0
+                          }}
+                        />
+                        <ColoredPath value={item} delimiter={delimiter} />
+                      </Group>
+                    </Combobox.Option>
+                  );
+                })}
+              </Box>
+            </Box>
+          )}
+        </Combobox.Options>
+      </Combobox.Dropdown>
+    </Combobox>
   );
 }
