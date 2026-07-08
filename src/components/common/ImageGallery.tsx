@@ -1,185 +1,182 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Upload } from 'lucide-react';
-
+import { useEffect, useState } from 'react';
 import {
+  AspectRatio,
+  Button,
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components//ui/card';
+  Group,
+  Modal,
+  Pagination,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+
 import Image from '@/components/common/Image';
+import { UploadIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-import Pagination from '../Pagination';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-interface GalleryProps {
+import styles from './ImageGallery.module.css';
+
+interface Props {
+  opened: boolean;
   images: Array<string>;
   selectedImage: string;
   onSelectImage: (imageUrl: string) => void;
-  handleClose: () => void;
+  onClose: () => void;
   setUploadFile: (file: File | null) => void;
 }
-const ImageGallery: React.FC<GalleryProps> = ({
+
+const ITEMS_PER_PAGE = 6;
+
+function ImageGallery({
+  opened,
   images,
   selectedImage: initialImage,
   onSelectImage,
-  handleClose,
+  onClose,
   setUploadFile
-}) => {
-  // State for modal visibility, pagination, and selected image
-  // const [modalVisible, setModalVisible] = useState(false);
+}: Props) {
   const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation
   );
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 6; // Adjust based on your preference
-  const totalPages = Math.ceil(images.length / itemsPerPage);
   const [selectedImage, setSelectedImage] = useState(initialImage);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const totalPages = Math.ceil(images.length / ITEMS_PER_PAGE);
+  const startIndex = currentPage * ITEMS_PER_PAGE;
+  const imagesToDisplay = images.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // The modal stays mounted (visibility is driven by `opened`), so re-sync the local
+  // selection whenever the incoming image changes - e.g. when reopened for a new value
   useEffect(() => {
     setSelectedImage(initialImage);
   }, [initialImage]);
-  const handleButtonClick = () => {
-    if (fileInputRef?.current) (fileInputRef.current as HTMLInputElement).click();
-  };
-  // Function to toggle modal visibility
-  // function toggleModal() {
-  //   setModalVisible(!modalVisible);
-  // }
 
-  // Function to change page
-  function goToPage(pageNumber: number) {
-    setCurrentPage(pageNumber);
-  }
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile: File | null = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      const imageUrl = URL.createObjectURL(selectedFile);
-      setSelectedImage(imageUrl);
-      setUploadFile(selectedFile);
+  function handleDrop(files: File[]) {
+    const [file] = files;
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      setUploadFile(file);
     }
-  };
+  }
 
-  // Calculate the images to display on the current page
-  const startIndex = currentPage * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const imagesToDisplay = images.slice(startIndex, endIndex);
-  console.log('imagesToDisplay', imagesToDisplay);
-  // Modal component with pagination and image selection
+  // Closing (X / Esc / click-away / Cancel) discards any pending upload operation
+  function handleCancel() {
+    resetAsyncPreSubmitOperation();
+    onClose();
+  }
+
   return (
-    <>
-      <div
-        className={
-          'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
-        }
-      >
-        <Card className={'w-[510px] bg-white'}>
-          <CardHeader>
-            <CardTitle>{getCopy('ImageGallery', 'image_gallery')}</CardTitle>
-            <CardDescription>
-              {getCopy('ImageGallery', 'choose_an_image')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className={'grid gap-2'}>
-              <div className={'grid grid-cols-3 gap-2'}>
-                <div className={'grid grid-rows-1 gap-2'}>
-                  <Label>{getCopy('ImageGallery', 'seleted_image:')}</Label>
-                  <Image
-                    alt={'Selected image'}
-                    className={
-                      'aspect-square w-full rounded-md border border-dashed  border-black object-cover'
-                    }
-                    height={'150'}
-                    src={selectedImage || initialImage}
-                    width={'150'}
-                  />
-                </div>
-                <div />
-                <div className={'grid grid-rows-1 gap-2'}>
-                  <Label>{getCopy('ImageGallery', 'upload_new_image:')}</Label>
-                  <button
-                    onClick={handleButtonClick}
-                    className={
-                      'flex aspect-square w-full items-center justify-center rounded-md border border-dashed hover:border-black'
-                    }
-                  >
-                    <input
-                      type={'file'}
-                      className={'hidden'}
-                      accept={'image/*'}
-                      onChange={handleFileChange}
-                      ref={fileInputRef}
-                      // {...props}
-                    />
-                    <Upload className={'text-muted-foreground h-8 w-8'} />
-                    <span className={'sr-only'}>{getCopy('ImageGallery', 'upload')}</span>
-                  </button>
-                </div>
-              </div>
-              <div className={'grid grid-cols-3 gap-2'}>
-                {imagesToDisplay.map((image, _index) => (
-                  <button key={image} onClick={() => setSelectedImage(image)}>
-                    <Image
-                      alt={'Uploaded image'}
-                      className={'aspect-square w-full rounded-md object-cover'}
-                      height={'60'}
-                      src={image}
-                      width={'60'}
-                    />
-                  </button>
-                ))}
-                {Array.from(
-                  {
-                    length: itemsPerPage - imagesToDisplay.length
-                  },
-                  (_, index) => (
-                    <div
-                      key={`placeholder-${index}`}
-                      className={
-                        'aspect-square w-full rounded-md border-[1.5px] border-dashed border-black/40 bg-white object-cover'
-                      }
-                    ></div>
-                  )
-                )}
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className={'flex flex-row justify-end gap-2'}>
-            <Button
-              variant={'outline'}
-              onClick={() => {
-                resetAsyncPreSubmitOperation();
-                handleClose();
-              }}
+    <Modal
+      opened={opened}
+      onClose={handleCancel}
+      title={getCopy('ImageGallery', 'image_gallery')}
+      centered
+      size={520}
+    >
+      <Stack gap={'md'}>
+        <Text size={'sm'} c={'dimmed'}>
+          {getCopy('ImageGallery', 'choose_an_image')}
+        </Text>
+        <SimpleGrid cols={2} spacing={'sm'}>
+          <Stack gap={'xs'}>
+            <Text size={'sm'} fw={500}>
+              {getCopy('ImageGallery', 'seleted_image:')}
+            </Text>
+            <Card withBorder radius={'md'} padding={0} style={{ overflow: 'hidden' }}>
+              <AspectRatio ratio={1}>
+                <Image
+                  alt={'Selected image'}
+                  src={selectedImage || initialImage}
+                  fit={'cover'}
+                />
+              </AspectRatio>
+            </Card>
+          </Stack>
+          <Stack gap={'xs'}>
+            <Text size={'sm'} fw={500}>
+              {getCopy('ImageGallery', 'upload_new_image:')}
+            </Text>
+            <AspectRatio ratio={1}>
+              <Dropzone
+                onDrop={handleDrop}
+                accept={['image/*']}
+                multiple={false}
+                styles={{
+                  inner: {
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }
+                }}
+              >
+                <Stack align={'center'} gap={'xs'}>
+                  <UploadIcon size={32} />
+                  <Text size={'sm'} ta={'center'}>
+                    {getCopy('ImageGallery', 'upload')}
+                  </Text>
+                </Stack>
+              </Dropzone>
+            </AspectRatio>
+          </Stack>
+        </SimpleGrid>
+        <SimpleGrid cols={3} spacing={'sm'}>
+          {imagesToDisplay.map((image) => (
+            <Card
+              key={image}
+              withBorder
+              radius={'md'}
+              padding={0}
+              className={styles.thumbnail}
+              onClick={() => setSelectedImage(image)}
+              style={{ overflow: 'hidden', cursor: 'pointer' }}
             >
-              {getCopy('ImageGallery', 'cancel')}
-            </Button>
-
-            <Button
-              disabled={!(selectedImage.length > 0)}
-              onClick={() => {
-                onSelectImage(selectedImage);
-                handleClose();
-              }}
+              <AspectRatio ratio={1}>
+                <Image alt={'Uploaded image'} src={image} fit={'cover'} />
+              </AspectRatio>
+            </Card>
+          ))}
+          {Array.from({ length: ITEMS_PER_PAGE - imagesToDisplay.length }, (_, index) => (
+            <Card
+              key={`placeholder-${index}`}
+              withBorder
+              radius={'md'}
+              padding={0}
+              style={{ opacity: 0.4 }}
             >
-              {getCopy('ImageGallery', 'add_image')}
-            </Button>
-          </CardFooter>
-          <div className={'relative flex h-24 w-full items-center justify-center '}>
+              <AspectRatio ratio={1} />
+            </Card>
+          ))}
+        </SimpleGrid>
+        <Group justify={'flex-end'} gap={'sm'}>
+          <Button variant={'outline'} onClick={handleCancel}>
+            {getCopy('ImageGallery', 'cancel')}
+          </Button>
+          <Button
+            disabled={selectedImage.length === 0}
+            onClick={() => {
+              onSelectImage(selectedImage);
+              onClose();
+            }}
+          >
+            {getCopy('ImageGallery', 'add_image')}
+          </Button>
+        </Group>
+        {totalPages > 1 && (
+          <Group justify={'center'}>
             <Pagination
-              currentIndex={currentPage}
-              length={totalPages}
-              setIndex={goToPage}
+              total={totalPages}
+              value={currentPage + 1}
+              onChange={(page) => setCurrentPage(page - 1)}
             />
-          </div>
-        </Card>
-      </div>
-    </>
+          </Group>
+        )}
+      </Stack>
+    </Modal>
   );
-};
+}
+
 export default ImageGallery;

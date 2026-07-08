@@ -1,13 +1,13 @@
-import { cn } from '@/lib/utils';
-import { getCopy } from '@/utils/copyHelpers';
+import { useCallback } from 'react';
+import { SimpleGrid, Stack, Text } from '@mantine/core';
 
-import { Label } from '../ui/label';
+import { getCopy } from '@/utils/copyHelpers';
 
 import ColorPickerComponent from './ColorPickerComponent';
 import Image from './Image';
 import ImageUpload from './ImageUpload';
 
-interface BackgroundHolderProps {
+interface Props {
   color: string;
   setColor: (color: string) => void;
   backgroundImage: string;
@@ -15,41 +15,44 @@ interface BackgroundHolderProps {
   componentId?: string;
 }
 
-const BackgroundHolder: React.FC<BackgroundHolderProps> = ({
+function BackgroundHolder({
   color,
   setColor,
   backgroundImage,
   setBackgroundImage
-}) => {
+}: Props) {
+  const handleImageChange = useCallback(
+    (image: string) => setBackgroundImage(image),
+    [setBackgroundImage]
+  );
+
   return (
-    <div className={'grid grid-cols-1 gap-4'}>
-      <div className={'grid grid-cols-2 gap-4'}>
-        <div className={'flex flex-col gap-4'}>
-          <Label htmlFor={'background_color'}>Background Color</Label>
-          <div className={'flex flex-row  items-center gap-2'}>
-            <ColorPickerComponent color={color} setColor={setColor} />
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <Label htmlFor={'background_image'}>
+    <Stack gap={'md'}>
+      <SimpleGrid cols={2} spacing={'md'}>
+        <Stack gap={'md'}>
+          <Text size={'sm'} fw={500}>
+            Background Color
+          </Text>
+          <ColorPickerComponent color={color} setColor={setColor} />
+        </Stack>
+        <Stack gap={'md'}>
+          <Text size={'sm'} fw={500}>
             {getCopy('Focus', 'background_image')}
-          </Label>
+          </Text>
           <Image
-            className={cn(
+            className={
               backgroundImage.length > 0
                 ? 'h-32 w-32 object-cover'
-                : 'h-16 w-16  object-cover'
-            )}
+                : 'h-16 w-16 object-cover'
+            }
             src={backgroundImage || ''}
             alt={'Loaded'}
           />
-        </div>
-        <div className={'col-span-2 grid gap-2'}>
-          <ImageUpload value={backgroundImage} onChange={(v) => setBackgroundImage(v)} />
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </SimpleGrid>
+      <ImageUpload value={backgroundImage} onChange={handleImageChange} />
+    </Stack>
   );
-};
+}
 
 export default BackgroundHolder;

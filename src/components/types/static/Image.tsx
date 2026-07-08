@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import ImageUpload from '@/components/common/ImageUpload';
 import { Label } from '@/components/ui/label';
@@ -33,15 +33,13 @@ const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData 
       backgroundImage: url
     });
   }, [url, handleComponentData]);
+
+  const handleImageChange = useCallback((value: string) => setUrl(value), [setUrl]);
+
   return (
     <div className={'grid grid-cols-1 gap-4'}>
       <Label>{getCopy('Image', 'image')}</Label>
-      <ImageUpload
-        value={url}
-        onChange={(v) => {
-          setUrl(v);
-        }}
-      />
+      <ImageUpload value={url} onChange={handleImageChange} />
     </div>
   );
 };

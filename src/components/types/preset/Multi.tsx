@@ -67,6 +67,10 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
   );
+  const handleImageChange = useCallback(
+    (image: string) => setBackgroundImage(image),
+    [setBackgroundImage]
+  );
   const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const getComponentById = useBoundStore((state) => state.getComponentById);
@@ -460,10 +464,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
               <Label htmlFor={'description'}>
                 {getCopy('Multi', 'background_image')}
               </Label>
-              <ImageUpload
-                value={backgroundImage}
-                onChange={(v) => setBackgroundImage(v)}
-              />
+              <ImageUpload value={backgroundImage} onChange={handleImageChange} />
             </div>
             <div className={'grid gap-2'}>
               <Label htmlFor={'description'}>{getCopy('Multi', 'gui_description')}</Label>

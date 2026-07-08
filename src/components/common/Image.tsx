@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { Center, Image as MantineImage, type MantineStyleProps } from '@mantine/core';
 
 import { ImageIcon } from '@/icons/icons';
@@ -7,9 +7,10 @@ interface Props extends MantineStyleProps {
   src: string;
   alt?: string;
   className?: string;
+  fit?: CSSProperties['objectFit'];
 }
 
-function Image({ src, alt, className, ...props }: Props) {
+function Image({ src, alt, className, fit, ...props }: Props) {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ function Image({ src, alt, className, ...props }: Props) {
       className={className}
       src={src}
       alt={alt}
+      fit={fit}
       onError={() => setImageError(true)}
       {...props}
     />

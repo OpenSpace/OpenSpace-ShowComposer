@@ -252,7 +252,9 @@ export const uploadImage = async (file: File) => {
     throw new Error('Failed to save image');
   }
   const data = await response.json();
-  // console.log('data', data);
   const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
-  return `${basePathWithoutTrailingSlash}${data.filePath}`;
+  // Normalize Windows backslashes to URL-style forward slashes, so the freshly-uploaded
+  // path is a valid URL and matches the gallery's path format
+  const normalizedFilePath = data.filePath.replace(/\\/g, '/');
+  return `${basePathWithoutTrailingSlash}${normalizedFilePath}`;
 };

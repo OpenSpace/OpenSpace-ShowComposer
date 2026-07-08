@@ -1,29 +1,29 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
+import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 import { fetchGalleryImages, uploadImage } from '@/utils/saveProject';
 
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-
 import ImageGallery from './ImageGallery';
 
-interface ImageUploadProps {
+interface Props {
   value: string;
   onChange: (url: string) => void;
   componentId?: string;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
+function ImageUpload({ value, onChange }: Props) {
   const setAsyncPreSubmitOperation = useBoundStore(
     (state) => state.setAsyncPreSubmitOperation
   );
   const [image, setImage] = useState<string>(value || '');
-  const [file, setFile] = useState<File | null>(null); // State to hold the file object
-  const [galleryVisible, setGalleryVisible] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [galleryOpened, { open: openGallery, close: closeGallery }] =
+    useDisclosure(false);
   const [galleryImages, setGalleryImages] = useState([]);
+
   useEffect(() => {
     const loadGalleryImages = async () => {
       try {
@@ -35,70 +35,63 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     };
     loadGalleryImages();
   }, []);
-  const handleSelectImage = (imagePath: string) => {
-    onChange(imagePath);
-    setImage(imagePath);
-    setGalleryVisible(false); // Optionally close the gallery
-  };
-  const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-    setImage(e.target.value); // Directly set the image to the entered URL
-  };
-  const onCloseGallery = () => {
-    setGalleryVisible(false);
-  };
+
+  // When a file is chosen, register the pre-submit operation that uploads it and
+  // reports the resulting path back to the parent.
   useEffect(() => {
-    if (file) {
-      setAsyncPreSubmitOperation(async () => await saveImageToServer());
-    }
-  }, [file]);
-  const saveImageToServer = useCallback(async () => {
-    if (file === null) {
+    if (!file) {
       return;
     }
-    try {
-      const filePath = await uploadImage(file);
-      onChange(filePath);
-    } catch (error) {
-      console.error('Failed to save image:', error);
-    }
-  }, [file]);
+    setAsyncPreSubmitOperation(async () => {
+      try {
+        const filePath = await uploadImage(file);
+        onChange(filePath);
+      } catch (error) {
+        console.error('Failed to save image:', error);
+      }
+    });
+  }, [file, onChange, setAsyncPreSubmitOperation]);
+
+  function handleSelectImage(imagePath: string) {
+    onChange(imagePath);
+    setImage(imagePath);
+    closeGallery();
+  }
+
+  function handleURLChange(event: ChangeEvent<HTMLInputElement>) {
+    onChange(event.currentTarget.value);
+    setImage(event.currentTarget.value);
+  }
+
   return (
-    <>
-      <div className={'grid gap-4'}>
-        <Label>{getCopy('ImageUpload', 'set_image_url')}</Label>
-        <div className={'grid grid-cols-7 gap-2'}>
-          <div className={'col-span-4'}>
-            <Input
-              type={'text'}
-              placeholder={'Set Image URL'}
-              className={'relative w-full rounded border p-2'}
-              value={value}
-              onChange={handleURLChange}
-            />
-          </div>
-          <div
-            className={
-              'col-span-1 flex-1 flex-row items-center justify-center text-center text-2xl text-slate-900 dark:text-slate-200'
-            }
-          >
-            {getCopy('ImageUpload', 'or')}
-          </div>
-          <Button className={'col-span-2'} onClick={() => setGalleryVisible(true)}>
-            {getCopy('ImageUpload', 'select_image')}
-          </Button>
-          {galleryVisible && (
-            <ImageGallery
-              images={galleryImages}
-              selectedImage={image || ''}
-              handleClose={onCloseGallery}
-              onSelectImage={handleSelectImage}
-              setUploadFile={setFile}
-            />
-          )}
-        </div>
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Text size={'sm'} fw={500}>
+        {getCopy('ImageUpload', 'set_image_url')}
+      </Text>
+      <Group align={'center'} gap={'sm'} wrap={'nowrap'}>
+        <TextInput
+          flex={4}
+          placeholder={'Set Image URL'}
+          value={value}
+          onChange={handleURLChange}
+        />
+        <Text flex={1} ta={'center'}>
+          {getCopy('ImageUpload', 'or')}
+        </Text>
+        <Button flex={2} onClick={openGallery}>
+          {getCopy('ImageUpload', 'select_image')}
+        </Button>
+      </Group>
+      <ImageGallery
+        opened={galleryOpened}
+        images={galleryImages}
+        selectedImage={image || ''}
+        onClose={closeGallery}
+        onSelectImage={handleSelectImage}
+        setUploadFile={setFile}
+      />
+    </Stack>
   );
-};
+}
+
 export default ImageUpload;
