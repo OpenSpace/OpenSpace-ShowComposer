@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
+import { ActionIcon } from '@mantine/core';
 import { GripHorizontal, Minus } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -125,14 +125,9 @@ const DraggablePanel: React.FC<PanelProps> = ({
         </div>
       </div>
       <div className={'absolute right-1 top-1 '}>
-        <Button
-          variant={'ghost'}
-          size={'icon'}
-          className={'m-0 h-4 w-4 p-0'}
-          onClick={minimize}
-        >
+        <ActionIcon variant={'subtle'} className={'m-0 h-4 w-4 p-0'} onClick={minimize}>
           <Minus size={'20'} />
-        </Button>
+        </ActionIcon>
       </div>
       <div className={'mt-1 p-3'}>{inner()}</div>
     </Rnd>

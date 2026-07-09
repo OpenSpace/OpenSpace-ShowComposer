@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Button } from '@mantine/core';
 
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -132,10 +132,10 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
         </CardContent>
         <CardFooter>
           <div className={'flex w-full flex-row justify-end gap-2'}>
-            <Button variant={'outline'} onClick={onClose}>
-              Cancel
+            <Button onClick={onClose}>Cancel</Button>
+            <Button variant={'filled'} onClick={handleSave}>
+              Save
             </Button>
-            <Button onClick={handleSave}>Save</Button>
           </div>
         </CardFooter>
       </Card>

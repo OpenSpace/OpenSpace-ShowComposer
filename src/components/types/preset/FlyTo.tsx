@@ -1,5 +1,6 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@mantine/core';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -11,7 +12,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -288,7 +288,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             />
           </div>
           <Button
-            size={'sm'}
+            variant={'filled'}
+            size={'xs'}
             onClick={setFromOpenspace}
             className={'mt-6 whitespace-normal text-xs'}
           >

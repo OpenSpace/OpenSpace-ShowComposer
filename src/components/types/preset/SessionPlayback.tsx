@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button } from '@mantine/core';
 import { Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -8,7 +9,6 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -119,13 +119,11 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
       case SessionStateIdle:
         return file ? (
           <Button
-            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={'gap-2'}
+            leftSection={<Play size={16} />}
             onClick={() => togglePlayback()}
           >
-            <Play />
             {getCopy('SessionPlayback', 'play')}
           </Button>
         ) : null;
@@ -135,23 +133,19 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={'gap-2'}
+              leftSection={<Pause size={16} />}
               onClick={togglePlaybackPaused}
             >
-              <Pause />
               {getCopy('SessionPlayback', 'pause')}
             </Button>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={'gap-2'}
+              leftSection={<Square size={16} />}
               onClick={() => togglePlayback()}
             >
-              <Square />
               {getCopy('SessionPlayback', 'stop')}
             </Button>
           </div>
@@ -160,23 +154,19 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={'gap-2'}
+              leftSection={<Play size={16} />}
               onClick={togglePlaybackPaused}
             >
-              <Play />
               {getCopy('SessionPlayback', 'resume')}
             </Button>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={'gap-2'}
+              leftSection={<Square size={16} />}
               onClick={() => togglePlayback()}
             >
-              <Square />
               {getCopy('SessionPlayback', 'stop')}
             </Button>
           </div>
@@ -328,12 +318,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
     switch (recordingState) {
       case SessionStateIdle:
         return file ? (
-          <Button
-            variant={'outline'}
-            className={'gap-2'}
-            onClick={() => togglePlayback()}
-          >
-            <Play />
+          <Button leftSection={<Play size={16} />} onClick={() => togglePlayback()}>
             {getCopy('SessionPlayback', 'play')}
           </Button>
         ) : null;
@@ -342,20 +327,10 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
       case SessionStatePlaying:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
-            <Button
-              variant={'outline'}
-              className={'gap-2'}
-              onClick={togglePlaybackPaused}
-            >
-              <Pause />
+            <Button leftSection={<Pause size={16} />} onClick={togglePlaybackPaused}>
               {getCopy('SessionPlayback', 'pause')}
             </Button>
-            <Button
-              variant={'outline'}
-              className={'gap-2'}
-              onClick={() => togglePlayback()}
-            >
-              <Square />
+            <Button leftSection={<Square size={16} />} onClick={() => togglePlayback()}>
               {getCopy('SessionPlayback', 'stop')}
             </Button>
           </div>
@@ -363,20 +338,10 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
       case SessionStatePaused:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
-            <Button
-              variant={'outline'}
-              className={'gap-2'}
-              onClick={togglePlaybackPaused}
-            >
-              <Play />
+            <Button leftSection={<Play size={16} />} onClick={togglePlaybackPaused}>
               {getCopy('SessionPlayback', 'resume')}
             </Button>
-            <Button
-              variant={'outline'}
-              className={'gap-2'}
-              onClick={() => togglePlayback()}
-            >
-              <Square />
+            <Button leftSection={<Square size={16} />} onClick={() => togglePlayback()}>
               {getCopy('SessionPlayback', 'stop')}
             </Button>
           </div>

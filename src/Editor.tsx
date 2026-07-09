@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle } from 'react-resizable-panels';
+import { Button } from '@mantine/core';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import {
   AlignJustify,
@@ -23,7 +24,6 @@ import {
 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Button } from '@/components/ui/button';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -46,7 +46,6 @@ import { LayoutContainer } from './components/layouts/LayoutContainer';
 import LayoutEditModal from './components/layouts/LayoutEditModal';
 import { LayoutToolbar } from './components/layouts/LayoutToolbar';
 import Pagination from './components/Pagination';
-// import PageButtonMenu from './components/PageButtonMenu';
 import PresentModeToggle from './components/PresentModeToggle';
 import { ThemeProvider } from './components/ThemeProvider';
 import ToggleButton from './components/ToggleButton';
@@ -381,13 +380,11 @@ const Editor = () => {
                         <Button
                           key={v.type}
                           size={'sm'}
-                          variant={'outline'}
-                          className={
-                            'flex flex-row items-center justify-between @container'
-                          }
+                          justify={'space-between'}
+                          leftSection={v.icon}
+                          className={'@container'}
                           onClick={() => handleAddComponent(v.type)}
                         >
-                          {v.icon}
                           <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}
@@ -400,13 +397,12 @@ const Editor = () => {
                         <Button
                           key={v.type}
                           size={'sm'}
-                          variant={'secondary'}
-                          className={
-                            'flex flex-row items-center justify-between @container'
-                          }
+                          variant={'light'}
+                          justify={'space-between'}
+                          leftSection={v.icon}
+                          className={'@container'}
                           onClick={() => handleAddComponent(v.type)}
                         >
-                          {v.icon}
                           <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}
@@ -416,13 +412,12 @@ const Editor = () => {
                         <Button
                           key={v.type}
                           size={'sm'}
-                          variant={'default'}
-                          className={
-                            'flex  flex-row items-center justify-between @container'
-                          }
+                          variant={'filled'}
+                          justify={'space-between'}
+                          leftSection={v.icon}
+                          className={'@container'}
                           onClick={() => handleAddComponent(v.type)}
                         >
-                          {v.icon}
                           <span className={'hidden @[40px]:inline'}>{v.name}</span>
                         </Button>
                       ))}

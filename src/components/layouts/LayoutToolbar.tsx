@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { ActionIcon, Button } from '@mantine/core';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 
 import { TooltipHolder } from '@/components/common/TooltipHolder';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -69,44 +69,41 @@ export const LayoutToolbar: React.FC = () => {
   return (
     <div className={'flex flex-wrap gap-2 '}>
       <TooltipHolder content={'Row'}>
-        <Button
-          size={'icon'}
-          variant={'ghost'}
+        <ActionIcon
+          variant={'subtle'}
           className={'h-10 w-10 p-2'}
           onClick={() => handleLayoutCreate('row')}
         >
           <RowIcon className={'h-5 w-5'} />
-        </Button>
+        </ActionIcon>
       </TooltipHolder>
       <Separator orientation={'vertical'} />
       <TooltipHolder content={'Column'}>
-        <Button
-          size={'icon'}
-          variant={'ghost'}
+        <ActionIcon
+          variant={'subtle'}
           className={'h-10 w-10 p-2'}
           onClick={() => handleLayoutCreate('column')}
         >
           <ColumnIcon className={'h-5 w-5'} />
-        </Button>
+        </ActionIcon>
       </TooltipHolder>
       <Separator orientation={'vertical'} />
       <TooltipHolder content={'Grid'}>
-        <Button
-          size={'icon'}
-          variant={'ghost'}
+        <ActionIcon
+          variant={'subtle'}
           className={'h-10 w-10 p-2'}
           onClick={() => handleLayoutCreate('grid')}
         >
           <LayoutGrid className={'h-5 w-5'} />
-        </Button>
+        </ActionIcon>
       </TooltipHolder>
       <Separator orientation={'vertical'} />
       <Popover open={open} onOpenChange={handleOpenChange}>
         <TooltipHolder content={'Grid Settings'}>
           <PopoverTrigger asChild>
-            <Button size={'icon'} variant={'ghost'} className={'h-10 w-10 p-2'}>
+            <ActionIcon variant={'subtle'} className={'h-10 w-10 p-2'}>
               <SettingsIcon className={'h-5 w-5'} />
-            </Button>
+            </ActionIcon>
           </PopoverTrigger>
         </TooltipHolder>
 
@@ -157,10 +154,9 @@ export const GridSettings = ({ onClose }: { onClose: () => void }) => {
           />
         </div>
         <div className={'flex justify-between'}>
-          <Button variant={'outline'} onClick={() => onClose()}>
-            Cancel
-          </Button>
+          <Button onClick={() => onClose()}>Cancel</Button>
           <Button
+            variant={'filled'}
             onClick={() => {
               setGridSize({
                 rows: rows,

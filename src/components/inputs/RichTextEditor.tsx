@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Button } from '@mantine/core';
 import Quill from 'quill';
 
 import { cn } from '@/lib/utils';
@@ -6,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { TooltipHolder } from '../common/TooltipHolder';
 // import { debounce } from 'lodash'; // Assuming lodash is available
 import { useTheme } from '../ThemeProvider';
-import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -121,8 +121,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
             <DropdownMenuTrigger asChild>
               <Button
                 className={cn('flex !w-auto', currentHeader === false && 'text-gray-500')}
-                size={'lg'}
-                variant={'ghost'}
+                size={'md'}
+                variant={'subtle'}
               >
                 {currentHeader
                   ? currentHeader == -1
@@ -161,7 +161,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className={'flex !w-auto'} size={'lg'} variant={'ghost'}>
+              <Button className={'flex !w-auto'} size={'md'} variant={'subtle'}>
                 {typeof currentSize === 'string'
                   ? currentSize.charAt(0).toUpperCase() + currentSize.slice(1)
                   : ''}

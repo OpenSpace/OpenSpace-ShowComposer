@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button } from '@mantine/core';
 import { throttle } from 'lodash';
 import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
@@ -6,7 +7,6 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import DateComponent from '@/components/timepicker/DateComponent';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
@@ -243,7 +243,6 @@ const TimeDatePicker = () => {
       <div className={'grid grid-cols-3 gap-2'}>
         <div className={'gap-.5 grid'}>
           <Button
-            variant={'outline'}
             size={'sm'}
             disabled={!hasPrevDeltaTimeStep}
             onClick={setPrevDeltaTimeStep}
@@ -252,12 +251,11 @@ const TimeDatePicker = () => {
           </Button>
           <Label className={'text-xs text-zinc-500'}> {prevLabel}</Label>
         </div>
-        <Button variant={'outline'} size={'sm'} onClick={togglePause}>
+        <Button size={'sm'} onClick={togglePause}>
           {paused ? <Play fill={'black'} /> : <Pause fill={'black'} />}
         </Button>
         <div className={'gap-.5 grid'}>
           <Button
-            variant={'outline'}
             size={'sm'}
             disabled={!hasNextDeltaTimeStep}
             onClick={setNextDeltaTimeStep}
@@ -325,14 +323,14 @@ const TimeDatePicker = () => {
         {deltaTimeStepsContol()}
         <div className={'grid grid-cols-2 gap-2'}>
           <Button
-            variant={targetDeltaTime == 1 ? 'default' : 'outline'}
+            variant={targetDeltaTime == 1 ? 'filled' : 'default'}
             size={'sm'}
             onClick={realtime}
             className={`${targetDeltaTime == 1 ? 'opacity-100' : 'opacity-60'}`}
           >
             {getCopy('TimeDatePicker', 'realtime')}
           </Button>
-          <Button variant={'outline'} size={'sm'} onClick={now}>
+          <Button size={'sm'} onClick={now}>
             {getCopy('TimeDatePicker', 'now')}
           </Button>
         </div>

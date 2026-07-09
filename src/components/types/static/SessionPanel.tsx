@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Button } from '@mantine/core';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -124,26 +124,22 @@ const SessionPanel = () => {
       case SessionStateIdle:
         return filenamePlayback ? (
           <Button
-            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={'gap-2'}
+            leftSection={<Play size={16} />}
             onClick={() => togglePlayback()}
           >
-            <Play />
             {getCopy('SessionPanel', 'play')}
           </Button>
         ) : null;
       case SessionStateRecording:
         return (
           <Button
-            variant={'outline'}
             //   size={'sm'}
             //   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-            className={'gap-2'}
+            leftSection={<Square size={16} />}
             onClick={() => toggleRecording()}
           >
-            <Square />
             {getCopy('SessionPanel', 'stop_recording')}
           </Button>
         );
@@ -151,23 +147,19 @@ const SessionPanel = () => {
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={'gap-2'}
+              leftSection={<Pause size={16} />}
               onClick={togglePlaybackPaused}
             >
-              <Pause />
               {getCopy('SessionPanel', 'pause')}
             </Button>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={'gap-2'}
+              leftSection={<Square size={16} />}
               onClick={() => togglePlayback()}
             >
-              <Square />
               {getCopy('SessionPanel', 'stop')}
             </Button>
           </div>
@@ -176,23 +168,19 @@ const SessionPanel = () => {
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={!filenamePlayback}
-              className={'gap-2'}
+              leftSection={<Play size={16} />}
               onClick={togglePlaybackPaused}
             >
-              <Play />
               {getCopy('SessionPanel', 'resume')}
             </Button>
             <Button
-              variant={'outline'}
               //   size={'sm'}
               // disabled={(isIdle && nameIsTaken) || !filenameRecording}
-              className={'gap-2'}
+              leftSection={<Square size={16} />}
               onClick={() => togglePlayback()}
             >
-              <Square />
               {getCopy('SessionPanel', 'stop')}
             </Button>
           </div>
@@ -228,12 +216,11 @@ const SessionPanel = () => {
                   onBlur={() => setIsInputFocused(false)} // Set focus state to false
                 />
                 <Button
-                  variant={'outline'}
                   disabled={(isIdle && nameIsTaken) || !filenameRecording}
-                  className={'gap-2'}
+                  leftSection={<Circle size={12} fill={'red'} color={'red'} />}
+                  flex={'0 0 auto'}
                   onClick={() => toggleRecording()}
                 >
-                  <Circle size={'12'} />
                   {getCopy('SessionPanel', 'record')}
                 </Button>
               </div>

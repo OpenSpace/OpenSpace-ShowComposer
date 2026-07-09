@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@mantine/core';
 import { Anchor, Clock } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Toggle from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -124,7 +124,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
   return (
     <div className={'grid grid-cols-1 gap-4'}>
       <div className={'grid grid-cols-1 gap-4'}>
-        <Button onClick={getNavigationState}>
+        <Button variant={'filled'} onClick={getNavigationState}>
           {getCopy('SetNavigation', 'save_current_navigation_state')}
         </Button>
         <div className={`grid  gap-2 opacity-100`}>

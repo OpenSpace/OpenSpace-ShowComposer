@@ -1,9 +1,9 @@
+import { ActionIcon } from '@mantine/core';
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { Information } from '@/components/common/Information';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useProperty } from '@/hooks/properties';
@@ -172,14 +172,14 @@ const FlightControlPanel = () => {
                 {getCopy('FlightControlPanel', 'rotation_friction')}
               </TooltipContent>
               <TooltipTrigger asChild>
-                <Button
-                  size={'icon'}
+                <ActionIcon
+                  size={'lg'}
                   onClick={toggleRotation}
-                  variant={rotationFriction ? 'default' : 'outline'}
+                  variant={rotationFriction ? 'filled' : 'default'}
                   className={`${rotationFriction ? 'opacity-100' : 'opacity-60'}`}
                 >
                   <Rotate3d />
-                </Button>
+                </ActionIcon>
               </TooltipTrigger>
             </Tooltip>
             <Tooltip>
@@ -187,14 +187,14 @@ const FlightControlPanel = () => {
                 {getCopy('FlightControlPanel', 'zoom_friction')}
               </TooltipContent>
               <TooltipTrigger asChild>
-                <Button
-                  size={'icon'}
+                <ActionIcon
+                  size={'lg'}
                   onClick={toggleZoom}
-                  variant={zoomFriction ? 'default' : 'outline'}
+                  variant={zoomFriction ? 'filled' : 'default'}
                   className={`${zoomFriction ? 'opacity-100' : 'opacity-60'}`}
                 >
                   <ZoomIn />
-                </Button>
+                </ActionIcon>
               </TooltipTrigger>
             </Tooltip>
             <Tooltip>
@@ -202,14 +202,14 @@ const FlightControlPanel = () => {
                 {getCopy('FlightControlPanel', 'roll_friction')}
               </TooltipContent>
               <TooltipTrigger asChild>
-                <Button
-                  size={'icon'}
+                <ActionIcon
+                  size={'lg'}
                   onClick={toggleRoll}
-                  variant={rollFriction ? 'default' : 'outline'}
+                  variant={rollFriction ? 'filled' : 'default'}
                   className={`${rollFriction ? 'opacity-100' : 'opacity-60'}`}
                 >
                   <RefreshCcwDot />
-                </Button>
+                </ActionIcon>
               </TooltipTrigger>
             </Tooltip>
           </div>

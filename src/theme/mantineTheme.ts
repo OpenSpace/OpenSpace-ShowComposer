@@ -60,6 +60,11 @@ export const theme = createTheme({
     Button: Button.extend({
       defaultProps: {
         variant: 'default'
+      },
+      styles: {
+        label: {
+          fontWeight: 400
+        }
       }
     }),
     RangeSlider: RangeSlider.extend({

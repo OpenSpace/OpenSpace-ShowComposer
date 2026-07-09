@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
+import { ActionIcon } from '@mantine/core';
 // import { Button } from '@/pages/ui/button';
 import { GripHorizontal, Lock, LockOpen } from 'lucide-react';
 
@@ -10,7 +11,6 @@ import { useBoundStore } from '@/store/boundStore';
 import { Page } from '@/types/components';
 
 import ButtonLabel from './common/ButtonLabel';
-import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 const AdjustablePage: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
@@ -138,9 +138,7 @@ const AdjustablePage: React.FC = () => {
                 <TooltipContent>{locked ? 'Unlock Page' : 'Lock Page'}</TooltipContent>
 
                 <TooltipTrigger asChild>
-                  <Button
-                    size={'icon'}
-                    variant={'outline'}
+                  <ActionIcon
                     // pressed={isPresentMode}
                     onClick={() => setLocked(!locked)}
                     className={cn(
@@ -156,7 +154,7 @@ const AdjustablePage: React.FC = () => {
                         // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
                       />
                     )}
-                  </Button>
+                  </ActionIcon>
                 </TooltipTrigger>
               </Tooltip>
             </div>

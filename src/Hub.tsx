@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mantine/core';
 
 import { ThemeProvider } from './components/ThemeProvider';
-import { Button } from './components/ui/button';
 import { ScrollArea } from './components/ui/scroll-area';
 import { useBoundStore } from './store/boundStore';
 import { getCopy } from './utils/copyHelpers';
@@ -81,7 +81,6 @@ export const Hub = () => {
           </ScrollArea>
           <div className={'flex  w-full justify-center gap-2'}>
             <Button
-              variant={'outline'}
               disabled={!selectedProject}
               onClick={() => {
                 if (selectedProject) {
@@ -93,7 +92,7 @@ export const Hub = () => {
               {getCopy('LoadProjectModal', 'edit_project')}
             </Button>
             <Button
-              variant={'default'}
+              variant={'filled'}
               disabled={!selectedProject}
               onClick={() => {
                 if (selectedProject) {

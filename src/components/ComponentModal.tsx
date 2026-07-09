@@ -1,7 +1,7 @@
 // ComponentModal.tsx
 import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from '@mantine/core';
 
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -359,10 +359,8 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
         <CardContent>{content}</CardContent>
         <CardFooter>
           <div className={'flex w-full flex-row justify-end gap-2'}>
-            <Button variant={'outline'} onClick={handleCancel}>
-              {getCopy('ComponentModal', 'cancel')}
-            </Button>
-            <Button onClick={handleSubmit}>
+            <Button onClick={handleCancel}>{getCopy('ComponentModal', 'cancel')}</Button>
+            <Button variant={'filled'} onClick={handleSubmit}>
               {component
                 ? getCopy('ComponentModal', 'save')
                 : getCopy('ComponentModal', 'create')}

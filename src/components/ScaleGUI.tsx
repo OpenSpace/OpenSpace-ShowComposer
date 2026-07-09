@@ -17,8 +17,8 @@ const ScaleGUI: React.FC = () => {
   };
   return (
     <div className={'flex w-16 flex-col items-center justify-center gap-2'}>
-      <HoldButton variant={'filled'} onClick={zoomIn}>
-        <ZoomIn size={'16'} color={'white'} />
+      <HoldButton onClick={zoomIn}>
+        <ZoomIn size={'16'} />
       </HoldButton>
       <Input
         value={Math.round(scale * 100)}
@@ -37,8 +37,8 @@ const ScaleGUI: React.FC = () => {
       >
         <span className={'text-sm'}>{getCopy('ScaleGUI', '%')}</span>
       </div>
-      <HoldButton variant={'filled'} onClick={zoomOut}>
-        <ZoomOut size={'16'} color={'white'} />
+      <HoldButton onClick={zoomOut}>
+        <ZoomOut size={'16'} />
       </HoldButton>
     </div>
   );

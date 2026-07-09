@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -9,7 +10,6 @@ import Toggle from '@/components/common/Toggle';
 import ToggleComponent from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import DateComponent from '@/components/timepicker/DateComponent';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -174,6 +174,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
           />
         )}
         <Button
+          variant={'filled'}
           onClick={() => {
             const newTime = new Date();
             setCompontentTime(newTime);

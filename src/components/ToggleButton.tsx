@@ -1,6 +1,6 @@
 import React from 'react';
+import { ActionIcon } from '@mantine/core';
 
-import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type ToggleButtonProps = {
@@ -22,15 +22,13 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
     <Tooltip>
       <TooltipContent>{tooltipText}</TooltipContent>
       <TooltipTrigger asChild>
-        <Button
-          size={'icon'}
+        <ActionIcon
           disabled={disabled}
-          variant={'outline'}
           onClick={onClick}
           className={`z-40 ${!selected ? 'opacity-60' : 'opacity-100'}`}
         >
           {icon}
-        </Button>
+        </ActionIcon>
       </TooltipTrigger>
     </Tooltip>
   );
