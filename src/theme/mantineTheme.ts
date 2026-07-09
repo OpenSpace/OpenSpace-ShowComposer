@@ -61,6 +61,34 @@ export const theme = createTheme({
       defaultProps: {
         variant: 'default'
       },
+      // Trim the horizontal padding a bit compared to Mantine's defaults (sm was
+      // 18px) to match the previous, tighter version. Mantine recommends the `vars` function
+      // (not `styles`) for overriding size-related CSS variables.
+      // https://mantine.dev/styles/styles-api/#vars
+      vars: (_theme, props) => {
+        if (props.size === 'xs') {
+          return { root: { '--button-padding-x': '10px' } };
+        }
+
+        // Mantine defaults to the `sm` size when none is provided.
+        if (props.size === 'sm' || props.size === undefined) {
+          return { root: { '--button-padding-x': '12px' } };
+        }
+
+        if (props.size === 'md') {
+          return { root: { '--button-padding-x': '16px' } };
+        }
+
+        if (props.size === 'lg') {
+          return { root: { '--button-padding-x': '22px' } };
+        }
+
+        if (props.size === 'xl') {
+          return { root: { '--button-padding-x': '28px' } };
+        }
+
+        return { root: {} };
+      },
       styles: {
         label: {
           fontWeight: 400
