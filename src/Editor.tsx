@@ -561,7 +561,6 @@ const Editor = () => {
                 />
               )}
               <div className={'absolute bottom-7 right-6 flex flex-row gap-2'}>
-                {/* <PageButtonMenu /> */}
                 <PresentModeToggle />
               </div>
             </div>
