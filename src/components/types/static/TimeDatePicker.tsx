@@ -247,12 +247,12 @@ const TimeDatePicker = () => {
             disabled={!hasPrevDeltaTimeStep}
             onClick={setPrevDeltaTimeStep}
           >
-            <Rewind fill={'black'} />
+            <Rewind />
           </Button>
           <Label className={'text-xs text-zinc-500'}> {prevLabel}</Label>
         </div>
         <Button size={'sm'} onClick={togglePause}>
-          {paused ? <Play fill={'black'} /> : <Pause fill={'black'} />}
+          {paused ? <Play /> : <Pause />}
         </Button>
         <div className={'gap-.5 grid'}>
           <Button
@@ -260,7 +260,7 @@ const TimeDatePicker = () => {
             disabled={!hasNextDeltaTimeStep}
             onClick={setNextDeltaTimeStep}
           >
-            <FastForward fill={'black'} />
+            <FastForward />
           </Button>
           <Label className={'text-xs text-zinc-500'}> {nextLabel}</Label>
         </div>
