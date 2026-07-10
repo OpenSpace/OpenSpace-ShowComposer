@@ -1,7 +1,5 @@
 import React from 'react';
-import { ActionIcon } from '@mantine/core';
-
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ActionIcon, Tooltip } from '@mantine/core';
 
 type ToggleButtonProps = {
   tooltipText: string;
@@ -19,17 +17,14 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
   onClick
 }) => {
   return (
-    <Tooltip>
-      <TooltipContent>{tooltipText}</TooltipContent>
-      <TooltipTrigger asChild>
-        <ActionIcon
-          disabled={disabled}
-          onClick={onClick}
-          className={`z-40 ${!selected ? 'opacity-60' : 'opacity-100'}`}
-        >
-          {icon}
-        </ActionIcon>
-      </TooltipTrigger>
+    <Tooltip label={tooltipText}>
+      <ActionIcon
+        disabled={disabled}
+        onClick={onClick}
+        className={`z-40 ${!selected ? 'opacity-60' : 'opacity-100'}`}
+      >
+        {icon}
+      </ActionIcon>
     </Tooltip>
   );
 };

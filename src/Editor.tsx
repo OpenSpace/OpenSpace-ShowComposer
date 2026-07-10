@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { Button } from '@mantine/core';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
 import {
   AlignJustify,
   BookOpenCheck,
@@ -307,273 +306,264 @@ const Editor = () => {
 
   return (
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
-      <TooltipProvider delayDuration={250}>
-        <ResizablePanelGroup
-          direction={'horizontal'}
-          className={
-            ' flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
-          }
-          onLayout={(newSizes: number[]) => setSizes(newSizes)}
+      <ResizablePanelGroup
+        direction={'horizontal'}
+        className={
+          ' flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
+        }
+        onLayout={(newSizes: number[]) => setSizes(newSizes)}
+      >
+        <ResizablePanel
+          collapsible
+          ref={panelRef}
+          defaultSize={sizes[0]}
+          onResize={(size) => handleResize(0, size)}
+          collapsedSize={0}
+          maxSize={35}
+          className={'h-screen max-w-[320px]'}
         >
-          <ResizablePanel
-            collapsible
-            ref={panelRef}
-            defaultSize={sizes[0]}
-            onResize={(size) => handleResize(0, size)}
-            collapsedSize={0}
-            maxSize={35}
-            className={'h-screen max-w-[320px]'}
-          >
-            <div className={'h-full w-full  p-4 pr-2 '}>
-              <div
-                className={
-                  'flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800'
-                }
-              >
-                <div className={' flex-0 felx flex flex-row items-center gap-2 p-2 px-3'}>
-                  <img src={favicon} width={20} className={'p-0'} />
-                  <h2 className={' scroll-m-20 text-xs font-bold tracking-tight'}>
-                    {getCopy('Main', 'interface_name')}
-                  </h2>
-                </div>
-                <Separator />
-                <GlobalMenuBar />
-                <Separator />
-                {/* <div className="flex flex-row items-center gap-2 p-2 px-4">
+          <div className={'h-full w-full  p-4 pr-2 '}>
+            <div
+              className={
+                'flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800'
+              }
+            >
+              <div className={' flex-0 felx flex flex-row items-center gap-2 p-2 px-3'}>
+                <img src={favicon} width={20} className={'p-0'} />
+                <h2 className={' scroll-m-20 text-xs font-bold tracking-tight'}>
+                  {getCopy('Main', 'interface_name')}
+                </h2>
+              </div>
+              <Separator />
+              <GlobalMenuBar />
+              <Separator />
+              {/* <div className="flex flex-row items-center gap-2 p-2 px-4">
                   <div className="text-xs font-bold ">
                     {getCopy('Main', 'project_name')}
                   </div>
                   <div className="text-sm font-normal">{projectName}</div>
                 </div>
                 <Separator /> */}
-                <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
-                  <ConnectionStatusIndicator />
-                  <div className={'flex flex-row items-center gap-2  '}>
-                    <div className={'text-xs font-bold '}>
-                      {getCopy('Main', 'project_name')}
-                    </div>
-                    <div
-                      className={'text-sm font-normal text-gray-500 dark:text-gray-400'}
-                    >
-                      {projectName}
-                    </div>
+              <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
+                <ConnectionStatusIndicator />
+                <div className={'flex flex-row items-center gap-2  '}>
+                  <div className={'text-xs font-bold '}>
+                    {getCopy('Main', 'project_name')}
                   </div>
-                  <Separator />
-                  <Undo />
-                  <Separator />
-                </div>
-
-                <div className={'grid gap-2 p-2 @[167px]:gap-2'}>
-                  <h2 className={'ml-2 text-xs font-bold '}>
-                    {getCopy('Main', 'layout')}
-                  </h2>
-                  <LayoutToolbar />
-                  <Separator />
-                </div>
-                <ScrollArea className={'flex-0 @container'} type={'always'}>
-                  <div className={'grid gap-2 p-4 @[167px]:gap-4'}>
-                    <h2 className={'text-xs font-bold '}>
-                      {getCopy('Main', 'static_components')}
-                    </h2>
-                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                      {staticComponentTypes.map((v, _i) => (
-                        <Button
-                          key={v.type}
-                          size={'sm'}
-                          justify={'space-between'}
-                          leftSection={v.icon}
-                          className={'@container'}
-                          onClick={() => handleAddComponent(v.type)}
-                        >
-                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
-                        </Button>
-                      ))}
-                    </div>
-                    <h2 className={' text-xs font-bold'}>
-                      {getCopy('Main', 'preset_components')}
-                    </h2>
-                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                      {presetComponentTypes.map((v, _i) => (
-                        <Button
-                          key={v.type}
-                          size={'sm'}
-                          variant={'light'}
-                          justify={'space-between'}
-                          leftSection={v.icon}
-                          className={'@container'}
-                          onClick={() => handleAddComponent(v.type)}
-                        >
-                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
-                        </Button>
-                      ))}
-                    </div>
-                    <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                      {propertyComponentTypes.map((v, _i) => (
-                        <Button
-                          key={v.type}
-                          size={'sm'}
-                          variant={'filled'}
-                          justify={'space-between'}
-                          leftSection={v.icon}
-                          className={'@container'}
-                          onClick={() => handleAddComponent(v.type)}
-                        >
-                          <span className={'hidden @[40px]:inline'}>{v.name}</span>
-                        </Button>
-                      ))}
-                    </div>
+                  <div className={'text-sm font-normal text-gray-500 dark:text-gray-400'}>
+                    {projectName}
                   </div>
-                </ScrollArea>
+                </div>
                 <Separator />
-                <FeedbackPanel className={'p-4'} />
+                <Undo />
+                <Separator />
               </div>
+
+              <div className={'grid gap-2 p-2 @[167px]:gap-2'}>
+                <h2 className={'ml-2 text-xs font-bold '}>{getCopy('Main', 'layout')}</h2>
+                <LayoutToolbar />
+                <Separator />
+              </div>
+              <ScrollArea className={'flex-0 @container'} type={'always'}>
+                <div className={'grid gap-2 p-4 @[167px]:gap-4'}>
+                  <h2 className={'text-xs font-bold '}>
+                    {getCopy('Main', 'static_components')}
+                  </h2>
+                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                    {staticComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        justify={'space-between'}
+                        leftSection={v.icon}
+                        className={'@container'}
+                        onClick={() => handleAddComponent(v.type)}
+                      >
+                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+                  <h2 className={' text-xs font-bold'}>
+                    {getCopy('Main', 'preset_components')}
+                  </h2>
+                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                    {presetComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        variant={'light'}
+                        justify={'space-between'}
+                        leftSection={v.icon}
+                        className={'@container'}
+                        onClick={() => handleAddComponent(v.type)}
+                      >
+                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                    {propertyComponentTypes.map((v, _i) => (
+                      <Button
+                        key={v.type}
+                        size={'sm'}
+                        variant={'filled'}
+                        justify={'space-between'}
+                        leftSection={v.icon}
+                        className={'@container'}
+                        onClick={() => handleAddComponent(v.type)}
+                      >
+                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </ScrollArea>
+              <Separator />
+              <FeedbackPanel className={'p-4'} />
             </div>
-          </ResizablePanel>
-          {!isPresentMode && <ResizableHandle withHandle />}
-          <ResizablePanel
-            defaultSize={sizes[1]}
-            onResize={(size) => handleResize(1, size)}
+          </div>
+        </ResizablePanel>
+        {!isPresentMode && <ResizableHandle withHandle />}
+        <ResizablePanel defaultSize={sizes[1]} onResize={(size) => handleResize(1, size)}>
+          <div
+            className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
           >
             <div
-              className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
+              className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
+                isPresentMode ? 'p-0' : 't p-4 pl-2'
+              } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
+              id={'workspace'}
             >
-              <div
-                className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
-                  isPresentMode ? 'p-0' : 't p-4 pl-2'
-                } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
-                id={'workspace'}
-              >
-                <DroppableWorkspace>
-                  {/* Static Panels */}
-                  {NavPanel && <DraggablePanel component={NavPanel} />}
-                  {TimePanel && <DraggablePanel component={TimePanel} />}
-                  {StatusPanel && <DraggablePanel component={StatusPanel} />}
-                  {RecordPanel && <DraggablePanel component={RecordPanel} />}
-                  {LogPanel && <DraggablePanel component={LogPanel} />}
-                  {Object.keys(layouts).map((layoutId) => {
-                    const layout = layouts[layoutId];
-                    if (
-                      !layout ||
-                      (!layout.persistent &&
-                        layout.parentPage &&
-                        layout.parentPage != currentPage)
-                    ) {
-                      return null;
-                    }
-                    return (
-                      <LayoutContainer
-                        key={layoutId}
-                        layout={layout}
-                        handleOpenEditModal={() => handleEditLayout(layoutId)}
-                      >
-                        {layout.children.map((childId) => {
-                          if (!childId) return null;
-                          const component = components[childId];
-                          if (!component) return null;
-                          return (
-                            <DraggableComponent
-                              key={childId}
-                              component={component}
-                              layoutId={layoutId}
-                              onEdit={() => handleEditComponent(childId)}
-                              onDelete={() => handleDeleteComponent(childId)}
-                              onCopy={() => handleCopyComponent(childId)}
-                            />
-                          );
-                        })}
-                      </LayoutContainer>
-                    );
-                  })}
+              <DroppableWorkspace>
+                {/* Static Panels */}
+                {NavPanel && <DraggablePanel component={NavPanel} />}
+                {TimePanel && <DraggablePanel component={TimePanel} />}
+                {StatusPanel && <DraggablePanel component={StatusPanel} />}
+                {RecordPanel && <DraggablePanel component={RecordPanel} />}
+                {LogPanel && <DraggablePanel component={LogPanel} />}
+                {Object.keys(layouts).map((layoutId) => {
+                  const layout = layouts[layoutId];
+                  if (
+                    !layout ||
+                    (!layout.persistent &&
+                      layout.parentPage &&
+                      layout.parentPage != currentPage)
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <LayoutContainer
+                      key={layoutId}
+                      layout={layout}
+                      handleOpenEditModal={() => handleEditLayout(layoutId)}
+                    >
+                      {layout.children.map((childId) => {
+                        if (!childId) return null;
+                        const component = components[childId];
+                        if (!component) return null;
+                        return (
+                          <DraggableComponent
+                            key={childId}
+                            component={component}
+                            layoutId={layoutId}
+                            onEdit={() => handleEditComponent(childId)}
+                            onDelete={() => handleDeleteComponent(childId)}
+                            onCopy={() => handleCopyComponent(childId)}
+                          />
+                        );
+                      })}
+                    </LayoutContainer>
+                  );
+                })}
 
-                  {Object.keys(components).map((componentId) => {
-                    const component = components[componentId];
-                    // Skip if component is in a layout
-                    if (
-                      !component ||
-                      Object.values(layouts).some((layout) =>
-                        layout.children.includes(componentId)
-                      ) ||
-                      (component.parentPage && component.parentPage != currentPage)
-                    ) {
-                      return null;
-                    }
-                    //skip it it belongs to a page that is not current page
+                {Object.keys(components).map((componentId) => {
+                  const component = components[componentId];
+                  // Skip if component is in a layout
+                  if (
+                    !component ||
+                    Object.values(layouts).some((layout) =>
+                      layout.children.includes(componentId)
+                    ) ||
+                    (component.parentPage && component.parentPage != currentPage)
+                  ) {
+                    return null;
+                  }
+                  //skip it it belongs to a page that is not current page
 
-                    return (
-                      <DraggableComponent
-                        key={componentId}
-                        component={component}
-                        onEdit={() => handleEditComponent(componentId)}
-                        onDelete={() => handleDeleteComponent(componentId)}
-                        onCopy={() => handleCopyComponent(componentId)}
-                      />
-                    );
-                  })}
-                </DroppableWorkspace>
-              </div>
-              <div className={'absolute bottom-7 left-6 flex flex-row gap-2'}>
-                <ToggleButton
-                  tooltipText={getCopy('Main', 'navpanel')}
-                  icon={navType.icon}
-                  selected={NavPosition?.minimized}
-                  onClick={() => minimize(NavPosition)}
-                  disabled={connectionStatus != ConnectionStatus.Connected}
-                />
-                <ToggleButton
-                  tooltipText={getCopy('Main', 'timepanel')}
-                  icon={timeType.icon}
-                  selected={TimePosition?.minimized}
-                  onClick={() => minimize(TimePosition)}
-                  disabled={connectionStatus != ConnectionStatus.Connected}
-                />
-                <ToggleButton
-                  tooltipText={getCopy('Main', 'statuspanel')}
-                  icon={statusType.icon}
-                  selected={StatusPosition?.minimized}
-                  onClick={() => minimize(StatusPosition)}
-                  disabled={connectionStatus != ConnectionStatus.Connected}
-                />
-                <ToggleButton
-                  tooltipText={getCopy('Main', 'recordpanel')}
-                  icon={recordType.icon}
-                  selected={RecordPosition?.minimized}
-                  onClick={() => minimize(RecordPosition)}
-                  disabled={connectionStatus != ConnectionStatus.Connected}
-                />
-                <ToggleButton
-                  tooltipText={getCopy('Main', 'logpanel')}
-                  icon={logType.icon}
-                  selected={LogPosition?.minimized}
-                  onClick={() => minimize(LogPosition)}
-                  disabled={connectionStatus != ConnectionStatus.Connected}
-                />
-              </div>
-              {(!isPresentMode || (showPagination && isPresentMode)) && (
-                <Pagination
-                  currentIndex={currentPageIndex}
-                  length={pagesLength}
-                  setIndex={goToPage}
-                />
-              )}
-              <div className={'absolute bottom-7 right-6 flex flex-row gap-2'}>
-                <PresentModeToggle />
-              </div>
+                  return (
+                    <DraggableComponent
+                      key={componentId}
+                      component={component}
+                      onEdit={() => handleEditComponent(componentId)}
+                      onDelete={() => handleDeleteComponent(componentId)}
+                      onCopy={() => handleCopyComponent(componentId)}
+                    />
+                  );
+                })}
+              </DroppableWorkspace>
             </div>
-            <ComponentModal
-              isOpen={isModalOpen}
-              onClose={handleModalClose}
-              componentId={currentComponentId}
-              type={currentComponentType}
-              icon={allComponentTypes.find((v) => v.type == currentComponentType)?.icon}
-            />
-            <LayoutEditModal
-              isOpen={showEditModal}
-              layoutId={currentLayoutId}
-              onClose={() => setShowEditModal(false)}
-            />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </TooltipProvider>
+            <div className={'absolute bottom-7 left-6 flex flex-row gap-2'}>
+              <ToggleButton
+                tooltipText={getCopy('Main', 'navpanel')}
+                icon={navType.icon}
+                selected={NavPosition?.minimized}
+                onClick={() => minimize(NavPosition)}
+                disabled={connectionStatus != ConnectionStatus.Connected}
+              />
+              <ToggleButton
+                tooltipText={getCopy('Main', 'timepanel')}
+                icon={timeType.icon}
+                selected={TimePosition?.minimized}
+                onClick={() => minimize(TimePosition)}
+                disabled={connectionStatus != ConnectionStatus.Connected}
+              />
+              <ToggleButton
+                tooltipText={getCopy('Main', 'statuspanel')}
+                icon={statusType.icon}
+                selected={StatusPosition?.minimized}
+                onClick={() => minimize(StatusPosition)}
+                disabled={connectionStatus != ConnectionStatus.Connected}
+              />
+              <ToggleButton
+                tooltipText={getCopy('Main', 'recordpanel')}
+                icon={recordType.icon}
+                selected={RecordPosition?.minimized}
+                onClick={() => minimize(RecordPosition)}
+                disabled={connectionStatus != ConnectionStatus.Connected}
+              />
+              <ToggleButton
+                tooltipText={getCopy('Main', 'logpanel')}
+                icon={logType.icon}
+                selected={LogPosition?.minimized}
+                onClick={() => minimize(LogPosition)}
+                disabled={connectionStatus != ConnectionStatus.Connected}
+              />
+            </div>
+            {(!isPresentMode || (showPagination && isPresentMode)) && (
+              <Pagination
+                currentIndex={currentPageIndex}
+                length={pagesLength}
+                setIndex={goToPage}
+              />
+            )}
+            <div className={'absolute bottom-7 right-6 flex flex-row gap-2'}>
+              <PresentModeToggle />
+            </div>
+          </div>
+          <ComponentModal
+            isOpen={isModalOpen}
+            onClose={handleModalClose}
+            componentId={currentComponentId}
+            type={currentComponentType}
+            icon={allComponentTypes.find((v) => v.type == currentComponentType)?.icon}
+          />
+          <LayoutEditModal
+            isOpen={showEditModal}
+            layoutId={currentLayoutId}
+            onClose={() => setShowEditModal(false)}
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </ThemeProvider>
   );
 };

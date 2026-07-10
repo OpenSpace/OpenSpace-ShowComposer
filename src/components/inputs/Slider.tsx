@@ -1,10 +1,5 @@
 import React from 'react';
 // import { Slider as RadixSlider } from '@/components/ui/slider';
-// import {
-//   Tooltip,
-//   TooltipContent,
-//   TooltipTrigger,
-// } from '@/components/ui/tooltip';
 import * as RadixSlider from '@radix-ui/react-slider';
 
 interface SliderProps {

@@ -1,11 +1,10 @@
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { Information } from '@/components/common/Information';
 import { Label } from '@/components/ui/label';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
@@ -167,50 +166,35 @@ const FlightControlPanel = () => {
         </Label>
         <div className={'flex w-full flex-row justify-center gap-2'}>
           <div className={'grid grid-cols-3 gap-2'}>
-            <Tooltip>
-              <TooltipContent>
-                {getCopy('FlightControlPanel', 'rotation_friction')}
-              </TooltipContent>
-              <TooltipTrigger asChild>
-                <ActionIcon
-                  size={'lg'}
-                  onClick={toggleRotation}
-                  variant={rotationFriction ? 'filled' : 'default'}
-                  className={`${rotationFriction ? 'opacity-100' : 'opacity-60'}`}
-                >
-                  <Rotate3d />
-                </ActionIcon>
-              </TooltipTrigger>
+            <Tooltip label={getCopy('FlightControlPanel', 'rotation_friction')}>
+              <ActionIcon
+                size={'lg'}
+                onClick={toggleRotation}
+                variant={rotationFriction ? 'filled' : 'default'}
+                className={`${rotationFriction ? 'opacity-100' : 'opacity-60'}`}
+              >
+                <Rotate3d />
+              </ActionIcon>
             </Tooltip>
-            <Tooltip>
-              <TooltipContent>
-                {getCopy('FlightControlPanel', 'zoom_friction')}
-              </TooltipContent>
-              <TooltipTrigger asChild>
-                <ActionIcon
-                  size={'lg'}
-                  onClick={toggleZoom}
-                  variant={zoomFriction ? 'filled' : 'default'}
-                  className={`${zoomFriction ? 'opacity-100' : 'opacity-60'}`}
-                >
-                  <ZoomIn />
-                </ActionIcon>
-              </TooltipTrigger>
+            <Tooltip label={getCopy('FlightControlPanel', 'zoom_friction')}>
+              <ActionIcon
+                size={'lg'}
+                onClick={toggleZoom}
+                variant={zoomFriction ? 'filled' : 'default'}
+                className={`${zoomFriction ? 'opacity-100' : 'opacity-60'}`}
+              >
+                <ZoomIn />
+              </ActionIcon>
             </Tooltip>
-            <Tooltip>
-              <TooltipContent>
-                {getCopy('FlightControlPanel', 'roll_friction')}
-              </TooltipContent>
-              <TooltipTrigger asChild>
-                <ActionIcon
-                  size={'lg'}
-                  onClick={toggleRoll}
-                  variant={rollFriction ? 'filled' : 'default'}
-                  className={`${rollFriction ? 'opacity-100' : 'opacity-60'}`}
-                >
-                  <RefreshCcwDot />
-                </ActionIcon>
-              </TooltipTrigger>
+            <Tooltip label={getCopy('FlightControlPanel', 'roll_friction')}>
+              <ActionIcon
+                size={'lg'}
+                onClick={toggleRoll}
+                variant={rollFriction ? 'filled' : 'default'}
+                className={`${rollFriction ? 'opacity-100' : 'opacity-60'}`}
+              >
+                <RefreshCcwDot />
+              </ActionIcon>
             </Tooltip>
           </div>
           <Information

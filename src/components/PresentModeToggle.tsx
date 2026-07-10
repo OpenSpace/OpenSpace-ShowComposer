@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { Pencil, TvMinimalPlay } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/store';
-
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 const useQuery = () => {
   // return new URLSearchParams(useLocation().search);
   return new URLSearchParams(window.location.search);
@@ -28,29 +26,25 @@ const PresentModeToggle = () => {
     }
   }, [query, isPresentMode, togglePresentMode, setPresentLocked]);
   return isPresentLocked ? null : (
-    <Tooltip>
-      <TooltipContent>{isPresentMode ? 'Edit Show' : 'Present Show'}</TooltipContent>
-
-      <TooltipTrigger asChild>
-        <ActionIcon
-          // pressed={isPresentMode}
-          onClick={togglePresentMode}
-          className={cn('z-50 p-1 transition-opacity duration-100', {
-            'opacity-60': isPresentMode,
-            'opacity-100': !isPresentMode
-          })}
-        >
-          {isPresentMode ? (
-            <Pencil strokeWidth={'1.5'} size={'32'} />
-          ) : (
-            <TvMinimalPlay
-              strokeWidth={'1.5'}
-              size={'32'}
-              // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
-            />
-          )}
-        </ActionIcon>
-      </TooltipTrigger>
+    <Tooltip label={isPresentMode ? 'Edit Show' : 'Present Show'}>
+      <ActionIcon
+        // pressed={isPresentMode}
+        onClick={togglePresentMode}
+        className={cn('z-50 p-1 transition-opacity duration-100', {
+          'opacity-60': isPresentMode,
+          'opacity-100': !isPresentMode
+        })}
+      >
+        {isPresentMode ? (
+          <Pencil strokeWidth={'1.5'} size={'32'} />
+        ) : (
+          <TvMinimalPlay
+            strokeWidth={'1.5'}
+            size={'32'}
+            // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
+          />
+        )}
+      </ActionIcon>
     </Tooltip>
   );
 };

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { Tooltip } from '@mantine/core';
 import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,7 +17,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
@@ -319,35 +319,37 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                           <div className={'w-[40%] overflow-hidden whitespace-nowrap'}>
                             {getComponentById(item.id)?.gui_name}
                           </div>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Toggle
-                                disabled={index == 0}
-                                pressed={item.chained}
-                                onPressedChange={(pressed) => {
-                                  const newItems = Array.from(items);
-                                  newItems[index].chained = pressed;
-                                  recalculateOffsets(newItems);
-                                  setItems(newItems);
-                                }}
-                                className={'p-1'}
-                              >
-                                {item.chained ? <Link size={20} /> : <Unlink size={20} />}
-                              </Toggle>
-                            </TooltipTrigger>
-                            <TooltipContent className={'w-[200px] bg-white'}>
-                              <b>{getCopy('Multi', 'chained_items:')}</b>
-                              {getCopy(
-                                'Multi',
-                                'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
-                              )}
-                              <br />
-                              <b>{getCopy('Multi', 'unchained_items:')}</b>
-                              {getCopy(
-                                'Multi',
-                                'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
-                              )}
-                            </TooltipContent>
+                          <Tooltip
+                            maw={200}
+                            label={
+                              <>
+                                <b>{getCopy('Multi', 'chained_items:')}</b>
+                                {getCopy(
+                                  'Multi',
+                                  'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
+                                )}
+                                <br />
+                                <b>{getCopy('Multi', 'unchained_items:')}</b>
+                                {getCopy(
+                                  'Multi',
+                                  'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
+                                )}
+                              </>
+                            }
+                          >
+                            <Toggle
+                              disabled={index == 0}
+                              pressed={item.chained}
+                              onPressedChange={(pressed) => {
+                                const newItems = Array.from(items);
+                                newItems[index].chained = pressed;
+                                recalculateOffsets(newItems);
+                                setItems(newItems);
+                              }}
+                              className={'p-1'}
+                            >
+                              {item.chained ? <Link size={20} /> : <Unlink size={20} />}
+                            </Toggle>
                           </Tooltip>
                           <div className={'flex items-center gap-1'}>
                             <Label>{getCopy('Multi', 'delay')}</Label>
@@ -368,11 +370,26 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                             />
                           </div>
                           <div className={'flex-0 grid grid-cols-2 gap-2'}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Toggle
-                                  pressed={undefined}
-                                  onPressedChange={(_pressed: boolean) => {
+                            <Tooltip label={getCopy('Multi', 'edit_component')}>
+                              <Toggle
+                                pressed={undefined}
+                                onPressedChange={(_pressed: boolean) => {
+                                  setInitialData({});
+                                  setCurrentComponentId(item.id);
+                                  setCurrentComponentType(
+                                    getComponentById(item.id)?.type
+                                  );
+                                  setCancelCallback(() => () => {
+                                    setItems(items);
+                                  });
+                                  setIsModalOpen(true);
+                                }}
+                                className={'p-1'}
+                              >
+                                <Edit2
+                                  size={20} // Adjust size as needed
+                                  onClick={() => {
+                                    // Your edit action here
                                     setInitialData({});
                                     setCurrentComponentId(item.id);
                                     setCurrentComponentType(
@@ -383,47 +400,22 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                     });
                                     setIsModalOpen(true);
                                   }}
-                                  className={'p-1'}
-                                >
-                                  <Edit2
-                                    size={20} // Adjust size as needed
-                                    onClick={() => {
-                                      // Your edit action here
-                                      setInitialData({});
-                                      setCurrentComponentId(item.id);
-                                      setCurrentComponentType(
-                                        getComponentById(item.id)?.type
-                                      );
-                                      setCancelCallback(() => () => {
-                                        setItems(items);
-                                      });
-                                      setIsModalOpen(true);
-                                    }}
-                                    style={{
-                                      cursor: 'pointer'
-                                    }} // Makes the icon behave like a button
-                                  />
-                                </Toggle>
-                              </TooltipTrigger>
-                              <TooltipContent className={'bg-white'}>
-                                {getCopy('Multi', 'edit_component')}
-                              </TooltipContent>
+                                  style={{
+                                    cursor: 'pointer'
+                                  }} // Makes the icon behave like a button
+                                />
+                              </Toggle>
                             </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Toggle
-                                  pressed={undefined}
-                                  onClick={() => removeItem(item.id)}
-                                  className={'p-1'}
-                                >
-                                  <XIcon
-                                    size={20} // Adjust size as needed
-                                  />
-                                </Toggle>
-                              </TooltipTrigger>
-                              <TooltipContent className={'bg-white'}>
-                                {getCopy('Multi', 'remove_from_component')}
-                              </TooltipContent>
+                            <Tooltip label={getCopy('Multi', 'remove_from_component')}>
+                              <Toggle
+                                pressed={undefined}
+                                onClick={() => removeItem(item.id)}
+                                className={'p-1'}
+                              >
+                                <XIcon
+                                  size={20} // Adjust size as needed
+                                />
+                              </Toggle>
                             </Tooltip>
                           </div>
                         </div>

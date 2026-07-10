@@ -33,15 +33,6 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setOpen}>
-      {/* <Tooltip>
-        <AlertDialogTrigger asChild>
-          <TooltipTrigger asChild>{enhancedTriggerButton}</TooltipTrigger>
-        </AlertDialogTrigger>
-
-        <TooltipContent side="bottom" className="bg-white">
-          {getCopy('DeleteConfirmationModal', 'delete_all_components')}
-        </TooltipContent>
-      </Tooltip> */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

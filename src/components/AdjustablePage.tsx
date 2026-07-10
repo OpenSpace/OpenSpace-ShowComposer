@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 // import { Button } from '@/pages/ui/button';
 import { GripHorizontal, Lock, LockOpen } from 'lucide-react';
 
@@ -11,7 +11,6 @@ import { useBoundStore } from '@/store/boundStore';
 import { Page } from '@/types/components';
 
 import ButtonLabel from './common/ButtonLabel';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 const AdjustablePage: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
@@ -134,28 +133,24 @@ const AdjustablePage: React.FC = () => {
               </ButtonLabel>
             </div>
             <div className={'pointer-events-auto absolute right-3 top-3 z-[999]'}>
-              <Tooltip>
-                <TooltipContent>{locked ? 'Unlock Page' : 'Lock Page'}</TooltipContent>
-
-                <TooltipTrigger asChild>
-                  <ActionIcon
-                    // pressed={isPresentMode}
-                    onClick={() => setLocked(!locked)}
-                    className={cn(
-                      'z-50 p-1 transition-opacity duration-100',
-                      locked ? 'opacity-60' : 'opacity-100'
-                    )}
-                  >
-                    {locked ? (
-                      <Lock size={'16'} />
-                    ) : (
-                      <LockOpen
-                        size={'16'}
-                        // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
-                      />
-                    )}
-                  </ActionIcon>
-                </TooltipTrigger>
+              <Tooltip label={locked ? 'Unlock Page' : 'Lock Page'}>
+                <ActionIcon
+                  // pressed={isPresentMode}
+                  onClick={() => setLocked(!locked)}
+                  className={cn(
+                    'z-50 p-1 transition-opacity duration-100',
+                    locked ? 'opacity-60' : 'opacity-100'
+                  )}
+                >
+                  {locked ? (
+                    <Lock size={'16'} />
+                  ) : (
+                    <LockOpen
+                      size={'16'}
+                      // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
+                    />
+                  )}
+                </ActionIcon>
               </Tooltip>
             </div>
           </>
