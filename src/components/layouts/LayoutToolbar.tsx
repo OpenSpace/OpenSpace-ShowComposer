@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { ActionIcon, Button, Divider, InputLabel, NumberInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  InputLabel,
+  NumberInput,
+  Popover,
+  Tooltip
+} from '@mantine/core';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 
 import { TooltipHolder } from '@/components/common/TooltipHolder';
 import { LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 // interface LayoutToolbarProps {
 //   onLayoutCreate: (type: LayoutType) => void;
@@ -95,18 +101,22 @@ export const LayoutToolbar: React.FC = () => {
         </ActionIcon>
       </TooltipHolder>
       <Divider orientation={'vertical'} />
-      <Popover open={open} onOpenChange={handleOpenChange}>
-        <TooltipHolder content={'Grid Settings'}>
-          <PopoverTrigger asChild>
-            <ActionIcon variant={'subtle'} className={'h-10 w-10 p-2'}>
+      <Popover opened={open} onChange={handleOpenChange} width={320}>
+        <Popover.Target>
+          <Tooltip label={'Grid Settings'}>
+            <ActionIcon
+              variant={'subtle'}
+              className={'h-10 w-10 p-2'}
+              onClick={() => handleOpenChange(!open)}
+            >
               <SettingsIcon className={'h-5 w-5'} />
             </ActionIcon>
-          </PopoverTrigger>
-        </TooltipHolder>
+          </Tooltip>
+        </Popover.Target>
 
-        <PopoverContent className={'w-80'}>
+        <Popover.Dropdown>
           <GridSettings onClose={() => handleOpenChange(false)} />
-        </PopoverContent>
+        </Popover.Dropdown>
       </Popover>
     </div>
   );
