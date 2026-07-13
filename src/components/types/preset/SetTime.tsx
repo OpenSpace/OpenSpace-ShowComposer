@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, InputLabel } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -11,7 +11,6 @@ import ToggleComponent from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import DateComponent from '@/components/timepicker/DateComponent';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
@@ -184,7 +183,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
         </Button>
         <div className={'grid grid-cols-4 gap-4'}>
           <div className={'col-span-3 grid gap-2'}>
-            <Label htmlFor={'guiname'}>{getCopy('SetTime', 'component_name')}</Label>
+            <InputLabel htmlFor={'guiname'}>
+              {getCopy('SetTime', 'component_name')}
+            </InputLabel>
             <Input
               id={'guiname'}
               placeholder={'Name of Component'}
@@ -206,7 +207,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
         <div className={'grid  gap-4'}>
           <div className={'grid grid-cols-4 gap-4'}>
             <div className={'col-span-2 grid gap-2'}>
-              <Label htmlFor={'duration'}>{getCopy('SetTime', 'fade_duration')}</Label>
+              <InputLabel htmlFor={'duration'}>
+                {getCopy('SetTime', 'fade_duration')}
+              </InputLabel>
               <Input
                 id={'duration'}
                 placeholder={'Duration to Fade'}
@@ -217,7 +220,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               />
             </div>
             <div className={'grid gap-2'}>
-              <Label />
+              <InputLabel />
               <Toggle
                 label={'Interpolate'}
                 value={interpolate}
@@ -225,7 +228,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               />
             </div>
             <div className={'grid gap-2'}>
-              <Label />
+              <InputLabel />
               <Toggle
                 label={'Fade Scene'}
                 disabled={!interpolate}
@@ -243,9 +246,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             />
 
             <div className={'grid gap-2'}>
-              <Label htmlFor={'description'}>
+              <InputLabel htmlFor={'description'}>
                 {getCopy('SetTime', 'gui_description')}
-              </Label>
+              </InputLabel>
               <Textarea
                 className={'w-full'}
                 id={'description'}

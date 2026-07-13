@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { debounce } from 'lodash';
 
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import RichTextEditor from '@/components/inputs/RichTextEditor';
-import { Label } from '@/components/ui/label';
 import { RichTextComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
@@ -89,7 +89,7 @@ const RichTextModal: React.FC<RichTextModalProps> = ({
   return (
     <>
       <div className={'grid-span-3 grid gap-2'}>
-        <Label htmlFor={'description'}>Background Color</Label>
+        <InputLabel htmlFor={'description'}>Background Color</InputLabel>
         <div className={'z-99 2 flex flex-row items-center justify-center'}>
           <ColorPickerComponent color={color} setColor={setColor} />
         </div>

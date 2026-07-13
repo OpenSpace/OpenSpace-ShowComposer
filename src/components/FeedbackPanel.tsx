@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
+import { InputLabel } from '@mantine/core';
 import { ArrowUpFromDot, Clock, Globe, Telescope } from 'lucide-react';
 
-import { Label } from '@/components/ui/label';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { cn } from '@/lib/utils';
@@ -39,9 +39,9 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
             'opacity-50': !time
           })}
         >
-          <Label className={'flex items-center justify-start gap-2'}>
+          <InputLabel className={'flex items-center justify-start gap-2'}>
             <Clock size={14} /> Current Time
-          </Label>
+          </InputLabel>
           <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
         </div>
         <div />
@@ -51,19 +51,19 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
             'opacity-50': !currentAnchor
           })}
         >
-          <Label className={'flex items-center justify-start gap-2'}>
+          <InputLabel className={'flex items-center justify-start gap-2'}>
             <Telescope size={14} />
             Current Focus
-          </Label>
+          </InputLabel>
           <ButtonLabel className={'border bg-transparent'}>{currentAnchor}</ButtonLabel>
         </div>
         {camera && (
           <div className={'mt-2 grid grid-cols-3 gap-2'}>
             <div className={'flex flex-col gap-2'}>
-              <Label className={'flex items-center justify-start gap-2'}>
+              <InputLabel className={'flex items-center justify-start gap-2'}>
                 <Globe size={14} />
                 Lat
-              </Label>
+              </InputLabel>
               <ButtonLabel
                 resize={false}
                 className={'border bg-transparent px-2 text-xs'}
@@ -72,10 +72,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
               </ButtonLabel>
             </div>
             <div className={'flex flex-col gap-2'}>
-              <Label className={'flex items-center justify-start gap-2'}>
+              <InputLabel className={'flex items-center justify-start gap-2'}>
                 <Globe size={14} />
                 Long
-              </Label>
+              </InputLabel>
               <ButtonLabel
                 resize={false}
                 className={'border bg-transparent px-2 text-xs'}
@@ -84,10 +84,10 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
               </ButtonLabel>
             </div>
             <div className={'flex flex-col gap-2'}>
-              <Label className={'flex items-center justify-start gap-2'}>
+              <InputLabel className={'flex items-center justify-start gap-2'}>
                 <ArrowUpFromDot size={14} />
                 Alt
-              </Label>
+              </InputLabel>
               <ButtonLabel
                 resize={false}
                 className={'text-nowrap border bg-transparent px-2 text-xs'}

@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { Label } from '@/components/ui/label';
 import { useSubscribeToErrorLog } from '@/hooks/topicSubscriptions';
 
 const logLevelOptions: { value: LogLevel; label: string }[] = [
@@ -41,7 +41,7 @@ const LogPanel = () => {
           'z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4'
         }
       >
-        <Label className={'flex w-full justify-start px-4'}>Error Logs</Label>
+        <InputLabel className={'flex w-full justify-start px-4'}>Error Logs</InputLabel>
 
         <div className={'flex w-full justify-start px-4'}>
           <SelectableDropdown

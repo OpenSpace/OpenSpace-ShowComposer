@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
@@ -13,7 +14,6 @@ import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBarControlled from '@/components/StatusBarControlled';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
@@ -229,7 +229,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
         </div>
         <div className={'grid grid-cols-2 gap-4'}>
           <div className={'grid gap-2'}>
-            <Label>{getCopy('Fade', 'action_type')}</Label>
+            <InputLabel>{getCopy('Fade', 'action_type')}</InputLabel>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
@@ -238,7 +238,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
           </div>
 
           <div className={'grid gap-2'}>
-            <Label htmlFor={'duration'}>{getCopy('Fade', 'fade_duration')}</Label>
+            <InputLabel htmlFor={'duration'}>
+              {getCopy('Fade', 'fade_duration')}
+            </InputLabel>
             <Input
               id={'duration'}
               placeholder={'Duration to Fade'}
@@ -255,7 +257,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
         <div className={'grid grid-cols-4 '}>
           <div className={'col-span-3 grid grid-cols-3 gap-4'}>
             <div className={'col-span-2 grid gap-2'}>
-              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
+              <InputLabel htmlFor={'gioname'}>
+                {getCopy('Fade', 'component_name')}
+              </InputLabel>
               <Input
                 id={'guiname'}
                 placeholder={'Name of Component'}
@@ -283,7 +287,9 @@ const FadeModal: React.FC<FadeModalProps> = ({
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>{getCopy('Fade', 'gui_description')}</Label>
+            <InputLabel htmlFor={'description'}>
+              {getCopy('Fade', 'gui_description')}
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

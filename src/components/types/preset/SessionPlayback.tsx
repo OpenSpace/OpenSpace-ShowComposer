@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, InputLabel } from '@mantine/core';
 import { Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -11,7 +11,6 @@ import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
@@ -179,9 +178,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     <div className={'grid grid-cols-1 gap-4'}>
       <div className={'grid grid-cols-1 gap-4'}>
         <div className={'grid gap-2'}>
-          <Label className={'flex items-center justify-start gap-2'}>
+          <InputLabel className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPlayback', 'play_session')}
-          </Label>
+          </InputLabel>
           <div className={'grid gap-2'}>
             <div className={'flex items-center space-x-2'}>
               <Checkbox
@@ -191,15 +190,15 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
                   if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
                 }}
               />
-              <Label htmlFor={'loop'}>
+              <InputLabel htmlFor={'loop'}>
                 {getCopy('SessionPlayback', 'loop_playback')}
-              </Label>
+              </InputLabel>
             </div>
           </div>
           <div className={'grid grid-cols-1 gap-2'}>
-            <Label htmlFor={'playback'}>
+            <InputLabel htmlFor={'playback'}>
               {getCopy('SessionPlayback', 'playback_file')}
-            </Label>
+            </InputLabel>
             <div className={'flex w-full flex-col gap-2'}>
               {/* <div className="grow"> */}
               <SelectableDropdown
@@ -214,9 +213,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
         </div>
         <div className={'grid grid-cols-4 gap-4'}>
           <div className={'col-span-3 grid gap-2'}>
-            <Label htmlFor={'gioname'}>
+            <InputLabel htmlFor={'gioname'}>
               {getCopy('SessionPlayback', 'component_name')}
-            </Label>
+            </InputLabel>
             <Input
               id={'guiname'}
               placeholder={'Name of Component'}
@@ -243,9 +242,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>
+            <InputLabel htmlFor={'description'}>
               {getCopy('SessionPlayback', 'gui_description')}
-            </Label>
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

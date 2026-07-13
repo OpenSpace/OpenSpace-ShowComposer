@@ -1,6 +1,6 @@
+import { InputLabel } from '@mantine/core';
 import { CheckCircle, HelpCircle, Radio, XCircle } from 'lucide-react';
 
-import { Label } from '@/components/ui/label';
 import { useConnectionStatus } from '@/hooks/util';
 import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
@@ -14,9 +14,9 @@ export function ConnectionStatusIndicator() {
         return (
           <div className={'flex items-center gap-1'}>
             <CheckCircle size={size} stroke={'green'} strokeWidth={2} />
-            <Label className={'text-xs'}>
+            <InputLabel className={'text-xs'}>
               {getCopy('ConnectionSettings', 'connected')}
-            </Label>
+            </InputLabel>
           </div>
         );
       case ConnectionStatus.Connecting:
@@ -28,18 +28,18 @@ export function ConnectionStatusIndicator() {
               stroke={'orange'}
               strokeWidth={2}
             />
-            <Label className={'animate-pulse text-xs'}>
+            <InputLabel className={'animate-pulse text-xs'}>
               {getCopy('ConnectionSettings', 'connecting')}
-            </Label>
+            </InputLabel>
           </div>
         );
       case ConnectionStatus.Disconnected:
         return (
           <div className={'flex items-center gap-1'}>
             <XCircle size={size} stroke={'red'} strokeWidth={2} />{' '}
-            <Label className={'text-xs'}>
+            <InputLabel className={'text-xs'}>
               {getCopy('ConnectionSettings', 'disconnected')}
-            </Label>
+            </InputLabel>
           </div>
         );
       default:

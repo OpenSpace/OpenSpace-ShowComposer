@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, InputLabel } from '@mantine/core';
 
 import {
   Card,
@@ -10,7 +10,6 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 // import { GridSettings } from './LayoutToolbar';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -86,15 +85,15 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
           <div className={'grid gap-2'}>
             {layoutType == 'grid' ? (
               <>
-                <Label className={'text-lg'}>
+                <InputLabel className={'text-lg'}>
                   {getCopy('LayoutEditModal', 'grid_size')}
-                </Label>
-                <Label className={'text-sm text-gray-500'}>
+                </InputLabel>
+                <InputLabel className={'text-sm text-gray-500'}>
                   {getCopy('LayoutEditModal', 'grid_size_description')}
-                </Label>
+                </InputLabel>
                 <div className={'mt-4 grid grid-cols-2 gap-4'}>
                   <div className={'grid-cols-1items-center col-span-1 grid gap-2'}>
-                    <Label htmlFor={'rows'}># of Rows</Label>
+                    <InputLabel htmlFor={'rows'}># of Rows</InputLabel>
                     <Input
                       id={'rows'}
                       // className="h-8"
@@ -107,7 +106,7 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
                     />
                   </div>
                   <div className={'col-span-1 grid grid-cols-1 items-center gap-4'}>
-                    <Label htmlFor={'columns'}># of Columns</Label>
+                    <InputLabel htmlFor={'columns'}># of Columns</InputLabel>
                     <Input
                       id={'columns'}
                       // className="h-8"
@@ -123,9 +122,9 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
               </>
             ) : null}
             <div className={'flex flex-row gap-2'}>
-              <Label htmlFor={'persistent'}>
+              <InputLabel htmlFor={'persistent'}>
                 {getCopy('LayoutEditModal', 'persist_across_pages')}
-              </Label>
+              </InputLabel>
               <Toggle value={persistent} setValue={setPersistent} />
             </div>
           </div>

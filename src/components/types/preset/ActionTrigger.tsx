@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -8,7 +9,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -90,7 +90,7 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
       </div>
       <div className={'grid grid-cols-2 gap-2 '}>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
+          <InputLabel htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</InputLabel>
           <Input
             id={'guiname'}
             placeholder={'Name of Component'}
@@ -115,7 +115,9 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
       />
       <div className={'grid grid-cols-1 gap-4'}>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'description'}>{getCopy('Focus', 'gui_description')}</Label>
+          <InputLabel htmlFor={'description'}>
+            {getCopy('Focus', 'gui_description')}
+          </InputLabel>
           <Textarea
             className={'w-full'}
             id={'description'}

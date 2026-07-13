@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { InputLabel } from '@mantine/core';
 
 import {
   Menubar,
@@ -31,7 +32,6 @@ import {
 } from '@/utils/saveProject';
 
 import { Input } from './ui/input';
-import { Label } from './ui/label';
 import ConfirmationModal from './ConfirmationModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ImportShowModal from './ImportShowModal';
@@ -190,7 +190,9 @@ export function GlobalMenuBar() {
             </MenubarSub>
             <div className={'grid gap-2 p-2'}>
               <div className={'space-between flex flex-row items-center gap-4'}>
-                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'width')}</Label>
+                <InputLabel htmlFor={'port'}>
+                  {getCopy('PageButtonMenu', 'width')}
+                </InputLabel>
                 <Input
                   id={'width'}
                   className={'h-8 w-40'}
@@ -203,7 +205,9 @@ export function GlobalMenuBar() {
                 />
               </div>
               <div className={'flex flex-row  items-center gap-4'}>
-                <Label htmlFor={'port'}>{getCopy('PageButtonMenu', 'height')}</Label>
+                <InputLabel htmlFor={'port'}>
+                  {getCopy('PageButtonMenu', 'height')}
+                </InputLabel>
                 <Input
                   id={'height'}
                   className={'h-8 w-40'}

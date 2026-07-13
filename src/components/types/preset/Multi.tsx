@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
-import { Tooltip } from '@mantine/core';
+import { InputLabel, Tooltip } from '@mantine/core';
 import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +13,6 @@ import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ComponentModal from '@/components/ComponentModal';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
@@ -352,7 +351,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                             </Toggle>
                           </Tooltip>
                           <div className={'flex items-center gap-1'}>
-                            <Label>{getCopy('Multi', 'delay')}</Label>
+                            <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
                             <Input
                               type={'number'}
                               className={'w-20'}
@@ -433,7 +432,9 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
         <div className={'grid grid-cols-1 gap-4'}>
           <div className={'grid grid-cols-1 gap-4'}>
             <div className={'grid gap-2'}>
-              <Label htmlFor={'gioname'}>{getCopy('Multi', 'component_name')}</Label>
+              <InputLabel htmlFor={'gioname'}>
+                {getCopy('Multi', 'component_name')}
+              </InputLabel>
               <Input
                 id={'guiname'}
                 placeholder={'Name of Component'}
@@ -447,19 +448,21 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
           </div>
           <div className={'grid grid-cols-1 gap-4'}>
             <div className={'grid gap-2'}>
-              <Label htmlFor={'description'}>Background Color</Label>
+              <InputLabel htmlFor={'description'}>Background Color</InputLabel>
               <div className={'flex flex-row gap-2'}>
                 <ColorPickerComponent color={color} setColor={setColor} />
               </div>
             </div>
             <div className={'grid gap-2'}>
-              <Label htmlFor={'description'}>
+              <InputLabel htmlFor={'description'}>
                 {getCopy('Multi', 'background_image')}
-              </Label>
+              </InputLabel>
               <ImageUpload value={backgroundImage} onChange={handleImageChange} />
             </div>
             <div className={'grid gap-2'}>
-              <Label htmlFor={'description'}>{getCopy('Multi', 'gui_description')}</Label>
+              <InputLabel htmlFor={'description'}>
+                {getCopy('Multi', 'gui_description')}
+              </InputLabel>
               <Textarea
                 className={'w-full'}
                 id={'description'}
@@ -638,9 +641,9 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
           <p>{component.gui_name}</p>
           {currentItems.length > 0 && (
             <div className={'grid-rows grid gap-1'}>
-              <Label>{getCopy('Multi', 'current_items:')}</Label>
+              <InputLabel>{getCopy('Multi', 'current_items:')}</InputLabel>
               {currentItems.map((v) => (
-                <Label key={v}>{v}</Label>
+                <InputLabel key={v}>{v}</InputLabel>
               ))}
             </div>
           )}

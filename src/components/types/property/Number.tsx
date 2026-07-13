@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import Slider from '@/components/inputs/Slider';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { NumberComponent, usePropertyStore } from '@/store';
@@ -82,7 +82,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
     >
       <div className={'grid w-[85%] gap-4 py-4'}>
         <div className={'flex flex-row gap-2'}>
-          <Label>{component.gui_name}</Label>
+          <InputLabel>{component.gui_name}</InputLabel>
           <Information content={component.gui_description} />
         </div>
 
@@ -200,7 +200,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
     <div className={'grid grid-cols-1 gap-4'}>
       <div className={'grid grid-cols-1 gap-4'}>
         <div className={'grid gap-2'}>
-          <Label>{getCopy('Number', 'property')}</Label>
+          <InputLabel>{getCopy('Number', 'property')}</InputLabel>
           <VirtualizedCombobox
             options={Object.keys(sortedKeys)}
             selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -213,7 +213,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
       </div>
       <div className={'grid grid-cols-4 gap-4'}>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'min'}>{getCopy('Number', 'range_min')}</Label>
+          <InputLabel htmlFor={'min'}>{getCopy('Number', 'range_min')}</InputLabel>
           <Input
             id={'min'}
             placeholder={'Slider Min'}
@@ -223,7 +223,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
           />
         </div>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'max'}>{getCopy('Number', 'range_max')}</Label>
+          <InputLabel htmlFor={'max'}>{getCopy('Number', 'range_max')}</InputLabel>
           <Input
             id={'max'}
             placeholder={'Slider Max'}
@@ -233,7 +233,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
           />
         </div>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'step'}>{getCopy('Number', 'step')}</Label>
+          <InputLabel htmlFor={'step'}>{getCopy('Number', 'step')}</InputLabel>
           <Input
             id={'step'}
             placeholder={'Slider Step'}
@@ -243,7 +243,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
           />
         </div>
         <div className={'grid gap-2'}>
-          <Label htmlFor={'exp'}>{getCopy('Number', 'exponent')}</Label>
+          <InputLabel htmlFor={'exp'}>{getCopy('Number', 'exponent')}</InputLabel>
           <Input
             id={'exp'}
             placeholder={"getCopy('Number', 'exponent')"}
@@ -255,7 +255,9 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
       </div>
       <div className={'grid grid-cols-4 gap-2'}>
         <div className={'col-span-3 grid gap-2'}>
-          <Label htmlFor={'gioname'}>{getCopy('Number', 'component_name')}</Label>
+          <InputLabel htmlFor={'gioname'}>
+            {getCopy('Number', 'component_name')}
+          </InputLabel>
           <Input
             id={'guiname'}
             placeholder={'Name of Component'}
@@ -278,7 +280,9 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
           setBackgroundImage={setBackgroundImage}
         />
         <div className={'grid gap-2'}>
-          <Label htmlFor={'description'}>{getCopy('Number', 'gui_description')}</Label>
+          <InputLabel htmlFor={'description'}>
+            {getCopy('Number', 'gui_description')}
+          </InputLabel>
           <Textarea
             className={'w-full'}
             id={'description'}

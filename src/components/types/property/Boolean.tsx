@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -11,7 +12,6 @@ import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { BooleanComponent, Toggle, usePropertyStore } from '@/store';
@@ -165,7 +165,7 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
         </div>
         <div className={'grid grid-cols-2 gap-4'}>
           <div className={'grid gap-2'}>
-            <Label>{getCopy('Boolean', 'action_type')}</Label>
+            <InputLabel>{getCopy('Boolean', 'action_type')}</InputLabel>
             <SelectableDropdown
               options={['toggle', 'on', 'off']}
               selected={action}
@@ -175,7 +175,9 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
         </div>
         <div className={'grid grid-cols-4 gap-2'}>
           <div className={'col-span-3 grid gap-2'}>
-            <Label htmlFor={'gioname'}>{getCopy('Boolean', 'component_name')}</Label>
+            <InputLabel htmlFor={'gioname'}>
+              {getCopy('Boolean', 'component_name')}
+            </InputLabel>
             <Input
               id={'guiname'}
               placeholder={'Name of Component'}
@@ -202,7 +204,9 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>{getCopy('Boolean', 'gui_description')}</Label>
+            <InputLabel htmlFor={'description'}>
+              {getCopy('Boolean', 'gui_description')}
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

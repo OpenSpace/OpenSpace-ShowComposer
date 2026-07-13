@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { ActionIcon, Button } from '@mantine/core';
+import { ActionIcon, Button, InputLabel } from '@mantine/core';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 
 import { TooltipHolder } from '@/components/common/TooltipHolder';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -124,7 +123,7 @@ export const GridSettings = ({ onClose }: { onClose: () => void }) => {
     <div className={'grid gap-4'}>
       <div className={'grid gap-2'}>
         <div className={'grid grid-cols-3 items-center gap-4'}>
-          <Label htmlFor={'rows'}># of Rows</Label>
+          <InputLabel htmlFor={'rows'}># of Rows</InputLabel>
           <Input
             id={'rows'}
             className={'col-span-2 h-8'}
@@ -139,7 +138,7 @@ export const GridSettings = ({ onClose }: { onClose: () => void }) => {
           />
         </div>
         <div className={'grid grid-cols-3 items-center gap-4'}>
-          <Label htmlFor={'columns'}># of Columns</Label>
+          <InputLabel htmlFor={'columns'}># of Columns</InputLabel>
           <Input
             id={'columns'}
             className={'col-span-2 h-8'}

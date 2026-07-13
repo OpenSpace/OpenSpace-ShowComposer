@@ -1,10 +1,9 @@
-import { ActionIcon, Tooltip } from '@mantine/core';
+import { ActionIcon, InputLabel, Tooltip } from '@mantine/core';
 import { RefreshCcwDot, Rotate3d, ZoomIn } from 'lucide-react';
 import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { Information } from '@/components/common/Information';
-import { Label } from '@/components/ui/label';
 import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
@@ -161,9 +160,9 @@ const FlightControlPanel = () => {
     >
       <div className={'flex w-full flex-col gap-2 px-4'}>
         {/* <div className="flex w-full flex-row justify-start"></div> */}
-        <Label className={'flex w-full justify-start'}>
+        <InputLabel className={'flex w-full justify-start'}>
           {getCopy('FlightControlPanel', 'camera_friction')}
-        </Label>
+        </InputLabel>
         <div className={'flex w-full flex-row justify-center gap-2'}>
           <div className={'grid grid-cols-3 gap-2'}>
             <Tooltip label={getCopy('FlightControlPanel', 'rotation_friction')}>
@@ -205,7 +204,7 @@ const FlightControlPanel = () => {
       </div>
       <div className={'flex w-full flex-col items-center gap-2 px-4'}>
         <div className={'flex w-full flex-row justify-start gap-2'}>
-          <Label>{getCopy('FlightControlPanel', 'control_area')}</Label>
+          <InputLabel>{getCopy('FlightControlPanel', 'control_area')}</InputLabel>
           <Information content={infoBoxContent} />
         </div>
         <div

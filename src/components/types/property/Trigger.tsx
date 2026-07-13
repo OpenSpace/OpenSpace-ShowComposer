@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { TriggerComponent, usePropertyStore } from '@/store';
@@ -146,7 +146,9 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
         </div>
         <div className={'grid grid-cols-4 gap-2'}>
           <div className={'col-span-3 grid gap-2'}>
-            <Label htmlFor={'gioname'}>{getCopy('Trigger', 'component_name')}</Label>
+            <InputLabel htmlFor={'gioname'}>
+              {getCopy('Trigger', 'component_name')}
+            </InputLabel>
             <Input
               id={'guiname'}
               placeholder={'Name of Component'}
@@ -173,7 +175,9 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>{getCopy('Trigger', 'gui_description')}</Label>
+            <InputLabel htmlFor={'description'}>
+              {getCopy('Trigger', 'gui_description')}
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

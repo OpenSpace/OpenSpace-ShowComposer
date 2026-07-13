@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, InputLabel } from '@mantine/core';
 import { throttle } from 'lodash';
 import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
@@ -8,7 +8,6 @@ import ButtonLabel from '@/components/common/ButtonLabel';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import DateComponent from '@/components/timepicker/DateComponent';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
@@ -249,7 +248,7 @@ const TimeDatePicker = () => {
           >
             <Rewind />
           </Button>
-          <Label className={'text-xs text-zinc-500'}> {prevLabel}</Label>
+          <InputLabel className={'text-xs text-zinc-500'}> {prevLabel}</InputLabel>
         </div>
         <Button size={'sm'} onClick={togglePause}>
           {paused ? <Play /> : <Pause />}
@@ -262,7 +261,7 @@ const TimeDatePicker = () => {
           >
             <FastForward />
           </Button>
-          <Label className={'text-xs text-zinc-500'}> {nextLabel}</Label>
+          <InputLabel className={'text-xs text-zinc-500'}> {nextLabel}</InputLabel>
         </div>
       </div>
     );
@@ -272,11 +271,11 @@ const TimeDatePicker = () => {
     <div>
       <div className={'grid gap-2 p-0'}>
         <div className={'grid gap-2'}>
-          <Label>{getCopy('TimeDatePicker', 'select_date')}</Label>
+          <InputLabel>{getCopy('TimeDatePicker', 'select_date')}</InputLabel>
           <DateComponent date={time} onChange={changeDate} />
         </div>
         <div className={'grid gap-2'}>
-          <Label>{getCopy('TimeDatePicker', 'simulation_speed')}</Label>
+          <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
           {/* <Separator /> */}
           <SelectableDropdown
             placeholder={'Select a Unit'}
@@ -301,9 +300,9 @@ const TimeDatePicker = () => {
               // noValue={adjustedDelta >= 0}
               // showOutsideRangeHint={false}
             />
-            <Label
+            <InputLabel
               className={'text-xs text-zinc-500'}
-            >{`Negative ${stepSize} / second`}</Label>
+            >{`Negative ${stepSize} / second`}</InputLabel>
           </div>
           <div className={'gap-.5 grid'}>
             <Input
@@ -317,7 +316,9 @@ const TimeDatePicker = () => {
               type={'number'}
               // readOnly
             />
-            <Label className={'text-xs text-zinc-500'}>{`${stepSize} / second`}</Label>
+            <InputLabel
+              className={'text-xs text-zinc-500'}
+            >{`${stepSize} / second`}</InputLabel>
           </div>
         </div>
         {deltaTimeStepsContol()}

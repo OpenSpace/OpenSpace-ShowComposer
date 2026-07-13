@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -8,7 +9,6 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
@@ -110,7 +110,7 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
       <div className={'grid grid-cols-1 gap-4'}>
         <div className={'grid grid-cols-4 items-center gap-4'}>
           <div className={'col-span-4 grid gap-2'}>
-            <Label htmlFor={'gioname'}>{getCopy('Script', 'script')}</Label>
+            <InputLabel htmlFor={'gioname'}>{getCopy('Script', 'script')}</InputLabel>
             <div style={{ maxHeight: '300px', overflowY: 'auto', resize: 'vertical' }}>
               <CodeEditor
                 value={script}
@@ -130,7 +130,9 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
           </div>
           <div className={'col-span-3 grid grid-cols-3  gap-2 '}>
             <div className={'col-span-2 grid gap-2'}>
-              <Label htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</Label>
+              <InputLabel htmlFor={'gioname'}>
+                {getCopy('Fade', 'component_name')}
+              </InputLabel>
               <Input
                 id={'guiname'}
                 placeholder={'Name of Component'}
@@ -159,7 +161,9 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>{getCopy('Fade', 'gui_description')}</Label>
+            <InputLabel htmlFor={'description'}>
+              {getCopy('Fade', 'gui_description')}
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

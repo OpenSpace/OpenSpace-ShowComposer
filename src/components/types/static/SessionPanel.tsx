@@ -1,12 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, InputLabel } from '@mantine/core';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
@@ -194,16 +193,16 @@ const SessionPanel = () => {
     <div className={'m-2 flex'}>
       <div className={'grid-rows grid gap-3'}>
         <div className={'grid  gap-3'}>
-          <Label className={'flex items-center justify-start gap-2'}>
+          <InputLabel className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPanel', 'record_session')}
-          </Label>
+          </InputLabel>
           <div className={'flex items-center space-x-2'}>
             <Checkbox id={'textformat'} />
-            <Label htmlFor={'textformat'}>{textFormatLabel}</Label>
+            <InputLabel htmlFor={'textformat'}>{textFormatLabel}</InputLabel>
           </div>
           <div className={'grid grid-cols-1 gap-4'}>
             <div className={'grid w-full gap-2'}>
-              <Label htmlFor={'guiname'}>{fileNameLabel}</Label>
+              <InputLabel htmlFor={'guiname'}>{fileNameLabel}</InputLabel>
               <div className={'flex w-full flex-row gap-2'}>
                 <Input
                   className={'grow'}
@@ -225,9 +224,9 @@ const SessionPanel = () => {
                 </Button>
               </div>
               {nameIsTaken && isInputFocused && (
-                <Label className={'text-red-500'}>
+                <InputLabel className={'text-red-500'}>
                   {getCopy('SessionPanel', 'name_is_already_taken.')}
-                </Label>
+                </InputLabel>
               )}
             </div>
           </div>
@@ -235,9 +234,9 @@ const SessionPanel = () => {
         <Separator />
 
         <div className={'grid  gap-3'}>
-          <Label className={'flex items-center justify-start gap-2'}>
+          <InputLabel className={'flex items-center justify-start gap-2'}>
             {getCopy('SessionPanel', 'play_session')}
-          </Label>
+          </InputLabel>
           <div className={'grid gap-2'}>
             <div className={'flex items-center space-x-2'}>
               <Checkbox
@@ -247,7 +246,9 @@ const SessionPanel = () => {
                   if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
                 }}
               />
-              <Label htmlFor={'loop'}>{getCopy('SessionPanel', 'loop_playback')}</Label>
+              <InputLabel htmlFor={'loop'}>
+                {getCopy('SessionPanel', 'loop_playback')}
+              </InputLabel>
             </div>
             <div className={'flex items-center space-x-2'}>
               <Checkbox
@@ -257,11 +258,15 @@ const SessionPanel = () => {
                   if (checked !== 'indeterminate') onShouldUpdateFramesChange(checked);
                 }}
               />
-              <Label htmlFor={'frames'}>{getCopy('SessionPanel', 'output_frames')}</Label>
+              <InputLabel htmlFor={'frames'}>
+                {getCopy('SessionPanel', 'output_frames')}
+              </InputLabel>
             </div>
           </div>
           <div className={'grid grid-cols-1 gap-2'}>
-            <Label htmlFor={'playback'}>{getCopy('SessionPanel', 'playback_file')}</Label>
+            <InputLabel htmlFor={'playback'}>
+              {getCopy('SessionPanel', 'playback_file')}
+            </InputLabel>
             <div className={'flex w-full flex-col gap-2'}>
               {/* <div className="grow"> */}
               <SelectableDropdown

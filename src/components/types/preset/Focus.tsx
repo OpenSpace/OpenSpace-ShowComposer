@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
 import { usePropertyStore } from '@/store';
@@ -168,7 +168,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
         </div>
         <div className={'grid grid-cols-4 gap-4'}>
           <div className={'col-span-3 grid gap-2'}>
-            <Label htmlFor={'gioname'}>{getCopy('Focus', 'component_name')}</Label>
+            <InputLabel htmlFor={'gioname'}>
+              {getCopy('Focus', 'component_name')}
+            </InputLabel>
             <Input
               id={'guiname'}
               placeholder={'Name of Component'}
@@ -195,7 +197,9 @@ const FocusModal: React.FC<FocusModalProps> = ({
             setBackgroundImage={setBackgroundImage}
           />
           <div className={'grid gap-2'}>
-            <Label htmlFor={'description'}>{getCopy('Focus', 'gui_description')}</Label>
+            <InputLabel htmlFor={'description'}>
+              {getCopy('Focus', 'gui_description')}
+            </InputLabel>
             <Textarea
               className={'w-full'}
               id={'description'}

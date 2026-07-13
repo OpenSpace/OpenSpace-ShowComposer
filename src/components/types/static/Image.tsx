@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 
 import ImageUpload from '@/components/common/ImageUpload';
-import { Label } from '@/components/ui/label';
 import { ImageComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 interface ImageGUIProps {
@@ -38,7 +38,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData 
 
   return (
     <div className={'grid grid-cols-1 gap-4'}>
-      <Label>{getCopy('Image', 'image')}</Label>
+      <InputLabel>{getCopy('Image', 'image')}</InputLabel>
       <ImageUpload value={url} onChange={handleImageChange} />
     </div>
   );

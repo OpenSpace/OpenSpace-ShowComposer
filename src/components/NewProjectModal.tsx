@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { InputLabel } from '@mantine/core';
 
 import {
   AlertDialog,
@@ -11,7 +12,6 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -108,9 +108,9 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
         </h4>
         <div className={'grid gap-2'}>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'projectName'}>
+            <InputLabel htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
-            </Label>
+            </InputLabel>
             <Input
               id={'projectName'}
               className={'col-span-2 h-8'}
@@ -121,9 +121,9 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'projectDescription'}>
+            <InputLabel htmlFor={'projectDescription'}>
               {getCopy('NewProjectModal', 'project_description')}
-            </Label>
+            </InputLabel>
             <Textarea
               className={'col-span-2 h-8'}
               id={'description'}
@@ -135,7 +135,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'showPagination'}>Show Pagination</Label>
+            <InputLabel htmlFor={'showPagination'}>Show Pagination</InputLabel>
             <Toggle
               label={'Show Pagination'}
               value={showPagination}
@@ -152,7 +152,9 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             {getCopy('ConnectionSettings', 'address_copy')}
           </p>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'ip'}>{getCopy('NewProjectModal', 'ip_address')}</Label>
+            <InputLabel htmlFor={'ip'}>
+              {getCopy('NewProjectModal', 'ip_address')}
+            </InputLabel>
             <Input
               id={'ip'}
               className={'col-span-2 h-8'}
@@ -164,7 +166,7 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
           </div>
 
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</Label>
+            <InputLabel htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</InputLabel>
             <Input
               id={'port'}
               className={'col-span-2 h-8'}
@@ -181,9 +183,9 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             {getCopy('NewProjectModal', 'default_page_size_copy')}
           </p>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'defaultPageSize'}>
+            <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
-            </Label>
+            </InputLabel>
             <Input
               id={'defaultPageSize'}
               className={'col-span-2 h-8'}
@@ -194,9 +196,9 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'defaultPageSize'}>
+            <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
-            </Label>
+            </InputLabel>
             <Input
               id={'defaultPageSize'}
               className={'col-span-2 h-8'}
@@ -305,9 +307,9 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
         </h4>
         <div className={'grid gap-2'}>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'projectName'}>
+            <InputLabel htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
-            </Label>
+            </InputLabel>
             <Input
               id={'projectName'}
               className={'col-span-2 h-8'}
@@ -318,9 +320,9 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'projectDescription'}>
+            <InputLabel htmlFor={'projectDescription'}>
               {getCopy('NewProjectModal', 'project_description')}
-            </Label>
+            </InputLabel>
             <Textarea
               className={'col-span-2 h-8'}
               id={'description'}
@@ -332,7 +334,7 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'showPagination'}>Show Pagination</Label>
+            <InputLabel htmlFor={'showPagination'}>Show Pagination</InputLabel>
             <Toggle
               label={'Show Pagination'}
               value={showPagination}
@@ -422,7 +424,9 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             {getCopy('ConnectionSettings', 'address_copy')}
           </p>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'ip'}>{getCopy('NewProjectModal', 'ip_address')}</Label>
+            <InputLabel htmlFor={'ip'}>
+              {getCopy('NewProjectModal', 'ip_address')}
+            </InputLabel>
             <Input
               id={'ip'}
               className={'col-span-2 h-8'}
@@ -434,7 +438,7 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
           </div>
 
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</Label>
+            <InputLabel htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</InputLabel>
             <Input
               id={'port'}
               className={'col-span-2 h-8'}
@@ -451,9 +455,9 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             {getCopy('NewProjectModal', 'default_page_size_copy')}
           </p>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'defaultPageSize'}>
+            <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
-            </Label>
+            </InputLabel>
             <Input
               id={'defaultPageSize'}
               className={'col-span-2 h-8'}
@@ -464,9 +468,9 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             />
           </div>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <Label htmlFor={'defaultPageSize'}>
+            <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
-            </Label>
+            </InputLabel>
             <Input
               id={'defaultPageSize'}
               className={'col-span-2 h-8'}
