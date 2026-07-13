@@ -1,8 +1,6 @@
 import React from 'react';
-import { TextInput } from '@mantine/core';
+import { ActionIcon, TextInput } from '@mantine/core';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-
-import { Toggle } from '@/components/ui/toggle';
 
 type DateData = {
   time: Date;
@@ -79,28 +77,31 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
         <div
           key={index}
           style={{ margin: '0px' }}
-          className={'flex flex-col items-center justify-center gap-1 '}
+          className={'flex flex-col items-center justify-center gap-1 px-1'}
         >
-          <Toggle
+          <ActionIcon
+            variant={'subtle'}
+            color={'white'}
             className={'h-4'}
+            size={'xs'}
             onClick={() => adjustDatePart(part, 1)}
-            pressed={false}
           >
             <ChevronUp
               className={
                 'h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]'
               }
             />
-          </Toggle>
+          </ActionIcon>
           <TextInput
             w={40}
+            variant={'unstyled'}
             styles={{
               input: {
                 height: 20,
                 minHeight: 20,
                 padding: 0,
                 textAlign: 'center',
-                fontSize: 12
+                fontSize: 14
               }
             }}
             value={
@@ -118,15 +119,17 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
             }
             readOnly
           />
-          <Toggle
+          <ActionIcon
+            variant={'subtle'}
+            color={'white'}
+            size={'xs'}
             className={'h-4'}
             onClick={() => adjustDatePart(part, -1)}
-            pressed={false}
           >
             <ChevronDown
               className={'h-6 w-6 cursor-pointer transition-all hover:scale-110'}
             />
-          </Toggle>
+          </ActionIcon>
         </div>
       ))}
     </div>

@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
-import { InputLabel, NumberInput, Textarea, TextInput, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  InputLabel,
+  NumberInput,
+  Textarea,
+  TextInput,
+  Tooltip
+} from '@mantine/core';
 import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +20,6 @@ import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ComponentModal from '@/components/ComponentModal';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Toggle } from '@/components/ui/toggle';
 import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
@@ -334,19 +340,19 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                               </>
                             }
                           >
-                            <Toggle
+                            <ActionIcon
                               disabled={index == 0}
-                              pressed={item.chained}
-                              onPressedChange={(pressed) => {
+                              variant={item.chained ? 'filled' : 'subtle'}
+                              onClick={() => {
                                 const newItems = Array.from(items);
-                                newItems[index].chained = pressed;
+                                newItems[index].chained = !item.chained;
                                 recalculateOffsets(newItems);
                                 setItems(newItems);
                               }}
                               className={'p-1'}
                             >
                               {item.chained ? <Link size={20} /> : <Unlink size={20} />}
-                            </Toggle>
+                            </ActionIcon>
                           </Tooltip>
                           <div className={'flex items-center gap-1'}>
                             <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
@@ -367,9 +373,9 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                           </div>
                           <div className={'flex-0 grid grid-cols-2 gap-2'}>
                             <Tooltip label={getCopy('Multi', 'edit_component')}>
-                              <Toggle
-                                pressed={undefined}
-                                onPressedChange={(_pressed: boolean) => {
+                              <ActionIcon
+                                variant={'subtle'}
+                                onClick={() => {
                                   setInitialData({});
                                   setCurrentComponentId(item.id);
                                   setCurrentComponentType(
@@ -382,36 +388,17 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                                 }}
                                 className={'p-1'}
                               >
-                                <Edit2
-                                  size={20} // Adjust size as needed
-                                  onClick={() => {
-                                    // Your edit action here
-                                    setInitialData({});
-                                    setCurrentComponentId(item.id);
-                                    setCurrentComponentType(
-                                      getComponentById(item.id)?.type
-                                    );
-                                    setCancelCallback(() => () => {
-                                      setItems(items);
-                                    });
-                                    setIsModalOpen(true);
-                                  }}
-                                  style={{
-                                    cursor: 'pointer'
-                                  }} // Makes the icon behave like a button
-                                />
-                              </Toggle>
+                                <Edit2 size={20} />
+                              </ActionIcon>
                             </Tooltip>
                             <Tooltip label={getCopy('Multi', 'remove_from_component')}>
-                              <Toggle
-                                pressed={undefined}
+                              <ActionIcon
+                                variant={'subtle'}
                                 onClick={() => removeItem(item.id)}
                                 className={'p-1'}
                               >
-                                <XIcon
-                                  size={20} // Adjust size as needed
-                                />
-                              </Toggle>
+                                <XIcon size={20} />
+                              </ActionIcon>
                             </Tooltip>
                           </div>
                         </div>
