@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { ActionIcon, Button, InputLabel, NumberInput } from '@mantine/core';
+import { ActionIcon, Button, Divider, InputLabel, NumberInput } from '@mantine/core';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 
 import { TooltipHolder } from '@/components/common/TooltipHolder';
-import { Separator } from '@/components/ui/separator';
 import { LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
@@ -75,7 +74,7 @@ export const LayoutToolbar: React.FC = () => {
           <RowIcon className={'h-5 w-5'} />
         </ActionIcon>
       </TooltipHolder>
-      <Separator orientation={'vertical'} />
+      <Divider orientation={'vertical'} />
       <TooltipHolder content={'Column'}>
         <ActionIcon
           variant={'subtle'}
@@ -85,7 +84,7 @@ export const LayoutToolbar: React.FC = () => {
           <ColumnIcon className={'h-5 w-5'} />
         </ActionIcon>
       </TooltipHolder>
-      <Separator orientation={'vertical'} />
+      <Divider orientation={'vertical'} />
       <TooltipHolder content={'Grid'}>
         <ActionIcon
           variant={'subtle'}
@@ -95,7 +94,7 @@ export const LayoutToolbar: React.FC = () => {
           <LayoutGrid className={'h-5 w-5'} />
         </ActionIcon>
       </TooltipHolder>
-      <Separator orientation={'vertical'} />
+      <Divider orientation={'vertical'} />
       <Popover open={open} onOpenChange={handleOpenChange}>
         <TooltipHolder content={'Grid Settings'}>
           <PopoverTrigger asChild>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle } from 'react-resizable-panels';
-import { Button } from '@mantine/core';
+import { Button, Divider } from '@mantine/core';
 import {
   AlignJustify,
   BookOpenCheck,
@@ -29,7 +29,6 @@ import {
   ResizablePanelGroup
 } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { useConnectionStatus } from '@/hooks/util';
 import { ConnectionStatus } from '@/types/enums';
 
@@ -334,16 +333,9 @@ const Editor = () => {
                   {getCopy('Main', 'interface_name')}
                 </h2>
               </div>
-              <Separator />
+              <Divider />
               <GlobalMenuBar />
-              <Separator />
-              {/* <div className="flex flex-row items-center gap-2 p-2 px-4">
-                  <div className="text-xs font-bold ">
-                    {getCopy('Main', 'project_name')}
-                  </div>
-                  <div className="text-sm font-normal">{projectName}</div>
-                </div>
-                <Separator /> */}
+              <Divider />
               <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
                 <ConnectionStatusIndicator />
                 <div className={'flex flex-row items-center gap-2  '}>
@@ -354,15 +346,15 @@ const Editor = () => {
                     {projectName}
                   </div>
                 </div>
-                <Separator />
+                <Divider />
                 <Undo />
-                <Separator />
+                <Divider />
               </div>
 
               <div className={'grid gap-2 p-2 @[167px]:gap-2'}>
                 <h2 className={'ml-2 text-xs font-bold '}>{getCopy('Main', 'layout')}</h2>
                 <LayoutToolbar />
-                <Separator />
+                <Divider />
               </div>
               <ScrollArea className={'flex-0 @container'} type={'always'}>
                 <div className={'grid gap-2 p-4 @[167px]:gap-4'}>
@@ -418,7 +410,7 @@ const Editor = () => {
                   </div>
                 </div>
               </ScrollArea>
-              <Separator />
+              <Divider />
               <FeedbackPanel className={'p-4'} />
             </div>
           </div>

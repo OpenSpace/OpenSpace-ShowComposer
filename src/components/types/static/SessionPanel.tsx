@@ -1,11 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, InputLabel, TextInput } from '@mantine/core';
+import { Button, Divider, InputLabel, TextInput } from '@mantine/core';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -228,7 +227,7 @@ const SessionPanel = () => {
             </div>
           </div>
         </div>
-        <Separator />
+        <Divider />
 
         <div className={'grid  gap-3'}>
           <InputLabel className={'flex items-center justify-start gap-2'}>

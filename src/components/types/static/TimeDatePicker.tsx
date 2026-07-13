@@ -275,7 +275,6 @@ const TimeDatePicker = () => {
         </div>
         <div className={'grid gap-2'}>
           <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
-          {/* <Separator /> */}
           <SelectableDropdown
             placeholder={'Select a Unit'}
             options={Object.values(Steps)}
