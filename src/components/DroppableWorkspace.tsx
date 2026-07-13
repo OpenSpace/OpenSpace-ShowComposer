@@ -1,5 +1,6 @@
 // DroppableWorkspace.tsx
 import React, { useEffect, useState } from 'react';
+import { Badge } from '@mantine/core';
 
 import SelectionTool from '@/components/SelectionTool';
 import { cn } from '@/lib/utils';
@@ -7,7 +8,6 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-import { Badge } from './ui/badge';
 import AdjustablePage from './AdjustablePage';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import ScaleGUI from './ScaleGUI';
@@ -102,7 +102,7 @@ const DroppableWorkspace: React.FC<{
       >
         {!isPresentMode && (
           <Badge
-            variant={'secondary'}
+            variant={'default'}
             className={
               ' font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700'
             }
