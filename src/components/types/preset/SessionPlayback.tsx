@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Button, Checkbox, InputLabel, Textarea, TextInput } from '@mantine/core';
 import { Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +9,6 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
@@ -184,9 +183,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
               <Checkbox
                 id={'loop'}
                 checked={loop}
-                onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
-                }}
+                onChange={(event) => onLoopPlaybackChange(event.currentTarget.checked)}
               />
               <InputLabel htmlFor={'loop'}>
                 {getCopy('SessionPlayback', 'loop_playback')}

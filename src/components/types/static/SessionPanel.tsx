@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, Divider, InputLabel, TextInput } from '@mantine/core';
+import { Button, Checkbox, Divider, InputLabel, TextInput } from '@mantine/core';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -238,9 +237,7 @@ const SessionPanel = () => {
               <Checkbox
                 id={'loop'}
                 checked={loopPlayback}
-                onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate') onLoopPlaybackChange(checked);
-                }}
+                onChange={(event) => onLoopPlaybackChange(event.currentTarget.checked)}
               />
               <InputLabel htmlFor={'loop'}>
                 {getCopy('SessionPanel', 'loop_playback')}
@@ -250,9 +247,9 @@ const SessionPanel = () => {
               <Checkbox
                 id={'frames'}
                 checked={shouldOutputFrames}
-                onCheckedChange={(checked: boolean | 'indeterminate') => {
-                  if (checked !== 'indeterminate') onShouldUpdateFramesChange(checked);
-                }}
+                onChange={(event) =>
+                  onShouldUpdateFramesChange(event.currentTarget.checked)
+                }
               />
               <InputLabel htmlFor={'frames'}>
                 {getCopy('SessionPanel', 'output_frames')}

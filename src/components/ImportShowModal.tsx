@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Checkbox } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import ToggleComponent from '@/components/common/Toggle';
@@ -12,7 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -318,7 +318,7 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
                   <Checkbox
                     className={'peer'}
                     checked={selectedPages.find((p) => p.id === page.id) !== undefined}
-                    onCheckedChange={() => handlePageSelect(page)}
+                    onChange={() => handlePageSelect(page)}
                   />
                 </TableCell>
                 <TableCell className={'dark:text-gray-100'}>{page.name}</TableCell>
