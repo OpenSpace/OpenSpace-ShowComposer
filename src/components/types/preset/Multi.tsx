@@ -4,6 +4,7 @@ import {
   ActionIcon,
   InputLabel,
   NumberInput,
+  Tabs,
   Textarea,
   TextInput,
   Tooltip
@@ -19,7 +20,6 @@ import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ComponentModal from '@/components/ComponentModal';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
@@ -259,11 +259,11 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
   };
   return (
     <Tabs defaultValue={'multi'} className={'w-auto'}>
-      <TabsList className={'mb-4'}>
-        <TabsTrigger value={'multi'}>{getCopy('Multi', 'multi_settings')}</TabsTrigger>
-        <TabsTrigger value={'visual'}>{getCopy('Multi', 'visual_settings')}</TabsTrigger>
-      </TabsList>
-      <TabsContent value={'multi'}>
+      <Tabs.List className={'mb-4'}>
+        <Tabs.Tab value={'multi'}>{getCopy('Multi', 'multi_settings')}</Tabs.Tab>
+        <Tabs.Tab value={'visual'}>{getCopy('Multi', 'visual_settings')}</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value={'multi'}>
         <div className={'grid grid-cols-1 gap-4'}>
           <div className={'grid grid-cols-2 gap-4'}>
             <div className={'grid gap-2'}>
@@ -411,8 +411,8 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
             </Droppable>
           </DragDropContext>
         </div>
-      </TabsContent>
-      <TabsContent value={'visual'}>
+      </Tabs.Panel>
+      <Tabs.Panel value={'visual'}>
         <div className={'grid grid-cols-1 gap-4'}>
           <div className={'grid grid-cols-1 gap-4'}>
             <div className={'grid gap-2'}>
@@ -454,7 +454,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
             </div>
           </div>
         </div>
-      </TabsContent>
+      </Tabs.Panel>
 
       <ComponentModal
         isOpen={isModalOpen}
