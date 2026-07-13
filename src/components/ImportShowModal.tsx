@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox } from '@mantine/core';
+import { Checkbox, Table } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import ToggleComponent from '@/components/common/Toggle';
@@ -13,14 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
@@ -284,9 +276,9 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>
                 <ToggleComponent
                   //   label="All"
                   value={selectedPages.length === pages.length}
@@ -298,14 +290,14 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
                   className="peer"
                 />
                 Select All */}
-              </TableHead>
-              <TableHead>Page</TableHead>
-              <TableHead>Components</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+              </Table.Th>
+              <Table.Th>Page</Table.Th>
+              <Table.Th>Components</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
             {pages.map((page) => (
-              <TableRow
+              <Table.Tr
                 key={page.name}
                 onClick={() => handlePageSelect(page)}
                 // selected={selectedPages.has(page.name)}
@@ -314,15 +306,15 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
                     'bg-gray-100 dark:bg-gray-800'
                 )}
               >
-                <TableCell>
+                <Table.Td>
                   <Checkbox
                     className={'peer'}
                     checked={selectedPages.find((p) => p.id === page.id) !== undefined}
                     onChange={() => handlePageSelect(page)}
                   />
-                </TableCell>
-                <TableCell className={'dark:text-gray-100'}>{page.name}</TableCell>
-                <TableCell>
+                </Table.Td>
+                <Table.Td className={'dark:text-gray-100'}>{page.name}</Table.Td>
+                <Table.Td>
                   {page.components
                     .filter((v) => !store.boundStore.layouts[v])
                     .map((componentId, index) => {
@@ -345,10 +337,10 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
                         </span>
                       );
                     })}
-                </TableCell>
-              </TableRow>
+                </Table.Td>
+              </Table.Tr>
             ))}
-          </TableBody>
+          </Table.Tbody>
         </Table>
         <AlertDialogFooter>
           <AlertDialogCancel
