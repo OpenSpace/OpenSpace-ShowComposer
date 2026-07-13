@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@mantine/core';
+import { Button, ScrollArea } from '@mantine/core';
 
 import { ThemeProvider } from './components/ThemeProvider';
-import { ScrollArea } from './components/ui/scroll-area';
 import { useBoundStore } from './store/boundStore';
 import { getCopy } from './utils/copyHelpers';
 // import Pagination from './components/Pagination';

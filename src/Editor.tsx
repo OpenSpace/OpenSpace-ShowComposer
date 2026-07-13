@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle } from 'react-resizable-panels';
-import { Button, Divider } from '@mantine/core';
+import { Button, Divider, ScrollArea } from '@mantine/core';
 import {
   AlignJustify,
   BookOpenCheck,
@@ -28,7 +28,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup
 } from '@/components/ui/resizable';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useConnectionStatus } from '@/hooks/util';
 import { ConnectionStatus } from '@/types/enums';
 
