@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, NumberInput } from '@mantine/core';
 import { throttle } from 'lodash';
 import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
@@ -7,7 +7,6 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import ButtonLabel from '@/components/common/ButtonLabel';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import DateComponent from '@/components/timepicker/DateComponent';
-import { Input } from '@/components/ui/input';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
@@ -286,35 +285,32 @@ const TimeDatePicker = () => {
         </div>
         <div className={'grid grid-cols-2 gap-2'}>
           <div className={'gap-.5 grid'}>
-            <Input
+            <NumberInput
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta >= 0}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setNegativeDeltaTime(e.target.valueAsNumber);
-              }}
+              onChange={(value) =>
+                setNegativeDeltaTime(
+                  typeof value === 'number' ? value : parseFloat(value)
+                )
+              }
               placeholder={`Negative ${stepSize} / second`}
               value={adjustedDelta >= 0 ? 0 : -adjustedDelta}
-              type={'number'}
-              // readOnly
-              // reverse
-              // noValue={adjustedDelta >= 0}
-              // showOutsideRangeHint={false}
             />
             <InputLabel
               className={'text-xs text-zinc-500'}
             >{`Negative ${stepSize} / second`}</InputLabel>
           </div>
           <div className={'gap-.5 grid'}>
-            <Input
+            <NumberInput
               {...Limits[stepSize]}
               disabled={!luaApi || adjustedDelta < 0}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPositiveDeltaTime(e.target.valueAsNumber);
-              }}
+              onChange={(value) =>
+                setPositiveDeltaTime(
+                  typeof value === 'number' ? value : parseFloat(value)
+                )
+              }
               placeholder={`${stepSize} / second`}
               value={adjustedDelta < 0 ? 0 : adjustedDelta}
-              type={'number'}
-              // readOnly
             />
             <InputLabel
               className={'text-xs text-zinc-500'}

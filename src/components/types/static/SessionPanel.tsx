@@ -1,11 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, TextInput } from '@mantine/core';
 import { Circle, Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { getCopy } from '@/utils/copyHelpers';
@@ -204,13 +203,11 @@ const SessionPanel = () => {
             <div className={'grid w-full gap-2'}>
               <InputLabel htmlFor={'guiname'}>{fileNameLabel}</InputLabel>
               <div className={'flex w-full flex-row gap-2'}>
-                <Input
+                <TextInput
                   className={'grow'}
                   value={filenameRecording}
                   placeholder={'Enter recording filename...'}
-                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-                    updateRecordingFilename(evt)
-                  }
+                  onChange={(evt) => updateRecordingFilename(evt)}
                   onFocus={() => setIsInputFocused(true)} // Set focus state to true
                   onBlur={() => setIsInputFocused(false)} // Set focus state to false
                 />

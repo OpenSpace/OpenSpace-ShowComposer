@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 import { Anchor, Clock } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -10,8 +10,6 @@ import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import Toggle from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
@@ -169,14 +167,13 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
             <InputLabel htmlFor={'duration'}>
               {getCopy('SetNavigation', 'fade_duration')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'duration'}
               disabled={mode == 'jump'}
               placeholder={'Duration to Fade'}
-              type={'number'}
               value={intDuration}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setIntDuration(parseFloat(e.target.value))
+              onChange={(value) =>
+                setIntDuration(typeof value === 'number' ? value : parseFloat(value))
               }
             />
           </div>
@@ -209,14 +206,11 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
               <InputLabel htmlFor={'gioname'}>
                 {getCopy('Fade', 'component_name')}
               </InputLabel>
-              <Input
+              <TextInput
                 id={'guiname'}
                 placeholder={'Name of Component'}
-                type={'text'}
                 value={gui_name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setGuiName(e.target.value)
-                }
+                onChange={(e) => setGuiName(e.currentTarget.value)}
               />
             </div>
             <div className={'col-span-1 mt-6 grid gap-2'}>
@@ -254,9 +248,7 @@ const SetNavModal: React.FC<SetNavModalProps> = ({
               className={'w-full'}
               id={'description'}
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
+              onChange={(e) => setGuiDescription(e.currentTarget.value)}
               placeholder={'Type your message here.'}
             />
           </div>

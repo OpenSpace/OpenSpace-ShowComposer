@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, TextInput } from '@mantine/core';
 
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
 import {
@@ -12,7 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 import { Page } from '@/types/components';
@@ -71,12 +70,12 @@ const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage 
         <div className={'grid gap-4'}>
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
             <InputLabel htmlFor={'pageName'}>Page Name</InputLabel>
-            <Input
+            <TextInput
               id={'pageName'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={pageName}
-              onChange={(e) => setPageName(e.target.value)}
+              onChange={(e) => setPageName(e.currentTarget.value)}
               placeholder={'Enter Page Name'}
             />
           </div>

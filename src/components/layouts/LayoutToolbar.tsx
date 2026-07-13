@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { ActionIcon, Button, InputLabel } from '@mantine/core';
+import { ActionIcon, Button, InputLabel, NumberInput } from '@mantine/core';
 import { LayoutGrid, SettingsIcon } from 'lucide-react';
 
 import { TooltipHolder } from '@/components/common/TooltipHolder';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -124,31 +123,33 @@ export const GridSettings = ({ onClose }: { onClose: () => void }) => {
       <div className={'grid gap-2'}>
         <div className={'grid grid-cols-3 items-center gap-4'}>
           <InputLabel htmlFor={'rows'}># of Rows</InputLabel>
-          <Input
+          <NumberInput
             id={'rows'}
-            className={'col-span-2 h-8'}
-            type={'number'}
+            className={'col-span-2'}
+            size={'xs'}
             min={1}
             max={10}
             value={rows}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setRows(parseInt(e.target.value))
+            onChange={(value) =>
+              setRows(typeof value === 'number' ? value : parseInt(value))
             }
+            allowDecimal={false}
             placeholder={'# of Rows'}
           />
         </div>
         <div className={'grid grid-cols-3 items-center gap-4'}>
           <InputLabel htmlFor={'columns'}># of Columns</InputLabel>
-          <Input
+          <NumberInput
             id={'columns'}
-            className={'col-span-2 h-8'}
-            type={'number'}
+            className={'col-span-2'}
+            size={'xs'}
             min={1}
             max={10}
             value={columns}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setColumns(parseInt(e.target.value))
+            onChange={(value) =>
+              setColumns(typeof value === 'number' ? value : parseInt(value))
             }
+            allowDecimal={false}
             placeholder={'# of Columns'}
           />
         </div>

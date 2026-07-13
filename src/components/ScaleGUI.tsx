@@ -1,11 +1,11 @@
 import React from 'react';
+import { NumberInput } from '@mantine/core';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
 import HoldButton from './common/HoldButton';
-import { Input } from './ui/input';
 const ScaleGUI: React.FC = () => {
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
@@ -20,23 +20,15 @@ const ScaleGUI: React.FC = () => {
       <HoldButton onClick={zoomIn}>
         <ZoomIn size={'16'} />
       </HoldButton>
-      <Input
+      <NumberInput
         value={Math.round(scale * 100)}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setScale(() => parseFloat(e.target.value) / 100)
+        onChange={(value) =>
+          setScale(() => (typeof value === 'number' ? value : parseFloat(value)) / 100)
         }
-        type={'number'}
-        className={'no-arrows  bg-transparent text-right '}
-        max={200}
-        min={75}
+        hideControls
+        suffix={`${getCopy('ScaleGUI', '%')}`}
+        styles={{ input: { textAlign: 'center' } }}
       />
-      <div
-        className={
-          'pointer-events-none absolute inset-y-0 left-0 ml-10 flex items-center'
-        }
-      >
-        <span className={'text-sm'}>{getCopy('ScaleGUI', '%')}</span>
-      </div>
       <HoldButton onClick={zoomOut}>
         <ZoomOut size={'16'} />
       </HoldButton>

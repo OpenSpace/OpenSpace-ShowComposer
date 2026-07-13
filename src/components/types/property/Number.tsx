@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,8 +9,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import Slider from '@/components/inputs/Slider';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { NumberComponent, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -36,12 +34,13 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
   const handleBlur = () => {
     component.triggerAction?.(tempValue);
   };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (value: number | string) => {
+    const numeric = typeof value === 'number' ? value : parseFloat(value);
     if (triggeredByArrowKey) {
-      component.triggerAction?.(parseFloat(e.target.value));
+      component.triggerAction?.(numeric);
       setTriggeredByArrowKey(false); // Reset the flag
     } else {
-      setTempValue(Number(e.target.value));
+      setTempValue(numeric);
     }
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -95,8 +94,7 @@ const NumberGUIComponent: React.FC<NumberGUIProps> = ({ component }) => {
           onChange={(v) => component.triggerAction?.(v)}
         />
 
-        <Input
-          type={'number'}
+        <NumberInput
           className={'w-auto bg-opacity-50 text-xs'}
           value={tempValue || 0}
           min={component.min}
@@ -214,42 +212,46 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
       <div className={'grid grid-cols-4 gap-4'}>
         <div className={'grid gap-2'}>
           <InputLabel htmlFor={'min'}>{getCopy('Number', 'range_min')}</InputLabel>
-          <Input
+          <NumberInput
             id={'min'}
             placeholder={'Slider Min'}
-            type={'number'}
             value={min || 0}
-            onChange={(e) => setMin(parseFloat(e.target.value))}
+            onChange={(value) =>
+              setMin(typeof value === 'number' ? value : parseFloat(value))
+            }
           />
         </div>
         <div className={'grid gap-2'}>
           <InputLabel htmlFor={'max'}>{getCopy('Number', 'range_max')}</InputLabel>
-          <Input
+          <NumberInput
             id={'max'}
             placeholder={'Slider Max'}
-            type={'number'}
             value={max || 0}
-            onChange={(e) => setMax(parseFloat(e.target.value))}
+            onChange={(value) =>
+              setMax(typeof value === 'number' ? value : parseFloat(value))
+            }
           />
         </div>
         <div className={'grid gap-2'}>
           <InputLabel htmlFor={'step'}>{getCopy('Number', 'step')}</InputLabel>
-          <Input
+          <NumberInput
             id={'step'}
             placeholder={'Slider Step'}
-            type={'number'}
             value={step || 0}
-            onChange={(e) => setStep(parseFloat(e.target.value))}
+            onChange={(value) =>
+              setStep(typeof value === 'number' ? value : parseFloat(value))
+            }
           />
         </div>
         <div className={'grid gap-2'}>
           <InputLabel htmlFor={'exp'}>{getCopy('Number', 'exponent')}</InputLabel>
-          <Input
+          <NumberInput
             id={'exp'}
             placeholder={"getCopy('Number', 'exponent')"}
-            type={'number'}
             value={exponent || 0}
-            onChange={(e) => setExponent(parseFloat(e.target.value))}
+            onChange={(value) =>
+              setExponent(typeof value === 'number' ? value : parseFloat(value))
+            }
           />
         </div>
       </div>
@@ -258,14 +260,11 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
           <InputLabel htmlFor={'gioname'}>
             {getCopy('Number', 'component_name')}
           </InputLabel>
-          <Input
+          <TextInput
             id={'guiname'}
             placeholder={'Name of Component'}
-            type={'text'}
             value={gui_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setGuiName(e.target.value)
-            }
+            onChange={(e) => setGuiName(e.currentTarget.value)}
           />
         </div>
         <div className={'col-span-1 mt-6 grid gap-2'}>
@@ -287,9 +286,7 @@ const NumberModal: React.FC<NumberModalProps> = ({ component, handleComponentDat
             className={'w-full'}
             id={'description'}
             value={gui_description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setGuiDescription(e.target.value)
-            }
+            onChange={(e) => setGuiDescription(e.currentTarget.value)}
             placeholder={'Type your message here.'}
           />
         </div>

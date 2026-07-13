@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, TextInput } from '@mantine/core';
 
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 // import { GridSettings } from './LayoutToolbar';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -94,26 +93,24 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
                 <div className={'mt-4 grid grid-cols-2 gap-4'}>
                   <div className={'grid-cols-1items-center col-span-1 grid gap-2'}>
                     <InputLabel htmlFor={'rows'}># of Rows</InputLabel>
-                    <Input
+                    <TextInput
                       id={'rows'}
                       // className="h-8"
-                      type={'text'}
                       value={rows}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setRows(e.target.value)
+                        setRows(e.currentTarget.value)
                       }
                       placeholder={'# of Rows'}
                     />
                   </div>
                   <div className={'col-span-1 grid grid-cols-1 items-center gap-4'}>
                     <InputLabel htmlFor={'columns'}># of Columns</InputLabel>
-                    <Input
+                    <TextInput
                       id={'columns'}
                       // className="h-8"
-                      type={'text'}
                       value={columns}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setColumns(e.target.value)
+                        setColumns(e.currentTarget.value)
                       }
                       placeholder={'# of Columns'}
                     />

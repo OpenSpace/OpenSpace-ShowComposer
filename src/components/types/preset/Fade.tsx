@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
@@ -13,8 +13,6 @@ import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBarControlled from '@/components/StatusBarControlled';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -241,16 +239,17 @@ const FadeModal: React.FC<FadeModalProps> = ({
             <InputLabel htmlFor={'duration'}>
               {getCopy('Fade', 'fade_duration')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'duration'}
               placeholder={'Duration to Fade'}
-              type={'number'}
               min={0}
               max={20}
               step={0.1}
               // className=""
               value={intDuration}
-              onChange={(e) => setIntDuration(parseFloat(e.target.value))}
+              onChange={(value) =>
+                setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+              }
             />
           </div>
         </div>
@@ -260,14 +259,11 @@ const FadeModal: React.FC<FadeModalProps> = ({
               <InputLabel htmlFor={'gioname'}>
                 {getCopy('Fade', 'component_name')}
               </InputLabel>
-              <Input
+              <TextInput
                 id={'guiname'}
                 placeholder={'Name of Component'}
-                type={'text'}
                 value={gui_name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setGuiName(e.target.value)
-                }
+                onChange={(e) => setGuiName(e.currentTarget.value)}
               />
             </div>
             <div className={'col-span-1 mt-6 grid gap-2'}>
@@ -294,9 +290,7 @@ const FadeModal: React.FC<FadeModalProps> = ({
               className={'w-full'}
               id={'description'}
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
+              onChange={(e) => setGuiDescription(e.currentTarget.value)}
               placeholder={'Type your message here.'}
             />
           </div>

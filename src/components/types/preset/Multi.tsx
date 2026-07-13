@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
-import { InputLabel, Tooltip } from '@mantine/core';
+import { InputLabel, NumberInput, Textarea, TextInput, Tooltip } from '@mantine/core';
 import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,9 +12,7 @@ import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ComponentModal from '@/components/ComponentModal';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { useBoundStore } from '@/store/boundStore';
 import {
@@ -352,18 +350,17 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                           </Tooltip>
                           <div className={'flex items-center gap-1'}>
                             <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
-                            <Input
-                              type={'number'}
+                            <NumberInput
                               className={'w-20'}
                               name={'delay'}
-                              min={'0'}
-                              max={'20'}
-                              step={'0.2'}
+                              min={0}
+                              max={20}
+                              step={0.2}
                               value={item.buffer}
-                              onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                                const { value } = e.currentTarget;
+                              onChange={(value) => {
                                 const newItems = Array.from(items);
-                                newItems[index].buffer = parseFloat(value);
+                                newItems[index].buffer =
+                                  typeof value === 'number' ? value : parseFloat(value);
                                 setItems(newItems);
                               }}
                             />
@@ -435,14 +432,11 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
               <InputLabel htmlFor={'gioname'}>
                 {getCopy('Multi', 'component_name')}
               </InputLabel>
-              <Input
+              <TextInput
                 id={'guiname'}
                 placeholder={'Name of Component'}
-                type={'text'}
                 value={gui_name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setGuiName(e.target.value)
-                }
+                onChange={(e) => setGuiName(e.currentTarget.value)}
               />
             </div>
           </div>
@@ -467,9 +461,7 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                 className={'w-full'}
                 id={'description'}
                 value={gui_description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setGuiDescription(e.target.value)
-                }
+                onChange={(e) => setGuiDescription(e.currentTarget.value)}
                 placeholder={'Type your message here.'}
               />
             </div>

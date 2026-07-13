@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/common/BackgroundHolder';
@@ -10,8 +10,6 @@ import Toggle from '@/components/common/Toggle';
 import ToggleComponent from '@/components/common/Toggle';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import DateComponent from '@/components/timepicker/DateComponent';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -186,14 +184,11 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
             <InputLabel htmlFor={'guiname'}>
               {getCopy('SetTime', 'component_name')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'guiname'}
               placeholder={'Name of Component'}
-              type={'text'}
               value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
+              onChange={(e) => setGuiName(e.currentTarget.value)}
             />
           </div>
           <div className={'cols-span-1 mt-6 grid gap-2'}>
@@ -210,13 +205,13 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
               <InputLabel htmlFor={'duration'}>
                 {getCopy('SetTime', 'fade_duration')}
               </InputLabel>
-              <Input
+              <NumberInput
                 id={'duration'}
                 placeholder={'Duration to Fade'}
-                type={'number'}
-                // className=""
                 value={intDuration}
-                onChange={(e) => setIntDuration(parseFloat(e.target.value))}
+                onChange={(value) =>
+                  setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+                }
               />
             </div>
             <div className={'grid gap-2'}>
@@ -253,9 +248,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
                 className={'w-full'}
                 id={'description'}
                 value={gui_description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setGuiDescription(e.target.value)
-                }
+                onChange={(e) => setGuiDescription(e.currentTarget.value)}
                 placeholder={'Type your message here.'}
               />
             </div>

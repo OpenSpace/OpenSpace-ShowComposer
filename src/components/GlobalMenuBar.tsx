@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, NumberInput } from '@mantine/core';
 
 import {
   Menubar,
@@ -31,7 +31,6 @@ import {
   saveProject
 } from '@/utils/saveProject';
 
-import { Input } from './ui/input';
 import ConfirmationModal from './ConfirmationModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ImportShowModal from './ImportShowModal';
@@ -193,13 +192,17 @@ export function GlobalMenuBar() {
                 <InputLabel htmlFor={'port'}>
                   {getCopy('PageButtonMenu', 'width')}
                 </InputLabel>
-                <Input
+                <NumberInput
                   id={'width'}
-                  className={'h-8 w-40'}
-                  type={'number'}
+                  className={'w-40'}
+                  size={'xs'}
+                  allowDecimal={false}
                   value={pageWidth}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updatePageSize(parseInt(e.target.value), pageHeight);
+                  onChange={(value) => {
+                    updatePageSize(
+                      typeof value === 'number' ? value : parseInt(value),
+                      pageHeight
+                    );
                   }}
                   placeholder={'Enter Page Width'}
                 />
@@ -208,13 +211,17 @@ export function GlobalMenuBar() {
                 <InputLabel htmlFor={'port'}>
                   {getCopy('PageButtonMenu', 'height')}
                 </InputLabel>
-                <Input
+                <NumberInput
                   id={'height'}
-                  className={'h-8 w-40'}
-                  type={'number'}
+                  className={'w-40'}
+                  size={'xs'}
+                  allowDecimal={false}
                   value={pageHeight}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updatePageSize(pageWidth, parseInt(e.target.value));
+                  onChange={(value) => {
+                    updatePageSize(
+                      pageWidth,
+                      typeof value === 'number' ? value : parseInt(value)
+                    );
                   }}
                   placeholder={'Enter Page Height'}
                 />

@@ -1,6 +1,6 @@
 // import SelectableDropdown from '@/components/common/SelectableDropdown';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -12,8 +12,6 @@ import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { usePropertyStore } from '@/store';
@@ -279,13 +277,14 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
             <InputLabel htmlFor={'duration'}>
               {getCopy('FlyTo', 'flight_duration')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'duration'}
               placeholder={'Duration to Flight'}
-              type={'number'}
               // className=""
               value={intDuration}
-              onChange={(e) => setIntDuration(parseFloat(e.target.value))}
+              onChange={(value) =>
+                setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+              }
             />
           </div>
           <Button
@@ -315,34 +314,37 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               <div className={'grid grid-cols-3 gap-4'}>
                 <div className={'grid gap-2'}>
                   <InputLabel htmlFor={'alt'}>{getCopy('FlyTo', 'alt')}</InputLabel>
-                  <Input
+                  <NumberInput
                     id={'alt'}
                     placeholder={'Altitude'}
-                    type={'number'}
                     value={alt}
-                    onChange={(e) => setAlt(parseFloat(e.target.value))}
+                    onChange={(value) =>
+                      setAlt(typeof value === 'number' ? value : parseFloat(value))
+                    }
                   />
                 </div>
                 <div className={'grid gap-2'}>
                   <InputLabel htmlFor={'lat'}>{getCopy('FlyTo', 'latitude')}</InputLabel>
-                  <Input
+                  <NumberInput
                     id={'lat'}
                     placeholder={getCopy('FlyTo', 'latitude')}
-                    type={'number'}
                     value={lat}
-                    onChange={(e) => setLat(parseFloat(e.target.value))}
+                    onChange={(value) =>
+                      setLat(typeof value === 'number' ? value : parseFloat(value))
+                    }
                   />
                 </div>
                 <div className={'grid gap-2'}>
                   <InputLabel htmlFor={'long'}>
                     {getCopy('FlyTo', 'longitude')}
                   </InputLabel>
-                  <Input
+                  <NumberInput
                     id={'long'}
                     placeholder={getCopy('FlyTo', 'longitude')}
-                    type={'number'}
                     value={long}
-                    onChange={(e) => setLong(parseFloat(e.target.value))}
+                    onChange={(value) =>
+                      setLong(typeof value === 'number' ? value : parseFloat(value))
+                    }
                   />
                 </div>
               </div>
@@ -355,14 +357,11 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               <InputLabel htmlFor={'gioname'}>
                 {getCopy('Fade', 'component_name')}
               </InputLabel>
-              <Input
+              <TextInput
                 id={'guiname'}
                 placeholder={'Name of Component'}
-                type={'text'}
                 value={gui_name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setGuiName(e.target.value)
-                }
+                onChange={(e) => setGuiName(e.currentTarget.value)}
               />
             </div>
             <div className={'col-span-1 mt-6 grid gap-2'}>
@@ -389,9 +388,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
               className={'w-full'}
               id={'description'}
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
+              onChange={(e) => setGuiDescription(e.currentTarget.value)}
               placeholder={'Type your message here.'}
             />
           </div>

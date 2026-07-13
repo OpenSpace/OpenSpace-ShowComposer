@@ -1,9 +1,8 @@
 import React from 'react';
+import { TextInput } from '@mantine/core';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
-
-import { Input } from '../ui/input';
 
 type DateData = {
   time: Date;
@@ -93,9 +92,17 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
               }
             />
           </Toggle>
-          <Input
-            type={'text'}
-            className={'flex h-[20px] w-[40px]  p-0 text-center text-xs'}
+          <TextInput
+            w={40}
+            styles={{
+              input: {
+                height: 20,
+                minHeight: 20,
+                padding: 0,
+                textAlign: 'center',
+                fontSize: 12
+              }
+            }}
             value={
               part === 'month'
                 ? monthAbbreviations[dateObj.getUTCMonth()]

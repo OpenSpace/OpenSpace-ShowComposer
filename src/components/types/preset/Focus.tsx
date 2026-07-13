@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, Textarea, TextInput } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,8 +9,6 @@ import ComponentContainer from '@/components/common/ComponentContainer';
 import { Information } from '@/components/common/Information';
 import ToggleComponent from '@/components/common/Toggle';
 import { VirtualizedCombobox } from '@/components/common/VirtualizedCombobox';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
 import { usePropertyStore } from '@/store';
 import {
@@ -171,14 +169,11 @@ const FocusModal: React.FC<FocusModalProps> = ({
             <InputLabel htmlFor={'gioname'}>
               {getCopy('Focus', 'component_name')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'guiname'}
               placeholder={'Name of Component'}
-              type={'text'}
               value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
+              onChange={(e) => setGuiName(e.currentTarget.value)}
             />
           </div>
           <div className={'cols-span-1 mt-6 grid gap-2'}>
@@ -204,9 +199,7 @@ const FocusModal: React.FC<FocusModalProps> = ({
               className={'w-full'}
               id={'description'}
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
+              onChange={(e) => setGuiDescription(e.currentTarget.value)}
               placeholder={'Type your message here.'}
             />
           </div>

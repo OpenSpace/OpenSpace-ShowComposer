@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, InputLabel } from '@mantine/core';
+import { Button, InputLabel, Textarea, TextInput } from '@mantine/core';
 import { Pause, Play, Square } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -10,8 +10,6 @@ import { Information } from '@/components/common/Information';
 import SelectableDropdown from '@/components/common/SelectableDropdown';
 import ToggleComponent from '@/components/common/Toggle';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
@@ -216,14 +214,11 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             <InputLabel htmlFor={'gioname'}>
               {getCopy('SessionPlayback', 'component_name')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'guiname'}
               placeholder={'Name of Component'}
-              type={'text'}
               value={gui_name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setGuiName(e.target.value)
-              }
+              onChange={(e) => setGuiName(e.currentTarget.value)}
             />
           </div>
           <div className={'col-span-1 mt-6 grid gap-2'}>
@@ -249,9 +244,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
               className={'w-full'}
               id={'description'}
               value={gui_description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setGuiDescription(e.target.value)
-              }
+              onChange={(e) => setGuiDescription(e.currentTarget.value)}
               placeholder={'Type your message here.'}
             />
           </div>

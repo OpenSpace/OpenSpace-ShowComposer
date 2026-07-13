@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
 
 import {
   AlertDialog,
@@ -11,13 +11,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
 import Toggle from './common/Toggle';
-import { Textarea } from './ui/textarea';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -111,12 +109,12 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             <InputLabel htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'projectName'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
+              onChange={(e) => setProjectName(e.currentTarget.value)}
               placeholder={'Enter Project Name'}
             />
           </div>
@@ -125,11 +123,11 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
               {getCopy('NewProjectModal', 'project_description')}
             </InputLabel>
             <Textarea
-              className={'col-span-2 h-8'}
+              className={'col-span-2'}
               id={'description'}
               value={projectDescription}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setProjectDescription(e.target.value)
+                setProjectDescription(e.currentTarget.value)
               }
               placeholder={'Type your description here.'}
             />
@@ -155,24 +153,24 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             <InputLabel htmlFor={'ip'}>
               {getCopy('NewProjectModal', 'ip_address')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'ip'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={ip}
-              onChange={(e) => setIp(e.target.value)}
+              onChange={(e) => setIp(e.currentTarget.value)}
               placeholder={'Enter IP'}
             />
           </div>
 
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
             <InputLabel htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</InputLabel>
-            <Input
+            <TextInput
               id={'port'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={port}
-              onChange={(e) => setPort(e.target.value)}
+              onChange={(e) => setPort(e.currentTarget.value)}
               placeholder={'Enter Port'}
             />
           </div>
@@ -186,12 +184,15 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'defaultPageSize'}
-              className={'col-span-2 h-8'}
-              type={'number'}
+              className={'col-span-2'}
+              size={'xs'}
+              allowDecimal={false}
               value={pageWidth}
-              onChange={(e) => setPageWidth(parseInt(e.target.value))}
+              onChange={(value) =>
+                setPageWidth(typeof value === 'number' ? value : parseInt(value))
+              }
               placeholder={'Enter Default Page Width'}
             />
           </div>
@@ -199,12 +200,15 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({
             <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'defaultPageSize'}
-              className={'col-span-2 h-8'}
-              type={'number'}
+              className={'col-span-2'}
+              size={'xs'}
+              allowDecimal={false}
               value={pageHeight}
-              onChange={(e) => setPageHeight(parseInt(e.target.value))}
+              onChange={(value) =>
+                setPageHeight(typeof value === 'number' ? value : parseInt(value))
+              }
               placeholder={'Enter Default Page Height'}
             />
           </div>
@@ -310,12 +314,12 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
             <InputLabel htmlFor={'projectName'}>
               {getCopy('NewProjectModal', 'project_name')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'projectName'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
+              onChange={(e) => setProjectName(e.currentTarget.value)}
               placeholder={'Enter Project Name'}
             />
           </div>
@@ -324,11 +328,11 @@ const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
               {getCopy('NewProjectModal', 'project_description')}
             </InputLabel>
             <Textarea
-              className={'col-span-2 h-8'}
+              className={'col-span-2'}
               id={'description'}
               value={projectDescription}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setProjectDescription(e.target.value)
+                setProjectDescription(e.currentTarget.value)
               }
               placeholder={'Type your description here.'}
             />
@@ -427,24 +431,24 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             <InputLabel htmlFor={'ip'}>
               {getCopy('NewProjectModal', 'ip_address')}
             </InputLabel>
-            <Input
+            <TextInput
               id={'ip'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={ip}
-              onChange={(e) => setIp(e.target.value)}
+              onChange={(e) => setIp(e.currentTarget.value)}
               placeholder={'Enter IP'}
             />
           </div>
 
           <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
             <InputLabel htmlFor={'port'}>{getCopy('NewProjectModal', 'port')}</InputLabel>
-            <Input
+            <TextInput
               id={'port'}
-              className={'col-span-2 h-8'}
-              type={'text'}
+              className={'col-span-2'}
+              size={'xs'}
               value={port}
-              onChange={(e) => setPort(e.target.value)}
+              onChange={(e) => setPort(e.currentTarget.value)}
               placeholder={'Enter Port'}
             />
           </div>
@@ -458,12 +462,15 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_width')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'defaultPageSize'}
-              className={'col-span-2 h-8'}
-              type={'number'}
+              className={'col-span-2'}
+              size={'xs'}
+              allowDecimal={false}
               value={pageWidth}
-              onChange={(e) => setPageWidth(parseInt(e.target.value))}
+              onChange={(value) =>
+                setPageWidth(typeof value === 'number' ? value : parseInt(value))
+              }
               placeholder={'Enter Default Page Width'}
             />
           </div>
@@ -471,12 +478,15 @@ const WorkspaceSettingsModal: React.FC<WorkspaceSettingsModalProps> = ({
             <InputLabel htmlFor={'defaultPageSize'}>
               {getCopy('NewProjectModal', 'page_height')}
             </InputLabel>
-            <Input
+            <NumberInput
               id={'defaultPageSize'}
-              className={'col-span-2 h-8'}
-              type={'number'}
+              className={'col-span-2'}
+              size={'xs'}
+              allowDecimal={false}
               value={pageHeight}
-              onChange={(e) => setPageHeight(parseInt(e.target.value))}
+              onChange={(value) =>
+                setPageHeight(typeof value === 'number' ? value : parseInt(value))
+              }
               placeholder={'Enter Default Page Height'}
             />
           </div>

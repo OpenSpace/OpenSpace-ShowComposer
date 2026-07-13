@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, TextInput } from '@mantine/core';
 
-import { Input } from '@/components/ui/input';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 const getVideoContent = (url: string) => {
@@ -73,11 +72,12 @@ const VideoModal: React.FC<VideoModalProps> = ({ component, handleComponentData 
         <div className={'grid grid-cols-1 gap-4'}>
           {/* <div className="flex flex-row items-center justify-between"> */}
           <InputLabel>{getCopy('Video', 'video')}</InputLabel>
-          <Input
+          <TextInput
             placeholder={'URL'}
-            type={'text'}
             value={url}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUrl(e.currentTarget.value)
+            }
           />
         </div>
         <div className={'mb-4 mt-2 text-sm text-slate-500 dark:text-slate-400'}>

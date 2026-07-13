@@ -7,6 +7,7 @@ import {
   CSSVariablesResolver,
   defaultVariantColorsResolver,
   Divider,
+  NumberInput,
   RangeSlider,
   Slider,
   Tabs,
@@ -93,6 +94,14 @@ export const theme = createTheme({
         label: {
           fontWeight: 400
         }
+      }
+    }),
+    NumberInput: NumberInput.extend({
+      // Add spinners to all number inputs. It starts slow and speeds up the longer you press.
+      // https://mantine.dev/core/number-input/#hold-to-step
+      defaultProps: {
+        stepHoldDelay: 300,
+        stepHoldInterval: (stepCount: number) => Math.max(600 / stepCount, 25)
       }
     }),
     RangeSlider: RangeSlider.extend({

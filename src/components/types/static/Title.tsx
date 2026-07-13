@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { InputLabel, TextInput } from '@mantine/core';
 import { throttle } from 'lodash';
 
 import Toggle from '@/components/common/Toggle';
-import { Input } from '@/components/ui/input';
 import { TitleComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -181,7 +180,7 @@ const TitleModal: React.FC<TitleModalProps> = ({
   return (
     <div className={'grid grid-cols-1 gap-4'}>
       <InputLabel>{getCopy('Title', 'title')}</InputLabel>
-      <Input value={text} onChange={(e) => setText(e.target.value)} />
+      <TextInput value={text} onChange={(e) => setText(e.currentTarget.value)} />
       <div className={'flex items-center gap-2'}>
         <InputLabel>{getCopy('Title', 'pageTitle')}</InputLabel>
         <Toggle
