@@ -4,7 +4,8 @@ interface StatusBarControlledProps {
   progress: number; // Float value between 0 and 1
   debounceDuration: number; // Duration in milliseconds
 }
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@mantine/core';
+
 import { cn } from '@/lib/utils';
 
 const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
