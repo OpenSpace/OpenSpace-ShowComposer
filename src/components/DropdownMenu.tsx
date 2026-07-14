@@ -1,21 +1,15 @@
 import React, { ReactNode } from 'react';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Menu } from '@mantine/core';
 import { EllipsisVertical } from 'lucide-react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { getCopy } from '@/utils/copyHelpers';
 interface DropdownMenuProps {
   items: ReactNode[];
 }
 const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild className={'z-[999999] '}>
+    <Menu position={'bottom-end'} zIndex={999999}>
+      <Menu.Target>
         <ActionIcon variant={'subtle'} className={'h-4 w-4 hover:bg-slate-900/40'}>
           <EllipsisVertical
             className={
@@ -24,14 +18,14 @@ const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
           />
           <span className={'sr-only'}>{getCopy('DropdownMenu', 'more')}</span>
         </ActionIcon>
-      </DropdownMenuTrigger>
+      </Menu.Target>
 
-      <DropdownMenuContent align={'end'}>
+      <Menu.Dropdown>
         {items.map((item, index) => (
-          <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
+          <Menu.Item key={index}>{item}</Menu.Item>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Menu.Dropdown>
+    </Menu>
   );
 };
 export default DropdownMenuComponent;

@@ -1,18 +1,13 @@
+import { CheckIcon, Menu } from '@mantine/core';
 import { Moon, Sun } from 'lucide-react';
 
 import { useTheme } from '@/components/ThemeProvider';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { getCopy } from '@/utils/copyHelpers';
 export function DarkModeToggle() {
   const { setTheme, theme } = useTheme();
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Menu position={'bottom-end'}>
+      <Menu.Target>
         <div className={'flex items-center justify-center'}>
           <Sun
             className={
@@ -25,21 +20,25 @@ export function DarkModeToggle() {
             }
           />
         </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align={'end'}>
-        <DropdownMenuCheckboxItem
-          checked={theme == 'light'}
-          onCheckedChange={() => setTheme('light')}
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item
+          leftSection={
+            theme === 'light' ? <CheckIcon size={12} /> : <span style={{ width: 12 }} />
+          }
+          onClick={() => setTheme('light')}
         >
           {getCopy('DarkModeToggle', 'light')}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={theme == 'dark'}
-          onCheckedChange={() => setTheme('dark')}
+        </Menu.Item>
+        <Menu.Item
+          leftSection={
+            theme === 'dark' ? <CheckIcon size={12} /> : <span style={{ width: 12 }} />
+          }
+          onClick={() => setTheme('dark')}
         >
           {getCopy('DarkModeToggle', 'dark')}
-        </DropdownMenuCheckboxItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 }
