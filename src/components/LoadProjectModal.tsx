@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Group, Modal, Text } from '@mantine/core';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 import { getCopy } from '@/utils/copyHelpers';
 import { Project } from '@/utils/saveProject';
 
@@ -49,67 +40,68 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
     .slice(startIndex, endIndex);
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className={'text-white'}>
-        <AlertDialogHeader>
-          <AlertDialogTitle className={'text-gray-900 dark:text-gray-100'}>
-            {getCopy('LoadProjectModal', 'load_project')}
-          </AlertDialogTitle>
-          <AlertDialogDescription className={'text-gray-700 dark:text-gray-300'}>
-            {getCopy('LoadProjectModal', 'load_project_description')}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className={'grid gap-2 text-white'}>
-          <div className={'flex flex-col gap-2'}>
-            {projectsToDisplay.map((project) => (
-              <button
-                key={project.filePath}
-                className={`w-full`}
-                onClick={() => setSelectedProject(project)}
+    <Modal
+      opened={isOpen}
+      onClose={() => setIsOpen(false)}
+      centered
+      title={
+        <span className={'text-gray-900 dark:text-gray-100'}>
+          {getCopy('LoadProjectModal', 'load_project')}
+        </span>
+      }
+    >
+      <Text className={'text-gray-700 dark:text-gray-300'}>
+        {getCopy('LoadProjectModal', 'load_project_description')}
+      </Text>
+      <div className={'grid gap-2 text-white'}>
+        <div className={'flex flex-col gap-2'}>
+          {projectsToDisplay.map((project) => (
+            <button
+              key={project.filePath}
+              className={`w-full`}
+              onClick={() => setSelectedProject(project)}
+            >
+              <div
+                className={`flex flex-col items-start justify-start rounded-md border p-2 text-left ${
+                  selectedProject?.filePath === project.filePath
+                    ? 'outline outline-2 outline-blue-500'
+                    : ''
+                }`}
               >
-                <div
-                  className={`flex flex-col items-start justify-start rounded-md border p-2 text-left ${
-                    selectedProject?.filePath === project.filePath
-                      ? 'outline outline-2 outline-blue-500'
-                      : ''
-                  }`}
-                >
-                  <h3 className={'text-sm'}>{project.projectName}</h3>
-                  <p className={'text-xs text-gray-500'}>
-                    Last Modified: {new Date(project.lastModified).toLocaleString()}
-                  </p>
-                  <p className={'text-xs text-gray-500'}>
-                    Created: {new Date(project.created).toLocaleString()}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
+                <h3 className={'text-sm'}>{project.projectName}</h3>
+                <p className={'text-xs text-gray-500'}>
+                  Last Modified: {new Date(project.lastModified).toLocaleString()}
+                </p>
+                <p className={'text-xs text-gray-500'}>
+                  Created: {new Date(project.created).toLocaleString()}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
-        <div className={'relative flex h-24 w-full items-center justify-center '}>
-          <Pagination
-            currentIndex={currentPage}
-            length={totalPages}
-            setIndex={goToPage}
-          />
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
+      </div>
+      <div className={'relative flex h-24 w-full items-center justify-center '}>
+        <Pagination currentIndex={currentPage} length={totalPages} setIndex={goToPage} />
+      </div>
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button variant={'default'} onClick={() => setIsOpen(false)}>
+          Cancel
+        </Button>
 
-          <AlertDialogAction
-            disabled={!selectedProject}
-            onClick={() => {
-              if (selectedProject) {
-                handleLoadProject(selectedProject);
-                setIsOpen(false);
-              }
-            }}
-          >
-            {getCopy('LoadProjectModal', 'add_project')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        <Button
+          variant={'filled'}
+          disabled={!selectedProject}
+          onClick={() => {
+            if (selectedProject) {
+              handleLoadProject(selectedProject);
+              setIsOpen(false);
+            }
+          }}
+        >
+          {getCopy('LoadProjectModal', 'add_project')}
+        </Button>
+      </Group>
+    </Modal>
   );
 };
 

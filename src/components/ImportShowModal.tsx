@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Table } from '@mantine/core';
+import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import ToggleComponent from '@/components/common/Toggle';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
@@ -262,105 +252,104 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      {/* <AlertDialogTrigger asChild>
-        <Button variant="secondary">Import Show</Button>
-      </AlertDialogTrigger> */}
-      <AlertDialogContent className={'w-full max-w-3xl'}>
-        <AlertDialogHeader>
-          <AlertDialogTitle className={'text-gray-900 dark:text-gray-100'}>
-            Import Show
-          </AlertDialogTitle>
-          <AlertDialogDescription className={'text-gray-700 dark:text-gray-300'}>
-            Select Pages you want to add to current Show.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>
-                <ToggleComponent
-                  //   label="All"
-                  value={selectedPages.length === pages.length}
-                  setValue={handleSelectAll}
-                />
-                {/* <Checkbox
+    <Modal
+      opened={isOpen}
+      onClose={onClose}
+      centered
+      size={'xl'}
+      title={<span className={'text-gray-900 dark:text-gray-100'}>Import Show</span>}
+    >
+      <Text className={'text-gray-700 dark:text-gray-300'}>
+        Select Pages you want to add to current Show.
+      </Text>
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>
+              <ToggleComponent
+                //   label="All"
+                value={selectedPages.length === pages.length}
+                setValue={handleSelectAll}
+              />
+              {/* <Checkbox
                   onCheckedChange={handleSelectAll}
                   checked={selectedPages.size === pages.length}
                   className="peer"
                 />
                 Select All */}
-              </Table.Th>
-              <Table.Th>Page</Table.Th>
-              <Table.Th>Components</Table.Th>
+            </Table.Th>
+            <Table.Th>Page</Table.Th>
+            <Table.Th>Components</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {pages.map((page) => (
+            <Table.Tr
+              key={page.name}
+              onClick={() => handlePageSelect(page)}
+              // selected={selectedPages.has(page.name)}
+              className={cn(
+                selectedPages.find((p) => p.id === page.id) &&
+                  'bg-gray-100 dark:bg-gray-800'
+              )}
+            >
+              <Table.Td>
+                <Checkbox
+                  className={'peer'}
+                  checked={selectedPages.find((p) => p.id === page.id) !== undefined}
+                  onChange={() => handlePageSelect(page)}
+                />
+              </Table.Td>
+              <Table.Td className={'dark:text-gray-100'}>{page.name}</Table.Td>
+              <Table.Td>
+                {page.components
+                  .filter((v) => !store.boundStore.layouts[v])
+                  .map((componentId, index) => {
+                    const component = store.boundStore.components[componentId];
+                    return (
+                      <span
+                        key={componentId}
+                        className={'text-gray-700 dark:text-gray-300'}
+                      >
+                        {component && component.gui_name?.length > 0
+                          ? component.gui_name
+                          : allComponentLabels.find((v) => v.value === component?.type)
+                              ?.label}
+                        {index <
+                        page.components.filter((v) => !store.boundStore.layouts[v])
+                          .length -
+                          1
+                          ? ', '
+                          : ''}
+                      </span>
+                    );
+                  })}
+              </Table.Td>
             </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {pages.map((page) => (
-              <Table.Tr
-                key={page.name}
-                onClick={() => handlePageSelect(page)}
-                // selected={selectedPages.has(page.name)}
-                className={cn(
-                  selectedPages.find((p) => p.id === page.id) &&
-                    'bg-gray-100 dark:bg-gray-800'
-                )}
-              >
-                <Table.Td>
-                  <Checkbox
-                    className={'peer'}
-                    checked={selectedPages.find((p) => p.id === page.id) !== undefined}
-                    onChange={() => handlePageSelect(page)}
-                  />
-                </Table.Td>
-                <Table.Td className={'dark:text-gray-100'}>{page.name}</Table.Td>
-                <Table.Td>
-                  {page.components
-                    .filter((v) => !store.boundStore.layouts[v])
-                    .map((componentId, index) => {
-                      const component = store.boundStore.components[componentId];
-                      return (
-                        <span
-                          key={componentId}
-                          className={'text-gray-700 dark:text-gray-300'}
-                        >
-                          {component && component.gui_name?.length > 0
-                            ? component.gui_name
-                            : allComponentLabels.find((v) => v.value === component?.type)
-                                ?.label}
-                          {index <
-                          page.components.filter((v) => !store.boundStore.layouts[v])
-                            .length -
-                            1
-                            ? ', '
-                            : ''}
-                        </span>
-                      );
-                    })}
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={async () => {
-              // onClose();
-              await closeWithConfirmation(false);
-            }}
-          >
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleImportToNewShow}>
-            Import Pages To New Show
-          </AlertDialogAction>
-          <AlertDialogAction onClick={handleImportToCurrentShow}>
-            Import Pages To Current Show
-          </AlertDialogAction>
-          <AlertDialogAction onClick={handleImport}>Import Full Show</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          ))}
+        </Table.Tbody>
+      </Table>
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button
+          variant={'default'}
+          onClick={async () => {
+            // onClose();
+            await closeWithConfirmation(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button variant={'filled'} onClick={handleImportToNewShow}>
+          Import Pages To New Show
+        </Button>
+        <Button variant={'filled'} onClick={handleImportToCurrentShow}>
+          Import Pages To Current Show
+        </Button>
+        <Button variant={'filled'} onClick={handleImport}>
+          Import Full Show
+        </Button>
+      </Group>
+    </Modal>
   );
 };
 

@@ -1,16 +1,7 @@
 // DeleteConfirmationModal.tsx
 import React, { ReactElement, useState } from 'react';
+import { Button, Group, Modal, Text } from '@mantine/core';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 import { getCopy } from '@/utils/copyHelpers';
 interface DeleteConfirmationModalProps {
   onConfirm: () => void;
@@ -32,36 +23,36 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   const setOpen = externalSetOpen || internalSetOpen;
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setOpen}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {getCopy('DeleteConfirmationModal', 'confirmation_text')}
-          </AlertDialogTitle>
-          <AlertDialogDescription>{message}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setOpen(false);
-              if (onClose) {
-                onClose();
-              }
-            }}
-          >
-            {getCopy('DeleteConfirmationModal', 'cancel')}
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              onConfirm();
-              setOpen(false);
-            }}
-          >
-            {getCopy('DeleteConfirmationModal', 'delete')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <Modal
+      opened={isOpen}
+      onClose={() => setOpen(false)}
+      centered
+      title={getCopy('DeleteConfirmationModal', 'confirmation_text')}
+    >
+      <Text>{message}</Text>
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button
+          variant={'default'}
+          onClick={() => {
+            setOpen(false);
+            if (onClose) {
+              onClose();
+            }
+          }}
+        >
+          {getCopy('DeleteConfirmationModal', 'cancel')}
+        </Button>
+        <Button
+          variant={'filled'}
+          onClick={() => {
+            onConfirm();
+            setOpen(false);
+          }}
+        >
+          {getCopy('DeleteConfirmationModal', 'delete')}
+        </Button>
+      </Group>
+    </Modal>
   );
 };
 export default DeleteConfirmationModal;

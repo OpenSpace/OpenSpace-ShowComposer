@@ -1,13 +1,6 @@
 import React from 'react';
+import { Button, Group, Modal, Text } from '@mantine/core';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader
-} from '@/components/ui/alert-dialog';
 import { getCopy } from '@/utils/copyHelpers';
 
 interface ConfirmationModalProps {
@@ -24,27 +17,23 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   setOpen
 }) => {
   return (
-    <AlertDialog open={isOpen} onOpenChange={setOpen}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          {/* <AlertDialogTitle>{message}</AlertDialogTitle> */}
-          <AlertDialogDescription>{message}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          {/* <AlertDialogCancel onClick={() => setOpen(false)}>
-            {getCopy('ConfirmationModal', 'cancel')}
-          </AlertDialogCancel> */}
-          <AlertDialogAction
-            onClick={() => {
-              onConfirm();
-              setOpen(false);
-            }}
-          >
-            {getCopy('ConfirmationModal', 'ok')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <Modal opened={isOpen} onClose={() => setOpen(false)} centered title={''}>
+      <Text>{message}</Text>
+      <Group justify={'flex-end'} mt={'md'}>
+        {/* <Button variant={'default'} onClick={() => setOpen(false)}>
+          {getCopy('ConfirmationModal', 'cancel')}
+        </Button> */}
+        <Button
+          variant={'filled'}
+          onClick={() => {
+            onConfirm();
+            setOpen(false);
+          }}
+        >
+          {getCopy('ConfirmationModal', 'ok')}
+        </Button>
+      </Group>
+    </Modal>
   );
 };
 

@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { InputLabel, TextInput } from '@mantine/core';
+import { Button, Group, InputLabel, Modal, Text, TextInput } from '@mantine/core';
 
 import ColorPickerComponent from '@/components/common/ColorPickerComponent';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors } from '@/types/components';
-import { Page } from '@/types/components';
+import { ComponentBaseColors, Page } from '@/types/components';
 
 interface NewPageModalProps {
   isOpen: boolean;
@@ -55,43 +44,43 @@ const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage 
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {newPage ? 'Create New Page' : 'Update Page Settings'}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {newPage
-              ? 'Set the name and background color for the new page.'
-              : 'Update the page name and background color.'}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className={'grid gap-4'}>
-          <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-            <InputLabel htmlFor={'pageName'}>Page Name</InputLabel>
-            <TextInput
-              id={'pageName'}
-              className={'col-span-2'}
-              size={'xs'}
-              value={pageName}
-              onChange={(e) => setPageName(e.currentTarget.value)}
-              placeholder={'Enter Page Name'}
-            />
-          </div>
-          <div className={'grid items-center gap-4 text-white'}>
-            <InputLabel htmlFor={'backgroundColor'}>Background Color</InputLabel>
-            <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
-          </div>
+    <Modal
+      opened={isOpen}
+      onClose={() => setIsOpen(false)}
+      centered
+      title={newPage ? 'Create New Page' : 'Update Page Settings'}
+    >
+      <Text>
+        {newPage
+          ? 'Set the name and background color for the new page.'
+          : 'Update the page name and background color.'}
+      </Text>
+      <div className={'grid gap-4'}>
+        <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
+          <InputLabel htmlFor={'pageName'}>Page Name</InputLabel>
+          <TextInput
+            id={'pageName'}
+            className={'col-span-2'}
+            size={'xs'}
+            value={pageName}
+            onChange={(e) => setPageName(e.currentTarget.value)}
+            placeholder={'Enter Page Name'}
+          />
         </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleSubmit}>
-            {newPage ? 'Create Page' : 'Update Page'}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        <div className={'grid items-center gap-4 text-white'}>
+          <InputLabel htmlFor={'backgroundColor'}>Background Color</InputLabel>
+          <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
+        </div>
+      </div>
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button variant={'default'} onClick={() => setIsOpen(false)}>
+          Cancel
+        </Button>
+        <Button variant={'filled'} onClick={handleSubmit}>
+          {newPage ? 'Create Page' : 'Update Page'}
+        </Button>
+      </Group>
+    </Modal>
   );
 };
 
