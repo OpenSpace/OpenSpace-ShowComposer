@@ -6,8 +6,6 @@ interface StatusBarControlledProps {
 }
 import { Progress } from '@mantine/core';
 
-import { cn } from '@/utils/utils';
-
 const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   progress,
   debounceDuration
@@ -48,18 +46,25 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
       }
     };
   }, [progress, debounceDuration, setThrottleProgress]);
-
   return (
     <div
-      className={cn(
-        'duration-400 absolute left-0 top-0 flex h-full w-full flex-col items-center justify-end rounded-lg bg-white/0 p-4 transition-opacity ease-linear',
-        {
-          // 'opacity-0': isFadingOut,
-          // 'opacity-100': !isFadingOut,
-        }
-      )}
+      className={
+        'absolute left-0 top-0 flex h-full w-full flex-col justify-end rounded-lg p-4'
+      }
     >
-      <Progress value={(Math.round(progress * 1000) / 1000) * 100} />
+      <Progress
+        value={(Math.round(progress * 1000) / 1000) * 100}
+        size={'xl'}
+        radius={'xl'}
+        transitionDuration={150}
+        styles={{
+          root: { backgroundColor: 'rgba(0, 0, 0, 0.4)' },
+          section: {
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            transitionTimingFunction: 'linear'
+          }
+        }}
+      />
     </div>
   );
 };

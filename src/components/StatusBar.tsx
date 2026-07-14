@@ -18,11 +18,12 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [duration, setDuration] = useState(incDuration);
     const [fadeOutDuration, _setFadeOutDuration] = useState(incFadeDuration);
-    const [startTime, setStartTime] = useState<number | null>(null);
-    const [progress, setProgress] = useState(0);
     const triggerAnimation = () => {
-      setStartTime(Date.now());
-      setIsAnimatingWidth(true);
+      // Reset to 0 first, then flip to animating on the next frame so the fill
+      // transitions 0 -> 100 over `duration` (rather than snapping if it was mid-run).
+      setIsFadingOut(false);
+      setIsAnimatingWidth(false);
+      requestAnimationFrame(() => setIsAnimatingWidth(true));
     };
 
     useImperativeHandle(ref, () => ({
@@ -36,24 +37,8 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     useEffect(() => {
       if (isAnimatingWidth) {
         const widthAnimationDuration = duration * 1000;
-        // const totalAnimationDuration = widthAnimationDuration + fadeOutDuration * 1000;
-        const updateProgress = () => {
-          if (startTime) {
-            const elapsedTime = Date.now() - startTime;
-            const newProgress = Math.min(
-              (elapsedTime / widthAnimationDuration) * 100,
-              100
-            );
-            setProgress(newProgress);
 
-            if (newProgress < 100) {
-              requestAnimationFrame(updateProgress);
-            }
-          }
-        };
-        updateProgress();
-
-        // Trigger opacity fade-out after width animation completes
+        // Trigger opacity fade-out after the width animation completes
         const widthAnimationTimeout = setTimeout(() => {
           setIsFadingOut(true);
         }, widthAnimationDuration);
@@ -62,7 +47,6 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
         const fadeOutTimeout = setTimeout(() => {
           setIsAnimatingWidth(false);
           setIsFadingOut(false);
-          setProgress(0);
         }, widthAnimationDuration + fadeOutDuration);
 
         return () => {
@@ -88,7 +72,19 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
           opacity: !(isAnimatingWidth || isFadingOut) ? 0 : ''
         }}
       >
-        <Progress value={progress} />
+        <Progress
+          value={isAnimatingWidth ? 100 : 0}
+          size={'xl'}
+          radius={'xl'}
+          transitionDuration={duration * 1000}
+          styles={{
+            root: { backgroundColor: 'rgba(0, 0, 0, 0.4)' },
+            section: {
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              transitionTimingFunction: 'linear'
+            }
+          }}
+        />
       </div>
     );
   }
