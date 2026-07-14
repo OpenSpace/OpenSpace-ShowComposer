@@ -1,7 +1,7 @@
 import { CheckIcon, Menu } from '@mantine/core';
 import { Moon, Sun } from 'lucide-react';
 
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/theme/ThemeProvider';
 import { getCopy } from '@/utils/copyHelpers';
 export function DarkModeToggle() {
   const { setTheme, theme } = useTheme();

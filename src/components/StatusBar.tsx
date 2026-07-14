@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Progress } from '@mantine/core';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 interface StatusBarProps {
   duration: number;

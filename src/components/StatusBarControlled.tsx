@@ -6,7 +6,7 @@ interface StatusBarControlledProps {
 }
 import { Progress } from '@mantine/core';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
   progress,
