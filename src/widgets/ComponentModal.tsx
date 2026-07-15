@@ -192,7 +192,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <TitleModal
           component={component as TitleComponent}
-          isOpen={isOpen}
           handleComponentData={setComponentData}
         />
       );

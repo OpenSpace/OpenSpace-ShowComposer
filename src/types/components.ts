@@ -99,7 +99,6 @@ export interface RichTextComponent extends ComponentBase {
 export interface TitleComponent extends ComponentBase {
   type: 'title';
   text: string;
-  setFromPageTitle: boolean;
 }
 export interface VideoComponent extends ComponentBase {
   type: 'video';
