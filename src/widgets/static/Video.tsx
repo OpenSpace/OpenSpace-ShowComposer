@@ -47,7 +47,14 @@ interface VideoGUIProps {
 
 function VideoGUIComponent({ component }: VideoGUIProps) {
   return (
-    <Center pos={'absolute'} top={0} right={0} h={'100%'} w={'100%'}>
+    <Center
+      pos={'absolute'}
+      top={0}
+      right={0}
+      h={'100%'}
+      w={'100%'}
+      style={{ borderRadius: 'var(--mantine-radius-md)', overflow: 'hidden' }}
+    >
       {getVideoContent(component.url)}
     </Center>
   );
