@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { InputLabel, TextInput } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Center, InputLabel, Stack, Text, TextInput } from '@mantine/core';
 
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
+
 const getVideoContent = (url: string) => {
-  // const youtubePattern =
-  //   /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-  // const vimeoPattern =
-  //   /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/[^\/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
   const youtubePattern =
     /(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const vimeoPattern =
@@ -24,7 +21,7 @@ const getVideoContent = (url: string) => {
           'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
         }
         allowFullScreen
-        className={'h-full w-full'}
+        style={{ height: '100%', width: '100%' }}
       ></iframe>
     );
   } else if (vimeoMatch) {
@@ -35,31 +32,33 @@ const getVideoContent = (url: string) => {
         frameBorder={'0'}
         allow={'autoplay; fullscreen; picture-in-picture'}
         allowFullScreen
-        className={'h-full w-full'}
+        style={{ height: '100%', width: '100%' }}
       ></iframe>
     );
   } else if (url) {
-    return <video src={url} controls className={'h-full w-full'} />;
+    return <video src={url} controls style={{ height: '100%', width: '100%' }} />;
   }
   return null;
 };
+
 interface VideoGUIProps {
   component: VideoComponent;
 }
-const VideoGUIComponent: React.FC<VideoGUIProps> = ({ component }) => {
+
+function VideoGUIComponent({ component }: VideoGUIProps) {
   return (
-    <div
-      className={'absolute right-0 top-0 flex h-full w-full items-center justify-center'}
-    >
+    <Center pos={'absolute'} top={0} right={0} h={'100%'} w={'100%'}>
       {getVideoContent(component.url)}
-    </div>
+    </Center>
   );
-};
+}
+
 interface VideoModalProps {
   component: VideoComponent | null;
   handleComponentData: (data: Partial<VideoComponent>) => void;
 }
-const VideoModal: React.FC<VideoModalProps> = ({ component, handleComponentData }) => {
+
+function VideoModal({ component, handleComponentData }: VideoModalProps) {
   const [url, setUrl] = useState(component?.url || '');
   useEffect(() => {
     handleComponentData({
@@ -67,25 +66,21 @@ const VideoModal: React.FC<VideoModalProps> = ({ component, handleComponentData 
     });
   }, [url, handleComponentData]);
   return (
-    <>
-      <div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          {/* <div className="flex flex-row items-center justify-between"> */}
-          <InputLabel>{getCopy('Video', 'video')}</InputLabel>
-          <TextInput
-            placeholder={'URL'}
-            value={url}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setUrl(e.currentTarget.value)
-            }
-          />
-        </div>
-        <div className={'mb-4 mt-2 text-sm text-slate-500 dark:text-slate-400'}>
-          {getCopy('Video', 'video_helper_text')}
-        </div>
-        {url && getVideoContent(url)}
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Video', 'video')}</InputLabel>
+        <TextInput
+          placeholder={'URL'}
+          value={url}
+          onChange={(e) => setUrl(e.currentTarget.value)}
+        />
+      </Stack>
+      <Text size={'sm'} c={'dimmed'} mt={'xs'} mb={'md'}>
+        {getCopy('Video', 'video_helper_text')}
+      </Text>
+      {url && getVideoContent(url)}
+    </Stack>
   );
-};
+}
+
 export { VideoGUIComponent, VideoModal };
