@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { InputLabel, TextInput } from '@mantine/core';
+import { useEffect, useRef, useState } from 'react';
+import { Box, Center, Group, InputLabel, Stack, TextInput } from '@mantine/core';
 import { throttle } from 'lodash';
 
 import Toggle from '@/components/Toggle';
 import { TitleComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
+
 interface TitleGUIProps {
   component: TitleComponent;
 }
-const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
+
+function TitleGUIComponent({ component }: TitleGUIProps) {
   const [textStyle, setTextStyle] = useState({
     fontSize: '1rem',
     lineHeight: '1.2'
-    // visibility: 'visible',
-    // position: 'static',
   });
   const containerRef = useRef<HTMLDivElement>(null);
   function measureTextDimensions(
@@ -22,10 +22,8 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
     style: {
       fontSize: string;
       lineHeight: string;
-      visibility: string; // Hide the element
-      // Hide the element
-      position: string; // Avoid affecting layout
-      // Avoid affecting layout
+      visibility: string;
+      position: string;
       whiteSpace: string;
     },
     containerWidth: number
@@ -109,36 +107,36 @@ const TitleGUIComponent: React.FC<TitleGUIProps> = ({ component }) => {
     };
   }, []);
   return (
-    <div
+    <Center
       ref={containerRef}
-      className={
-        'absolute right-0 top-0 flex h-full w-full items-center justify-center overflow-hidden text-center'
-      }
+      pos={'absolute'}
+      top={0}
+      right={0}
+      h={'100%'}
+      w={'100%'}
+      style={{ overflow: 'hidden', textAlign: 'center' }}
     >
-      <h1
-        className={'dark:text-white'}
+      <Box
+        component={'h1'}
         style={{
           fontSize: textStyle.fontSize,
-          lineHeight: textStyle.lineHeight
-          // visibility: textStyle.visibility,
-          // position: textStyle.position,
+          lineHeight: textStyle.lineHeight,
+          color: 'light-dark(var(--mantine-color-black), var(--mantine-color-white))'
         }}
       >
         {component?.text}
-      </h1>
-    </div>
+      </Box>
+    </Center>
   );
-};
+}
+
 interface TitleModalProps {
   component: TitleComponent | null;
   handleComponentData: (data: Partial<TitleComponent>) => void;
   isOpen: boolean;
 }
-const TitleModal: React.FC<TitleModalProps> = ({
-  component,
-  handleComponentData,
-  isOpen
-}) => {
+
+function TitleModal({ component, handleComponentData, isOpen }: TitleModalProps) {
   const currentPageTitle = useBoundStore(
     (state) => state.getPageById(state.currentPage).name
   );
@@ -178,17 +176,18 @@ const TitleModal: React.FC<TitleModalProps> = ({
     }
   }, [isOpen, setText]);
   return (
-    <div className={'grid grid-cols-1 gap-4'}>
+    <Stack gap={'md'}>
       <InputLabel>{getCopy('Title', 'title')}</InputLabel>
       <TextInput value={text} onChange={(e) => setText(e.currentTarget.value)} />
-      <div className={'flex items-center gap-2'}>
+      <Group gap={'xs'}>
         <InputLabel>{getCopy('Title', 'pageTitle')}</InputLabel>
         <Toggle
           value={setFromPageTitle}
           setValue={(value) => setSetFromPageTitle(value)}
         />
-      </div>
-    </div>
+      </Group>
+    </Stack>
   );
-};
+}
+
 export { TitleGUIComponent, TitleModal };
