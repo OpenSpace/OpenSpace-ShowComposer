@@ -1,32 +1,38 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { useCallback, useEffect, useState } from 'react';
+import { Box, InputLabel, Stack } from '@mantine/core';
 
 import ImageUpload from '@/components/ImageUpload';
 import { ImageComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
+
 interface ImageGUIProps {
   component: ImageComponent;
 }
-const ImageGUIComponent: React.FC<ImageGUIProps> = ({ component }) => {
+
+function ImageGUIComponent({ component }: ImageGUIProps) {
   return (
-    <div
-      className={
-        'absolute right-0 top-0 flex h-full w-full items-center justify-center hover:cursor-pointer'
-      }
+    <Box
+      pos={'absolute'}
+      top={0}
+      right={0}
+      h={'100%'}
+      w={'100%'}
       style={{
-        //cover and center the background image
+        cursor: 'pointer',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`
       }}
     />
   );
-};
+}
+
 interface ImageModalProps {
   component: ImageComponent | null;
   handleComponentData: (data: Partial<ImageComponent>) => void;
 }
-const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData }) => {
+
+function ImageModal({ component, handleComponentData }: ImageModalProps) {
   const [url, setUrl] = useState(component?.backgroundImage || '');
   useEffect(() => {
     handleComponentData({
@@ -37,10 +43,11 @@ const ImageModal: React.FC<ImageModalProps> = ({ component, handleComponentData 
   const handleImageChange = useCallback((value: string) => setUrl(value), [setUrl]);
 
   return (
-    <div className={'grid grid-cols-1 gap-4'}>
+    <Stack gap={'md'}>
       <InputLabel>{getCopy('Image', 'image')}</InputLabel>
       <ImageUpload value={url} onChange={handleImageChange} />
-    </div>
+    </Stack>
   );
-};
+}
+
 export { ImageGUIComponent, ImageModal };
