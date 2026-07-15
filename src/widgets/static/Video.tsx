@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Center, InputLabel, Stack, Text, TextInput } from '@mantine/core';
+import { Center, Stack, Text, TextInput } from '@mantine/core';
 
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
@@ -74,14 +74,12 @@ function VideoModal({ component, handleComponentData }: VideoModalProps) {
   }, [url, handleComponentData]);
   return (
     <Stack gap={'md'}>
-      <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Video', 'video')}</InputLabel>
-        <TextInput
-          placeholder={'URL'}
-          value={url}
-          onChange={(e) => setUrl(e.currentTarget.value)}
-        />
-      </Stack>
+      <TextInput
+        label={getCopy('Video', 'video')}
+        placeholder={'URL'}
+        value={url}
+        onChange={(e) => setUrl(e.currentTarget.value)}
+      />
       <Text size={'sm'} c={'dimmed'} mt={'xs'} mb={'md'}>
         {getCopy('Video', 'video_helper_text')}
       </Text>
