@@ -19,6 +19,7 @@ function ImageGUIComponent({ component }: ImageGUIProps) {
       w={'100%'}
       style={{
         cursor: 'pointer',
+        borderRadius: 'var(--mantine-radius-md)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundImage: `url(${component.backgroundImage})`
