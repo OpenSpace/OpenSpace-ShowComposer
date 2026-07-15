@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Box, InputLabel, Stack } from '@mantine/core';
 
 import ImageUpload from '@/components/ImageUpload';
@@ -35,13 +35,14 @@ interface ImageModalProps {
 
 function ImageModal({ component, handleComponentData }: ImageModalProps) {
   const [url, setUrl] = useState(component?.backgroundImage || '');
-  useEffect(() => {
-    handleComponentData({
-      backgroundImage: url
-    });
-  }, [url, handleComponentData]);
 
-  const handleImageChange = useCallback((value: string) => setUrl(value), [setUrl]);
+  const handleImageChange = useCallback(
+    (value: string) => {
+      setUrl(value);
+      handleComponentData({ backgroundImage: value });
+    },
+    [handleComponentData]
+  );
 
   return (
     <Stack gap={'md'}>
