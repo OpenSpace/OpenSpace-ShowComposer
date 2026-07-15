@@ -122,23 +122,34 @@ interface TitleModalProps {
 
 function TitleModal({ component, handleComponentData }: TitleModalProps) {
   const currentPageTitle = useBoundStore(
-    (state) => state.getPageById(state.currentPage).name
+    (state) => state.getPageById(state.currentPage).name ?? ''
   );
-  const [text, setText] = useState(component?.text ?? currentPageTitle ?? '');
+  const [text, setText] = useState(component?.text ?? currentPageTitle);
 
+  // Since we have a default value for the title from currentPageTitle, we need
+  // to set this value upstream on mount, in case we just click "save" without
+  // triggering the change handler
   useEffect(() => {
-    handleComponentData({ text });
-  }, [text, handleComponentData]);
+    handleComponentData({ text: currentPageTitle });
+  }, [handleComponentData, currentPageTitle]);
+
+  function handleTitleChange(value: string) {
+    setText(value);
+    handleComponentData({ text: value });
+  }
 
   return (
     <Group align={'flex-end'}>
       <TextInput
         label={getCopy('Title', 'title')}
         value={text}
-        onChange={(e) => setText(e.currentTarget.value)}
+        onChange={(e) => handleTitleChange(e.currentTarget.value)}
         flex={1}
       />
-      <Button variant={'default'} onClick={() => setText(currentPageTitle ?? '')}>
+      <Button
+        variant={'default'}
+        onClick={() => handleTitleChange(currentPageTitle ?? '')}
+      >
         {getCopy('Title', 'pageTitle')}
       </Button>
     </Group>
