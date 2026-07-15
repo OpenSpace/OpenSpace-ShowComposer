@@ -4,13 +4,21 @@ import { Center, Stack, Text, TextInput } from '@mantine/core';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-const getVideoContent = (url: string) => {
-  const youtubePattern =
-    /(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-  const vimeoPattern =
-    /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
-  const youtubeMatch = url.match(youtubePattern);
-  const vimeoMatch = url.match(vimeoPattern);
+const YOUTUBE_PATTERN =
+  /(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+const VIMEO_PATTERN =
+  /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/[^/]*\/videos\/|album\/\d+\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+
+interface VideoContentProps {
+  url: string;
+}
+
+// Renders a YouTube/Vimeo embed for a matching URL, a raw <video> for any other
+// non-empty URL, or nothing when the URL is empty
+function VideoContent({ url }: VideoContentProps) {
+  const youtubeMatch = url.match(YOUTUBE_PATTERN);
+  const vimeoMatch = url.match(VIMEO_PATTERN);
+
   if (youtubeMatch) {
     return (
       <iframe
@@ -38,8 +46,9 @@ const getVideoContent = (url: string) => {
   } else if (url) {
     return <video src={url} controls style={{ height: '100%', width: '100%' }} />;
   }
+
   return null;
-};
+}
 
 interface VideoGUIProps {
   component: VideoComponent;
@@ -55,7 +64,7 @@ function VideoGUIComponent({ component }: VideoGUIProps) {
       w={'100%'}
       style={{ borderRadius: 'var(--mantine-radius-md)', overflow: 'hidden' }}
     >
-      {getVideoContent(component.url)}
+      <VideoContent url={component.url} />
     </Center>
   );
 }
@@ -67,23 +76,23 @@ interface VideoModalProps {
 
 function VideoModal({ component, handleComponentData }: VideoModalProps) {
   const [url, setUrl] = useState(component?.url || '');
-  useEffect(() => {
-    handleComponentData({
-      url
-    });
-  }, [url, handleComponentData]);
+
+  function handleUrlChange(value: string) {
+    setUrl(value);
+    handleComponentData({ url: value });
+  }
   return (
     <Stack gap={'md'}>
       <TextInput
         label={getCopy('Video', 'video')}
         placeholder={'URL'}
         value={url}
-        onChange={(e) => setUrl(e.currentTarget.value)}
+        onChange={(e) => handleUrlChange(e.currentTarget.value)}
       />
       <Text size={'sm'} c={'dimmed'} mt={'xs'} mb={'md'}>
         {getCopy('Video', 'video_helper_text')}
       </Text>
-      {url && getVideoContent(url)}
+      <VideoContent url={url} />
     </Stack>
   );
 }
