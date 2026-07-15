@@ -184,7 +184,6 @@ export const exportProject = () => {
   const boundStore = useBoundStore.getState();
   const store = { boundStore, settingsStore };
   const storeString = JSON.stringify(store);
-  console.log('storeString', storeString);
   fetch(`${basePath}api/package`, {
     method: 'POST',
     headers: {
@@ -192,15 +191,27 @@ export const exportProject = () => {
     },
     body: storeString
   })
-    .then((response) => response.blob())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Export failed: ${response.status}`);
+      }
+      return response.blob();
+    })
     .then((blob) => {
-      // Create download link
+      // Create download link. The anchor must be attached to the DOM, and the object
+      // URL must NOT be revoked synchronously right after click - otherwise the
+      // browser aborts the download before it has read the blob, producing a 0-byte file
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${settingsStore.projectName.replace(/ /g, '_')}-${Date.now()}.zip`;
+      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+    })
+    .catch((error) => {
+      console.error('Error exporting project:', error);
     });
 };
 
