@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Box, InputLabel, Stack } from '@mantine/core';
+import { Image, InputLabel, Stack } from '@mantine/core';
 
 import ImageUpload from '@/components/ImageUpload';
 import { ImageComponent } from '@/store';
@@ -11,19 +11,15 @@ interface ImageGUIProps {
 
 function ImageGUIComponent({ component }: ImageGUIProps) {
   return (
-    <Box
+    <Image
+      src={component.backgroundImage}
       pos={'absolute'}
       top={0}
       right={0}
       h={'100%'}
       w={'100%'}
-      style={{
-        cursor: 'pointer',
-        borderRadius: 'var(--mantine-radius-md)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundImage: `url(${component.backgroundImage})`
-      }}
+      fit={'cover'}
+      radius={'md'}
     />
   );
 }
