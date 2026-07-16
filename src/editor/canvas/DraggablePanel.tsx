@@ -6,9 +6,9 @@ import { GripHorizontal, Minus } from 'lucide-react';
 
 import FeedbackPanel from '@/editor/sidebar/FeedbackPanel';
 import FlightControlPanel from '@/panels/FlightControlPanel';
-import LogPanel from '@/panels/LogPanel';
 import RecordPanel from '@/panels/SessionPanel';
 import TimeDatePicker from '@/panels/TimeDatePicker';
+import { LogPanel } from '@/panels/LogPanel';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import {

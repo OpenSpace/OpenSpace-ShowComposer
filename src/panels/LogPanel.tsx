@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { InputLabel } from '@mantine/core';
+import { Box, Stack, Table, Text } from '@mantine/core';
 import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
 import SelectableDropdown from '@/components/SelectableDropdown';
@@ -16,90 +16,95 @@ const logLevelOptions: { value: LogLevel; label: string }[] = [
   { value: LogLevel.NoLogging, label: 'No Logging' }
 ];
 
+const logLevelColors: Record<string, string> = {
+  Trace: 'gray.5',
+  Debug: 'blue.5',
+  Info: 'green.5',
+  Warning: 'yellow.5',
+  Error: 'red.5',
+  Fatal: 'red.7'
+};
+
+function logLevelColor(level: string | undefined): string {
+  return (level && logLevelColors[level]) || 'gray.6';
+}
+
 const logLevelValueSet = new Set<string>(Object.values(LogLevel));
 
 function isLogLevel(value: string): value is LogLevel {
   return logLevelValueSet.has(value);
 }
 
-const LogPanel = () => {
+export function LogPanel() {
   const { errorLog, setLogLevel: updateLogLevel } = useSubscribeToErrorLog();
   const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
 
-  const handleLogLevelChange = (value: string) => {
+  function handleLogLevelChange(value: string) {
     if (!isLogLevel(value)) {
       return;
     }
     setLogLevel(value);
     updateLogLevel(value);
-  };
+  }
 
   return (
-    <div className={'flex flex-col'}>
-      <div
-        className={
-          'z-9 absolute left-0 mt-2 flex w-full flex-col items-center justify-center gap-4'
-        }
-      >
-        <InputLabel className={'flex w-full justify-start px-4'}>Error Logs</InputLabel>
+    <Stack
+      pos={'absolute'}
+      left={0}
+      mt={'xs'}
+      w={'100%'}
+      gap={'md'}
+      style={{ zIndex: 9 }}
+    >
+      <Text px={'md'} fw={500}>
+        Error Logs
+      </Text>
 
-        <div className={'flex w-full justify-start px-4'}>
-          <SelectableDropdown
-            options={logLevelOptions}
-            selected={logLevel}
-            setSelected={handleLogLevelChange}
-            placeholder={'Select log level'}
-          />
-        </div>
+      <Box px={'md'}>
+        <SelectableDropdown
+          options={logLevelOptions}
+          selected={logLevel}
+          setSelected={handleLogLevelChange}
+          placeholder={'Select log level'}
+        />
+      </Box>
 
-        <div className={'space-y-1'}>
-          <div
-            className={
-              ' mb-1 grid w-full grid-cols-[100px_100px_150px_1fr] gap-2 text-sm font-medium text-gray-500'
-            }
-          >
-            <div>Time</div>
-            <div>Level</div>
-            <div>Source</div>
-            <div>Message</div>
-          </div>
-          {errorLog.map((log: LogMessage, index) => {
-            const levelString = log.level;
-
-            return (
-              <div
-                key={index}
-                className={'grid w-full grid-cols-[100px_100px_150px_1fr] gap-2 text-sm'}
-              >
-                <span className={'text-gray-500'}>{log.timeStamp}</span>
-                <span
-                  className={`font-semibold ${
-                    levelString === 'Trace'
-                      ? 'text-gray-400'
-                      : levelString === 'Debug'
-                        ? 'text-blue-500'
-                        : levelString === 'Info'
-                          ? 'text-green-500'
-                          : levelString === 'Warning'
-                            ? 'text-yellow-500'
-                            : levelString === 'Error'
-                              ? 'text-red-500'
-                              : levelString === 'Fatal'
-                                ? 'text-red-700'
-                                : 'text-gray-500'
-                  }`}
-                >
-                  [{levelString}]
-                </span>
-                <span className={'text-gray-400'}>{log.category}</span>
-                <span className={'truncate'}>{log.message}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+      <Table layout={'fixed'} verticalSpacing={2} fz={'sm'}>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th w={100}>Time</Table.Th>
+            <Table.Th w={100}>Level</Table.Th>
+            <Table.Th w={150}>Source</Table.Th>
+            <Table.Th>Message</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {errorLog.map((log: LogMessage, index) => (
+            <Table.Tr key={index}>
+              <Table.Td>
+                <Text size={'sm'} c={'dimmed'}>
+                  {log.timeStamp}
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Text size={'sm'} fw={600} c={logLevelColor(log.level)}>
+                  [{log.level}]
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Text size={'sm'} c={'dimmed'}>
+                  {log.category}
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Text size={'sm'} truncate>
+                  {log.message}
+                </Text>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Stack>
   );
-};
-
-export default LogPanel;
+}
