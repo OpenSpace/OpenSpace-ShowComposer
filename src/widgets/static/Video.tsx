@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Center, Stack, Text, TextInput } from '@mantine/core';
 
 import { VideoComponent } from '@/store';
