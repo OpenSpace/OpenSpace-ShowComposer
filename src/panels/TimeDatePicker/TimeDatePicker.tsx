@@ -11,10 +11,10 @@ import {
 import { throttle } from 'lodash';
 
 import { useOpenSpaceApi } from '@/api/hooks';
+import { DateComponent } from '@/components/DateComponent';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
-import { DateComponent } from '@/panels/DateComponent';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 

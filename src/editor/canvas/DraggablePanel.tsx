@@ -8,7 +8,7 @@ import FeedbackPanel from '@/editor/sidebar/FeedbackPanel';
 import { FlightControlPanel } from '@/panels/FlightControlPanel';
 import { LogPanel } from '@/panels/LogPanel';
 import { SessionPanel } from '@/panels/SessionPanel';
-import { TimeDatePicker } from '@/panels/TimeDatePicker';
+import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import {
