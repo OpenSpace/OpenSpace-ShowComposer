@@ -11,7 +11,7 @@ import {
 import { throttle } from 'lodash';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import { DateComponent } from '@/components/DateComponent';
+import { DateTimeStepper } from '@/components/DateTimeStepper';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
@@ -285,7 +285,7 @@ export function TimeDatePicker() {
     <Stack gap={'xs'}>
       <Stack gap={'xs'}>
         <InputLabel>{getCopy('TimeDatePicker', 'select_date')}</InputLabel>
-        <DateComponent date={time} onChange={changeDate} />
+        <DateTimeStepper date={time} onChange={changeDate} />
       </Stack>
       <Stack gap={'xs'}>
         <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>

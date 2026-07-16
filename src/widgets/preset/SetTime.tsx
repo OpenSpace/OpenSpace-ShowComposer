@@ -5,7 +5,7 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
 import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
-import { DateComponent } from '@/components/DateComponent';
+import { DateTimeStepper } from '@/components/DateTimeStepper';
 import { Information } from '@/components/Information';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import Toggle from '@/components/Toggle';
@@ -158,7 +158,7 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     <>
       <div className={'grid grid-cols-1 gap-4'}>
         {time && (
-          <DateComponent
+          <DateTimeStepper
             date={componentTime as Date}
             onChange={(data: {
               time: Date | string;
