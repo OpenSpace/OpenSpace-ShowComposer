@@ -5,10 +5,10 @@ import { ActionIcon } from '@mantine/core';
 import { GripHorizontal, Minus } from 'lucide-react';
 
 import FeedbackPanel from '@/editor/sidebar/FeedbackPanel';
-import FlightControlPanel from '@/panels/FlightControlPanel';
-import RecordPanel from '@/panels/SessionPanel';
-import TimeDatePicker from '@/panels/TimeDatePicker';
+import { FlightControlPanel } from '@/panels/FlightControlPanel';
 import { LogPanel } from '@/panels/LogPanel';
+import { SessionPanel } from '@/panels/SessionPanel';
+import { TimeDatePicker } from '@/panels/TimeDatePicker';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import {
@@ -61,7 +61,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
       case 'statuspanel':
         return <FeedbackPanel />;
       case 'recordpanel':
-        return <RecordPanel />;
+        return <SessionPanel />;
       case 'logpanel':
         return <LogPanel />;
       default:

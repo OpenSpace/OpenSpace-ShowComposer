@@ -1,6 +1,6 @@
-import React from 'react';
-import { ActionIcon, TextInput } from '@mantine/core';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ActionIcon, Group, Stack, TextInput } from '@mantine/core';
+
+import { ChevronDownIcon, ChevronUpIcon } from '@/icons/icons';
 
 type DateData = {
   time: Date;
@@ -9,19 +9,59 @@ type DateData = {
   relative: boolean;
 };
 
-type DateComponentProps = {
+interface DateComponentProps {
   date: Date | string;
   onChange: (data: DateData) => void;
-};
+}
 
-const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
+const dateParts = ['year', 'month', 'day', 'hours', 'minutes', 'seconds'] as const;
+
+const monthAbbreviations = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];
+
+function zeroPad(value: number): string {
+  return value < 10 ? `0${value}` : `${value}`;
+}
+
+// The value shown in each part's field, matching the pre-migration display (year is
+// unpadded, minutes are unpadded, the rest are zero-padded, and month is abbreviated)
+function formatDatePart(part: (typeof dateParts)[number], date: Date): string | number {
+  switch (part) {
+    case 'month':
+      return monthAbbreviations[date.getUTCMonth()];
+    case 'year':
+      return date.getUTCFullYear();
+    case 'day':
+      return zeroPad(date.getUTCDate());
+    case 'hours':
+      return zeroPad(date.getUTCHours());
+    case 'minutes':
+      return date.getUTCMinutes();
+    default:
+      return zeroPad(date.getUTCSeconds());
+  }
+}
+
+export function DateComponent({ date, onChange }: DateComponentProps) {
   if (date === undefined) {
     return null;
   }
 
   const dateObj = new Date(date);
 
-  const adjustDatePart = (part: string, delta: number) => {
+  function adjustDatePart(part: (typeof dateParts)[number], delta: number) {
     const newDate = new Date(date);
     switch (part) {
       case 'year':
@@ -51,46 +91,19 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
       delta: (newDate.getTime() - new Date(date).getTime()) / 1000,
       relative: true
     });
-  };
-
-  const monthAbbreviations = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
-  function zeroPad(number: number): string {
-    return number < 10 ? `0${number}` : `${number}`;
   }
 
   return (
-    <div className={'flex flex-row items-center justify-center'}>
-      {['year', 'month', 'day', 'hours', 'minutes', 'seconds'].map((part, index) => (
-        <div
-          key={index}
-          style={{ margin: '0px' }}
-          className={'flex flex-col items-center justify-center gap-1 px-1'}
-        >
+    <Group justify={'center'} gap={0}>
+      {dateParts.map((part) => (
+        <Stack key={part} align={'center'} gap={4} px={4}>
           <ActionIcon
             variant={'subtle'}
             color={'white'}
-            className={'h-4'}
             size={'xs'}
             onClick={() => adjustDatePart(part, 1)}
           >
-            <ChevronUp
-              className={
-                'h-6 w-6 cursor-pointer transition-all hover:scale-110 hover:bg-[]'
-              }
-            />
+            <ChevronUpIcon size={20} />
           </ActionIcon>
           <TextInput
             w={40}
@@ -104,36 +117,19 @@ const DateComponent: React.FC<DateComponentProps> = ({ date, onChange }) => {
                 fontSize: 14
               }
             }}
-            value={
-              part === 'month'
-                ? monthAbbreviations[dateObj.getUTCMonth()]
-                : part === 'year'
-                  ? dateObj.getUTCFullYear()
-                  : part === 'day'
-                    ? zeroPad(dateObj.getUTCDate())
-                    : part === 'hours'
-                      ? zeroPad(dateObj.getUTCHours())
-                      : part === 'minutes'
-                        ? dateObj.getUTCMinutes()
-                        : zeroPad(dateObj.getUTCSeconds())
-            }
+            value={formatDatePart(part, dateObj)}
             readOnly
           />
           <ActionIcon
             variant={'subtle'}
             color={'white'}
             size={'xs'}
-            className={'h-4'}
             onClick={() => adjustDatePart(part, -1)}
           >
-            <ChevronDown
-              className={'h-6 w-6 cursor-pointer transition-all hover:scale-110'}
-            />
+            <ChevronDownIcon size={20} />
           </ActionIcon>
-        </div>
+        </Stack>
       ))}
-    </div>
+    </Group>
   );
-};
-
-export default DateComponent;
+}

@@ -1,15 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Button, InputLabel, NumberInput } from '@mantine/core';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Box,
+  Button,
+  InputLabel,
+  NumberInput,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { throttle } from 'lodash';
-import { FastForward, Pause, Play, Rewind } from 'lucide-react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ButtonLabel from '@/components/ButtonLabel';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import DateComponent from '@/panels/DateComponent';
+import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
+import { DateComponent } from '@/panels/DateComponent';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
+
 const updateDelayMs = 1000;
 const updateDeltaTimeNow = (
   openspace: any,
@@ -89,8 +97,18 @@ Object.freeze(StepSizes);
 Object.freeze(StepPrecisions);
 Object.freeze(Limits);
 
-const TimeDatePicker = () => {
-  const [stepSize, setStepSize] = useState('Seconds'); // Step 1: Add state for display unit
+const round10 = (value: number, exp: number) => {
+  const valueStr = value.toString();
+  const [integer, decimal] = valueStr.split('.');
+  if (decimal) {
+    const decimalRounded = Math.round(Number(`0.${decimal}e${exp}`)).toString();
+    return Number(`${integer}.${decimalRounded}`);
+  }
+  return value;
+};
+
+export function TimeDatePicker() {
+  const [stepSize, setStepSize] = useState('Seconds');
 
   const luaApi = useOpenSpaceApi();
   const {
@@ -103,6 +121,20 @@ const TimeDatePicker = () => {
     prevStep: prevDeltaTimeStep
   } = useSubscribeToTime(1000);
   const [paused, setPaused] = useState<boolean>(isPaused || false);
+
+  const adjustedDelta = round10(
+    targetDeltaTime ? targetDeltaTime / StepSizes[stepSize] : 0,
+    StepPrecisions[stepSize]
+  );
+
+  const [localDelta, setLocalDelta] = useState(adjustedDelta);
+  const isEditingDelta = useRef(false);
+  useEffect(() => {
+    if (!isEditingDelta.current) {
+      setLocalDelta(adjustedDelta);
+    }
+  }, [adjustedDelta]);
+
   function setNextDeltaTimeStep() {
     updateDeltaTime.cancel();
     luaApi?.time.interpolateNextDeltaTimeStep();
@@ -119,9 +151,6 @@ const TimeDatePicker = () => {
     setPaused(isPaused || false);
   }, [isPaused]);
   function setDate(newTime: Date) {
-    // Spice, that is handling the time parsing in OpenSpace does not support
-    // ISO 8601-style time zones (the Z). It does, however, always assume that UTC
-    // is given.
     try {
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
@@ -133,9 +162,6 @@ const TimeDatePicker = () => {
     try {
       const newTime = new Date(time || '');
       newTime.setSeconds(newTime.getSeconds() + delta);
-      // Spice, that is handling the time parsing in OpenSpace does not support
-      // ISO 8601-style time zones (the Z). It does, however, always assume that UTC
-      // is given.
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
     } catch {
@@ -149,16 +175,12 @@ const TimeDatePicker = () => {
   function interpolateDateRelative(delta: number) {
     luaApi?.time.interpolateTimeRelative(delta);
   }
-  function changeDate(event // useLock: boolean,
-  : {
+  function changeDate(event: {
     time: Date;
     interpolate: boolean;
     delta: number;
     relative: boolean;
   }) {
-    // if (useLock) {
-    // setPendingTime(new Date(event.time));
-    // } else
     if (event.interpolate) {
       if (event.relative) {
         interpolateDateRelative(event.delta);
@@ -192,19 +214,7 @@ const TimeDatePicker = () => {
     }
     return time;
   }, [time]);
-  const round10 = (value: number, exp: number) => {
-    const valueStr = value.toString();
-    const [integer, decimal] = valueStr.split('.');
-    if (decimal) {
-      const decimalRounded = Math.round(Number(`0.${decimal}e${exp}`)).toString();
-      return Number(`${integer}.${decimalRounded}`);
-    }
-    return value;
-  };
-  const adjustedDelta = round10(
-    targetDeltaTime ? targetDeltaTime / StepSizes[stepSize] : 0,
-    StepPrecisions[stepSize]
-  );
+
   function setDeltaTime(value: number) {
     const deltaTime = value * StepSizes[stepSize];
     if (Number.isNaN(deltaTime)) {
@@ -214,15 +224,26 @@ const TimeDatePicker = () => {
       updateDeltaTimeNow(luaApi, deltaTime);
     }
   }
+
   function setPositiveDeltaTime(value: number) {
-    const dt = value;
-    setDeltaTime(dt);
+    isEditingDelta.current = true;
+    setLocalDelta(value);
+    setDeltaTime(value);
   }
   function setNegativeDeltaTime(value: number) {
-    const dt = -value;
-    setDeltaTime(dt);
+    isEditingDelta.current = true;
+    setLocalDelta(-value);
+    setDeltaTime(-value);
   }
-  function deltaTimeStepsContol() {
+  function beginEditingDelta() {
+    isEditingDelta.current = true;
+  }
+  function endEditingDelta() {
+    isEditingDelta.current = false;
+    setLocalDelta(adjustedDelta);
+  }
+
+  function deltaTimeStepsControl() {
     const adjustedNextDelta = round10(
       nextDeltaTimeStep ? nextDeltaTimeStep / StepSizes[stepSize] : 0,
       StepPrecisions[stepSize]
@@ -238,103 +259,96 @@ const TimeDatePicker = () => {
       ? `${adjustedPrevDelta} ${stepSize} / second`
       : 'None';
     return (
-      <div className={'grid grid-cols-3 gap-2'}>
-        <div className={'gap-.5 grid'}>
-          <Button
-            size={'sm'}
-            disabled={!hasPrevDeltaTimeStep}
-            onClick={setPrevDeltaTimeStep}
-          >
-            <Rewind />
+      <SimpleGrid cols={3} spacing={'xs'}>
+        <Stack gap={2}>
+          <Button disabled={!hasPrevDeltaTimeStep} onClick={setPrevDeltaTimeStep}>
+            <RewindIcon />
           </Button>
-          <InputLabel className={'text-xs text-zinc-500'}> {prevLabel}</InputLabel>
-        </div>
-        <Button size={'sm'} onClick={togglePause}>
-          {paused ? <Play /> : <Pause />}
-        </Button>
-        <div className={'gap-.5 grid'}>
-          <Button
-            size={'sm'}
-            disabled={!hasNextDeltaTimeStep}
-            onClick={setNextDeltaTimeStep}
-          >
-            <FastForward />
+          <Text size={'xs'} c={'dimmed'}>
+            {prevLabel}
+          </Text>
+        </Stack>
+        <Button onClick={togglePause}>{paused ? <PlayIcon /> : <PauseIcon />}</Button>
+        <Stack gap={2}>
+          <Button disabled={!hasNextDeltaTimeStep} onClick={setNextDeltaTimeStep}>
+            <FastForwardIcon />
           </Button>
-          <InputLabel className={'text-xs text-zinc-500'}> {nextLabel}</InputLabel>
-        </div>
-      </div>
+          <Text size={'xs'} c={'dimmed'}>
+            {nextLabel}
+          </Text>
+        </Stack>
+      </SimpleGrid>
     );
   }
   if (!time) return null;
   return (
-    <div>
-      <div className={'grid gap-2 p-0'}>
-        <div className={'grid gap-2'}>
-          <InputLabel>{getCopy('TimeDatePicker', 'select_date')}</InputLabel>
-          <DateComponent date={time} onChange={changeDate} />
-        </div>
-        <div className={'grid gap-2'}>
-          <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
-          <SelectableDropdown
-            placeholder={'Select a Unit'}
-            options={Object.values(Steps)}
-            selected={stepSize}
-            setSelected={setStepSize}
+    <Stack gap={'xs'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('TimeDatePicker', 'select_date')}</InputLabel>
+        <DateComponent date={time} onChange={changeDate} />
+      </Stack>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
+        <SelectableDropdown
+          placeholder={'Select a Unit'}
+          options={Object.values(Steps)}
+          selected={stepSize}
+          setSelected={setStepSize}
+        />
+      </Stack>
+      <SimpleGrid cols={2} spacing={'xs'}>
+        <Stack gap={2}>
+          <NumberInput
+            {...Limits[stepSize]}
+            disabled={!luaApi || localDelta >= 0}
+            onFocus={beginEditingDelta}
+            onBlur={endEditingDelta}
+            onChange={(value) =>
+              setNegativeDeltaTime(typeof value === 'number' ? value : parseFloat(value))
+            }
+            placeholder={`Negative ${stepSize} / second`}
+            value={localDelta >= 0 ? 0 : -localDelta}
           />
-        </div>
-        <div className={'grid grid-cols-2 gap-2'}>
-          <div className={'gap-.5 grid'}>
-            <NumberInput
-              {...Limits[stepSize]}
-              disabled={!luaApi || adjustedDelta >= 0}
-              onChange={(value) =>
-                setNegativeDeltaTime(
-                  typeof value === 'number' ? value : parseFloat(value)
-                )
-              }
-              placeholder={`Negative ${stepSize} / second`}
-              value={adjustedDelta >= 0 ? 0 : -adjustedDelta}
-            />
-            <InputLabel
-              className={'text-xs text-zinc-500'}
-            >{`Negative ${stepSize} / second`}</InputLabel>
-          </div>
-          <div className={'gap-.5 grid'}>
-            <NumberInput
-              {...Limits[stepSize]}
-              disabled={!luaApi || adjustedDelta < 0}
-              onChange={(value) =>
-                setPositiveDeltaTime(
-                  typeof value === 'number' ? value : parseFloat(value)
-                )
-              }
-              placeholder={`${stepSize} / second`}
-              value={adjustedDelta < 0 ? 0 : adjustedDelta}
-            />
-            <InputLabel
-              className={'text-xs text-zinc-500'}
-            >{`${stepSize} / second`}</InputLabel>
-          </div>
-        </div>
-        {deltaTimeStepsContol()}
-        <div className={'grid grid-cols-2 gap-2'}>
-          <Button
-            variant={targetDeltaTime == 1 ? 'filled' : 'default'}
-            size={'sm'}
-            onClick={realtime}
-            className={`${targetDeltaTime == 1 ? 'opacity-100' : 'opacity-60'}`}
-          >
-            {getCopy('TimeDatePicker', 'realtime')}
-          </Button>
-          <Button size={'sm'} onClick={now}>
-            {getCopy('TimeDatePicker', 'now')}
-          </Button>
-        </div>
-        {/* </div> */}
-        <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
-      </div>
-      {/* )} */}
-    </div>
+          <Text size={'xs'} c={'dimmed'}>{`Negative ${stepSize} / second`}</Text>
+        </Stack>
+        <Stack gap={2}>
+          <NumberInput
+            {...Limits[stepSize]}
+            disabled={!luaApi || localDelta < 0}
+            onFocus={beginEditingDelta}
+            onBlur={endEditingDelta}
+            onChange={(value) =>
+              setPositiveDeltaTime(typeof value === 'number' ? value : parseFloat(value))
+            }
+            placeholder={`${stepSize} / second`}
+            value={localDelta < 0 ? 0 : localDelta}
+          />
+          <Text size={'xs'} c={'dimmed'}>{`${stepSize} / second`}</Text>
+        </Stack>
+      </SimpleGrid>
+      {deltaTimeStepsControl()}
+      <SimpleGrid cols={2} spacing={'xs'}>
+        <Button
+          variant={targetDeltaTime == 1 ? 'filled' : 'default'}
+          onClick={realtime}
+          style={{ opacity: targetDeltaTime == 1 ? 1 : 0.6 }}
+        >
+          {getCopy('TimeDatePicker', 'realtime')}
+        </Button>
+        <Button onClick={now}>{getCopy('TimeDatePicker', 'now')}</Button>
+      </SimpleGrid>
+      <Box
+        ta={'center'}
+        fz={'sm'}
+        px={'md'}
+        py={'xs'}
+        style={{
+          border: '1px solid var(--mantine-color-default-border)',
+          borderRadius: 'var(--mantine-radius-md)'
+        }}
+      >
+        {timeLabel}
+      </Box>
+    </Stack>
   );
-};
-export default TimeDatePicker;
+}

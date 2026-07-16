@@ -1,7 +1,7 @@
 import React from 'react';
 
-import TimeDatePicker from '@/panels/TimeDatePicker';
 import { FlightControlPanel } from '@/panels/FlightControlPanel';
+import { TimeDatePicker } from '@/panels/TimeDatePicker';
 import {
   BooleanComponent,
   Component,

@@ -10,7 +10,7 @@ import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import Toggle from '@/components/Toggle';
 import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import DateComponent from '@/panels/DateComponent';
+import { DateComponent } from '@/panels/DateComponent';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
