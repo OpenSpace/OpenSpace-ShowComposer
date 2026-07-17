@@ -20,7 +20,7 @@ import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 
 export function SessionPanel() {
-  const [useTextFormat, _setUseTextFormat] = useState(false);
+  const [useTextFormat, setUseTextFormat] = useState(false);
   const [filenameRecording, setFilenameRecording] = useState('');
   const [filenamePlayback, setFilenamePlayback] = useState<string>('');
   const [shouldOutputFrames, setShouldOutputFrames] = useState(false);
@@ -164,7 +164,11 @@ export function SessionPanel() {
     <Stack m={'xs'} gap={'sm'}>
       <Stack gap={'sm'}>
         <InputLabel>{getCopy('SessionPanel', 'record_session')}</InputLabel>
-        <Checkbox label={getCopy('SessionPanel', 'text_file_format')} />
+        <Checkbox
+          label={getCopy('SessionPanel', 'text_file_format')}
+          checked={useTextFormat}
+          onChange={(event) => setUseTextFormat(event.currentTarget.checked)}
+        />
         <Stack gap={'xs'} w={'100%'}>
           <InputLabel>{getCopy('SessionPanel', 'name_of_recording')}</InputLabel>
           <Group w={'100%'} gap={'xs'} wrap={'nowrap'} align={'center'}>
