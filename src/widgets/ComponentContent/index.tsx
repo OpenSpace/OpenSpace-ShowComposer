@@ -36,7 +36,7 @@ import { BoolGUIComponent } from '@/widgets/property/Boolean';
 import { NumberGUIComponent } from '@/widgets/property/Number';
 import { TriggerGUIComponent } from '@/widgets/property/Trigger';
 import { ImageGUIComponent } from '@/widgets/static/Image';
-import { RichTextGUIComponent } from '@/widgets/static/RichText';
+import { RichTextGUIComponent } from '@/widgets/static/RichText/RichText';
 import { TitleGUIComponent } from '@/widgets/static/Title';
 import { VideoGUIComponent } from '@/widgets/static/Video';
 interface ComponentContentProps {

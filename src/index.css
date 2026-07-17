@@ -5,6 +5,7 @@
 
 @import '@mantine/core/styles.layer.css';
 @import '@mantine/dropzone/styles.layer.css';
+@import '@mantine/tiptap/styles.layer.css';
 
 @layer tailwind-base {
   @tailwind base;
@@ -51,17 +52,4 @@ body {
   to {
     width: 100%;
   }
-}
-
-/* Dark mode toolbar icon color */
-.dark-mode .ql-toolbar .ql-stroke {
-  @apply dark:stroke-slate-200;
-}
-
-.dark-mode .ql-toolbar .ql-fill {
-  @apply dark:fill-slate-200;
-}
-
-.dark-mode .ql-picker-label {
-  @apply dark:text-slate-200;
 }

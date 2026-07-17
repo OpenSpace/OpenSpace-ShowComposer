@@ -50,7 +50,7 @@ import { BoolModal } from '@/widgets/property/Boolean';
 import { NumberModal } from '@/widgets/property/Number';
 import { TriggerModal } from '@/widgets/property/Trigger';
 import { ImageModal } from '@/widgets/static/Image';
-import { RichTextModal } from '@/widgets/static/RichText';
+import { RichTextModal } from '@/widgets/static/RichText/RichText';
 import { TitleModal } from '@/widgets/static/Title';
 import { VideoModal } from '@/widgets/static/Video';
 
