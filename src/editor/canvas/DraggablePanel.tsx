@@ -5,9 +5,9 @@ import { ActionIcon } from '@mantine/core';
 import { GripHorizontal, Minus } from 'lucide-react';
 
 import FeedbackPanel from '@/editor/sidebar/FeedbackPanel';
-import { FlightControlPanel } from '@/panels/FlightControlPanel';
+import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
 import { LogPanel } from '@/panels/LogPanel';
-import { SessionPanel } from '@/panels/SessionPanel';
+import { SessionPanel } from '@/panels/SessionPanel/SessionPanel';
 import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';

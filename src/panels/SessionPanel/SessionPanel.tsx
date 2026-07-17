@@ -15,14 +15,9 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { CircleIcon, PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
+import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
-
-//set up recording state
-export const SessionStateIdle = 'idle';
-export const SessionStateRecording = 'recording';
-export const SessionStatePlaying = 'playing';
-export const SessionStatePaused = 'playing-paused';
 
 export function SessionPanel() {
   const [useTextFormat, _setUseTextFormat] = useState(false);
@@ -35,7 +30,7 @@ export function SessionPanel() {
 
   const sessionRecording = useSubscribeToSessionRecording();
   const fileList = sessionRecording.files || [];
-  const recordingState = sessionRecording.state || SessionStateIdle;
+  const recordingState = sessionRecording.state || RecordingState.Idle;
 
   const nameIsTaken = useMemo(() => {
     return fileList.map((v: string) => v.split('.')[0]).includes(filenameRecording);
@@ -43,7 +38,7 @@ export function SessionPanel() {
 
   const luaApi = useOpenSpaceApi();
 
-  const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
+  const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
 
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
@@ -117,13 +112,13 @@ export function SessionPanel() {
 
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
-      case SessionStateIdle:
+      case RecordingState.Idle:
         return filenamePlayback ? (
           <Button leftSection={<PlayIcon size={16} />} onClick={() => togglePlayback()}>
             {getCopy('SessionPanel', 'play')}
           </Button>
         ) : null;
-      case SessionStateRecording:
+      case RecordingState.Recording:
         return (
           <Button
             leftSection={<SquareIcon size={16} />}
@@ -132,7 +127,7 @@ export function SessionPanel() {
             {getCopy('SessionPanel', 'stop_recording')}
           </Button>
         );
-      case SessionStatePlaying:
+      case RecordingState.Playing:
         return (
           <SimpleGrid cols={2} spacing={'xs'}>
             <Button leftSection={<PauseIcon size={16} />} onClick={togglePlaybackPaused}>
@@ -146,7 +141,7 @@ export function SessionPanel() {
             </Button>
           </SimpleGrid>
         );
-      case SessionStatePaused:
+      case RecordingState.Paused:
         return (
           <SimpleGrid cols={2} spacing={'xs'}>
             <Button leftSection={<PlayIcon size={16} />} onClick={togglePlaybackPaused}>

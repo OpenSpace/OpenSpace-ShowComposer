@@ -12,13 +12,10 @@ import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
+import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
-//set up recording state
-export const SessionStateIdle = 'idle';
-export const SessionStateRecording = 'recording';
-export const SessionStatePlaying = 'playing';
-export const SessionStatePaused = 'playing-paused';
+
 interface SessionPlaybackModalProps {
   component: SessionPlaybackComponent | null;
   handleComponentData: (data: Partial<SessionPlaybackComponent>) => void;
@@ -32,7 +29,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   const luaApi = useOpenSpaceApi();
   const sessionRecording = useSubscribeToSessionRecording();
   const fileList = sessionRecording.files || [];
-  const recordingState = sessionRecording.state || SessionStateIdle;
+  const recordingState = sessionRecording.state || RecordingState.Idle;
 
   useEffect(() => {
     console.log('recordingState', recordingState);
@@ -80,7 +77,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
     color,
     handleComponentData
   ]);
-  const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
+  const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
 
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
@@ -112,7 +109,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
   }
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
-      case SessionStateIdle:
+      case RecordingState.Idle:
         return file ? (
           <Button
             //   size={'sm'}
@@ -123,9 +120,9 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             {getCopy('SessionPlayback', 'play')}
           </Button>
         ) : null;
-      case SessionStateRecording:
+      case RecordingState.Recording:
         return null;
-      case SessionStatePlaying:
+      case RecordingState.Playing:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
@@ -146,7 +143,7 @@ const SessionPlaybackModal: React.FC<SessionPlaybackModalProps> = ({
             </Button>
           </div>
         );
-      case SessionStatePaused:
+      case RecordingState.Paused:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button
@@ -259,10 +256,10 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
   shouldRender = true
 }) => {
   const { file, loop, gui_name, gui_description } = component;
-  const recordingState = useSubscribeToSessionRecording().state || SessionStateIdle;
+  const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
-  const isIdle = useMemo(() => recordingState === SessionStateIdle, [recordingState]);
+  const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
@@ -305,15 +302,15 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
 
   const playbackSwitch = useCallback(() => {
     switch (recordingState) {
-      case SessionStateIdle:
+      case RecordingState.Idle:
         return file ? (
           <Button leftSection={<Play size={16} />} onClick={() => togglePlayback()}>
             {getCopy('SessionPlayback', 'play')}
           </Button>
         ) : null;
-      case SessionStateRecording:
+      case RecordingState.Recording:
         return null;
-      case SessionStatePlaying:
+      case RecordingState.Playing:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button leftSection={<Pause size={16} />} onClick={togglePlaybackPaused}>
@@ -324,7 +321,7 @@ const SessionPlaybackGUIComponent: React.FC<SessionPlaybackGUIProps> = ({
             </Button>
           </div>
         );
-      case SessionStatePaused:
+      case RecordingState.Paused:
         return (
           <div className={'grid grid-cols-2 gap-2'}>
             <Button leftSection={<Play size={16} />} onClick={togglePlaybackPaused}>

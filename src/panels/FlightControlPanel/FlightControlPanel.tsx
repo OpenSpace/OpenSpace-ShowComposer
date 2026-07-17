@@ -16,6 +16,19 @@ import { useFlightController } from '@/hooks/topicSubscriptions';
 import { RefreshCcwDotIcon, Rotate3dIcon, ZoomInIcon } from '@/icons/icons';
 import { getCopy } from '@/utils/copyHelpers';
 
+// Sent on pointer/touch release to stop all camera motion.
+const IDLE_INPUT_STATE_COMMAND: FlightControllerInputStateCommand = {
+  event: 'inputState',
+  inputState: {
+    zoomIn: 0.0,
+    orbitX: 0.0,
+    orbitY: 0.0,
+    panX: 0.0,
+    panY: 0.0,
+    localRollX: 0.0
+  }
+};
+
 function InfoBox() {
   return (
     <>
@@ -125,17 +138,7 @@ export function FlightControlPanel() {
 
   function touchUp() {
     touchStartX = 0;
-    sendFlightControlInput({
-      event: 'inputState',
-      inputState: {
-        zoomIn: 0.0,
-        orbitX: 0.0,
-        orbitY: 0.0,
-        panX: 0.0,
-        panY: 0.0,
-        localRollX: 0.0
-      }
-    });
+    sendFlightControlInput(IDLE_INPUT_STATE_COMMAND);
   }
 
   function mouseUp() {
@@ -143,17 +146,7 @@ export function FlightControlPanel() {
       return;
     }
     mouseIsDown = false;
-    sendFlightControlInput({
-      event: 'inputState',
-      inputState: {
-        zoomIn: 0.0,
-        orbitX: 0.0,
-        orbitY: 0.0,
-        panX: 0.0,
-        panY: 0.0,
-        localRollX: 0.0
-      }
-    });
+    sendFlightControlInput(IDLE_INPUT_STATE_COMMAND);
   }
 
   return (
