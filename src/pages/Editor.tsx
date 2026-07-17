@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import favicon from '@/assets/images/favicon.png';
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
+import { Feedback } from '@/components/Feedback';
 import Pagination from '@/components/Pagination';
 import ToggleButton from '@/components/ToggleButton';
 import {
@@ -38,7 +39,6 @@ import DroppableWorkspace from '@/editor/canvas/DroppableWorkspace';
 import { LayoutContainer } from '@/editor/canvas/LayoutContainer';
 import PresentModeToggle from '@/editor/canvas/PresentModeToggle';
 import GlobalMenuBar from '@/editor/menubar/GlobalMenuBar';
-import FeedbackPanel from '@/editor/sidebar/FeedbackPanel';
 import LayoutEditModal from '@/editor/sidebar/LayoutEditModal';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
 import Undo from '@/editor/sidebar/Undo';
@@ -409,7 +409,7 @@ const Editor = () => {
                 </div>
               </ScrollArea>
               <Divider />
-              <FeedbackPanel className={'p-4'} />
+              <Feedback className={'p-4'} />
             </div>
           </div>
         </ResizablePanel>
