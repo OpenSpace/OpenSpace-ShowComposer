@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
@@ -20,20 +20,16 @@ interface ActionTriggerModalProps {
   handleComponentData: (data: Partial<ActionTriggerComponent>) => void;
 }
 
-const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
-  component,
-  handleComponentData
-}) => {
+function ActionTriggerModal({ component, handleComponentData }: ActionTriggerModalProps) {
   const [action, setAction] = useState<string>(component?.action || '');
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
   );
-
   const [color, setColor] = useState<string>(
     component?.color || ComponentBaseColors.action
   );
@@ -41,7 +37,6 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
   const actions = usePropertyStore((state) => state.actions);
 
   const handleActionChange = (action: Action) => {
-    console.log(action);
     setAction(action.Identifier);
     if (!lockName) {
       setGuiName(action.Name);
@@ -54,89 +49,72 @@ const ActionTriggerModal: React.FC<ActionTriggerModalProps> = ({
       action,
       backgroundImage,
       lockName,
-      gui_name,
-      gui_description,
+      gui_name: guiName,
+      gui_description: guiDescription,
       color
     });
   }, [
     action,
     backgroundImage,
-    gui_name,
-    gui_description,
+    guiName,
+    guiDescription,
     lockName,
     color,
     handleComponentData
   ]);
 
   return (
-    <div className={'grid grid-cols-1 gap-4'}>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid gap-2'}>
-          <div className={'text-sm font-medium text-black'}>
-            {getCopy('Action', 'action')}
-          </div>
-          <VirtualizedCombobox
-            options={Object.keys(actions)}
-            selectOption={(v: string) => handleActionChange(actions[v])}
-            selectedOption={
-              Object.keys(actions).find((key) => actions[key].Identifier === action) || ''
-            }
-            searchPlaceholder={'Search the Actions...'}
-            delimiter={'/'}
-          />
-        </div>
-      </div>
-      <div className={'grid grid-cols-2 gap-2 '}>
-        <div className={'grid gap-2'}>
-          <InputLabel htmlFor={'gioname'}>{getCopy('Fade', 'component_name')}</InputLabel>
-          <TextInput
-            id={'guiname'}
-            placeholder={'Name of Component'}
-            value={gui_name}
-            onChange={(e) => setGuiName(e.currentTarget.value)}
-          />
-        </div>
-        <div className={'mt-6 grid gap-2'}>
-          <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-        </div>
-      </div>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Action', 'action')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(actions)}
+          selectOption={(v: string) => handleActionChange(actions[v])}
+          selectedOption={
+            Object.keys(actions).find((key) => actions[key].Identifier === action) || ''
+          }
+          searchPlaceholder={'Search the Actions...'}
+          delimiter={'/'}
+        />
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Fade', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
       <BackgroundHolder
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
-        setBackgroundImage={(v) => {
-          setBackgroundImage(v);
-        }}
+        setBackgroundImage={setBackgroundImage}
       />
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid gap-2'}>
-          <InputLabel htmlFor={'description'}>
-            {getCopy('Focus', 'gui_description')}
-          </InputLabel>
-          <Textarea
-            className={'w-full'}
-            id={'description'}
-            value={gui_description}
-            onChange={(e) => setGuiDescription(e.currentTarget.value)}
-            placeholder={'Type your descriptionhere.'}
-          />
-        </div>
-      </div>
-    </div>
+      <Textarea
+        id={'description'}
+        label={getCopy('Focus', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your description here.'}
+      />
+    </Stack>
   );
-};
+}
 
 interface ActionTriggerGUIProps {
   component: ActionTriggerComponent;
   shouldRender?: boolean;
 }
 
-const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
+function ActionTriggerGUIComponent({
   component,
   shouldRender = true
-}) => {
+}: ActionTriggerGUIProps) {
   const luaApi = useOpenSpaceApi();
-
   const updateComponent = useBoundStore((state) => state.updateComponent);
 
   useEffect(() => {
@@ -154,7 +132,9 @@ const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
     }
   }, [component.id, component.action, luaApi]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <ComponentContainer
@@ -166,14 +146,14 @@ const ActionTriggerGUIComponent: React.FC<ActionTriggerGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={'flex flex-row gap-2'}>
+          <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
             <Information content={component.gui_description} />
-          </div>
+          </Group>
         </ButtonLabel>
       ) : null}
     </ComponentContainer>
   );
-};
+}
 
 export { ActionTriggerGUIComponent, ActionTriggerModal };
