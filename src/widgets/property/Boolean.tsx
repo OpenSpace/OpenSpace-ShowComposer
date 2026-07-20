@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -18,18 +18,19 @@ import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerBool } from '@/utils/triggerHelpers';
+
 interface BoolGUIProps {
   component: BooleanComponent;
   shouldRender?: boolean;
 }
-const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = true }) => {
+
+function BoolGUIComponent({ component, shouldRender = true }: BoolGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [value] = useProperty('BoolProperty', component.property);
 
   useEffect(() => {
     if (luaApi) {
-      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           triggerBool(component.property, component.action);
@@ -44,47 +45,58 @@ const BoolGUIComponent: React.FC<BoolGUIProps> = ({ component, shouldRender = tr
   }, [
     component.id,
     component.action,
-    component.action,
     component.property,
     value,
-    luaApi
+    luaApi,
+    updateComponent
   ]);
 
-  return shouldRender ? (
+  if (!shouldRender) {
+    return null;
+  }
+
+  // Reflect the live property state on the card outline: on (green), off (red),
+  // unknown/disconnected (grey)
+  const outlineColor =
+    value === true
+      ? 'var(--mantine-color-green-6)'
+      : value === false
+        ? 'var(--mantine-color-red-6)'
+        : 'var(--mantine-color-gray-5)';
+
+  return (
     <ComponentContainer
-      className={`${
-        value === true
-          ? 'outline-green-500'
-          : value === false
-            ? 'outline-red-500'
-            : 'outline-grey-500'
-      } outline  outline-4 outline-offset-2 transition-[outline-color] duration-300 `}
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
       style={{
         top: '4px',
         left: '4px',
         width: 'calc(100% - 8px)', // Adjust width to account for outline width and offset
-        height: 'calc(100% - 8px)' // Adjust height to account for outline width and offset
+        height: 'calc(100% - 8px)', // Adjust height to account for outline width and offset
+        outline: `4px solid ${outlineColor}`,
+        outlineOffset: '2px',
+        transition: 'outline-color 300ms'
       }}
       onClick={() => {
         component.triggerAction?.();
       }}
     >
       <ButtonLabel>
-        <div className={'flex gap-2'}>
+        <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
-        </div>
+        </Group>
       </ButtonLabel>
     </ComponentContainer>
-  ) : null;
-};
+  );
+}
+
 interface BoolModalProps {
   component: BooleanComponent | null;
   handleComponentData: (data: Partial<BooleanComponent>) => void;
 }
-const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData }) => {
+
+function BoolModal({ component, handleComponentData }: BoolModalProps) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -99,10 +111,9 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
   const [color, setColor] = useState<string>(
     component?.color || ComponentBaseColors.boolean
   );
+
   useEffect(() => {
-    // console.log(properties);
     const propertyData = usePropertyStore.getState().properties[property];
-    console.log('PROPERTY DATA', propertyData);
     if (!propertyData || lockName) return;
     setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
     setGuiDescription(propertyData.metaData.description);
@@ -128,6 +139,7 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
     backgroundImage,
     color
   ]);
+
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].metaData?.type === 'BoolProperty')
     .sort((a, b) => {
@@ -143,76 +155,54 @@ const BoolModal: React.FC<BoolModalProps> = ({ component, handleComponentData })
       acc[newValue] = key;
       return acc;
     }, {});
+
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid gap-2'}>
-            <div className={'text-sm font-medium text-black'}>
-              {getCopy('Boolean', 'property')}
-            </div>
-            <VirtualizedCombobox
-              options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => setProperty(sortedKeys[v])}
-              selectedOption={
-                Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
-              }
-              searchPlaceholder={'Search the Scene...'}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-2 gap-4'}>
-          <div className={'grid gap-2'}>
-            <InputLabel>{getCopy('Boolean', 'action_type')}</InputLabel>
-            <SelectableDropdown
-              options={['toggle', 'on', 'off']}
-              selected={action}
-              setSelected={setAction}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-4 gap-2'}>
-          <div className={'col-span-3 grid gap-2'}>
-            <InputLabel htmlFor={'gioname'}>
-              {getCopy('Boolean', 'component_name')}
-            </InputLabel>
-            <TextInput
-              id={'guiname'}
-              placeholder={'Name of Component'}
-              value={gui_name}
-              onChange={(e) => setGuiName(e.currentTarget.value)}
-            />
-          </div>
-          <div className={'col-span-1 mt-6 grid gap-2'}>
-            <ToggleComponent
-              label={'Lock Name'}
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
-          />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Boolean', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Boolean', 'property')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(sortedKeys)}
+          selectOption={(v: string) => setProperty(sortedKeys[v])}
+          selectedOption={
+            Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
+          }
+          searchPlaceholder={'Search the Scene...'}
+        />
+      </Stack>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Boolean', 'action_type')}</InputLabel>
+        <SelectableDropdown
+          options={['toggle', 'on', 'off']}
+          selected={action}
+          setSelected={setAction}
+        />
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Boolean', 'component_name')}
+          placeholder={'Name of Component'}
+          value={gui_name}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Boolean', 'gui_description')}
+        value={gui_description}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { BoolGUIComponent, BoolModal };
