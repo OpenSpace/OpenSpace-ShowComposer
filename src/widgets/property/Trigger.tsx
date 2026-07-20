@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -21,17 +21,14 @@ interface TriggerGUIProps {
   component: TriggerComponent;
   shouldRender?: boolean;
 }
-const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
-  component,
-  shouldRender = true
-}) => {
+
+function TriggerGUIComponent({ component, shouldRender = true }: TriggerGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [, , meta] = useProperty('TriggerProperty', component.property);
 
   useEffect(() => {
     if (luaApi) {
-      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           triggerTrigger(component.property);
@@ -43,33 +40,34 @@ const TriggerGUIComponent: React.FC<TriggerGUIProps> = ({
         isDisabled: true
       });
     }
-  }, [component.id, component.property, luaApi, meta]);
+  }, [component.id, component.property, luaApi, meta, updateComponent]);
 
-  return shouldRender ? (
+  if (!shouldRender) {
+    return null;
+  }
+
+  return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
       onClick={() => component.triggerAction?.()}
     >
       <ButtonLabel>
-        <>
+        <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
-        </>
+        </Group>
       </ButtonLabel>
     </ComponentContainer>
-  ) : null;
-};
+  );
+}
 
 interface TriggerModalProps {
   component: TriggerComponent | null;
   handleComponentData: (data: Partial<TriggerComponent>) => void;
 }
 
-const TriggerModal: React.FC<TriggerModalProps> = ({
-  component,
-  handleComponentData
-}) => {
+function TriggerModal({ component, handleComponentData }: TriggerModalProps) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -109,6 +107,7 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
     color,
     handleComponentData
   ]);
+
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].metaData?.type === 'TriggerProperty')
     .sort((a, b) => {
@@ -124,66 +123,46 @@ const TriggerModal: React.FC<TriggerModalProps> = ({
       acc[newValue] = key;
       return acc;
     }, {});
+
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid gap-2'}>
-            <div className={'text-sm font-medium text-black'}>
-              {getCopy('Trigger', 'property')}
-            </div>
-            <VirtualizedCombobox
-              options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => setProperty(sortedKeys[v])}
-              selectedOption={
-                Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
-              }
-              searchPlaceholder={'Search the Scene...'}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-4 gap-2'}>
-          <div className={'col-span-3 grid gap-2'}>
-            <InputLabel htmlFor={'gioname'}>
-              {getCopy('Trigger', 'component_name')}
-            </InputLabel>
-            <TextInput
-              id={'guiname'}
-              placeholder={'Name of Component'}
-              value={gui_name}
-              onChange={(e) => setGuiName(e.currentTarget.value)}
-            />
-          </div>
-          <div className={'col-span-1 mt-6 grid gap-2'}>
-            <ToggleComponent
-              label={'Lock Name'}
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
-          />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Trigger', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Trigger', 'property')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(sortedKeys)}
+          selectOption={(v: string) => setProperty(sortedKeys[v])}
+          selectedOption={
+            Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
+          }
+          searchPlaceholder={'Search the Scene...'}
+        />
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Trigger', 'component_name')}
+          placeholder={'Name of Component'}
+          value={gui_name}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Trigger', 'gui_description')}
+        value={gui_description}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { TriggerGUIComponent, TriggerModal };
