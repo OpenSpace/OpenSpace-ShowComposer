@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 
 import BackgroundHolder from '@/components/BackgroundHolder';
 import ButtonLabel from '@/components/ButtonLabel';
@@ -10,13 +10,16 @@ import ToggleComponent from '@/components/Toggle';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, PageComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
+
 interface PageGUIProps {
   component: PageComponent;
   shouldRender?: boolean;
 }
-const PageGUIComponent: React.FC<PageGUIProps> = ({ component, shouldRender = true }) => {
+
+function PageGUIComponent({ component, shouldRender = true }: PageGUIProps) {
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const goToPage = useBoundStore((state) => state.goToPage);
+
   useEffect(() => {
     updateComponent(component.id, {
       triggerAction: () => {
@@ -24,7 +27,12 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({ component, shouldRender = tr
       }
     });
   }, [component.page]);
-  return shouldRender ? (
+
+  if (!shouldRender) {
+    return null;
+  }
+
+  return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
@@ -33,30 +41,26 @@ const PageGUIComponent: React.FC<PageGUIProps> = ({ component, shouldRender = tr
       }}
     >
       <ButtonLabel>
-        <div className={'flex flex-row gap-2'}>
-          {/* {property?.value * 100} */}
+        <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
-        </div>
+        </Group>
       </ButtonLabel>
     </ComponentContainer>
-  ) : null;
-};
+  );
+}
+
 interface PageModalProps {
   component: PageComponent | null;
   handleComponentData: (data: Partial<PageComponent>) => void;
-  //   isOpen: boolean;
 }
-const PageModal: React.FC<PageModalProps> = ({
-  component,
-  handleComponentData
-  //   isOpen,
-}) => {
+
+function PageModal({ component, handleComponentData }: PageModalProps) {
   const pages = useBoundStore((state) => state.pages);
   const [page, setPage] = useState<number>(component?.page || 1);
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || 'Go to Page 1');
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || 'Go to Page 1');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
@@ -73,80 +77,65 @@ const PageModal: React.FC<PageModalProps> = ({
       setGuiName(`Go to ${pageData.name ? pageData.name : 'Go to Page ' + page}`);
     }
   };
+
   useEffect(() => {
     handleComponentData({
       page,
       backgroundImage,
-      gui_name,
+      gui_name: guiName,
       lockName,
-      gui_description,
+      gui_description: guiDescription,
       color
     });
   }, [
     page,
     backgroundImage,
-    gui_name,
+    guiName,
     lockName,
-    gui_description,
+    guiDescription,
     color,
     handleComponentData
   ]);
+
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <InputLabel htmlFor={'page'}>{getCopy('Page', 'page_number')}</InputLabel>
-          <SelectableDropdown
-            options={pages.map((v, i) => ({
-              value: (i + 1).toString(),
-              label: v.name ? v.name : 'Page ' + (i + 1).toString()
-            }))}
-            selected={page.toString()}
-            setSelected={(v: string) => handlePageChange(parseInt(v))}
-          />
-        </div>
-        <div className={'grid grid-cols-4 gap-2'}>
-          <div className={'col-span-3 grid gap-2'}>
-            <InputLabel htmlFor={'gioname'}>
-              {getCopy('Page', 'component_name')}
-            </InputLabel>
-            <TextInput
-              id={'guiname'}
-              placeholder={'Name of Component'}
-              value={gui_name}
-              onChange={(e) => setGuiName(e.currentTarget.value)}
-            />
-          </div>
-          <div className={'cols-span-1 mt-6 grid gap-2'}>
-            <ToggleComponent
-              label={'Lock Name'}
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
-          />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Page', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Page', 'page_number')}</InputLabel>
+        <SelectableDropdown
+          options={pages.map((v, i) => ({
+            value: (i + 1).toString(),
+            label: v.name ? v.name : 'Page ' + (i + 1).toString()
+          }))}
+          selected={page.toString()}
+          setSelected={(v: string) => handlePageChange(parseInt(v))}
+        />
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Page', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Page', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { PageGUIComponent, PageModal };
