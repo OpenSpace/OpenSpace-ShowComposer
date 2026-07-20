@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Box, Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -17,13 +17,11 @@ interface ScriptGUIProps {
   component: ScriptComponent;
   shouldRender?: boolean;
 }
-const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
-  component,
-  shouldRender = true
-}) => {
-  const luaApi = useOpenSpaceApi();
 
+function ScriptGUIComponent({ component, shouldRender = true }: ScriptGUIProps) {
+  const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
+
   useEffect(() => {
     if (luaApi) {
       updateComponent(component.id, {
@@ -39,7 +37,9 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
     }
   }, [component.id, component.script, luaApi]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <ComponentContainer
@@ -51,30 +51,26 @@ const ScriptGUIComponent: React.FC<ScriptGUIProps> = ({
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={'flex flex-row gap-2'}>
+          <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
             <Information content={component.gui_description} />
-          </div>
+          </Group>
         </ButtonLabel>
       ) : null}
     </ComponentContainer>
   );
-};
+}
 
 interface ScriptModalProps {
   component: ScriptComponent | null;
   handleComponentData: (data: Partial<ScriptComponent>) => void;
-  //   isOpen: boolean;
 }
-const ScriptModal: React.FC<ScriptModalProps> = ({
-  component,
-  handleComponentData
-  //   isOpen,
-}) => {
+
+function ScriptModal({ component, handleComponentData }: ScriptModalProps) {
   const [script, setScript] = useState<string>(component?.script || '');
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
@@ -89,87 +85,66 @@ const ScriptModal: React.FC<ScriptModalProps> = ({
       script,
       backgroundImage,
       lockName,
-      gui_name,
-      gui_description,
+      gui_name: guiName,
+      gui_description: guiDescription,
       color
     });
   }, [
     script,
     backgroundImage,
-    gui_name,
-    gui_description,
+    guiName,
+    guiDescription,
     lockName,
     color,
     handleComponentData
   ]);
 
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-4 items-center gap-4'}>
-          <div className={'col-span-4 grid gap-2'}>
-            <InputLabel htmlFor={'gioname'}>{getCopy('Script', 'script')}</InputLabel>
-            <div style={{ maxHeight: '300px', overflowY: 'auto', resize: 'vertical' }}>
-              <CodeEditor
-                value={script}
-                language={'lua'}
-                placeholder={'Please enter Lua code.'}
-                onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setScript(evn.target.value)
-                }
-                padding={15}
-                style={{
-                  // backgroundColor: '#f5f55',
-                  fontFamily:
-                    'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
-                }}
-              />
-            </div>
-          </div>
-          <div className={'col-span-3 grid grid-cols-3  gap-2 '}>
-            <div className={'col-span-2 grid gap-2'}>
-              <InputLabel htmlFor={'gioname'}>
-                {getCopy('Fade', 'component_name')}
-              </InputLabel>
-              <TextInput
-                id={'guiname'}
-                placeholder={'Name of Component'}
-                value={gui_name}
-                onChange={(e) => setGuiName(e.currentTarget.value)}
-              />
-            </div>
-            <div className={'col-span-1 mt-6 grid gap-2'}>
-              <ToggleComponent
-                label={'Lock Name'}
-                value={lockName}
-                setValue={setLockName}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Script', 'script')}</InputLabel>
+        <Box style={{ maxHeight: '300px', overflowY: 'auto', resize: 'vertical' }}>
+          <CodeEditor
+            value={script}
+            language={'lua'}
+            placeholder={'Please enter Lua code.'}
+            onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setScript(evn.target.value)
+            }
+            padding={15}
+            style={{
+              fontFamily:
+                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
+            }}
           />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Fade', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+        </Box>
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Fade', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Fade', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { ScriptGUIComponent, ScriptModal };
