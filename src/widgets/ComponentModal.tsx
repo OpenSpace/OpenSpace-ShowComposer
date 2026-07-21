@@ -200,7 +200,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <SetTimeModal
           component={component as SetTimeComponent}
-          isOpen={isOpen}
           handleComponentData={setComponentData}
         />
       );
@@ -209,7 +208,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <SetNavModal
           component={component as SetNavComponent}
-          isOpen={isOpen}
           handleComponentData={setComponentData}
         />
       );
