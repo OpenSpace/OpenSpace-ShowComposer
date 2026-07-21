@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InputLabel, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -17,8 +17,7 @@ import {
   RetargetAnchorKey
 } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
-import { SetFocusComponent } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, SetFocusComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -26,7 +25,8 @@ interface FocusGUIProps {
   component: SetFocusComponent;
   shouldRender?: boolean;
 }
-const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = true }) => {
+
+function FocusComponent({ component, shouldRender = true }: FocusGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   // Reading Renderable.Enabled lets us check whether the scene node exists.
@@ -54,7 +54,9 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
     }
   }, [component.id, component.property, luaApi, enabledValue]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <ComponentContainer
@@ -66,34 +68,27 @@ const FocusComponent: React.FC<FocusGUIProps> = ({ component, shouldRender = tru
     >
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={'flex flex-row gap-2'}>
+          <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
-            {/* {CurrentAnchor?.value && (
-              <p>{`Current Anchor: ${CurrentAnchor?.value}`}</p>
-            )} */}
             <Information content={component.gui_description} />
-          </div>
+          </Group>
         </ButtonLabel>
       ) : null}
     </ComponentContainer>
   );
-};
+}
 
 interface FocusModalProps {
   component: SetFocusComponent | null;
   handleComponentData: (data: Partial<SetFocusComponent>) => void;
-  //   isOpen: boolean;
 }
-const FocusModal: React.FC<FocusModalProps> = ({
-  component,
-  handleComponentData
-  //   isOpen,
-}) => {
+
+function FocusModal({ component, handleComponentData }: FocusModalProps) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
@@ -118,19 +113,20 @@ const FocusModal: React.FC<FocusModalProps> = ({
       property,
       backgroundImage,
       lockName,
-      gui_name,
-      gui_description,
+      gui_name: guiName,
+      gui_description: guiDescription,
       color
     });
   }, [
     property,
     backgroundImage,
-    gui_name,
-    gui_description,
+    guiName,
+    guiDescription,
     lockName,
     color,
     handleComponentData
   ]);
+
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => a.includes('.Renderable'))
     .sort((a, b) => {
@@ -146,66 +142,46 @@ const FocusModal: React.FC<FocusModalProps> = ({
       acc[formatName(newValue)] = newValue;
       return acc;
     }, {});
+
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid gap-2'}>
-            <div className={'text-sm font-medium text-black'}>
-              {getCopy('Focus', 'property')}
-            </div>
-            <VirtualizedCombobox
-              options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
-              selectedOption={
-                (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
-              }
-              searchPlaceholder={'Search the Scene...'}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-4 gap-4'}>
-          <div className={'col-span-3 grid gap-2'}>
-            <InputLabel htmlFor={'gioname'}>
-              {getCopy('Focus', 'component_name')}
-            </InputLabel>
-            <TextInput
-              id={'guiname'}
-              placeholder={'Name of Component'}
-              value={gui_name}
-              onChange={(e) => setGuiName(e.currentTarget.value)}
-            />
-          </div>
-          <div className={'cols-span-1 mt-6 grid gap-2'}>
-            <ToggleComponent
-              label={'Lock Name'}
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
-          />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Focus', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Focus', 'property')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(sortedKeys)}
+          selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
+          selectedOption={
+            (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
+          }
+          searchPlaceholder={'Search the Scene...'}
+        />
+      </Stack>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Focus', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Focus', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { FocusComponent, FocusModal };
