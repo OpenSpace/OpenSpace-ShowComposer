@@ -55,7 +55,7 @@ function BoolGUIComponent({ component, shouldRender = true }: BoolGUIProps) {
     return null;
   }
 
-  // Reflect the live property state on the card outline: on (green), off (red),
+  // Reflect the property state on the card outline: on (green), off (red),
   // unknown/disconnected (grey)
   const outlineColor =
     value === true

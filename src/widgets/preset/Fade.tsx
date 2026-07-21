@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
+import {
+  Group,
+  InputLabel,
+  NumberInput,
+  Stack,
+  Textarea,
+  TextInput
+} from '@mantine/core';
 import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
@@ -17,7 +24,6 @@ import { useProperty } from '@/hooks/properties';
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
-// import { EnginePropertyVisibilityKey } from '@/store/apiStore';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 import { triggerFade } from '@/utils/triggerHelpers';
@@ -26,7 +32,8 @@ interface FadeGUIProps {
   component: FadeComponent;
   shouldRender?: boolean;
 }
-const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = true }) => {
+
+function FadeGUIComponent({ component, shouldRender = true }: FadeGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [opacity] = useProperty('FloatProperty', component.property);
@@ -52,31 +59,36 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
     component.id,
     component.action,
     component.intDuration,
-    component.action,
     component.property,
     opacity,
     luaApi
   ]);
-  return shouldRender ? (
+
+  if (!shouldRender) {
+    return null;
+  }
+
+  // Reflect the value of fade on the card outline: faded in (green),
+  // faded out (red), transitioning/disconnected (grey)
+  const outlineColor =
+    fadeValue === 1
+      ? 'var(--mantine-color-green-6)'
+      : fadeValue === 0
+        ? 'var(--mantine-color-red-6)'
+        : 'var(--mantine-color-gray-5)';
+
+  return (
     <ComponentContainer
-      className={`${
-        opacity === undefined
-          ? '!outline-none !outline-0'
-          : opacity === 1
-            ? 'outline-green-500'
-            : opacity === 0
-              ? 'outline-red-500'
-              : 'outline-grey-500'
-      }
-      outline outline-4 outline-offset-2 transition-[outline-color] duration-300`}
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
       style={{
         top: '4px',
         left: '4px',
         width: 'calc(100% - 8px)', // Adjust width to account for outline width and offset
-        height: 'calc(100% - 8px)' // Adjust height to account for outline width and offset
-        // opacity: property ? 1.0 : 0.15,
+        height: 'calc(100% - 8px)', // Adjust height to account for outline width and offset
+        outline: `4px solid ${outlineColor}`,
+        outlineOffset: '2px',
+        transition: 'outline-color 300ms'
       }}
       onClick={() => {
         component.triggerAction?.();
@@ -87,26 +99,22 @@ const FadeGUIComponent: React.FC<FadeGUIProps> = ({ component, shouldRender = tr
       ) : null}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={'flex flex-row gap-2'}>
+          <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
             <Information content={component.gui_description} />
-          </div>
+          </Group>
         </ButtonLabel>
       ) : null}
     </ComponentContainer>
-  ) : null;
-};
+  );
+}
 
 interface FadeModalProps {
   component: FadeComponent | null;
   handleComponentData: (data: Partial<FadeComponent>) => void;
-  //   isOpen: boolean;
 }
-const FadeModal: React.FC<FadeModalProps> = ({
-  component,
-  handleComponentData
-  //   isOpen,
-}) => {
+
+function FadeModal({ component, handleComponentData }: FadeModalProps) {
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
@@ -117,16 +125,11 @@ const FadeModal: React.FC<FadeModalProps> = ({
         }, {})
     )
   );
-  // const properties = usePropertyStore((state) => state.properties);
-
-  // const Visibility = usePropertyStore(
-  //   (state) => state.properties[EnginePropertyVisibilityKey],
-  // );
   const [property, setProperty] = useState<string>(component?.property || '');
   const [intDuration, setIntDuration] = useState<number>(component?.intDuration || 1);
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [action, setAction] = useState<string>(component?.action || 'toggle');
@@ -172,8 +175,8 @@ const FadeModal: React.FC<FadeModalProps> = ({
       action: action as Toggle,
       backgroundImage,
       lockName,
-      gui_name,
-      gui_description,
+      gui_name: guiName,
+      gui_description: guiDescription,
       color
     });
   }, [
@@ -181,8 +184,8 @@ const FadeModal: React.FC<FadeModalProps> = ({
     intDuration,
     action,
     backgroundImage,
-    gui_name,
-    gui_description,
+    guiName,
+    guiDescription,
     lockName,
     color,
     handleComponentData
@@ -191,7 +194,6 @@ const FadeModal: React.FC<FadeModalProps> = ({
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        // .filter((a) => a.endsWith('.Fade') && !a.endsWith('.Appearance.Fade'))
         .sort((a, b) => {
           const periodCountA = (a.match(/\./g) || []).length;
           const periodCountB = (b.match(/\./g) || []).length;
@@ -207,96 +209,68 @@ const FadeModal: React.FC<FadeModalProps> = ({
         }, {}),
     [properties]
   );
-  return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid gap-2'}>
-            <div className={'text-sm font-medium text-black'}>
-              {getCopy('Fade', 'property')}
-            </div>
-            <VirtualizedCombobox
-              options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
-              selectedOption={
-                Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
-              }
-              searchPlaceholder={'Search the Scene...'}
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-2 gap-4'}>
-          <div className={'grid gap-2'}>
-            <InputLabel>{getCopy('Fade', 'action_type')}</InputLabel>
-            <SelectableDropdown
-              options={['toggle', 'on', 'off']}
-              selected={action}
-              setSelected={handleActionChange}
-            />
-          </div>
 
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'duration'}>
-              {getCopy('Fade', 'fade_duration')}
-            </InputLabel>
-            <NumberInput
-              id={'duration'}
-              placeholder={'Duration to Fade'}
-              min={0}
-              max={20}
-              step={0.1}
-              // className=""
-              value={intDuration}
-              onChange={(value) =>
-                setIntDuration(typeof value === 'number' ? value : parseFloat(value))
-              }
-            />
-          </div>
-        </div>
-        <div className={'grid grid-cols-4 '}>
-          <div className={'col-span-3 grid grid-cols-3 gap-4'}>
-            <div className={'col-span-2 grid gap-2'}>
-              <InputLabel htmlFor={'gioname'}>
-                {getCopy('Fade', 'component_name')}
-              </InputLabel>
-              <TextInput
-                id={'guiname'}
-                placeholder={'Name of Component'}
-                value={gui_name}
-                onChange={(e) => setGuiName(e.currentTarget.value)}
-              />
-            </div>
-            <div className={'col-span-1 mt-6 grid gap-2'}>
-              <ToggleComponent
-                label={'Lock Name'}
-                value={lockName}
-                setValue={setLockName}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
+  return (
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('Fade', 'property')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(sortedKeys)}
+          selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
+          selectedOption={
+            Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
+          }
+          searchPlaceholder={'Search the Scene...'}
+        />
+      </Stack>
+      <Group grow align={'flex-end'} wrap={'nowrap'}>
+        <Stack gap={'xs'}>
+          <InputLabel>{getCopy('Fade', 'action_type')}</InputLabel>
+          <SelectableDropdown
+            options={['toggle', 'on', 'off']}
+            selected={action}
+            setSelected={handleActionChange}
           />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('Fade', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+        </Stack>
+        <NumberInput
+          id={'duration'}
+          label={getCopy('Fade', 'fade_duration')}
+          placeholder={'Duration to Fade'}
+          min={0}
+          max={20}
+          step={0.1}
+          value={intDuration}
+          onChange={(value) =>
+            setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+          }
+        />
+      </Group>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Fade', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('Fade', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { FadeGUIComponent, FadeModal };
