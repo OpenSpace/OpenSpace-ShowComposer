@@ -10,7 +10,9 @@ export {
   LuFastForward as FastForwardIcon,
   LuGlobe as GlobeIcon,
   LuImage as ImageIcon,
+  LuLink as LinkIcon,
   LuPause as PauseIcon,
+  LuPencil as EditIcon,
   LuPlay as PlayIcon,
   LuRefreshCcwDot as RefreshCcwDotIcon,
   LuRewind as RewindIcon,
@@ -18,6 +20,8 @@ export {
   LuSearch as SearchIcon,
   LuSquare as SquareIcon,
   LuTelescope as TelescopeIcon,
+  LuUnlink as UnlinkIcon,
   LuUpload as UploadIcon,
+  LuX as XIcon,
   LuZoomIn as ZoomInIcon
 } from 'react-icons/lu';

@@ -2,14 +2,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import {
   ActionIcon,
+  Group,
   InputLabel,
   NumberInput,
+  SimpleGrid,
+  Stack,
   Tabs,
+  Text,
   Textarea,
   TextInput,
   Tooltip
 } from '@mantine/core';
-import { Edit2, Link, Unlink, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import ButtonLabel from '@/components/ButtonLabel';
@@ -19,6 +22,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,
@@ -43,8 +47,8 @@ import { TriggerGUIComponent } from '../property/Trigger';
 import { FadeGUIComponent } from './Fade';
 import { FlyToGUIComponent } from './FlyTo';
 import { FocusComponent } from './Focus';
-// // Define the type for list items
-// set up chained v paralell data handling
+
+// One entry in a Multi's ordered list of chained/parallel sub-components
 interface MultiType {
   component: MultiOption['id'];
   buffer: number;
@@ -53,12 +57,13 @@ interface MultiType {
   startTime: number;
   id: string;
 }
+
 interface MultiModalProps {
   component: MultiComponent | null;
   handleComponentData: (data: Partial<MultiComponent>) => void;
 }
-// MultiModal Component
-const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData }) => {
+
+function MultiModal({ component, handleComponentData }: MultiModalProps) {
   const [items, setItems] = useState<MultiType[]>(
     component
       ? component.components.map((v) => ({
@@ -85,8 +90,8 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
       isMultiOption(getComponentById(c))
     )
   );
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [color, setColor] = useState<string>(
@@ -98,9 +103,10 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
     ''
   );
   const [cancelCallback, setCancelCallback] = useState<() => void>(() => () => {});
-  const [initalData, setInitialData] = useState<Partial<MultiOption>>({
+  const [initialData, setInitialData] = useState<Partial<MultiOption>>({
     isMulti: 'pendingSave'
   });
+
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
     setInitialData({
@@ -163,8 +169,8 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
       }
     }
   }
+
   function recalculateOffsets(tempItems: MultiType[]) {
-    // let totalDelay = 0;
     const originalOrder = tempItems.map((v) => v.id);
     sortAdjacentUnchainedItems(tempItems);
     let lastStartTime = 0;
@@ -175,7 +181,6 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
       }
       if (!tempItems[i].chained) {
         tempItems[i].startTime = lastStartTime + tempItems[i].buffer;
-        // lastStartTime = lastStartTime ;
       } else {
         tempItems[i].startTime = lastEndTime + tempItems[i].buffer;
         lastStartTime = tempItems[i].startTime;
@@ -191,20 +196,16 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
       return originalOrder.indexOf(a.id) - originalOrder.indexOf(b.id);
     });
   }
-  // console.log(items);
 
   useEffect(() => {
     const newItems = Array.from(items);
     recalculateOffsets(newItems);
     setItems(newItems);
   }, [items]);
+
   useEffect(() => {
     setAvailableOptions(
-      multiOptions.filter(
-        (component) =>
-          // getComponentById(component)?.isMulti != 'false' &&
-          !items.some((item) => item.id === component)
-      )
+      multiOptions.filter((component) => !items.some((item) => item.id === component))
     );
     handleComponentData({
       components: items.map((v) => ({
@@ -215,11 +216,11 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
         chained: v.chained
       })),
       backgroundImage,
-      gui_description,
-      gui_name,
+      gui_description: guiDescription,
+      gui_name: guiName,
       color
     });
-  }, [items, backgroundImage, gui_name, gui_description, color]);
+  }, [items, backgroundImage, guiName, guiDescription, color]);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -236,12 +237,9 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
     const newItem: MultiType = {
       id: newComponent,
       component: newComponent,
-      // Placeholder component
-      // delay: 0, // Default delay of 1 second
       buffer: 0,
       startTime: 0,
       endTime: 0,
-      // totalOffset: 0,
       chained: items.length > 0 ? true : false
     };
     setItems([...items, newItem]);
@@ -249,65 +247,48 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
       isMulti: 'pendingSave'
     });
   };
+
   const removeItem = (id: string) => {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
     removeComponent(id);
-    // updateComponent(id, {
-    //   isMulti: 'pendingDelete',
-    // });
   };
+
   return (
-    <Tabs defaultValue={'multi'} className={'w-auto'}>
-      <Tabs.List className={'mb-4'}>
+    <Tabs defaultValue={'multi'}>
+      <Tabs.List>
         <Tabs.Tab value={'multi'}>{getCopy('Multi', 'multi_settings')}</Tabs.Tab>
         <Tabs.Tab value={'visual'}>{getCopy('Multi', 'visual_settings')}</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value={'multi'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid grid-cols-2 gap-4'}>
-            <div className={'grid gap-2'}>
-              {/* <Label>Add Existing Component</Label> */}
-              <SelectableDropdown
-                placeholder={'Add Existing Component'}
-                options={availableOptions.map((component) => ({
-                  value: component,
-                  label: getComponentById(component)?.gui_name
-                }))}
-                selected={undefined}
-                setSelected={(id: string) => {
-                  addItem(id);
-                }}
-              />
-            </div>
-            <div className={'grid gap-2'}>
-              {/* <Label>Add New Component</Label> */}
-
-              <SelectableDropdown
-                placeholder={'Add New Component'}
-                options={MultiOptions}
-                selected={undefined}
-                setSelected={(type: string) => handleAddComponent(type as ComponentType)}
-              />
-            </div>
-          </div>
-          {/* {availableOptions.map((component, index) => (
-           <button key={index} onClick={() => addItem(component)}>
-           Add {getComponentById(component).type}
-           </button>
-           ))} */}
-          <p className={'text-sm text-slate-500 dark:text-slate-400'}>
+        <Stack gap={'md'}>
+          <SimpleGrid cols={2}>
+            <SelectableDropdown
+              placeholder={'Add Existing Component'}
+              options={availableOptions.map((component) => ({
+                value: component,
+                label: getComponentById(component)?.gui_name
+              }))}
+              selected={undefined}
+              setSelected={(id: string) => {
+                addItem(id);
+              }}
+            />
+            <SelectableDropdown
+              placeholder={'Add New Component'}
+              options={MultiOptions}
+              selected={undefined}
+              setSelected={(type: string) => handleAddComponent(type as ComponentType)}
+            />
+          </SimpleGrid>
+          <Text size={'sm'} c={'dimmed'}>
             <b>{getCopy('Multi', 'delay:')}</b>
             {getCopy('Multi', 'delay_copy')}
-          </p>
+          </Text>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={'droppable'}>
               {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  //   className="flex flex-row"
-                >
+                <div {...provided.droppableProps} ref={provided.innerRef}>
                   {items.map((item, index) => (
                     <Draggable key={item.id} draggableId={item.id} index={index}>
                       {(provided) => (
@@ -315,92 +296,104 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className={
-                            'mb-2 flex items-center justify-between gap-2 overflow-hidden rounded border px-4 py-2'
-                          }
                         >
-                          <div className={'w-[40%] overflow-hidden whitespace-nowrap'}>
-                            {getComponentById(item.id)?.gui_name}
-                          </div>
-                          <Tooltip
-                            maw={200}
-                            label={
-                              <>
-                                <b>{getCopy('Multi', 'chained_items:')}</b>
-                                {getCopy(
-                                  'Multi',
-                                  'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
-                                )}
-                                <br />
-                                <b>{getCopy('Multi', 'unchained_items:')}</b>
-                                {getCopy(
-                                  'Multi',
-                                  'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
-                                )}
-                              </>
-                            }
+                          <Group
+                            justify={'space-between'}
+                            wrap={'nowrap'}
+                            gap={'xs'}
+                            mb={'xs'}
+                            px={'md'}
+                            py={'xs'}
+                            style={{
+                              overflow: 'hidden',
+                              border: '1px solid var(--mantine-color-default-border)',
+                              borderRadius: 'var(--mantine-radius-sm)'
+                            }}
                           >
-                            <ActionIcon
-                              disabled={index == 0}
-                              variant={item.chained ? 'filled' : 'subtle'}
-                              onClick={() => {
-                                const newItems = Array.from(items);
-                                newItems[index].chained = !item.chained;
-                                recalculateOffsets(newItems);
-                                setItems(newItems);
-                              }}
-                              className={'p-1'}
+                            <Text w={'40%'} truncate>
+                              {getComponentById(item.id)?.gui_name}
+                            </Text>
+                            <Tooltip
+                              maw={200}
+                              label={
+                                <>
+                                  <b>{getCopy('Multi', 'chained_items:')}</b>
+                                  {getCopy(
+                                    'Multi',
+                                    'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
+                                  )}
+                                  <br />
+                                  <b>{getCopy('Multi', 'unchained_items:')}</b>
+                                  {getCopy(
+                                    'Multi',
+                                    'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
+                                  )}
+                                </>
+                              }
                             >
-                              {item.chained ? <Link size={20} /> : <Unlink size={20} />}
-                            </ActionIcon>
-                          </Tooltip>
-                          <div className={'flex items-center gap-1'}>
-                            <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
-                            <NumberInput
-                              className={'w-20'}
-                              name={'delay'}
-                              min={0}
-                              max={20}
-                              step={0.2}
-                              value={item.buffer}
-                              onChange={(value) => {
-                                const newItems = Array.from(items);
-                                newItems[index].buffer =
-                                  typeof value === 'number' ? value : parseFloat(value);
-                                setItems(newItems);
-                              }}
-                            />
-                          </div>
-                          <div className={'flex-0 grid grid-cols-2 gap-2'}>
-                            <Tooltip label={getCopy('Multi', 'edit_component')}>
                               <ActionIcon
-                                variant={'subtle'}
+                                disabled={index === 0}
+                                variant={item.chained ? 'filled' : 'subtle'}
                                 onClick={() => {
-                                  setInitialData({});
-                                  setCurrentComponentId(item.id);
-                                  setCurrentComponentType(
-                                    getComponentById(item.id)?.type
-                                  );
-                                  setCancelCallback(() => () => {
-                                    setItems(items);
-                                  });
-                                  setIsModalOpen(true);
+                                  const newItems = Array.from(items);
+                                  newItems[index].chained = !item.chained;
+                                  recalculateOffsets(newItems);
+                                  setItems(newItems);
                                 }}
-                                className={'p-1'}
                               >
-                                <Edit2 size={20} />
+                                {item.chained ? (
+                                  <LinkIcon size={20} />
+                                ) : (
+                                  <UnlinkIcon size={20} />
+                                )}
                               </ActionIcon>
                             </Tooltip>
-                            <Tooltip label={getCopy('Multi', 'remove_from_component')}>
-                              <ActionIcon
-                                variant={'subtle'}
-                                onClick={() => removeItem(item.id)}
-                                className={'p-1'}
-                              >
-                                <XIcon size={20} />
-                              </ActionIcon>
-                            </Tooltip>
-                          </div>
+                            <Group gap={'xs'} wrap={'nowrap'}>
+                              <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
+                              <NumberInput
+                                w={80}
+                                name={'delay'}
+                                min={0}
+                                max={20}
+                                step={0.2}
+                                value={item.buffer}
+                                onChange={(value) => {
+                                  const newItems = Array.from(items);
+                                  newItems[index].buffer =
+                                    typeof value === 'number' ? value : parseFloat(value);
+                                  setItems(newItems);
+                                }}
+                              />
+                            </Group>
+                            <Group gap={'xs'} wrap={'nowrap'}>
+                              <Tooltip label={getCopy('Multi', 'edit_component')}>
+                                <ActionIcon
+                                  variant={'subtle'}
+                                  onClick={() => {
+                                    setInitialData({});
+                                    setCurrentComponentId(item.id);
+                                    setCurrentComponentType(
+                                      getComponentById(item.id)?.type
+                                    );
+                                    setCancelCallback(() => () => {
+                                      setItems(items);
+                                    });
+                                    setIsModalOpen(true);
+                                  }}
+                                >
+                                  <EditIcon size={20} />
+                                </ActionIcon>
+                              </Tooltip>
+                              <Tooltip label={getCopy('Multi', 'remove_from_component')}>
+                                <ActionIcon
+                                  variant={'subtle'}
+                                  onClick={() => removeItem(item.id)}
+                                >
+                                  <XIcon size={20} />
+                                </ActionIcon>
+                              </Tooltip>
+                            </Group>
+                          </Group>
                         </div>
                       )}
                     </Draggable>
@@ -410,56 +403,38 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
               )}
             </Droppable>
           </DragDropContext>
-        </div>
+        </Stack>
       </Tabs.Panel>
       <Tabs.Panel value={'visual'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid grid-cols-1 gap-4'}>
-            <div className={'grid gap-2'}>
-              <InputLabel htmlFor={'gioname'}>
-                {getCopy('Multi', 'component_name')}
-              </InputLabel>
-              <TextInput
-                id={'guiname'}
-                placeholder={'Name of Component'}
-                value={gui_name}
-                onChange={(e) => setGuiName(e.currentTarget.value)}
-              />
-            </div>
-          </div>
-          <div className={'grid grid-cols-1 gap-4'}>
-            <div className={'grid gap-2'}>
-              <InputLabel htmlFor={'description'}>Background Color</InputLabel>
-              <div className={'flex flex-row gap-2'}>
-                <ColorPickerComponent color={color} setColor={setColor} />
-              </div>
-            </div>
-            <div className={'grid gap-2'}>
-              <InputLabel htmlFor={'description'}>
-                {getCopy('Multi', 'background_image')}
-              </InputLabel>
-              <ImageUpload value={backgroundImage} onChange={handleImageChange} />
-            </div>
-            <div className={'grid gap-2'}>
-              <InputLabel htmlFor={'description'}>
-                {getCopy('Multi', 'gui_description')}
-              </InputLabel>
-              <Textarea
-                className={'w-full'}
-                id={'description'}
-                value={gui_description}
-                onChange={(e) => setGuiDescription(e.currentTarget.value)}
-                placeholder={'Type your message here.'}
-              />
-            </div>
-          </div>
-        </div>
+        <Stack gap={'md'}>
+          <TextInput
+            id={'guiname'}
+            label={getCopy('Multi', 'component_name')}
+            placeholder={'Name of Component'}
+            value={guiName}
+            onChange={(e) => setGuiName(e.currentTarget.value)}
+          />
+          <Stack gap={'xs'}>
+            <InputLabel>Background Color</InputLabel>
+            <ColorPickerComponent color={color} setColor={setColor} />
+          </Stack>
+          <Stack gap={'xs'}>
+            <InputLabel>{getCopy('Multi', 'background_image')}</InputLabel>
+            <ImageUpload value={backgroundImage} onChange={handleImageChange} />
+          </Stack>
+          <Textarea
+            id={'description'}
+            label={getCopy('Multi', 'gui_description')}
+            value={guiDescription}
+            onChange={(e) => setGuiDescription(e.currentTarget.value)}
+            placeholder={'Type your message here.'}
+          />
+        </Stack>
       </Tabs.Panel>
 
       <ComponentModal
         isOpen={isModalOpen}
         onClose={() => {
-          // recalculateOffsets(items);
           const newItems = Array.from(items);
           recalculateOffsets(newItems);
           setItems(newItems);
@@ -467,90 +442,78 @@ const MultiModal: React.FC<MultiModalProps> = ({ component, handleComponentData 
         }}
         onCancel={cancelCallback}
         componentId={currentComponentId}
-        initialData={initalData}
+        initialData={initialData}
         type={currentComponentType}
       />
     </Tabs>
   );
-};
+}
+
+// Mounts each sub-component's GUI with shouldRender={false} so it registers its
+// triggerAction/subscriptions in the store without drawing anything
 function renderByType(component: MultiOption) {
-  let content;
   switch (component?.type) {
     case 'flyto':
-      content = (
+      return (
         <FlyToGUIComponent
           key={component.id}
           component={component as FlyToComponent}
           shouldRender={false}
         />
       );
-      break;
     case 'fade':
-      content = (
+      return (
         <FadeGUIComponent
           key={component.id}
           component={component as FadeComponent}
           shouldRender={false}
         />
       );
-      break;
     case 'setfocus':
-      content = (
+      return (
         <FocusComponent
           key={component.id}
           component={component as SetFocusComponent}
           shouldRender={false}
         />
       );
-      break;
     case 'boolean':
-      content = (
+      return (
         <BoolGUIComponent
           key={component.id}
           component={component as BooleanComponent}
           shouldRender={false}
         />
       );
-      break;
     case 'trigger':
-      content = (
+      return (
         <TriggerGUIComponent
           key={component.id}
           component={component as TriggerComponent}
           shouldRender={false}
         />
       );
-      break;
     default:
-      content = null;
-      break;
+      return null;
   }
-  return content;
 }
+
 interface MultiGUIComponentProps {
   component: MultiComponent;
 }
 
-// MultiGUIComponent
-const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
-  // const items = component.components;
+function MultiGUIComponent({ component }: MultiGUIComponentProps) {
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
   const triggerAnimation = () => {
     statusBarRef.current?.triggerAnimation();
   };
-  // useEffect(() => {
-  //   if (component.components.length == 0) {
-  //     return;
-  //   }
-  // }, [component]);
 
   const totalDelay = useMemo(() => {
     return component.components[component.components.length - 1]?.endTime || 0;
   }, [component.components]);
   const [currentItems, setCurrentItems] = useState<string[]>([]);
-  // const [currentDelay, setCurrentDelay] = useState(0);
   const [_trigger, setTrigger] = useState(false);
   const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -560,17 +523,11 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       const triggerComponent = () => {
         const tempComponent = getComponentById(item.component) as MultiOption | undefined;
         if (tempComponent) {
-          // console.log(
-          //   `Triggering ${tempComponent.gui_name} after ${item.startTime} seconds`,
-          // );
           setCurrentItems((items) => [...items, tempComponent.gui_name || '']);
           tempComponent.triggerAction?.();
           if (item.endTime) {
             const intDurationTimeoutId = setTimeout(
               () => {
-                // console.log(
-                //   `Removing ${tempComponent.gui_name} after ${item.endTime} seconds`,
-                // );
                 setCurrentItems((items) =>
                   items.filter((i) => i !== tempComponent.gui_name)
                 );
@@ -600,12 +557,12 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
       timeoutIds.current = [];
     };
   }, []);
+
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
       onClick={() => {
-        // component.triggerAction?.();
         triggerComponents();
         triggerAnimation();
       }}
@@ -616,25 +573,26 @@ const MultiGUIComponent: React.FC<MultiGUIComponentProps> = ({ component }) => {
         fadeOutDuration={fadeOutDuration}
       />
       <ButtonLabel>
-        <div className={'flex flex-col gap-2'}>
-          <p>{component.gui_name}</p>
+        <Stack gap={'xs'}>
+          <Text>{component.gui_name}</Text>
           {currentItems.length > 0 && (
-            <div className={'grid-rows grid gap-1'}>
+            <Stack gap={4}>
               <InputLabel>{getCopy('Multi', 'current_items:')}</InputLabel>
               {currentItems.map((v) => (
                 <InputLabel key={v}>{v}</InputLabel>
               ))}
-            </div>
+            </Stack>
           )}
           <Information content={component?.gui_description} />
-        </div>
+        </Stack>
       </ButtonLabel>
 
       {/* add none rendered versions of components to dom to register their actions and subscriptions */}
-      {component?.components.map((v, _i) => {
+      {component?.components.map((v) => {
         return renderByType(getComponentById(v.component) as MultiOption);
       })}
     </ComponentContainer>
   );
-};
+}
+
 export { MultiGUIComponent, MultiModal };
