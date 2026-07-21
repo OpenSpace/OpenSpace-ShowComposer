@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Group, NumberInput, Stack, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
@@ -8,7 +8,6 @@ import ComponentContainer from '@/components/ComponentContainer';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
 import { Information } from '@/components/Information';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
-import Toggle from '@/components/Toggle';
 import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
@@ -20,13 +19,13 @@ import { formatDate, jumpToTime } from '@/utils/time';
 interface SetTimeComponentProps {
   component: SetTimeType;
 }
-const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
+
+function SetTimeComponent({ component }: SetTimeComponentProps) {
   const luaApi = useOpenSpaceApi();
   useSubscribeToTime();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   useEffect(() => {
     if (luaApi) {
-      // console.log('Registering trigger action');
       updateComponent(component.id, {
         triggerAction: () => {
           jumpToTime(
@@ -74,31 +73,28 @@ const SetTimeComponent: React.FC<SetTimeComponentProps> = ({ component }) => {
         />
       )}
       <ButtonLabel>
-        <div className={'flex flex-row gap-2'}>
+        <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
-        </div>
+        </Group>
       </ButtonLabel>
     </ComponentContainer>
   );
-};
+}
+
 interface SetTimeModalProps {
   component: SetTimeType | null;
   handleComponentData: (data: Partial<SetTimeType>) => void;
-  isOpen: boolean;
 }
-const SetTimeModal: React.FC<SetTimeModalProps> = ({
-  component,
-  handleComponentData
-  // isOpen,
-}) => {
+
+function SetTimeModal({ component, handleComponentData }: SetTimeModalProps) {
   const { timeCapped: time } = useSubscribeToTime();
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(component?.interpolate || false);
   const [intDuration, setIntDuration] = useState(component?.intDuration || 4);
-  const [fadeScene, setFadeScene] = useState(component?.fadeScene || false); //
-  const [gui_name, setGuiName] = useState(component?.gui_name); //
-  const [gui_description, setGuiDescription] = useState(component?.gui_description); //
+  const [fadeScene, setFadeScene] = useState(component?.fadeScene || false);
+  const [guiName, setGuiName] = useState(component?.gui_name);
+  const [guiDescription, setGuiDescription] = useState(component?.gui_description);
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
@@ -136,9 +132,9 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
       interpolate,
       intDuration,
       fadeScene,
-      gui_name,
+      gui_name: guiName,
       lockName,
-      gui_description,
+      gui_description: guiDescription,
       backgroundImage,
       color
     });
@@ -148,114 +144,85 @@ const SetTimeModal: React.FC<SetTimeModalProps> = ({
     intDuration,
     handleComponentData,
     fadeScene,
-    gui_name,
+    guiName,
     lockName,
-    gui_description,
+    guiDescription,
     backgroundImage,
     color
   ]);
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        {time && (
-          <DateTimeStepper
-            date={componentTime as Date}
-            onChange={(data: {
-              time: Date | string;
-              interpolate: boolean;
-              delta: number;
-              relative: boolean;
-            }) => {
-              setCompontentTime(data.time);
-            }}
-          />
-        )}
-        <Button
-          variant={'filled'}
-          onClick={() => {
-            const newTime = new Date();
-            setCompontentTime(newTime);
+    <Stack gap={'md'}>
+      {time && (
+        <DateTimeStepper
+          date={componentTime as Date}
+          onChange={(data: {
+            time: Date | string;
+            interpolate: boolean;
+            delta: number;
+            relative: boolean;
+          }) => {
+            setCompontentTime(data.time);
           }}
-        >
-          {getCopy('SetTime', 'set_time_to_now')}
-        </Button>
-        <div className={'grid grid-cols-4 gap-4'}>
-          <div className={'col-span-3 grid gap-2'}>
-            <InputLabel htmlFor={'guiname'}>
-              {getCopy('SetTime', 'component_name')}
-            </InputLabel>
-            <TextInput
-              id={'guiname'}
-              placeholder={'Name of Component'}
-              value={gui_name}
-              onChange={(e) => setGuiName(e.currentTarget.value)}
-            />
-          </div>
-          <div className={'cols-span-1 mt-6 grid gap-2'}>
-            <ToggleComponent
-              label={'Lock Name'}
-              value={lockName}
-              setValue={setLockName}
-            />
-          </div>
-        </div>
-        <div className={'grid  gap-4'}>
-          <div className={'grid grid-cols-4 gap-4'}>
-            <div className={'col-span-2 grid gap-2'}>
-              <InputLabel htmlFor={'duration'}>
-                {getCopy('SetTime', 'fade_duration')}
-              </InputLabel>
-              <NumberInput
-                id={'duration'}
-                placeholder={'Duration to Fade'}
-                value={intDuration}
-                onChange={(value) =>
-                  setIntDuration(typeof value === 'number' ? value : parseFloat(value))
-                }
-              />
-            </div>
-            <div className={'grid gap-2'}>
-              <InputLabel />
-              <Toggle
-                label={'Interpolate'}
-                value={interpolate}
-                setValue={setInterpolate}
-              />
-            </div>
-            <div className={'grid gap-2'}>
-              <InputLabel />
-              <Toggle
-                label={'Fade Scene'}
-                disabled={!interpolate}
-                value={fadeScene}
-                setValue={setFadeScene}
-              />
-            </div>
-          </div>
-          <div className={'grid grid-cols-1 gap-4'}>
-            <BackgroundHolder
-              color={color}
-              setColor={setColor}
-              backgroundImage={backgroundImage}
-              setBackgroundImage={setBackgroundImage}
-            />
-
-            <div className={'grid gap-2'}>
-              <InputLabel htmlFor={'description'}>
-                {getCopy('SetTime', 'gui_description')}
-              </InputLabel>
-              <Textarea
-                className={'w-full'}
-                id={'description'}
-                value={gui_description}
-                onChange={(e) => setGuiDescription(e.currentTarget.value)}
-                placeholder={'Type your message here.'}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+        />
+      )}
+      <Button
+        variant={'filled'}
+        onClick={() => {
+          const newTime = new Date();
+          setCompontentTime(newTime);
+        }}
+      >
+        {getCopy('SetTime', 'set_time_to_now')}
+      </Button>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('SetTime', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <NumberInput
+          flex={1}
+          id={'duration'}
+          label={getCopy('SetTime', 'fade_duration')}
+          placeholder={'Duration to Fade'}
+          value={intDuration}
+          onChange={(value) =>
+            setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+          }
+        />
+        <ToggleComponent
+          label={'Interpolate'}
+          value={interpolate}
+          setValue={setInterpolate}
+        />
+        <ToggleComponent
+          label={'Fade Scene'}
+          disabled={!interpolate}
+          value={fadeScene}
+          setValue={setFadeScene}
+        />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('SetTime', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { SetTimeComponent, SetTimeModal };
