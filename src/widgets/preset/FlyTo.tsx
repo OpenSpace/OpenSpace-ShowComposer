@@ -1,6 +1,14 @@
-// import SelectableDropdown from '@/components/SelectableDropdown';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputLabel, NumberInput, Textarea, TextInput } from '@mantine/core';
+import {
+  Button,
+  Group,
+  InputLabel,
+  NumberInput,
+  SimpleGrid,
+  Stack,
+  Textarea,
+  TextInput
+} from '@mantine/core';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -17,8 +25,7 @@ import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscr
 import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
-import { FlyToComponent } from '@/types/components';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, FlyToComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -26,10 +33,8 @@ interface FlyToGUIProps {
   component: FlyToComponent;
   shouldRender?: boolean;
 }
-const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
-  component,
-  shouldRender = true
-}) => {
+
+function FlyToGUIComponent({ component, shouldRender = true }: FlyToGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const fadeOutDuration = 400; // 1 second fade out
@@ -71,7 +76,12 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
     component.intDuration,
     luaApi
   ]);
-  return shouldRender ? (
+
+  if (!shouldRender) {
+    return null;
+  }
+
+  return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
@@ -89,41 +99,32 @@ const FlyToGUIComponent: React.FC<FlyToGUIProps> = ({
       )}
       {component.gui_name || component.gui_description ? (
         <ButtonLabel>
-          <div className={'flex flex-row gap-2'}>
+          <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
             <Information content={component.gui_description} />
-          </div>
+          </Group>
         </ButtonLabel>
       ) : null}
     </ComponentContainer>
-  ) : null;
-};
+  );
+}
 
 interface FlyToModalProps {
   component: FlyToComponent | null;
   handleComponentData: (data: Partial<FlyToComponent>) => void;
-  isOpen: boolean;
 }
-const FlyToModal: React.FC<FlyToModalProps> = ({
-  component,
-  handleComponentData
-  //   isOpen,
-}) => {
-  // const throttledHandleComponentData = throttle(handleComponentData, 3000);
 
+type Option = {
+  name: string;
+  shouldGeo: boolean;
+};
+
+function FlyToModal({ component, handleComponentData }: FlyToModalProps) {
   const camera = useSubscribeToCamera(500);
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
-  type Option = {
-    name: string;
-    shouldGeo: boolean;
-  };
-  const [options, setOptions] = useState<Option[]>();
-
   const profile = useSubscribeToProfile();
   const setFavorites = usePropertyStore((state) => state.setFavorites);
-  // console.log("PROFILE", profile);
   const favorites = usePropertyStore((state) => state.favorites);
-  // const properties = usePropertyStore((state) => state.properties);
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
@@ -138,30 +139,7 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     )
   );
 
-  useEffect(() => {
-    setFavorites(profile.markNodes);
-  }, [profile, properties]);
-  // FIX FAVORITESSSSSSS
-  useEffect(() => {
-    setOptions(
-      favorites.map((favorite) => {
-        return {
-          name: favorite,
-          shouldGeo: true
-          // !favorites[favorite].tags.includes('earth_satellite')
-        };
-      })
-    );
-  }, [favorites]);
-  //
-  //in array of ooptiosn, find current option and check if it should be geo
-
-  useEffect(() => {
-    if (component) {
-      setGeo(component?.geo || false);
-    }
-  }, [component]);
-
+  const [options, setOptions] = useState<Option[]>();
   const [geo, setGeo] = useState<boolean>(component?.geo || false);
   const [long, setLong] = useState<number>(component?.long || 0);
   const [lat, setLat] = useState<number>(component?.lat || 0);
@@ -169,8 +147,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [intDuration, setIntDuration] = useState<number>(component?.intDuration || 4);
   const [target, setTarget] = useState<string>(component?.target || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [gui_description, setGuiDescription] = useState<string>(
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
@@ -179,6 +157,26 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
   const [color, setColor] = useState<string>(
     component?.color || ComponentBaseColors.flyto
   );
+
+  useEffect(() => {
+    setFavorites(profile.markNodes);
+  }, [profile, properties]);
+
+  useEffect(() => {
+    setOptions(
+      favorites.map((favorite) => ({
+        name: favorite,
+        shouldGeo: true
+      }))
+    );
+  }, [favorites]);
+
+  useEffect(() => {
+    if (component) {
+      setGeo(component?.geo || false);
+    }
+  }, [component]);
+
   const hasGeoOption: boolean = useMemo(() => {
     const shouldGeo =
       options && target && options.find((option) => option.name === target)?.shouldGeo;
@@ -216,8 +214,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
       target,
       intDuration,
       lockName,
-      gui_name,
-      gui_description,
+      gui_name: guiName,
+      gui_description: guiDescription,
       backgroundImage,
       color
     });
@@ -229,8 +227,8 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
     alt,
     target,
     lockName,
-    gui_name,
-    gui_description,
+    guiName,
+    guiDescription,
     backgroundImage,
     color,
     handleComponentData
@@ -249,152 +247,103 @@ const FlyToModal: React.FC<FlyToModalProps> = ({
         })
         .reduce((acc: Record<string, string>, key) => {
           const newValue = getStringBetween(key, 'Scene.', '.Renderable');
-          // console.log(newValue);
-          acc[formatName(newValue)] = getStringBetween(key, 'Scene.', '.Renderable');
+          acc[formatName(newValue)] = newValue;
           return acc;
         }, {}),
     [properties]
   );
+
   return (
-    <>
-      <div className={'grid grid-cols-1 gap-4'}>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <div className={'grid gap-2'}>
-            <InputLabel>{getCopy('FlyTo', 'target')}</InputLabel>
-            <VirtualizedCombobox
-              options={Object.keys(sortedKeys)}
-              selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
-              selectedOption={
-                Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
-              }
-              searchPlaceholder={'Search the Scene...'}
-              presets={options?.map((v) => v.name) || null}
-            />
-          </div>
-        </div>
-        <div className={'my-4 grid grid-cols-3 justify-start gap-4'}>
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'duration'}>
-              {getCopy('FlyTo', 'flight_duration')}
-            </InputLabel>
-            <NumberInput
-              id={'duration'}
-              placeholder={'Duration to Flight'}
-              // className=""
-              value={intDuration}
-              onChange={(value) =>
-                setIntDuration(typeof value === 'number' ? value : parseFloat(value))
-              }
-            />
-          </div>
-          <Button
-            variant={'filled'}
-            size={'xs'}
-            onClick={setFromOpenspace}
-            className={'mt-6 whitespace-normal text-xs'}
-          >
-            {getCopy('FlyTo', 'set_target_from_openspace')}
-          </Button>
-          {/* <div className="flex items-center space-x-2"> */}
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'duration'}>
-              {getCopy('FlyTo', 'set_coordinates/altitude')}
-            </InputLabel>
-            <ToggleComponent
-              value={geo}
-              disabled={!hasGeoOption}
-              setValue={setGeo}
-              label={getCopy('FlyTo', 'set_coordinates/altitude')}
-            />
-          </div>
-        </div>
-        {hasGeoOption && (
-          <>
-            {geo == true && (
-              <div className={'grid grid-cols-3 gap-4'}>
-                <div className={'grid gap-2'}>
-                  <InputLabel htmlFor={'alt'}>{getCopy('FlyTo', 'alt')}</InputLabel>
-                  <NumberInput
-                    id={'alt'}
-                    placeholder={'Altitude'}
-                    value={alt}
-                    onChange={(value) =>
-                      setAlt(typeof value === 'number' ? value : parseFloat(value))
-                    }
-                  />
-                </div>
-                <div className={'grid gap-2'}>
-                  <InputLabel htmlFor={'lat'}>{getCopy('FlyTo', 'latitude')}</InputLabel>
-                  <NumberInput
-                    id={'lat'}
-                    placeholder={getCopy('FlyTo', 'latitude')}
-                    value={lat}
-                    onChange={(value) =>
-                      setLat(typeof value === 'number' ? value : parseFloat(value))
-                    }
-                  />
-                </div>
-                <div className={'grid gap-2'}>
-                  <InputLabel htmlFor={'long'}>
-                    {getCopy('FlyTo', 'longitude')}
-                  </InputLabel>
-                  <NumberInput
-                    id={'long'}
-                    placeholder={getCopy('FlyTo', 'longitude')}
-                    value={long}
-                    onChange={(value) =>
-                      setLong(typeof value === 'number' ? value : parseFloat(value))
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </>
-        )}
-        <div className={'grid grid-cols-4 '}>
-          <div className={'col-span-3 grid grid-cols-3 gap-4'}>
-            <div className={'col-span-2 grid gap-2'}>
-              <InputLabel htmlFor={'gioname'}>
-                {getCopy('Fade', 'component_name')}
-              </InputLabel>
-              <TextInput
-                id={'guiname'}
-                placeholder={'Name of Component'}
-                value={gui_name}
-                onChange={(e) => setGuiName(e.currentTarget.value)}
-              />
-            </div>
-            <div className={'col-span-1 mt-6 grid gap-2'}>
-              <ToggleComponent
-                label={'Lock Name'}
-                value={lockName}
-                setValue={setLockName}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={'grid grid-cols-1 gap-4'}>
-          <BackgroundHolder
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{getCopy('FlyTo', 'target')}</InputLabel>
+        <VirtualizedCombobox
+          options={Object.keys(sortedKeys)}
+          selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
+          selectedOption={
+            Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
+          }
+          searchPlaceholder={'Search the Scene...'}
+          presets={options?.map((v) => v.name) || null}
+        />
+      </Stack>
+      <Group grow align={'flex-end'} wrap={'nowrap'}>
+        <NumberInput
+          id={'duration'}
+          label={getCopy('FlyTo', 'flight_duration')}
+          placeholder={'Duration to Flight'}
+          value={intDuration}
+          onChange={(value) =>
+            setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+          }
+        />
+        <Button variant={'filled'} size={'xs'} onClick={setFromOpenspace}>
+          {getCopy('FlyTo', 'set_target_from_openspace')}
+        </Button>
+        <ToggleComponent
+          value={geo}
+          disabled={!hasGeoOption}
+          setValue={setGeo}
+          label={getCopy('FlyTo', 'set_coordinates/altitude')}
+        />
+      </Group>
+      {hasGeoOption && geo && (
+        <SimpleGrid cols={3}>
+          <NumberInput
+            id={'alt'}
+            label={getCopy('FlyTo', 'alt')}
+            placeholder={'Altitude'}
+            value={alt}
+            onChange={(value) =>
+              setAlt(typeof value === 'number' ? value : parseFloat(value))
+            }
           />
-          <div className={'grid gap-2'}>
-            <InputLabel htmlFor={'description'}>
-              {getCopy('FlyTo', 'gui_description')}
-            </InputLabel>
-            <Textarea
-              className={'w-full'}
-              id={'description'}
-              value={gui_description}
-              onChange={(e) => setGuiDescription(e.currentTarget.value)}
-              placeholder={'Type your message here.'}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+          <NumberInput
+            id={'lat'}
+            label={getCopy('FlyTo', 'latitude')}
+            placeholder={getCopy('FlyTo', 'latitude')}
+            value={lat}
+            onChange={(value) =>
+              setLat(typeof value === 'number' ? value : parseFloat(value))
+            }
+          />
+          <NumberInput
+            id={'long'}
+            label={getCopy('FlyTo', 'longitude')}
+            placeholder={getCopy('FlyTo', 'longitude')}
+            value={long}
+            onChange={(value) =>
+              setLong(typeof value === 'number' ? value : parseFloat(value))
+            }
+          />
+        </SimpleGrid>
+      )}
+      <Group align={'flex-end'} wrap={'nowrap'}>
+        <TextInput
+          flex={3}
+          id={'guiname'}
+          label={getCopy('Fade', 'component_name')}
+          placeholder={'Name of Component'}
+          value={guiName}
+          onChange={(e) => setGuiName(e.currentTarget.value)}
+        />
+        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
+      </Group>
+      <BackgroundHolder
+        color={color}
+        setColor={setColor}
+        backgroundImage={backgroundImage}
+        setBackgroundImage={setBackgroundImage}
+      />
+      <Textarea
+        id={'description'}
+        label={getCopy('FlyTo', 'gui_description')}
+        value={guiDescription}
+        onChange={(e) => setGuiDescription(e.currentTarget.value)}
+        placeholder={'Type your message here.'}
+      />
+    </Stack>
   );
-};
+}
+
 export { FlyToGUIComponent, FlyToModal };

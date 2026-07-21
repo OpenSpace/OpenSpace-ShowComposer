@@ -216,7 +216,6 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       content = (
         <FlyToModal
           component={component as FlyToComponent}
-          isOpen={isOpen}
           handleComponentData={setComponentData}
         />
       );
