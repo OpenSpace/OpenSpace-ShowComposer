@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { ActionIcon, Tooltip } from '@mantine/core';
-// import { Button } from '@/pages/ui/button';
-import { GripHorizontal, Lock, LockOpen } from 'lucide-react';
+import { ActionIcon, Box, Tooltip } from '@mantine/core';
 
 import ButtonLabel from '@/components/ButtonLabel';
+import { GripHorizontalIcon, LockIcon, LockOpenIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Page } from '@/types/components';
-import { cn } from '@/utils/utils';
-const AdjustablePage: React.FC = () => {
+
+import classes from './AdjustablePage.module.css';
+
+export default function AdjustablePage() {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
-  const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const updatePage = useBoundStore((state) => state.updatePage);
   const page: Page = useBoundStore((state) => state.getPageById(state.currentPage));
@@ -38,9 +39,15 @@ const AdjustablePage: React.FC = () => {
       y: d.y
     });
   };
+
+  const borderColor = isDragging
+    ? 'var(--mantine-color-blue-5)'
+    : locked
+      ? 'color-mix(in srgb, var(--mantine-color-gray-2) 30%, transparent)'
+      : 'var(--mantine-color-gray-2)';
+
   return (
     <Rnd
-      //   dragHandleClassName={'drag-handle'}
       scale={isPresentMode ? 1.0 : scale}
       default={{
         x: page.x,
@@ -76,86 +83,88 @@ const AdjustablePage: React.FC = () => {
           y: position.y
         });
       }}
-      disableDragging={locked || isPresentMode} // Conditionally disable dragging
-      enableResizing={!locked && !isPresentMode} // Conditionally disable resizing
+      disableDragging={locked || isPresentMode}
+      enableResizing={!locked && !isPresentMode}
+      className={classes.page}
       style={{
         zIndex: 0,
-        backgroundColor: page.color
+        outline: 'none',
+        color: 'var(--mantine-color-text)',
+        backgroundColor: page.color,
+        boxShadow: isDragging ? 'var(--mantine-shadow-lg)' : undefined,
+        border: isPresentMode ? undefined : `2px dashed ${borderColor}`,
+        pointerEvents: !isPresentMode && locked ? 'none' : 'auto'
       }}
-      className={cn(
-        'absolute cursor-move',
-        'group text-slate-950 outline-none dark:text-slate-50',
-        'shadow-slate-800 dark:shadow-slate-500/50',
-        'data=[state=open]:opacity-100',
-        isDragging && 'z-50 border-blue-500 shadow-lg',
-        isPresentMode
-          ? 'border-0 '
-          : locked
-            ? 'pointer-events-none border-2 border-dashed border-slate-700/30 dark:border-slate-200/30 '
-            : 'border-slate-700/80dark:border-slate-200 pointer-events-auto border-2 border-dashed '
-      )}
     >
-      <div className={'drag-handle  absolute top-0 h-[30px] w-full cursor-move'}>
+      <Box style={{ position: 'absolute', top: 0, height: 30, width: '100%' }}>
         {!isPresentMode && !locked && (
-          <div
-            className={'absolute flex w-full flex-col items-center justify-center gap-1'}
+          <Box
+            style={{
+              position: 'absolute',
+              display: 'flex',
+              width: '100%',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4
+            }}
           >
-            <GripHorizontal
-              className={cn(
-                'stroke-slate-700/40 transition-colors duration-300 dark:stroke-slate-500',
-                'group-hover:stroke-slate-800 dark:group-hover:stroke-white'
-              )}
-            />
-          </div>
+            <GripHorizontalIcon className={classes.grip} />
+          </Box>
         )}
         {!isPresentMode && (
           <>
             {!locked && (
-              <div className={'absolute right-14 top-3'}>
+              <Box style={{ position: 'absolute', right: 56, top: 12 }}>
                 <ButtonLabel
                   resize={false}
-                  className={cn(
-                    'text-xs text-slate-700 dark:text-slate-200',
-                    'transition-opacity duration-500',
-                    isVisible ? 'opacity-100' : 'opacity-0'
-                  )}
+                  style={{
+                    fontSize: 'var(--mantine-font-size-xs)',
+                    color: 'var(--mantine-color-gray-2)',
+                    transition: 'opacity 500ms',
+                    opacity: isVisible ? 1 : 0
+                  }}
                 >
                   {pageWidth} x {pageHeight}
                 </ButtonLabel>
-              </div>
+              </Box>
             )}
-            <div className={'p-3'}>
+            <Box style={{ padding: 12 }}>
               <ButtonLabel
-                className={'w-auto text-xs text-slate-700 dark:text-slate-200'}
+                style={{
+                  width: 'auto',
+                  fontSize: 'var(--mantine-font-size-xs)',
+                  color: 'var(--mantine-color-gray-2)'
+                }}
               >
                 {page.name ? page.name : `Page ${currentPageIndex + 1}`}
               </ButtonLabel>
-            </div>
-            <div className={'pointer-events-auto absolute right-3 top-3 z-[999]'}>
+            </Box>
+            <Box
+              style={{
+                pointerEvents: 'auto',
+                position: 'absolute',
+                right: 12,
+                top: 12,
+                zIndex: 999
+              }}
+            >
               <Tooltip label={locked ? 'Unlock Page' : 'Lock Page'}>
                 <ActionIcon
-                  // pressed={isPresentMode}
                   onClick={() => setLocked(!locked)}
-                  className={cn(
-                    'z-50 p-1 transition-opacity duration-100',
-                    locked ? 'opacity-60' : 'opacity-100'
-                  )}
+                  style={{
+                    zIndex: 50,
+                    transition: 'opacity 100ms',
+                    opacity: locked ? 0.6 : 1
+                  }}
                 >
-                  {locked ? (
-                    <Lock size={'16'} />
-                  ) : (
-                    <LockOpen
-                      size={'16'}
-                      // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
-                    />
-                  )}
+                  {locked ? <LockIcon size={16} /> : <LockOpenIcon size={16} />}
                 </ActionIcon>
               </Tooltip>
-            </div>
+            </Box>
           </>
         )}
-      </div>
+      </Box>
     </Rnd>
   );
-};
-export default AdjustablePage;
+}

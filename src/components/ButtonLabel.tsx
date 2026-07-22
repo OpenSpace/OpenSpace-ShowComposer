@@ -6,12 +6,14 @@ interface ButtonLabelProps {
   children: React.ReactNode;
   resize?: boolean;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const ButtonLabel: React.FC<ButtonLabelProps> = ({
   children,
   className,
-  resize = false
+  resize = false,
+  style
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState('16px');
@@ -56,7 +58,8 @@ const ButtonLabel: React.FC<ButtonLabelProps> = ({
         maxWidth: '90%', // Constrain width to parent
         maxHeight: '90%', // Con
         fontSize,
-        lineHeight: `${lineHeight}px` // Apply calculated line height
+        lineHeight: `${lineHeight}px`, // Apply calculated line height
+        ...style
       }}
     >
       {children}
