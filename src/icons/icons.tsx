@@ -18,6 +18,8 @@ export {
   LuMinus as MinusIcon,
   LuPause as PauseIcon,
   LuPlay as PlayIcon,
+  LuPlus as PlusIcon,
+  LuTvMinimalPlay as PresentIcon,
   LuRefreshCcwDot as RefreshCcwDotIcon,
   LuRewind as RewindIcon,
   LuRotate3D as Rotate3dIcon,
@@ -28,5 +30,6 @@ export {
   LuUnlink as UnlinkIcon,
   LuUpload as UploadIcon,
   LuX as XIcon,
-  LuZoomIn as ZoomInIcon
+  LuZoomIn as ZoomInIcon,
+  LuZoomOut as ZoomOutIcon
 } from 'react-icons/lu';
