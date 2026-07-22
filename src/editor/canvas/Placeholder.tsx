@@ -1,8 +1,9 @@
-import { Plus } from 'lucide-react';
+import { Box } from '@mantine/core';
 
+import { PlusIcon } from '@/icons/icons';
 import { LayoutType } from '@/types/components';
 
-const Placeholder = ({
+export default function Placeholder({
   childWidth,
   childHeight,
   type,
@@ -18,8 +19,7 @@ const Placeholder = ({
   index?: number;
   hidden?: boolean;
   columns?: number;
-}) => {
-  //
+}) {
   // Determine dimensions based on type
   let top, left, right, bottom;
   if (type === 'row') {
@@ -36,9 +36,14 @@ const Placeholder = ({
   }
 
   return (
-    <div
-      className={`absolute flex items-center justify-center rounded-md border border-dashed border-gray-400`}
+    <Box
       style={{
+        position: 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 'var(--mantine-radius-md)',
+        border: '1px dashed var(--mantine-color-dimmed)',
         height: `${childHeight}px`,
         width: `${childWidth}px`,
         top: top,
@@ -48,17 +53,15 @@ const Placeholder = ({
         visibility: hidden ? 'hidden' : 'visible'
       }}
     >
-      <Plus
-        className={'text-gray-400'}
+      <PlusIcon
         style={{
           width: '100%',
           height: '100%',
-          maxWidth: '64px',
-          maxHeight: '64px'
+          maxWidth: 64,
+          maxHeight: 64,
+          color: 'var(--mantine-color-dimmed)'
         }}
       />
-    </div>
+    </Box>
   );
-};
-
-export default Placeholder;
+}
