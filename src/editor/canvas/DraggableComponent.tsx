@@ -151,7 +151,7 @@ export default function DraggableComponent({
           opacity: isMultiLoading ? 0.25 : 1,
           zIndex: isHighlighted ? 999 : undefined,
           boxShadow: isHighlighted
-            ? `0 10px 15px -3px ${alpha('var(--mantine-color-blue-5)', 0.5)}`
+            ? `0 10px 15px -3px ${alpha('var(--mantine-color-gray-4)', 0.5)}`
             : undefined,
           transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none',
           // FIX: Because the component needs to be mounted to run its effects, we have to do some
