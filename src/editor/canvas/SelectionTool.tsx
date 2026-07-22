@@ -1,9 +1,9 @@
-// SelectionTool.tsx
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { Box } from '@mantine/core';
 
 import { useBoundStore } from '@/store/boundStore';
 
-const SelectionTool: React.FC = () => {
+export default function SelectionTool() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -67,29 +67,32 @@ const SelectionTool: React.FC = () => {
   };
 
   return (
-    <div
+    <Box
       ref={containerRef}
-      className={'relative h-full w-full'}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      style={{ zIndex: isSelecting ? 9999 : 0 }}
+      style={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        zIndex: isSelecting ? 9999 : 0
+      }}
     >
       {isSelecting && (
-        <div
-          className={
-            'absolute border-2 border-dashed border-blue-500 bg-blue-200 bg-opacity-25'
-          }
+        <Box
           style={{
+            position: 'absolute',
+            border: '2px dashed var(--mantine-color-blue-5)',
+            backgroundColor:
+              'color-mix(in srgb, var(--mantine-color-blue-2) 25%, transparent)',
             left: rect.x,
             top: rect.y,
             width: rect.width,
             height: rect.height
           }}
-        ></div>
+        />
       )}
-    </div>
+    </Box>
   );
-};
-
-export default SelectionTool;
+}
