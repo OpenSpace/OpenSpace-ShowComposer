@@ -144,7 +144,6 @@ export default function DraggableComponent({
         enableResizing={!isPresentMode}
         style={{
           pointerEvents: 'auto',
-          cursor: 'move',
           borderRadius: 'var(--mantine-radius-lg)',
           background: isPresentMode
             ? undefined
