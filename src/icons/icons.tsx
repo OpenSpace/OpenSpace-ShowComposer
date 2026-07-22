@@ -15,6 +15,7 @@ export {
   LuGripHorizontal as GripHorizontalIcon,
   LuImage as ImageIcon,
   LuLink as LinkIcon,
+  LuMinus as MinusIcon,
   LuPause as PauseIcon,
   LuPlay as PlayIcon,
   LuRefreshCcwDot as RefreshCcwDotIcon,

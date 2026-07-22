@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { ActionIcon } from '@mantine/core';
-import { GripHorizontal, Minus } from 'lucide-react';
+import { ActionIcon, Box } from '@mantine/core';
 
+import { GripHorizontalIcon, MinusIcon } from '@/icons/icons';
 import { FeedbackPanel } from '@/panels/FeedbackPanel/FeedbackPanel';
 import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
 import { LogPanel } from '@/panels/LogPanel/LogPanel';
@@ -19,7 +19,9 @@ import {
   TimeComponent
 } from '@/types/components';
 import { roundToNearest } from '@/utils/math';
-import { cn } from '@/utils/utils';
+
+import classes from './DraggablePanel.module.css';
+
 interface PanelProps {
   component:
     | TimeComponent
@@ -31,11 +33,11 @@ interface PanelProps {
   originY?: number;
 }
 
-const DraggablePanel: React.FC<PanelProps> = ({
+export default function DraggablePanel({
   component,
   originX = 0,
   originY = 0
-}) => {
+}: PanelProps) {
   const position = useBoundStore((state) => state.positions[component.id]);
   const updatePosition = useBoundStore((state) => state.updatePosition);
 
@@ -65,7 +67,7 @@ const DraggablePanel: React.FC<PanelProps> = ({
       case 'logpanel':
         return <LogPanel />;
       default:
-        return <div>Unknown type</div>;
+        return <Box>Unknown type</Box>;
     }
   };
 
@@ -94,43 +96,54 @@ const DraggablePanel: React.FC<PanelProps> = ({
         setIsDragging(true);
       }}
       onDragStop={(e: DraggableEvent, d: DraggableData) => handleDragStop(e, d)}
-      onResizeStop={(_e, _direction, _ref, _delta, _position) => {}}
-      enableResizing={false} // Conditionally disable resizing
+      onResizeStop={() => {}}
+      enableResizing={false}
       resizeGrid={[25, 25]}
       minHeight={position?.minHeight || 100}
       minWidth={position.minWidth || 100}
       style={{
+        borderRadius: 'var(--mantine-radius-md)',
+        outline: 'none',
+        color: 'var(--mantine-color-text)',
+        background: 'var(--mantine-color-dark-9)',
+        boxShadow: isDragging ? 'var(--mantine-shadow-lg)' : 'var(--mantine-shadow-md)',
+        opacity: position?.minimized ? 0 : 1,
+        pointerEvents: position?.minimized ? 'none' : 'auto',
         zIndex: position?.minimized ? 0 : 99999,
-        transformOrigin: `${originX}px ${originY}px`
+        transformOrigin: `${originX}px ${originY}px`,
+        transition: 'opacity 300ms'
       }}
-      data-state={position?.minimized ? 'closed' : 'open'}
-      className={cn(
-        'absolute cursor-move',
-        'data=[state=open]:opacity-100 rounded-md border-slate-200',
-        'bg-gray-300 bg-opacity-75 text-slate-950 shadow-md outline-none',
-        'transition-opacity duration-300 data-[state=closed]:pointer-events-none',
-        'data-[state=open]:pointer-events-auto data-[state=closed]:opacity-0',
-        'dark:border dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50',
-        isDragging ? 'z-50 border-blue-500 shadow-lg' : ''
-      )}
     >
-      <div className={'drag-handle group absolute top-0 h-[30px] w-full cursor-move'}>
-        <div
-          className={'absolute flex w-full flex-col items-center justify-center gap-1'}
+      <Box
+        className={`drag-handle ${classes.dragHandle}`}
+        style={{
+          position: 'absolute',
+          top: 0,
+          height: 30,
+          width: '100%',
+          cursor: 'move'
+        }}
+      >
+        <Box
+          style={{
+            position: 'absolute',
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4
+          }}
         >
-          <GripHorizontal
-            className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
-          />
-        </div>
-      </div>
-      <div className={'absolute right-1 top-1 '}>
-        <ActionIcon variant={'subtle'} className={'m-0 h-4 w-4 p-0'} onClick={minimize}>
-          <Minus size={'20'} />
+          <GripHorizontalIcon className={classes.grip} />
+        </Box>
+      </Box>
+      <Box style={{ position: 'absolute', right: 4, top: 4 }}>
+        <ActionIcon variant={'subtle'} size={'sm'} onClick={minimize}>
+          <MinusIcon size={16} />
         </ActionIcon>
-      </div>
-      <div className={'mt-1 p-3'}>{inner()}</div>
+      </Box>
+      <Box style={{ marginTop: 4, padding: 12 }}>{inner()}</Box>
     </Rnd>
   );
-};
-
-export default DraggablePanel;
+}
