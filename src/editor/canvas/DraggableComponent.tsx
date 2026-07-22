@@ -1,18 +1,23 @@
-// DraggableComponent.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import { Copy, Edit2, GripHorizontal, Trash2 } from 'lucide-react';
+import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
-import DropdownMenuComponent from '@/components/DropdownMenu';
+import {
+  CopyIcon,
+  EditIcon,
+  EllipsisVerticalIcon,
+  GripHorizontalIcon,
+  TrashIcon
+} from '@/icons/icons';
 import { Component, useSettingsStore } from '@/store';
-// import { useShallow } from 'zustand/react/shallow';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
-import { cn } from '@/utils/utils';
 import { ComponentContent } from '@/widgets/ComponentContent';
+
+import classes from './DraggableComponent.module.css';
 
 interface DraggableComponentProps {
   component: Component;
@@ -22,31 +27,19 @@ interface DraggableComponentProps {
   onDelete: () => void;
 }
 
-const DraggableComponent: React.FC<DraggableComponentProps> = ({
+export default function DraggableComponent({
   component,
   layoutId,
   onEdit,
   onCopy = () => {},
   onDelete
-}) => {
+}: DraggableComponentProps) {
   const position = useBoundStore((state) => state.positions[component?.id || '']);
-
   const updatePosition = useBoundStore((state) => state.updatePosition);
-
   const tempPosition = useBoundStore((state) => state.tempPositions[component.id]);
   const handleComponentDrop = useBoundStore((state) => state.handleComponentDrop);
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const isDragging = useBoundStore((state) => state.positions[component.id]?.isDragging);
-
-  // const isOnPage = useBoundStore(
-  //   useShallow((state) => {
-  //     return state
-  //       .getPageById(state.currentPage)
-  //       ?.components.includes(component.id);
-  //   }),
-  // );
-
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const selectedComponents = useBoundStore((state) => state.selectedComponents);
@@ -54,6 +47,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   if (!component || !component.id || !position) {
     return null;
   }
+
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
   };
@@ -85,6 +79,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   const isMultiLoading = component.isMulti?.includes('pending');
   const isHidden = component.isMulti?.includes('true');
   const hideOnPresent = component.isDisabled && isPresentMode;
+  const isHighlighted = (isDragging || isSelected) && !isPresentMode;
+
   const getComponentPosition = () => {
     return (
       tempPosition || {
@@ -112,14 +108,12 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         }}
         minWidth={position.minWidth || 100}
         minHeight={position.minHeight || 100}
-        // dragGrid={[25, 25]}
         resizeGrid={[25, 25]}
         onDragStart={(e: DraggableEvent) => {
           e.stopPropagation();
           updatePosition(component.id, {
             isDragging: true
           });
-          // setIsDragging(true);
         }}
         onDrag={(_e: DraggableEvent, d: DraggableData) => {
           if (selectedComponents.includes(component.id)) {
@@ -134,12 +128,6 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
                 });
               }
             });
-          } else {
-            // updatePosition(component.id, {
-            //   isDragging: true,
-            //   x: d.x,
-            //   y: d.y,
-            // });
           }
         }}
         onDragStop={handleDragStop}
@@ -154,85 +142,111 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         }}
         disableDragging={isPresentMode}
         enableResizing={!isPresentMode}
-        className={cn(
-          'pointer-events-auto absolute cursor-move rounded-lg ',
-          isHidden && '!hidden',
-          hideOnPresent && '!hidden',
-          isPresentMode ? '' : 'border-0 bg-gray-300 bg-opacity-25',
-          (isDragging || isSelected) &&
-            !isPresentMode &&
-            'z-[999] border-blue-500 shadow-lg shadow-blue-500/50 dark:shadow-slate-100/50',
-          isMultiLoading ? 'opacity-25' : 'opacity-100'
-          // layoutId && 'border border-blue-200  dark:border-blue-800',
-        )}
         style={{
-          transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none'
+          pointerEvents: 'auto',
+          cursor: 'move',
+          borderRadius: 'var(--mantine-radius-lg)',
+          background: isPresentMode
+            ? undefined
+            : alpha('var(--mantine-color-gray-3)', 0.25),
+          opacity: isMultiLoading ? 0.25 : 1,
+          zIndex: isHighlighted ? 999 : undefined,
+          boxShadow: isHighlighted
+            ? `0 10px 15px -3px ${alpha('var(--mantine-color-blue-5)', 0.5)}`
+            : undefined,
+          transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none',
+          // FIX: Because the component needs to be mounted to run its effects, we have to do some
+          // trickery to hide it from view when it's in a multi state
+          ...(isHidden || hideOnPresent ? { display: 'none' } : {})
         }}
       >
         {!isPresentMode && (
-          <div
-            className={cn(
-              'drag-handle transition-color group absolute top-0 z-[99] flex w-full cursor-move justify-end rounded-t-lg bg-slate-500/0 duration-300 hover:bg-slate-900/0',
-              isSelected ? 'h-full' : 'h-[20px]',
-              layoutId && 'bg-blue-500/10'
-            )}
+          <Box
+            className={`drag-handle ${classes.dragHandle}`}
+            style={{
+              position: 'absolute',
+              top: 0,
+              zIndex: 99,
+              display: 'flex',
+              width: '100%',
+              cursor: 'move',
+              justifyContent: 'flex-end',
+              borderTopLeftRadius: 'var(--mantine-radius-lg)',
+              borderTopRightRadius: 'var(--mantine-radius-lg)',
+              transition: 'background-color 300ms',
+              height: isSelected ? '100%' : 20,
+              backgroundColor: layoutId
+                ? alpha('var(--mantine-color-blue-5)', 0.1)
+                : undefined
+            }}
           >
-            <div
-              className={
-                'absolute flex w-full flex-col items-center justify-center gap-1'
-              }
+            <Box
+              style={{
+                position: 'absolute',
+                display: 'flex',
+                width: '100%',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4
+              }}
             >
-              <GripHorizontal
-                className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
-              />
-            </div>
-            <div className={'relative z-[99] flex items-start justify-end gap-2 p-2'}>
-              <DropdownMenuComponent
-                items={[
-                  <div
-                    key={'edit'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
-                    }
-                    onClick={onEdit}
-                  >
-                    <span>{getCopy('DraggableComponent', 'edit')}</span>
-                    <Edit2 className={'h-4 w-4'} />
-                  </div>,
-                  <div
-                    key={'edit'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
-                    }
-                    onClick={onCopy}
-                  >
-                    <span>{getCopy('DraggableComponent', 'copy')}</span>
-                    <Copy className={'h-4 w-4'} />
-                  </div>,
-                  <div
-                    key={'delete'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100'
-                    }
+              <GripHorizontalIcon className={classes.grip} />
+            </Box>
+            <Box
+              style={{
+                position: 'relative',
+                zIndex: 99,
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+                gap: 8,
+                padding: 8
+              }}
+            >
+              <Menu position={'bottom-end'} zIndex={999999}>
+                <Menu.Target>
+                  <ActionIcon variant={'subtle'}>
+                    <EllipsisVerticalIcon />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item leftSection={<EditIcon />} onClick={onEdit}>
+                    {getCopy('DraggableComponent', 'edit')}
+                  </Menu.Item>
+                  <Menu.Item leftSection={<CopyIcon />} onClick={onCopy}>
+                    {getCopy('DraggableComponent', 'copy')}
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<TrashIcon />}
+                    color={'red'}
                     onClick={handleDeleteClick}
                   >
-                    <span>{getCopy('DraggableComponent', 'delete')}</span>
-                    <Trash2 className={'h-4 w-4'} />
-                  </div>
-                ]}
-              />
-            </div>
-          </div>
+                    {getCopy('DraggableComponent', 'delete')}
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Box>
+          </Box>
         )}
-        <div
-          className={cn(
-            'relative top-0 z-0 flex h-full flex-col items-center justify-center rounded-lg p-4 py-2',
-            layoutId && 'p-2',
-            component.isDisabled && 'pointer-events-none opacity-25'
-          )}
+        <Box
+          style={{
+            position: 'relative',
+            top: 0,
+            zIndex: 0,
+            display: 'flex',
+            height: '100%',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 'var(--mantine-radius-lg)',
+            padding: layoutId ? 8 : '8px 16px',
+            pointerEvents: component.isDisabled ? 'none' : undefined,
+            opacity: component.isDisabled ? 0.25 : undefined
+          }}
         >
           <ComponentContent component={component} />
-        </div>
+        </Box>
       </Rnd>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -244,6 +258,4 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       />
     </>
   );
-};
-
-export default DraggableComponent;
+}
