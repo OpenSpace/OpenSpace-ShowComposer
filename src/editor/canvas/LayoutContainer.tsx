@@ -1,45 +1,45 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
-import {
-  Copy,
-  Edit2,
-  GripHorizontal,
-  LayoutGrid,
-  Pin,
-  PinOff,
-  Trash2
-} from 'lucide-react';
-import { useShallow } from 'zustand/react/shallow';
+import { ActionIcon, Box, Menu } from '@mantine/core';
 
-import DropdownMenuComponent from '@/components/DropdownMenu';
 import Placeholder from '@/editor/canvas/Placeholder';
 import { ColumnIcon, RowIcon } from '@/editor/sidebar/LayoutToolbar';
+import {
+  CopyIcon,
+  EditIcon,
+  EllipsisVerticalIcon,
+  GripHorizontalIcon,
+  LayoutGridIcon,
+  PinIcon,
+  PinOffIcon,
+  TrashIcon
+} from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-// import { createIcon } from 'lucide-react';
 import { LayoutBase } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
-import { cn } from '@/utils/utils';
+
+import classes from './LayoutContainer.module.css';
 
 interface LayoutContainerProps {
   layout: LayoutBase;
-  children?: React.ReactNode;
+  children?: ReactNode;
   handleOpenEditModal: () => void;
 }
 
 const typeIcons = {
-  row: <RowIcon className={'h-4 w-4'} />, // Replace IconType1 with the actual icon for 'row'
-  column: <ColumnIcon className={'h-4 w-4'} />, // Replace IconType2 with the actual icon for 'column'
-  grid: <LayoutGrid className={'h-6 w-6'} /> // Replace IconType3 with the actual icon for 'grid'
+  row: <RowIcon />,
+  column: <ColumnIcon />,
+  grid: <LayoutGridIcon size={24} />
 };
 
-export const LayoutContainer: React.FC<LayoutContainerProps> = ({
+export function LayoutContainer({
   layout,
   children,
   handleOpenEditModal
-}) => {
+}: LayoutContainerProps) {
   const layoutPosition = useBoundStore((state) => state.positions[layout?.id || '']);
 
   const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);
@@ -67,11 +67,6 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
 
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
-  const isOnPage = useBoundStore(
-    useShallow((state) => {
-      return state.getPageById(state.currentPage)?.components.includes(id);
-    })
-  );
   if (!layout || !layout.id || !layoutPosition) {
     return null;
   }
@@ -109,7 +104,6 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
         newHeight * (layoutChildren.length + 1) - layoutChildren.length * layout.padding;
       childWidth = newHeight - layout.padding * 2;
       childHeight = newHeight - layout.padding * 2;
-      // childWidth = newWidth;
     } else if (type === 'column') {
       newHeight =
         newWidth * (layoutChildren.length + 1) - layoutChildren.length * layout.padding;
@@ -137,146 +131,151 @@ export const LayoutContainer: React.FC<LayoutContainerProps> = ({
   const isGrid = type === 'grid';
 
   return (
-    <>
-      <Rnd
-        default={{
-          x,
-          y,
-          width,
-          height
-        }}
-        position={{ x, y }}
-        dragHandleClassName={'drag-handle'}
-        size={{ width, height }}
-        minWidth={100}
-        minHeight={100}
-        scale={isPresentMode ? 1.0 : scale}
-        onDragStop={handleDragStop}
-        onResizeStop={handleResize}
-        bounds={'parent'}
-        enableResizing={!isPresentMode}
-        disableDragging={isPresentMode}
-        className={cn(
-          'items-center',
-          isOnPage
-            ? 'outline outline-offset-4 outline-blue-500'
-            : 'outline outline-offset-4 outline-red-500',
-          isPresentMode
-            ? '!outline-none'
-            : 'pointer-events-auto rounded-lg outline-dashed outline-2 outline-gray-300 dark:outline-gray-600',
-          'transition-colors duration-200',
-          'hover:outline-blue-500 dark:hover:outline-blue-400',
-          isPresentMode ? '' : 'bg-white/50 dark:bg-slate-950/50',
-          'z-[9999]'
-        )}
-      >
-        {!isPresentMode && (
-          <div
-            className={cn(
-              'drag-handle transition-color group absolute top-0 z-[99] flex w-full cursor-move justify-end rounded-t-lg bg-slate-500/0 duration-300 hover:bg-slate-900/0'
-            )}
-          >
-            <div
-              className={
-                'absolute flex w-full flex-col items-center justify-center gap-1'
-              }
-            >
-              <GripHorizontal
-                className={`stroke-slate-500 transition-colors duration-300 group-hover:stroke-white`}
-              />
-            </div>
-            <div
-              className={'relative z-[99] flex items-start justify-end gap-2 px-2 py-1'}
-            >
-              {layout.persistent ? (
-                <Pin
-                  className={'h-4 w-4'}
-                  onClick={handlePin}
-                  fill={'white'}
-                  stroke={'white'}
-                />
-              ) : (
-                <PinOff
-                  className={'h-4 w-4'}
-                  onClick={handlePin}
-                  fill={'currentColor'}
-                  stroke={'currentColor'}
-                />
-              )}
-              <DropdownMenuComponent
-                items={[
-                  <div
-                    key={'edit'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
-                    }
-                    onClick={handleOpenEditModal}
-                  >
-                    <span>{getCopy('DraggableComponent', 'edit')}</span>
-                    <Edit2 className={'h-4 w-4'} />
-                  </div>,
-                  <div
-                    key={'copy'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
-                    }
-                    onClick={() => copyLayout(id)}
-                  >
-                    <span>{getCopy('DraggableComponent', 'copy')}</span>
-                    <Copy className={'h-4 w-4'} />
-                  </div>,
-                  <div
-                    key={'delete'}
-                    className={
-                      'flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-sm text-red-600 hover:bg-slate-100 hover:text-red-900 dark:text-red-400 dark:hover:bg-slate-800 dark:hover:text-red-100'
-                    }
-                    onClick={() => deleteLayout(id)}
-                  >
-                    <span>{getCopy('DraggableComponent', 'delete')}</span>
-                    <Trash2 className={'h-4 w-4'} />
-                  </div>
-                ]}
-              />
-            </div>
-            <div className={'absolute left-2 top-1 text-xs text-white'}>
-              {typeIcons[type]}
-            </div>
-          </div>
-        )}
-        <div
-          className={cn(
-            'h-full w-full ',
-            'cursor-move' // Add cursor indicator
-          )}
+    <Rnd
+      default={{
+        x,
+        y,
+        width,
+        height
+      }}
+      position={{ x, y }}
+      dragHandleClassName={'drag-handle'}
+      size={{ width, height }}
+      minWidth={100}
+      minHeight={100}
+      scale={isPresentMode ? 1.0 : scale}
+      onDragStop={handleDragStop}
+      onResizeStop={handleResize}
+      bounds={'parent'}
+      enableResizing={!isPresentMode}
+      disableDragging={isPresentMode}
+      className={classes.layout}
+      data-present={isPresentMode}
+      style={{
+        zIndex: 9999,
+        borderRadius: isPresentMode ? undefined : 'var(--mantine-radius-lg)',
+        backgroundColor: isPresentMode
+          ? undefined
+          : 'color-mix(in srgb, var(--mantine-color-dark-9) 50%, transparent)',
+        pointerEvents: isPresentMode ? undefined : 'auto'
+      }}
+    >
+      {!isPresentMode && (
+        <Box
+          className={`drag-handle ${classes.handle}`}
+          style={{
+            position: 'absolute',
+            top: 0,
+            zIndex: 99,
+            display: 'flex',
+            width: '100%',
+            cursor: 'move',
+            justifyContent: 'flex-end',
+            borderTopLeftRadius: 'var(--mantine-radius-lg)',
+            borderTopRightRadius: 'var(--mantine-radius-lg)'
+          }}
         >
-          {children}
-          {!isPresentMode && !isGrid && (
-            <Placeholder
-              type={type}
-              childWidth={childWidth}
-              childHeight={childHeight}
-              padding={layout.padding}
-              columns={layout.columns}
-            />
-          )}
-          {!isPresentMode &&
-            isGrid &&
-            layout.children.map((_childId, index) => {
-              return (
-                <Placeholder
-                  type={type}
-                  hidden={_childId != null}
-                  index={index}
-                  childWidth={childWidth}
-                  childHeight={childHeight}
-                  padding={padding}
-                  columns={columns}
-                  key={index}
-                />
-              );
-            })}
-        </div>
-      </Rnd>
-    </>
+          <Box
+            style={{
+              position: 'absolute',
+              display: 'flex',
+              width: '100%',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4
+            }}
+          >
+            <GripHorizontalIcon className={classes.grip} />
+          </Box>
+          <Box
+            style={{
+              position: 'relative',
+              zIndex: 99,
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-end',
+              gap: 8,
+              padding: '4px 8px'
+            }}
+          >
+            {layout.persistent ? (
+              <PinIcon
+                size={16}
+                onClick={handlePin}
+                style={{ cursor: 'pointer', color: 'var(--mantine-color-white)' }}
+              />
+            ) : (
+              <PinOffIcon
+                size={16}
+                onClick={handlePin}
+                style={{ cursor: 'pointer', color: 'var(--mantine-color-dimmed)' }}
+              />
+            )}
+            <Menu position={'bottom-end'} zIndex={999999}>
+              <Menu.Target>
+                <ActionIcon variant={'subtle'}>
+                  <EllipsisVerticalIcon />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item leftSection={<EditIcon />} onClick={handleOpenEditModal}>
+                  {getCopy('DraggableComponent', 'edit')}
+                </Menu.Item>
+                <Menu.Item leftSection={<CopyIcon />} onClick={() => copyLayout(id)}>
+                  {getCopy('DraggableComponent', 'copy')}
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<TrashIcon />}
+                  color={'red'}
+                  onClick={() => deleteLayout(id)}
+                >
+                  {getCopy('DraggableComponent', 'delete')}
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Box>
+          <Box
+            style={{
+              position: 'absolute',
+              left: 8,
+              top: 4,
+              fontSize: 'var(--mantine-font-size-xs)',
+              color: 'var(--mantine-color-white)'
+            }}
+          >
+            {typeIcons[type]}
+          </Box>
+        </Box>
+      )}
+      <Box style={{ height: '100%', width: '100%' }}>
+        {children}
+        {!isPresentMode && !isGrid && (
+          <Placeholder
+            type={type}
+            childWidth={childWidth}
+            childHeight={childHeight}
+            padding={layout.padding}
+            columns={layout.columns}
+          />
+        )}
+        {!isPresentMode &&
+          isGrid &&
+          layout.children.map((_childId, index) => {
+            return (
+              <Placeholder
+                type={type}
+                hidden={_childId != null}
+                index={index}
+                childWidth={childWidth}
+                childHeight={childHeight}
+                padding={padding}
+                columns={columns}
+                key={index}
+              />
+            );
+          })}
+      </Box>
+    </Rnd>
   );
-};
+}

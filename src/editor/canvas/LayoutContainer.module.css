@@ -1,0 +1,22 @@
+.layout {
+  outline: 2px dashed var(--mantine-color-dark-3);
+  outline-offset: 4px;
+  transition: outline-color 200ms;
+}
+
+.layout:hover {
+  outline-color: var(--mantine-color-blue-4);
+}
+
+.layout[data-present='true'] {
+  outline: none;
+}
+
+.grip {
+  color: var(--mantine-color-gray-6);
+  transition: color 300ms;
+}
+
+.handle:hover .grip {
+  color: var(--mantine-color-white);
+}
