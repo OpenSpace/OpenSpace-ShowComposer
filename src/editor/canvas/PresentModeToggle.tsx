@@ -1,51 +1,44 @@
 import { useEffect } from 'react';
 import { ActionIcon, Tooltip } from '@mantine/core';
-import { Pencil, TvMinimalPlay } from 'lucide-react';
 
+import { EditIcon, PresentIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
-import { cn } from '@/utils/utils';
+
 const useQuery = () => {
-  // return new URLSearchParams(useLocation().search);
   return new URLSearchParams(window.location.search);
 };
-const PresentModeToggle = () => {
+
+export default function PresentModeToggle() {
   const togglePresentMode = useSettingsStore((state) => state.togglePresentMode);
   const setPresentLocked = useSettingsStore((state) => state.setPresentLocked);
-  const isPresentMode = useSettingsStore((state) => state.presentMode); // Get the global state
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
   const isPresentLocked = useSettingsStore((state) => state.presentLocked);
   const query = useQuery();
   useEffect(() => {
-    // console.log(query.get('show'));
     if (query.has('show')) {
       setPresentLocked(true);
       if (!isPresentMode) {
         togglePresentMode();
       }
-    } else {
-      // setPresentLocked(false);
     }
   }, [query, isPresentMode, togglePresentMode, setPresentLocked]);
   return isPresentLocked ? null : (
     <Tooltip label={isPresentMode ? 'Edit Show' : 'Present Show'}>
       <ActionIcon
-        // pressed={isPresentMode}
         onClick={togglePresentMode}
-        className={cn('z-50 p-1 transition-opacity duration-100', {
-          'opacity-60': isPresentMode,
-          'opacity-100': !isPresentMode
-        })}
+        size={28}
+        style={{
+          zIndex: 50,
+          transition: 'opacity 100ms',
+          opacity: isPresentMode ? 0.6 : 1
+        }}
       >
         {isPresentMode ? (
-          <Pencil strokeWidth={'1.5'} size={'32'} />
+          <EditIcon strokeWidth={1.5} size={18} />
         ) : (
-          <TvMinimalPlay
-            strokeWidth={'1.5'}
-            size={'32'}
-            // className={isPresentMode ? 'stroke-zinc-700/100' : 'stroke-zinc-700/70'}
-          />
+          <PresentIcon strokeWidth={1.5} size={18} />
         )}
       </ActionIcon>
     </Tooltip>
   );
-};
-export default PresentModeToggle;
+}
