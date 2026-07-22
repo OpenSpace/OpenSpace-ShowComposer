@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Button, InputLabel, TextInput } from '@mantine/core';
+import {
+  Button,
+  Group,
+  InputLabel,
+  Modal,
+  SimpleGrid,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
 
 import Toggle from '@/components/Toggle';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-// import { GridSettings } from '@/editor/sidebar/LayoutToolbar';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -21,7 +21,11 @@ interface LayoutEditModalProps {
   layoutId: string | null;
 }
 
-const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) => {
+export default function LayoutEditModal({
+  isOpen,
+  onClose,
+  layoutId
+}: LayoutEditModalProps) {
   const gridSettings = useSettingsStore((state) => state.gridSize);
   const gridSize = useBoundStore((state) => ({
     columns: layoutId
@@ -36,7 +40,6 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
   const layoutType = layout?.type;
 
   const updateLayout = useBoundStore((state) => state.updateLayout);
-  //   const
   const setGridSize = useSettingsStore((state) => state.setGridSize);
   const [rows, setRows] = useState(gridSize.rows.toString());
   const [columns, setColumns] = useState(gridSize.columns.toString());
@@ -47,6 +50,7 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
       setPersistent(layout?.persistent || false);
     }
   }, [isOpen, layout]);
+
   const handleSave = () => {
     if (!layoutId) return;
     setGridSize({
@@ -61,81 +65,52 @@ const LayoutEditModal = ({ isOpen, onClose, layoutId }: LayoutEditModalProps) =>
     onClose();
   };
 
-  if (!isOpen || !layoutId) return null;
   return (
-    <div
-      className={
-        'fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50'
-      }
+    <Modal
+      opened={isOpen && !!layoutId}
+      onClose={onClose}
+      centered
+      size={510}
+      title={getCopy('LayoutEditModal', 'edit_layout')}
     >
-      <Card className={'w-[510px] bg-white'}>
-        <CardHeader>
-          <CardTitle>
-            <div className={'flex flex-row gap-2'}>
-              {getCopy('LayoutEditModal', 'edit_layout')}
-            </div>
-          </CardTitle>
-          <CardDescription>
-            {/* This will also change default grid size. */}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className={'grid gap-2'}>
-            {layoutType == 'grid' ? (
-              <>
-                <InputLabel className={'text-lg'}>
-                  {getCopy('LayoutEditModal', 'grid_size')}
-                </InputLabel>
-                <InputLabel className={'text-sm text-gray-500'}>
-                  {getCopy('LayoutEditModal', 'grid_size_description')}
-                </InputLabel>
-                <div className={'mt-4 grid grid-cols-2 gap-4'}>
-                  <div className={'grid-cols-1items-center col-span-1 grid gap-2'}>
-                    <InputLabel htmlFor={'rows'}># of Rows</InputLabel>
-                    <TextInput
-                      id={'rows'}
-                      // className="h-8"
-                      value={rows}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setRows(e.currentTarget.value)
-                      }
-                      placeholder={'# of Rows'}
-                    />
-                  </div>
-                  <div className={'col-span-1 grid grid-cols-1 items-center gap-4'}>
-                    <InputLabel htmlFor={'columns'}># of Columns</InputLabel>
-                    <TextInput
-                      id={'columns'}
-                      // className="h-8"
-                      value={columns}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setColumns(e.currentTarget.value)
-                      }
-                      placeholder={'# of Columns'}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : null}
-            <div className={'flex flex-row gap-2'}>
-              <InputLabel htmlFor={'persistent'}>
-                {getCopy('LayoutEditModal', 'persist_across_pages')}
-              </InputLabel>
-              <Toggle value={persistent} setValue={setPersistent} />
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <div className={'flex w-full flex-row justify-end gap-2'}>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button variant={'filled'} onClick={handleSave}>
-              Save
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+      <Stack gap={'xs'}>
+        {layoutType == 'grid' && (
+          <>
+            <Text size={'lg'} fw={600}>
+              {getCopy('LayoutEditModal', 'grid_size')}
+            </Text>
+            <Text size={'sm'} c={'dimmed'}>
+              {getCopy('LayoutEditModal', 'grid_size_description')}
+            </Text>
+            <SimpleGrid cols={2} mt={'md'}>
+              <TextInput
+                label={'# of Rows'}
+                value={rows}
+                onChange={(e) => setRows(e.currentTarget.value)}
+              />
+              <TextInput
+                label={'# of Columns'}
+                value={columns}
+                onChange={(e) => setColumns(e.currentTarget.value)}
+              />
+            </SimpleGrid>
+          </>
+        )}
+        <Group gap={'xs'}>
+          <InputLabel htmlFor={'persistent'}>
+            {getCopy('LayoutEditModal', 'persist_across_pages')}
+          </InputLabel>
+          <Toggle value={persistent} setValue={setPersistent} />
+        </Group>
+      </Stack>
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button variant={'default'} onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant={'filled'} onClick={handleSave}>
+          Save
+        </Button>
+      </Group>
+    </Modal>
   );
-};
-
-export default LayoutEditModal;
+}

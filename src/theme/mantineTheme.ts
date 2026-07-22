@@ -7,6 +7,7 @@ import {
   CSSVariablesResolver,
   defaultVariantColorsResolver,
   Divider,
+  Modal,
   NumberInput,
   RangeSlider,
   Slider,
@@ -157,6 +158,14 @@ export const theme = createTheme({
     Divider: Divider.extend({
       defaultProps: {
         'aria-hidden': true
+      }
+    }),
+    Modal: Modal.extend({
+      styles: {
+        title: {
+          fontSize: '1.5rem',
+          fontWeight: 700
+        }
       }
     }),
     Notification: {

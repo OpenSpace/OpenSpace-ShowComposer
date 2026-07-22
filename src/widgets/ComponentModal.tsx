@@ -1,15 +1,6 @@
-// ComponentModal.tsx
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
+import { useCallback, useEffect, useState } from 'react';
+import { Button, Group, Modal, Text } from '@mantine/core';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import {
   BooleanComponent,
   Component,
@@ -69,7 +60,7 @@ enum AsyncStatus {
   True = 'true',
   Pending = 'pending'
 }
-const ComponentModal: React.FC<ComponentModalProps> = ({
+export default function ComponentModal({
   isOpen,
   onClose,
   onCancel,
@@ -77,7 +68,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   type,
   initialData = {},
   icon
-}) => {
+}: ComponentModalProps) {
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const removeComponent = useBoundStore((state) => state.removeComponent);
@@ -85,14 +76,12 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation
   );
-
   const executeAndResetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.executeAndResetAsyncPreSubmitOperation
   );
   const [asyncOperationStatus, setAsyncOperationStatus] = useState<AsyncStatus>(
     AsyncStatus.False
   );
-
   const components = useBoundStore((state) => state.components);
   const component = componentId ? components[componentId] : null;
   const [componentData, setComponentData] = useState<Partial<Component>>({
@@ -115,7 +104,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       if (component) {
         if (component.type == 'multi') {
           Object.entries(components)
-            .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
+            .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
             .forEach(([id, c]) => {
               if (c.isMulti === 'pendingSave') {
                 updateComponent(id, {
@@ -142,7 +131,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
 
         if (type == 'multi') {
           Object.entries(components)
-            .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
+            .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
             .forEach(([id, c]) => {
               if (c.isMulti === 'pendingSave') {
                 updateComponent(id, {
@@ -168,13 +157,10 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
   const handleCancel = () => {
     if ((component ? component.type : type) == 'multi') {
       Object.entries(components)
-        .filter(([_id, c], _i) => c.isMulti !== 'false' && c.isMulti !== 'true')
+        .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
         .forEach(([id, c]) => {
           if (c.isMulti === 'pendingSave') {
             removeComponent(id);
-            // updateComponent(id, {
-            //   isMulti: 'false',
-            // });
           } else if (c.isMulti === 'pendingDelete') {
             updateComponent(id, {
               isMulti: 'true'
@@ -186,6 +172,7 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
     onClose();
     if (onCancel) onCancel();
   };
+
   let content;
   switch (component ? component.type : type) {
     case 'title':
@@ -325,45 +312,43 @@ const ComponentModal: React.FC<ComponentModalProps> = ({
       );
       break;
     default:
-      content = <div>{getCopy('ComponentModal', 'unknown_component_type')}</div>;
+      content = <Text>{getCopy('ComponentModal', 'unknown_component_type')}</Text>;
   }
-  if (!isOpen) return null;
+
   return (
-    <div
-      className={
-        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
+    <Modal
+      opened={isOpen}
+      onClose={handleCancel}
+      centered
+      size={510}
+      title={
+        <Group gap={'xs'}>
+          {icon}
+          {component
+            ? `Edit ${
+                allComponentLabels.find((c) => c.value == component.type)?.label ||
+                'Component'
+              } Component`
+            : `Create ${
+                allComponentLabels.find((c) => c.value == type)?.label || 'Component'
+              } Component`}
+        </Group>
       }
     >
-      <Card className={'w-[510px] bg-white'}>
-        <CardHeader>
-          <CardTitle>
-            <div className={'flex flex-row gap-2'}>
-              {icon}
-              {component
-                ? `Edit ${
-                    allComponentLabels.find((c) => c.value == component.type)?.label ||
-                    'Component'
-                  } Component`
-                : `Create ${
-                    allComponentLabels.find((c) => c.value == type)?.label || 'Component'
-                  } Component`}
-            </div>
-          </CardTitle>
-          <CardDescription>{getCopy('ComponentModal', 'configure_copy')}</CardDescription>
-        </CardHeader>
-        <CardContent>{content}</CardContent>
-        <CardFooter>
-          <div className={'flex w-full flex-row justify-end gap-2'}>
-            <Button onClick={handleCancel}>{getCopy('ComponentModal', 'cancel')}</Button>
-            <Button variant={'filled'} onClick={handleSubmit}>
-              {component
-                ? getCopy('ComponentModal', 'save')
-                : getCopy('ComponentModal', 'create')}
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+      <Text size={'sm'} c={'dimmed'} mb={'md'}>
+        {getCopy('ComponentModal', 'configure_copy')}
+      </Text>
+      {content}
+      <Group justify={'flex-end'} mt={'md'}>
+        <Button variant={'default'} onClick={handleCancel}>
+          {getCopy('ComponentModal', 'cancel')}
+        </Button>
+        <Button variant={'filled'} onClick={handleSubmit}>
+          {component
+            ? getCopy('ComponentModal', 'save')
+            : getCopy('ComponentModal', 'create')}
+        </Button>
+      </Group>
+    </Modal>
   );
-};
-export default ComponentModal;
+}
