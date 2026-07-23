@@ -1,6 +1,5 @@
-// DroppableWorkspace.tsx
-import React, { useEffect, useState } from 'react';
-import { Badge } from '@mantine/core';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Badge, Box } from '@mantine/core';
 
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
 import AdjustablePage from '@/editor/canvas/AdjustablePage';
@@ -8,25 +7,24 @@ import ScaleGUI from '@/editor/canvas/ScaleGUI';
 import SelectionTool from '@/editor/canvas/SelectionTool';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { useTheme } from '@/theme/ThemeProvider';
 import { getCopy } from '@/utils/copyHelpers';
-import { cn } from '@/utils/utils';
 
-const DroppableWorkspace: React.FC<{
-  children: React.ReactNode;
-}> = ({ children }) => {
-  const { theme } = useTheme();
+export default function DroppableWorkspace({ children }: { children: ReactNode }) {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const currentPage = useBoundStore((state) => state.currentPage);
-  const { x: pageX, y: pageY } = useBoundStore((state) => state.getPageById(currentPage));
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
+
+  const currentPage = useBoundStore((state) => state.currentPage);
+  const { x: pageX, y: pageY } = useBoundStore((state) => state.getPageById(currentPage));
+
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
 
-  // Wheel and mouse handlers remain the same
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const innerContainerRef = useRef<HTMLDivElement>(null);
+
   const handleWheel = (event: React.WheelEvent) => {
     const scaleAmount = event.deltaY > 0 ? 0.95 : 1.05;
     setScale((prevScale) => {
@@ -35,39 +33,6 @@ const DroppableWorkspace: React.FC<{
     });
   };
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    const startX = event.pageX - translateX * scale;
-    const startY = event.pageY - translateY * scale;
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const container = document.getElementById('workspace');
-      const containerRect = container?.getBoundingClientRect();
-      const div = document.getElementById('innerContainer');
-      const divRect = div?.getBoundingClientRect();
-      let newTranslateX = (moveEvent.pageX - startX) / scale;
-      let newTranslateY = (moveEvent.pageY - startY) / scale;
-      if (divRect && containerRect) {
-        // Ensure the div does not move out of the container's bounds
-        if (newTranslateX > 0) {
-          newTranslateX = 0;
-        } else if (newTranslateX < (containerRect.width - divRect.width) / scale) {
-          newTranslateX = (containerRect.width - divRect.width) / scale;
-        }
-        if (newTranslateY > 0) {
-          newTranslateY = 0;
-        } else if (newTranslateY < (containerRect.height - divRect.height) / scale) {
-          newTranslateY = (containerRect.height - divRect.height) / scale;
-        }
-        setTranslateX(newTranslateX);
-        setTranslateY(newTranslateY);
-      }
-    };
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Shift') {
@@ -86,15 +51,54 @@ const DroppableWorkspace: React.FC<{
       document.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
+
+  const handleMouseDown = (event: React.MouseEvent) => {
+    const startX = event.pageX - translateX * scale;
+    const startY = event.pageY - translateY * scale;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const containerRect = workspaceRef.current?.getBoundingClientRect();
+      const divRect = innerContainerRef.current?.getBoundingClientRect();
+      let newTranslateX = (moveEvent.pageX - startX) / scale;
+      let newTranslateY = (moveEvent.pageY - startY) / scale;
+      if (divRect && containerRect) {
+        // Ensure the div does not move out of the container's bounds
+        if (newTranslateX > 0) {
+          newTranslateX = 0;
+        } else if (newTranslateX < (containerRect.width - divRect.width) / scale) {
+          newTranslateX = (containerRect.width - divRect.width) / scale;
+        }
+        if (newTranslateY > 0) {
+          newTranslateY = 0;
+        } else if (newTranslateY < (containerRect.height - divRect.height) / scale) {
+          newTranslateY = (containerRect.height - divRect.height) / scale;
+        }
+        setTranslateX(newTranslateX);
+        setTranslateY(newTranslateY);
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
   return (
     <>
-      <div
-        // id="workspace"
-        className={cn(
-          'relative h-full w-full rounded-lg border border-slate-200 bg-white text-slate-950',
-          'dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
-        )}
+      <Box
+        ref={workspaceRef}
         style={{
+          position: 'relative',
+          height: '100%',
+          width: '100%',
+          borderRadius: 'var(--mantine-radius-lg)',
+          border: '1px solid var(--mantine-color-dark-4)',
+          backgroundColor: 'var(--mantine-color-dark-6)',
+          color: 'var(--mantine-color-dimmed)',
           overflow: 'hidden',
           transition: 'transform 0.2s'
         }}
@@ -102,25 +106,29 @@ const DroppableWorkspace: React.FC<{
         {!isPresentMode && (
           <Badge
             variant={'default'}
-            className={
-              ' font-lg absolute left-3 top-3 gap-2 bg-white/70 tracking-wide dark:bg-slate-700'
-            }
+            style={{
+              position: 'absolute',
+              left: 12,
+              top: 12,
+              letterSpacing: '0.025em',
+              backgroundColor: 'var(--mantine-color-dark-5)'
+            }}
           >
             {getCopy('DroppableWorkspace', 'edit_mode')}
           </Badge>
         )}
 
         {isPresentMode && (
-          <div className={'absolute left-3 top-3'}>
+          <Box style={{ position: 'absolute', left: 12, top: 12 }}>
             <ConnectionStatusIndicator />
-          </div>
+          </Box>
         )}
         {!isPresentMode && <SelectionTool />}
 
-        <div
+        <Box
+          ref={innerContainerRef}
           onWheel={handleWheel}
           onMouseDown={isShiftPressed ? handleMouseDown : undefined}
-          id={'innerContainer'}
           style={{
             position: 'absolute',
             top: isPresentMode ? -pageY : 0,
@@ -128,13 +136,11 @@ const DroppableWorkspace: React.FC<{
             width: isPresentMode ? pageWidth + pageX : '4000px',
             height: isPresentMode ? pageHeight + pageY : '4000px',
             minHeight: isPresentMode ? '' : '100%',
-            overflow: isPresentMode ? 'hidden' : 'hidden',
+            overflow: 'hidden',
             backgroundPosition: '-12.5px -12.5px',
             backgroundSize: '25px 25px',
             backgroundImage: !isPresentMode
-              ? theme == 'dark'
-                ? 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)'
-                : 'radial-gradient(circle,#404040 1px, #f1f5f9 1px)'
+              ? 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)'
               : undefined,
             pointerEvents: isShiftPressed ? 'all' : 'none',
             transformOrigin: isPresentMode ? 'center' : 'top left',
@@ -146,17 +152,22 @@ const DroppableWorkspace: React.FC<{
         >
           <AdjustablePage />
           {children}
-        </div>
-      </div>
-      <div
-        className={
-          'absolute right-5 top-7 flex flex-col items-center justify-center gap-2'
-        }
+        </Box>
+      </Box>
+      <Box
+        style={{
+          position: 'absolute',
+          right: 20,
+          top: 28,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8
+        }}
       >
         {!isPresentMode && <ScaleGUI />}
-      </div>
+      </Box>
     </>
   );
-};
-
-export default DroppableWorkspace;
+}

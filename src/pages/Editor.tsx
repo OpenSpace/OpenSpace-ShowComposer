@@ -422,7 +422,6 @@ const Editor = () => {
               className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
                 isPresentMode ? 'p-0' : 't p-4 pl-2'
               } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
-              id={'workspace'}
             >
               <DroppableWorkspace>
                 {/* Static Panels */}

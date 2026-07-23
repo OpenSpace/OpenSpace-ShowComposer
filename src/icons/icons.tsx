@@ -20,6 +20,8 @@ export {
   LuLockOpen as LockOpenIcon,
   LuMinus as MinusIcon,
   LuPause as PauseIcon,
+  LuPin as PinIcon,
+  LuPinOff as PinOffIcon,
   LuPlay as PlayIcon,
   LuPlus as PlusIcon,
   LuTvMinimalPlay as PresentIcon,
