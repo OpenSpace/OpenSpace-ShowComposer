@@ -1,19 +1,7 @@
 import { useState } from 'react';
-import { InputLabel, NumberInput } from '@mantine/core';
+import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
 
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger
-} from '@/components/ui/menubar';
 import ConfirmationModal from '@/editor/menubar/ConfirmationModal';
 import ImportShowModal from '@/editor/menubar/ImportShowModal';
 import LoadProjectModal from '@/editor/menubar/LoadProjectModal';
@@ -31,11 +19,9 @@ import {
 import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
 import {
-  // loadStore,
   exportProject,
   loadProject,
   loadProjects,
-  // loadStoreImageSeperately,
   loadStoreToServer,
   Project,
   saveProject
@@ -48,6 +34,15 @@ interface LoadedStore {
 }
 
 export function GlobalMenuBar() {
+  const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
+    (state) => state
+  );
+  const deletePage = useBoundStore((state) => state.deletePage);
+  const currentPage = useBoundStore((state) => state.currentPage);
+  const { pageWidth, pageHeight } = useSettingsStore((state) => state);
+  const updatePageSize = useSettingsStore((state) => state.updatePageSize);
+  const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
+
   const [loadedStore, setLoadedStore] = useState<LoadedStore | null>(null);
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
@@ -59,14 +54,8 @@ export function GlobalMenuBar() {
     useState(false);
   const [isLoadProjectModalOpen, setIsLoadProjectModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
-    (state) => state
-  );
-  const deletePage = useBoundStore((state) => state.deletePage);
-  const currentPage = useBoundStore((state) => state.currentPage);
   const [projects, setProjects] = useState<Project[]>([]);
-  const { pageWidth, pageHeight } = useSettingsStore((state) => state);
-  const updatePageSize = useSettingsStore((state) => state.updatePageSize);
+
   const pageSizes = [
     {
       name: '1080',
@@ -85,9 +74,7 @@ export function GlobalMenuBar() {
     }
   ];
 
-  const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
-
-  const handleLoadStore = async () => {
+  async function handleLoadStore() {
     try {
       const store = (await loadStoreToServer()) as LoadedStore;
       setLoadedStore(store); // Store the loaded data
@@ -95,8 +82,8 @@ export function GlobalMenuBar() {
     } catch (error) {
       console.error('Error loading store:', error);
     }
-  };
-  const handleLoadProjects = async () => {
+  }
+  async function handleLoadProjects() {
     try {
       const projects = await loadProjects();
       setProjects(projects);
@@ -104,148 +91,182 @@ export function GlobalMenuBar() {
     } catch (error) {
       console.error('Error loading projects:', error);
     }
-  };
-  const handleDeleteAllConfirm = () => {
+  }
+  function handleDeleteAllConfirm() {
     removeAllComponents();
     setIsDeleteAllModalOpen(false);
     setIsNewProjectModalOpen(true);
-  };
-  const handleSaveConfirm = async () => {
+  }
+  async function handleSaveConfirm() {
     const saved = await saveProject();
     if (saved) {
       setIsConfirmationModalOpen(true);
     }
-  };
+  }
 
   return (
     <>
-      <Menubar className={'border-0 p-2'}>
-        <MenubarMenu>
-          <MenubarTrigger>
-            {/* <PlusCircleIcon size={20} /> */}
-            File
-          </MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem onClick={() => setIsNewProjectModalOpen(true)}>
-              New Show
-            </MenubarItem>
-            <MenubarItem onClick={handleSaveConfirm}>Save </MenubarItem>
-            <MenubarItem onClick={handleLoadProjects}>Open</MenubarItem>
-            <MenubarItem onClick={handleLoadStore}>Import</MenubarItem>
-            <MenubarItem onClick={exportProject}>Export</MenubarItem>
-            <MenubarItem
-              onClick={() => setIsDeleteAllModalOpen(true)}
-              className={'text-red-500'}
-            >
+      <Group gap={4} p={8}>
+        <Menu trigger={'click-hover'} position={'bottom-start'}>
+          <Menu.Target>
+            <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
+              File
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item onClick={() => setIsNewProjectModalOpen(true)}>New Show</Menu.Item>
+            <Menu.Item onClick={handleSaveConfirm}>Save</Menu.Item>
+            <Menu.Item onClick={handleLoadProjects}>Open</Menu.Item>
+            <Menu.Item onClick={handleLoadStore}>Import</Menu.Item>
+            <Menu.Item onClick={exportProject}>Export</Menu.Item>
+            <Menu.Item color={'red'} onClick={() => setIsDeleteAllModalOpen(true)}>
               Delete Show
-            </MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>Settings</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem onClick={() => setIsProjectSettingsModalOpen(true)}>
-              Presentation Settings <MenubarShortcut>⌘Z</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onClick={() => setIsConnectionSettingsModalOpen(true)}>
-              Workspace Settings <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-            </MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>Page</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+
+        <Menu trigger={'click-hover'} position={'bottom-start'}>
+          <Menu.Target>
+            <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
+              Settings
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              onClick={() => setIsProjectSettingsModalOpen(true)}
+              rightSection={
+                <Text size={'xs'} c={'dimmed'}>
+                  ⌘Z
+                </Text>
+              }
+            >
+              Presentation Settings
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => setIsConnectionSettingsModalOpen(true)}
+              rightSection={
+                <Text size={'xs'} c={'dimmed'}>
+                  ⇧⌘Z
+                </Text>
+              }
+            >
+              Workspace Settings
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+
+        <Menu trigger={'click-hover'} position={'bottom-start'}>
+          <Menu.Target>
+            <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
+              Page
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
               onClick={() => {
                 setIsNewPage(true);
                 setIsNewPageModalOpen(true);
               }}
             >
               Add Page
-            </MenubarItem>
-            <MenubarItem
+            </Menu.Item>
+            <Menu.Item
               onClick={() => {
                 setIsNewPage(false);
                 setIsNewPageModalOpen(true);
               }}
             >
               Edit Page
-            </MenubarItem>
-            <MenubarItem onClick={() => deletePage(currentPage)}>Delete Page</MenubarItem>
-            <MenubarSeparator />
-            <MenubarSub>
-              <MenubarSubTrigger>Page Presets</MenubarSubTrigger>
-              <MenubarSubContent>
+            </Menu.Item>
+            <Menu.Item onClick={() => deletePage(currentPage)}>Delete Page</Menu.Item>
+            <Menu.Divider />
+            <Menu.Sub>
+              <Menu.Sub.Target>
+                <Menu.Sub.Item>Page Presets</Menu.Sub.Item>
+              </Menu.Sub.Target>
+              <Menu.Sub.Dropdown>
                 {pageSizes.map((page) => (
-                  <MenubarItem
-                    onClick={() => updatePageSize(page.width, page.height)}
+                  <Menu.Item
                     key={page.name}
+                    onClick={() => updatePageSize(page.width, page.height)}
                   >
                     {page.name}
-                  </MenubarItem>
+                  </Menu.Item>
                 ))}
-              </MenubarSubContent>
-            </MenubarSub>
-            <div className={'grid gap-2 p-2'}>
-              <div className={'space-between flex flex-row items-center gap-4'}>
-                <InputLabel htmlFor={'port'}>
-                  {getCopy('PageButtonMenu', 'width')}
-                </InputLabel>
-                <NumberInput
-                  id={'width'}
-                  className={'w-40'}
-                  size={'xs'}
-                  allowDecimal={false}
-                  value={pageWidth}
-                  onChange={(value) => {
-                    updatePageSize(
-                      typeof value === 'number' ? value : parseInt(value),
-                      pageHeight
-                    );
-                  }}
-                  placeholder={'Enter Page Width'}
-                />
-              </div>
-              <div className={'flex flex-row  items-center gap-4'}>
-                <InputLabel htmlFor={'port'}>
-                  {getCopy('PageButtonMenu', 'height')}
-                </InputLabel>
-                <NumberInput
-                  id={'height'}
-                  className={'w-40'}
-                  size={'xs'}
-                  allowDecimal={false}
-                  value={pageHeight}
-                  onChange={(value) => {
-                    updatePageSize(
-                      pageWidth,
-                      typeof value === 'number' ? value : parseInt(value)
-                    );
-                  }}
-                  placeholder={'Enter Page Height'}
-                />
-              </div>
-            </div>
-            <MenubarSeparator />
-          </MenubarContent>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>History</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem onClick={() => undo()} disabled={!pastStates.length}>
-              {/* <Undo /> */}
+              </Menu.Sub.Dropdown>
+            </Menu.Sub>
+            <Stack
+              gap={'xs'}
+              p={'xs'}
+              // Stop propagation from arrow inputs into the number inputs as
+              // the menu steals focus (still let Escape bubble up to close the menu).
+              onKeyDown={(event) => {
+                if (event.key !== 'Escape') {
+                  event.stopPropagation();
+                }
+              }}
+            >
+              <NumberInput
+                label={getCopy('PageButtonMenu', 'width')}
+                size={'xs'}
+                allowDecimal={false}
+                value={pageWidth}
+                onChange={(value) =>
+                  updatePageSize(
+                    typeof value === 'number' ? value : parseInt(value),
+                    pageHeight
+                  )
+                }
+              />
+              <NumberInput
+                label={getCopy('PageButtonMenu', 'height')}
+                size={'xs'}
+                allowDecimal={false}
+                value={pageHeight}
+                onChange={(value) =>
+                  updatePageSize(
+                    pageWidth,
+                    typeof value === 'number' ? value : parseInt(value)
+                  )
+                }
+              />
+            </Stack>
+          </Menu.Dropdown>
+        </Menu>
+
+        <Menu trigger={'click-hover'} position={'bottom-start'}>
+          <Menu.Target>
+            <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
+              History
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              onClick={() => undo()}
+              disabled={!pastStates.length}
+              rightSection={
+                <Text size={'xs'} c={'dimmed'}>
+                  ⌘Z
+                </Text>
+              }
+            >
               Undo
-              <MenubarShortcut>⌘Z</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onClick={() => redo()} disabled={!futureStates.length}>
-              {/* <Redo /> */}
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => redo()}
+              disabled={!futureStates.length}
+              rightSection={
+                <Text size={'xs'} c={'dimmed'}>
+                  ⇧⌘Z
+                </Text>
+              }
+            >
               Redo
-              <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onClick={() => clear()}>Clear History</MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar>
+            </Menu.Item>
+            <Menu.Item onClick={() => clear()}>Clear History</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
       <ImportShowModal
         isOpen={isImportShowModalOpen && loadedStore !== null}
         onClose={() => setIsImportShowModalOpen(false)}
