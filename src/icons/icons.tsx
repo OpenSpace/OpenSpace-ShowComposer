@@ -14,6 +14,7 @@ export {
   LuGlobe as GlobeIcon,
   LuGripHorizontal as GripHorizontalIcon,
   LuImage as ImageIcon,
+  LuLayoutGrid as LayoutGridIcon,
   LuLink as LinkIcon,
   LuLock as LockIcon,
   LuLockOpen as LockOpenIcon,
@@ -27,6 +28,7 @@ export {
   LuRewind as RewindIcon,
   LuRotate3D as Rotate3dIcon,
   LuSearch as SearchIcon,
+  LuSettings as SettingsIcon,
   LuSquare as SquareIcon,
   LuTelescope as TelescopeIcon,
   LuTrash2 as TrashIcon,
@@ -37,3 +39,40 @@ export {
   LuZoomIn as ZoomInIcon,
   LuZoomOut as ZoomOutIcon
 } from 'react-icons/lu';
+
+// Custom icons - nothing in react-icons library matched them
+export function RowIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={'0 0 24 24'}
+      fill={'none'}
+      stroke={'currentColor'}
+      strokeWidth={'2'}
+      strokeLinecap={'round'}
+      strokeLinejoin={'round'}
+    >
+      <rect x={'2'} y={'8'} width={'8'} height={'8'} />
+      <rect x={'14'} y={'8'} width={'8'} height={'8'} />
+    </svg>
+  );
+}
+
+export function ColumnIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={'0 0 24 24'}
+      fill={'none'}
+      stroke={'currentColor'}
+      strokeWidth={'2'}
+      strokeLinecap={'round'}
+      strokeLinejoin={'round'}
+    >
+      <rect x={'8'} y={'2'} width={'8'} height={'8'} />
+      <rect x={'8'} y={'14'} width={'8'} height={'8'} />
+    </svg>
+  );
+}

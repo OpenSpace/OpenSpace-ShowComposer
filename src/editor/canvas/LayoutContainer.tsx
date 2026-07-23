@@ -4,8 +4,8 @@ import { Rnd } from 'react-rnd';
 import { ActionIcon, Box, Menu } from '@mantine/core';
 
 import Placeholder from '@/editor/canvas/Placeholder';
-import { ColumnIcon, RowIcon } from '@/editor/sidebar/LayoutToolbar';
 import {
+  ColumnIcon,
   CopyIcon,
   EditIcon,
   EllipsisVerticalIcon,
@@ -13,6 +13,7 @@ import {
   LayoutGridIcon,
   PinIcon,
   PinOffIcon,
+  RowIcon,
   TrashIcon
 } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
