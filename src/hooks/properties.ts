@@ -8,20 +8,10 @@ import { ConnectionStatus } from '@/types/enums';
 import { PropertyOrPropertyGroup, PropertyTypeKey } from '@/types/Property/property';
 import { PropertyGroupsRuntime } from '@/types/Property/propertyGroups';
 
-// These hooks give components the same property API as OpenSpace-WebGui, but read from
-// ShowComposer's Zustand propertyStore instead of Redux, so components use them instead of
-// poking at the store directly. One difference: WebGui keeps the whole property tree synced
-// all the time, while ShowComposer subscribes to one property at a time, only when needed —
-// that's why useSubscribeToProperty handles starting and stopping the subscription.
-
 function validatePropertyType<T extends PropertyTypeKey>(
   type: T,
   prop: PropertyOrPropertyGroup<T> | undefined
 ): boolean {
-  // Unlike WebGui (whose property tree is always fully synced with metadata),
-  // ShowComposer populates many properties from value-only subscription updates that carry
-  // no metaData. We can only type-check when metadata is present; otherwise skip the check
-  // rather than dereference undefined metaData.
   if (prop === undefined || prop.metaData === undefined) {
     return true;
   }

@@ -48,8 +48,6 @@ function ImageGallery({
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const imagesToDisplay = images.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // The modal stays mounted (visibility is driven by `opened`), so re-sync the local
-  // selection whenever the incoming image changes - e.g. when reopened for a new value
   useEffect(() => {
     setSelectedImage(initialImage);
   }, [initialImage]);

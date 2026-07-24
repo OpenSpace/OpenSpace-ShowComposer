@@ -35,8 +35,6 @@ function zeroPad(value: number): string {
   return value < 10 ? `0${value}` : `${value}`;
 }
 
-// The value shown in each part's field, matching the pre-migration display (year is
-// unpadded, minutes are unpadded, the rest are zero-padded, and month is abbreviated)
 function formatDatePart(part: (typeof dateParts)[number], date: Date): string | number {
   switch (part) {
     case 'month':

@@ -1,4 +1,3 @@
-// DeleteConfirmationModal.tsx
 import React, { ReactElement, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 

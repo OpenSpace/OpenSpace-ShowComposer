@@ -28,7 +28,7 @@ export function TimeDatePicker() {
     return time;
   }, [time]);
 
-  // Spice, which handles OpenSpace time parsing, does not support ISO 8601 time zones (the
+  // Spice does not support ISO 8601 time zones (the
   // trailing Z) but always assumes UTC, so we strip the Z before sending.
   function setDate(newTime: Date) {
     try {
