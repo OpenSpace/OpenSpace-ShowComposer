@@ -12,6 +12,7 @@ const DEFAULT_BACKEND_ORIGIN = 'http://localhost:4680';
  * @see https://vitejs.dev/config/
  */
 export default defineConfig(({ mode }) => {
+  // The empty string means that all env vars are loaded, not just those starting with VITE_ (the default)
   const env = loadEnv(mode, process.cwd(), '');
   const backend = env.SHOWCOMPOSER_BACKEND || DEFAULT_BACKEND_ORIGIN;
 
