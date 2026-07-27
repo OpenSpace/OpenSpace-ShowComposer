@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ImperativePanelHandle } from 'react-resizable-panels';
+import {
+  ImperativePanelHandle,
+  Panel,
+  PanelGroup,
+  PanelResizeHandle
+} from 'react-resizable-panels';
 import { Button, Divider, ScrollArea } from '@mantine/core';
 import {
   AlignJustify,
@@ -8,6 +13,7 @@ import {
   Clock,
   Code,
   Compass,
+  GripVertical,
   Group,
   Hash,
   History,
@@ -28,11 +34,6 @@ import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicato
 import { Feedback } from '@/components/Feedback';
 import Pagination from '@/components/Pagination';
 import ToggleButton from '@/components/ToggleButton';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup
-} from '@/components/ui/resizable';
 import DraggableComponent from '@/editor/canvas/DraggableComponent';
 import DraggablePanel from '@/editor/canvas/DraggablePanel';
 import DroppableWorkspace from '@/editor/canvas/DroppableWorkspace';
@@ -51,6 +52,8 @@ import { MultiComponent } from '@/types/components';
 import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
 import ComponentModal from '@/widgets/ComponentModal';
+
+import classes from './Editor.module.css';
 // import { useNavigate } from 'react-router-dom';
 // import TooltipHolder from '@/components/TooltipHolder';
 
@@ -268,7 +271,7 @@ const Editor = () => {
     });
   };
 
-  const [_collapsing, setCollapsing] = useState(false);
+  const [, setCollapsing] = useState(false);
   const collapsePanel = (perc: number) => {
     const panel = panelRef.current;
     setCollapsing(true);
@@ -290,14 +293,14 @@ const Editor = () => {
 
   return (
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
-      <ResizablePanelGroup
+      <PanelGroup
         direction={'horizontal'}
         className={
           ' flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
         }
         onLayout={(newSizes: number[]) => setSizes(newSizes)}
       >
-        <ResizablePanel
+        <Panel
           collapsible
           ref={panelRef}
           defaultSize={sizes[0]}
@@ -347,7 +350,7 @@ const Editor = () => {
                     {getCopy('Main', 'static_components')}
                   </h2>
                   <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                    {staticComponentTypes.map((v, _i) => (
+                    {staticComponentTypes.map((v) => (
                       <Button
                         key={v.type}
                         size={'sm'}
@@ -364,7 +367,7 @@ const Editor = () => {
                     {getCopy('Main', 'preset_components')}
                   </h2>
                   <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                    {presetComponentTypes.map((v, _i) => (
+                    {presetComponentTypes.map((v) => (
                       <Button
                         key={v.type}
                         size={'sm'}
@@ -379,7 +382,7 @@ const Editor = () => {
                     ))}
                   </div>
                   <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
-                    {propertyComponentTypes.map((v, _i) => (
+                    {propertyComponentTypes.map((v) => (
                       <Button
                         key={v.type}
                         size={'sm'}
@@ -399,9 +402,15 @@ const Editor = () => {
               <Feedback className={'p-4'} />
             </div>
           </div>
-        </ResizablePanel>
-        {!isPresentMode && <ResizableHandle withHandle />}
-        <ResizablePanel defaultSize={sizes[1]} onResize={(size) => handleResize(1, size)}>
+        </Panel>
+        {!isPresentMode && (
+          <PanelResizeHandle className={classes.resizeHandle}>
+            <div className={classes.resizeGrip}>
+              <GripVertical size={10} />
+            </div>
+          </PanelResizeHandle>
+        )}
+        <Panel defaultSize={sizes[1]} onResize={(size) => handleResize(1, size)}>
           <div
             className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
           >
@@ -538,8 +547,8 @@ const Editor = () => {
             layoutId={currentLayoutId}
             onClose={() => setShowEditModal(false)}
           />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </Panel>
+      </PanelGroup>
     </ThemeProvider>
   );
 };

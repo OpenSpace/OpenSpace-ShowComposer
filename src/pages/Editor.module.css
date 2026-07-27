@@ -1,0 +1,39 @@
+/* Splitter handle between the sidebar and the workspace (react-resizable-panels). */
+.resizeHandle {
+  position: relative;
+  display: flex;
+  width: 1px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mantine-color-dark-4);
+}
+
+/* Widen the invisible grab area around the 1px line. */
+.resizeHandle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 8px;
+  transform: translateX(-50%);
+}
+
+.resizeGrip {
+  z-index: 1;
+  display: flex;
+  height: 16px;
+  width: 12px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mantine-color-dark-4);
+  border-radius: var(--mantine-radius-sm);
+  background-color: var(--mantine-color-dark-6);
+  color: var(--mantine-color-dark-1);
+}
+
+.resizeHandle[data-resize-handle-state='hover'] .resizeGrip,
+.resizeHandle[data-resize-handle-state='drag'] .resizeGrip {
+  background-color: var(--mantine-color-dark-4);
+  color: var(--mantine-color-white);
+}
