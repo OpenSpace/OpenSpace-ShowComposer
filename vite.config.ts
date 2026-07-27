@@ -12,7 +12,7 @@ const DEFAULT_BACKEND_ORIGIN = 'http://localhost:4680';
  * @see https://vitejs.dev/config/
  */
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, process.cwd(), '');
   const backend = env.SHOWCOMPOSER_BACKEND || DEFAULT_BACKEND_ORIGIN;
 
   return {
