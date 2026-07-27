@@ -2,9 +2,9 @@ import { type ChangeEvent, useEffect, useState } from 'react';
 import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
+import { fetchGalleryImages, uploadImage } from '@/api/showbuilder';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
-import { fetchGalleryImages, uploadImage } from '@/utils/saveProject';
 
 import ImageGallery from './ImageGallery';
 
@@ -22,7 +22,7 @@ function ImageUpload({ value, onChange }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [galleryOpened, { open: openGallery, close: closeGallery }] =
     useDisclosure(false);
-  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
     const loadGalleryImages = async () => {

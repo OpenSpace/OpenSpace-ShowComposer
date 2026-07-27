@@ -92,6 +92,17 @@ In production, the application expects:
    - Project Export:
      - `POST /api/package` - Export project as ZIP file
 
+## Backend integration
+
+Saving, loading, exporting, and image uploads all go through the OpenSpace WebGui backend
+(`showbuilder.js`, in the separate `OpenSpace-WebGuiBackend` repo) - the app doesn't do any
+of that itself. Those calls all live in one file, `src/api/showbuilder.ts`, so if a backend
+route changes, that's the only place to update.
+
+Requests are relative, never tied to a host: in production the backend serves both the app
+and the API under `/showcomposer/`, and in dev Vite proxies those paths to the running
+backend (see `vite.config.ts`). So it just works wherever OpenSpace happens to be running.
+
 ## Component Categories
 
 ### Static Components

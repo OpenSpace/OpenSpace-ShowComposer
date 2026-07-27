@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
+import { confirmStoreImport } from '@/api/showbuilder';
 import ToggleComponent from '@/components/Toggle';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
@@ -13,7 +14,6 @@ import {
   MultiComponent,
   Page
 } from '@/types/components';
-import { confirmStoreImport } from '@/utils/saveProject';
 import { cn } from '@/utils/utils';
 
 type MultiOption = {

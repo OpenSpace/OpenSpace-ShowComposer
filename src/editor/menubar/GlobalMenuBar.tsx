@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
 
+import { loadProject, loadProjects, Project } from '@/api/showbuilder';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import ConfirmationModal from '@/editor/menubar/ConfirmationModal';
 import ImportShowModal from '@/editor/menubar/ImportShowModal';
@@ -18,14 +19,7 @@ import {
 } from '@/store/boundStore';
 import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
 import { getCopy } from '@/utils/copyHelpers';
-import {
-  exportProject,
-  loadProject,
-  loadProjects,
-  loadStoreToServer,
-  Project,
-  saveProject
-} from '@/utils/saveProject';
+import { exportProject, loadStoreToServer, saveProject } from '@/utils/saveProject';
 
 interface LoadedStore {
   boundStore: BoundStoreState;
@@ -305,9 +299,13 @@ export function GlobalMenuBar() {
         setIsOpen={setIsLoadProjectModalOpen}
         projects={projects}
         handleLoadProject={async (project: Project) => {
-          const store = await loadProject(project.filePath);
-          useBoundStore.setState(store.boundStore);
-          useSettingsStore.setState(store.settingsStore);
+          try {
+            const store = await loadProject(project.filePath);
+            useBoundStore.setState(store.boundStore);
+            useSettingsStore.setState(store.settingsStore);
+          } catch (error) {
+            console.error('Error loading project:', error);
+          }
         }}
       />
       <ConfirmationModal

@@ -1,110 +1,175 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, ScrollArea } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Loader,
+  ScrollArea,
+  Stack,
+  Text,
+  UnstyledButton
+} from '@mantine/core';
 
+import { loadProject, loadProjects, Project } from '@/api/showbuilder';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { getCopy } from '@/utils/copyHelpers';
-// import Pagination from '@/components/Pagination';
-import { loadProject, loadProjects, Project } from '@/utils/saveProject';
 
-export const Hub = () => {
+type LoadStatus = 'loading' | 'error' | 'ready';
+
+export function Hub() {
   const [projects, setProjects] = useState<Project[]>([]);
-
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const handleLoadProjects = async () => {
+  const [status, setStatus] = useState<LoadStatus>('loading');
+
+  const navigate = useNavigate();
+
+  async function handleLoadProjects() {
+    setStatus('loading');
     try {
       const projects = await loadProjects();
       setProjects(projects);
+      setStatus('ready');
     } catch (error) {
       console.error('Error loading projects:', error);
+      setStatus('error');
     }
-  };
-  const navigate = useNavigate();
+  }
 
   useEffect(() => {
     handleLoadProjects();
   }, []);
 
-  const handleLoadProject = async (project: Project, editMode: boolean) => {
-    const store = await loadProject(project.filePath);
-    const settingsStore = {
-      ...store.settingsStore,
-      presentMode: editMode,
-      presentLocked: editMode
-    };
-    useBoundStore.setState(store.boundStore);
-    useSettingsStore.setState(settingsStore);
-    navigate('/');
-  };
-
-  useEffect(() => {
-    setSelectedProject(selectedProject);
-  }, [selectedProject]);
+  async function handleLoadProject(project: Project, editMode: boolean) {
+    try {
+      const store = await loadProject(project.filePath);
+      const settingsStore = {
+        ...store.settingsStore,
+        presentMode: editMode,
+        presentLocked: editMode
+      };
+      useBoundStore.setState(store.boundStore);
+      useSettingsStore.setState(settingsStore);
+      navigate('/');
+    } catch (error) {
+      console.error('Error loading project:', error);
+      setStatus('error');
+    }
+  }
 
   return (
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
-      <div
-        className={
-          'flex  h-screen w-screen flex-col  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
-        }
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          width: '100vw',
+          overflow: 'hidden',
+          backgroundColor: 'var(--mantine-color-dark-9)',
+          color: 'var(--mantine-color-text)'
+        }}
       >
-        <div className={'mx-auto grid w-full max-w-screen-md gap-2 px-2 text-white'}>
-          <ScrollArea className={'my-8 max-h-[70vh] w-full gap-2 rounded-md '}>
-            <div className={'flex flex-col gap-2 p-2'}>
-              {projects.map((project) => (
-                <button
-                  key={project.filePath}
-                  className={`w-full`}
-                  onClick={() => setSelectedProject(project)}
-                >
-                  <div
-                    className={`flex flex-col items-start justify-start rounded-md border p-2 text-left ${
-                      selectedProject?.filePath === project.filePath
-                        ? 'outline outline-2 outline-blue-500'
-                        : ''
-                    }`}
+        <Stack w={'100%'} maw={768} mx={'auto'} px={'xs'} gap={'xs'} c={'white'}>
+          <ScrollArea my={'xl'} mah={'70vh'} w={'100%'}>
+            {status === 'loading' && (
+              <Center h={200}>
+                <Loader />
+              </Center>
+            )}
+
+            {status === 'error' && (
+              <Center h={200} p={'md'}>
+                <Stack align={'center'} gap={'sm'} maw={440}>
+                  <Text fw={600} size={'lg'}>
+                    Can&apos;t connect to OpenSpace
+                  </Text>
+                  <Text size={'sm'} c={'dimmed'} ta={'center'}>
+                    Projects are loaded from the OpenSpace backend. Make sure OpenSpace is
+                    running, then try again.
+                  </Text>
+                  <Button variant={'default'} onClick={handleLoadProjects}>
+                    Retry
+                  </Button>
+                </Stack>
+              </Center>
+            )}
+
+            {status === 'ready' && projects.length === 0 && (
+              <Center h={200}>
+                <Text size={'sm'} c={'dimmed'}>
+                  No saved projects found.
+                </Text>
+              </Center>
+            )}
+
+            {status === 'ready' && projects.length > 0 && (
+              <Stack gap={'xs'} p={'xs'}>
+                {projects.map((project) => (
+                  <UnstyledButton
+                    key={project.filePath}
+                    w={'100%'}
+                    onClick={() => setSelectedProject(project)}
                   >
-                    <h3 className={'text-sm'}>{project.projectName}</h3>
-                    <p className={'text-xs text-gray-500'}>
-                      Last Modified: {new Date(project.lastModified).toLocaleString()}
-                    </p>
-                    <p className={'text-xs text-gray-500'}>
-                      Created: {new Date(project.created).toLocaleString()}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
+                    <Box
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        padding: 'var(--mantine-spacing-xs)',
+                        borderRadius: 'var(--mantine-radius-md)',
+                        border: '1px solid var(--mantine-color-dark-4)',
+                        textAlign: 'left',
+                        outline:
+                          selectedProject?.filePath === project.filePath
+                            ? '2px solid var(--mantine-color-blue-5)'
+                            : undefined
+                      }}
+                    >
+                      <Text size={'sm'}>{project.projectName}</Text>
+                      <Text size={'xs'} c={'dimmed'}>
+                        Last Modified: {new Date(project.lastModified).toLocaleString()}
+                      </Text>
+                      <Text size={'xs'} c={'dimmed'}>
+                        Created: {new Date(project.created).toLocaleString()}
+                      </Text>
+                    </Box>
+                  </UnstyledButton>
+                ))}
+              </Stack>
+            )}
           </ScrollArea>
-          <div className={'flex  w-full justify-center gap-2'}>
-            <Button
-              disabled={!selectedProject}
-              onClick={() => {
-                if (selectedProject) {
-                  handleLoadProject(selectedProject, false);
-                  // setIsOpen(false);
-                }
-              }}
-            >
-              {getCopy('LoadProjectModal', 'edit_project')}
-            </Button>
-            <Button
-              variant={'filled'}
-              disabled={!selectedProject}
-              onClick={() => {
-                if (selectedProject) {
-                  handleLoadProject(selectedProject, true);
-                  // setIsOpen(false);
-                }
-              }}
-            >
-              {getCopy('LoadProjectModal', 'add_project')}
-            </Button>
-          </div>
-        </div>
-      </div>
+
+          {status === 'ready' && projects.length > 0 && (
+            <Group w={'100%'} justify={'center'} gap={'xs'}>
+              <Button
+                disabled={!selectedProject}
+                onClick={() => {
+                  if (selectedProject) {
+                    handleLoadProject(selectedProject, false);
+                  }
+                }}
+              >
+                {getCopy('LoadProjectModal', 'edit_project')}
+              </Button>
+              <Button
+                variant={'filled'}
+                disabled={!selectedProject}
+                onClick={() => {
+                  if (selectedProject) {
+                    handleLoadProject(selectedProject, true);
+                  }
+                }}
+              >
+                {getCopy('LoadProjectModal', 'add_project')}
+              </Button>
+            </Group>
+          )}
+        </Stack>
+      </Box>
     </ThemeProvider>
   );
-};
+}

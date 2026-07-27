@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
+import { Project } from '@/api/showbuilder';
 import Pagination from '@/components/Pagination';
 import { getCopy } from '@/utils/copyHelpers';
-import { Project } from '@/utils/saveProject';
 
 interface LoadProjectModalProps {
   isOpen: boolean;
