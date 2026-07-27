@@ -18,7 +18,7 @@ function App() {
       <LuaApiProvider>
         <Router basename={basePath}>
           <Routes>
-            <Route path={'/'} element={<Editor />} />
+            <Route index element={<Editor />} />
             <Route path={'/hub'} element={<Hub />} />
           </Routes>
         </Router>

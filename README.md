@@ -32,18 +32,31 @@ npm install
 
 ## Development Setup
 
-1. Start the development server:
+The project saving/loading and image upload features are served by the OpenSpace WebGui
+backend, which OpenSpace runs while it is up. There is no separate dev backend to start:
+
+1. Have OpenSpace running (it serves the backend on `http://localhost:4680` by default).
+2. Start the development server:
 ```sh
 npm run dev
 ```
 
+The dev server serves the app (with hot reload) at `http://localhost:<port>/showcomposer/`
+and proxies the backend paths (`/showcomposer/api`, `/showcomposer/uploads`,
+`/showcomposer/projects`) to the running OpenSpace backend, so saving/loading and image
+upload work exactly as they do in production.
+
 ### Development Environment Notes
 
-In development mode, certain features will have limited functionality:
-- Project saving/loading
-- Image upload/loading
-
-This is because these features expect specific API endpoints that are only available in the production environment. The application will still run, but these features will not work as expected.
+- If OpenSpace serves the backend on a different host or port, set the `SHOWCOMPOSER_BACKEND`
+  environment variable to that origin when starting the dev server:
+  ```sh
+  SHOWCOMPOSER_BACKEND=http://localhost:4681 npm run dev
+  ```
+  (Or, for a persistent override, put `SHOWCOMPOSER_BACKEND=http://localhost:4681` in a
+  gitignored `.env.local` file - you'd need to create it.)
+- If OpenSpace is not running, the app still loads but the backend-dependent features
+  (project save/load, image upload) will fail until it is.
 
 ## Production Setup
 

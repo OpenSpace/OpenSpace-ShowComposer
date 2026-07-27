@@ -61,19 +61,6 @@ type ComponentTypeData = {
 };
 
 const Editor = () => {
-  // const currentPath = window.location.pathname;
-  // const navigate = useNavigate();
-  // let basePath = currentPath;
-  // if (currentPath.split('/').pop() === 'hub') {
-  //   basePath = currentPath.split('/').slice(0, -1).join('/');
-  // }
-  // useEffect(() => {
-  //   // Check if the user navigated directly to /hub
-  //   // const currentPath = window.location.pathname;
-  //   if (currentPath.split('/').pop() === 'hub') {
-  //     navigate(`${basePath}/hub`); // Redirect to the correct base path
-  //   }
-  // }, [navigate]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
