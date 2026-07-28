@@ -82,10 +82,8 @@ function BoolGUIComponent({ component, shouldRender = true }: BoolGUIProps) {
       }}
     >
       <DisplayLabel>
-        <Group gap={'xs'} wrap={'nowrap'}>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </Group>
+        {component.gui_name}
+        <Information content={component.gui_description} />
       </DisplayLabel>
     </ComponentContainer>
   );

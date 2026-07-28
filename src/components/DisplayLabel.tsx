@@ -31,7 +31,6 @@ function DisplayLabel({
     <Box
       style={{
         display: 'inline-flex',
-        flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 'var(--mantine-spacing-xs)',

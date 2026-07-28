@@ -68,10 +68,8 @@ function FocusComponent({ component, shouldRender = true }: FocusGUIProps) {
     >
       {component.gui_name || component.gui_description ? (
         <DisplayLabel>
-          <Group gap={'xs'} wrap={'nowrap'}>
-            {component.gui_name}
-            <Information content={component.gui_description} />
-          </Group>
+          {component.gui_name}
+          <Information content={component.gui_description} />
         </DisplayLabel>
       ) : null}
     </ComponentContainer>

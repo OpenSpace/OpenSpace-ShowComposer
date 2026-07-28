@@ -138,10 +138,8 @@ function SessionPlaybackGUIComponent({
       <Stack align={'center'} gap={'xs'}>
         {gui_name || gui_description ? (
           <DisplayLabel>
-            <Group gap={'xs'} wrap={'nowrap'}>
-              {gui_name}
-              <Information content={gui_description} />
-            </Group>
+            {gui_name}
+            <Information content={gui_description} />
           </DisplayLabel>
         ) : null}
         <PlaybackControls

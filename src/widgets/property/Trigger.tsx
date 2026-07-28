@@ -53,10 +53,8 @@ function TriggerGUIComponent({ component, shouldRender = true }: TriggerGUIProps
       onClick={() => component.triggerAction?.()}
     >
       <DisplayLabel>
-        <Group gap={'xs'} wrap={'nowrap'}>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </Group>
+        {component.gui_name}
+        <Information content={component.gui_description} />
       </DisplayLabel>
     </ComponentContainer>
   );
