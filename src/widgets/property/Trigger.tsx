@@ -4,8 +4,8 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
@@ -52,12 +52,12 @@ function TriggerGUIComponent({ component, shouldRender = true }: TriggerGUIProps
       backgroundColor={component.color}
       onClick={() => component.triggerAction?.()}
     >
-      <ButtonLabel>
+      <DisplayLabel>
         <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </Group>
-      </ButtonLabel>
+      </DisplayLabel>
     </ComponentContainer>
   );
 }

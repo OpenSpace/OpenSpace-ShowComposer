@@ -13,8 +13,8 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import StatusBarControlled from '@/components/StatusBarControlled';
@@ -98,12 +98,12 @@ function FadeGUIComponent({ component, shouldRender = true }: FadeGUIProps) {
         <StatusBarControlled progress={fadeValue} debounceDuration={0} />
       ) : null}
       {component.gui_name || component.gui_description ? (
-        <ButtonLabel>
+        <DisplayLabel>
           <Group gap={'xs'} wrap={'nowrap'}>
             {component.gui_name}
             <Information content={component.gui_description} />
           </Group>
-        </ButtonLabel>
+        </DisplayLabel>
       ) : null}
     </ComponentContainer>
   );

@@ -11,8 +11,8 @@ import {
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
@@ -137,12 +137,12 @@ function SessionPlaybackGUIComponent({
     >
       <Stack align={'center'} gap={'xs'}>
         {gui_name || gui_description ? (
-          <ButtonLabel>
+          <DisplayLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               {gui_name}
               <Information content={gui_description} />
             </Group>
-          </ButtonLabel>
+          </DisplayLabel>
         ) : null}
         <PlaybackControls
           recordingState={recordingState}

@@ -11,8 +11,8 @@ import {
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
@@ -97,12 +97,12 @@ function SetNavGUIComponent({ component, shouldRender = true }: SetNavGUICompone
         />
       )}
       {gui_name || gui_description ? (
-        <ButtonLabel>
+        <DisplayLabel>
           <Group gap={'xs'} wrap={'nowrap'}>
             {gui_name}
             <Information content={gui_description} />
           </Group>
-        </ButtonLabel>
+        </DisplayLabel>
       ) : null}
     </ComponentContainer>
   );
@@ -210,7 +210,7 @@ function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
             Navigation State Anchor
           </Group>
         </InputLabel>
-        <ButtonLabel showBorder>{navigationState?.Anchor}</ButtonLabel>
+        <DisplayLabel showBorder>{navigationState?.Anchor}</DisplayLabel>
       </Stack>
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <Stack gap={'xs'} style={{ opacity: setTime ? 1 : 0.5 }}>
@@ -220,7 +220,7 @@ function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
               {getCopy('SetNavigation', 'navigation_state_time')}
             </Group>
           </InputLabel>
-          <ButtonLabel showBorder>{timeLabel as string}</ButtonLabel>
+          <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
         </Stack>
         <ToggleComponent label={'Include Time'} value={setTime} setValue={setSetTime} />
       </Group>

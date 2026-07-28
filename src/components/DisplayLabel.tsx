@@ -1,16 +1,16 @@
 import { CSSProperties, ReactNode } from 'react';
 import { Box } from '@mantine/core';
 
-type ButtonLabelSize = 'sm' | 'md';
+type DisplayLabelSize = 'sm' | 'md';
 
-interface ButtonLabelProps {
+interface DisplayLabelProps {
   children: ReactNode;
   showBorder?: boolean;
-  size?: ButtonLabelSize;
+  size?: DisplayLabelSize;
   style?: CSSProperties;
 }
 
-const sizeStyles: Record<ButtonLabelSize, CSSProperties> = {
+const sizeStyles: Record<DisplayLabelSize, CSSProperties> = {
   sm: {
     fontSize: 'var(--mantine-font-size-xs)',
     padding: '4px var(--mantine-spacing-xs)'
@@ -21,12 +21,12 @@ const sizeStyles: Record<ButtonLabelSize, CSSProperties> = {
   }
 };
 
-function ButtonLabel({
+function DisplayLabel({
   children,
   showBorder = false,
   size = 'md',
   style
-}: ButtonLabelProps) {
+}: DisplayLabelProps) {
   return (
     <Box
       style={{
@@ -52,4 +52,4 @@ function ButtonLabel({
   );
 }
 
-export default ButtonLabel;
+export default DisplayLabel;

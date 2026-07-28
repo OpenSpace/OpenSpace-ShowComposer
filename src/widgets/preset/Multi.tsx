@@ -15,9 +15,9 @@ import {
 } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import ButtonLabel from '@/components/ButtonLabel';
 import ColorPickerComponent from '@/components/ColorPickerComponent';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import ImageUpload from '@/components/ImageUpload';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
@@ -572,7 +572,7 @@ function MultiGUIComponent({ component }: MultiGUIComponentProps) {
         duration={totalDelay}
         fadeOutDuration={fadeOutDuration}
       />
-      <ButtonLabel>
+      <DisplayLabel>
         <Stack gap={'xs'}>
           <Text>{component.gui_name}</Text>
           {currentItems.length > 0 && (
@@ -585,7 +585,7 @@ function MultiGUIComponent({ component }: MultiGUIComponentProps) {
           )}
           <Information content={component?.gui_description} />
         </Stack>
-      </ButtonLabel>
+      </DisplayLabel>
 
       {/* add none rendered versions of components to dom to register their actions and subscriptions */}
       {component?.components.map((v) => {

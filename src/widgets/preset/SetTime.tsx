@@ -3,9 +3,9 @@ import { Button, Group, NumberInput, Stack, Textarea, TextInput } from '@mantine
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import ToggleComponent from '@/components/Toggle';
@@ -72,12 +72,12 @@ function SetTimeComponent({ component }: SetTimeComponentProps) {
           fadeOutDuration={fadeOutDuration}
         />
       )}
-      <ButtonLabel>
+      <DisplayLabel>
         <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </Group>
-      </ButtonLabel>
+      </DisplayLabel>
     </ComponentContainer>
   );
 }

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 
 import BackgroundHolder from '@/components/BackgroundHolder';
-import ButtonLabel from '@/components/ButtonLabel';
 import ComponentContainer from '@/components/ComponentContainer';
+import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
@@ -40,12 +40,12 @@ function PageGUIComponent({ component, shouldRender = true }: PageGUIProps) {
         component.triggerAction?.();
       }}
     >
-      <ButtonLabel>
+      <DisplayLabel>
         <Group gap={'xs'} wrap={'nowrap'}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </Group>
-      </ButtonLabel>
+      </DisplayLabel>
     </ComponentContainer>
   );
 }

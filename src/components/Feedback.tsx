@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Box, Group, InputLabel, SimpleGrid, Stack } from '@mantine/core';
 
-import ButtonLabel from '@/components/ButtonLabel';
+import DisplayLabel from '@/components/DisplayLabel';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { ArrowUpFromDotIcon, ClockIcon, GlobeIcon, TelescopeIcon } from '@/icons/icons';
@@ -37,7 +37,7 @@ export function Feedback({ className }: FeedbackProps) {
               <ClockIcon size={14} /> Current Time
             </Group>
           </InputLabel>
-          <ButtonLabel showBorder>{timeLabel}</ButtonLabel>
+          <DisplayLabel showBorder>{timeLabel}</DisplayLabel>
         </Stack>
         <Stack gap={'xs'} style={{ opacity: currentAnchor ? 1 : 0.5 }}>
           <InputLabel>
@@ -46,7 +46,7 @@ export function Feedback({ className }: FeedbackProps) {
               Current Focus
             </Group>
           </InputLabel>
-          <ButtonLabel showBorder>{currentAnchor}</ButtonLabel>
+          <DisplayLabel showBorder>{currentAnchor}</DisplayLabel>
         </Stack>
         {camera && (
           <SimpleGrid cols={3} spacing={'xs'} mt={'xs'}>
@@ -57,9 +57,9 @@ export function Feedback({ className }: FeedbackProps) {
                   Lat
                 </Group>
               </InputLabel>
-              <ButtonLabel showBorder size={'sm'}>
+              <DisplayLabel showBorder size={'sm'}>
                 {camera?.latitude ? Math.round(camera.latitude * 100) / 100 : '-'}&deg;
-              </ButtonLabel>
+              </DisplayLabel>
             </Stack>
             <Stack gap={'xs'}>
               <InputLabel>
@@ -68,9 +68,9 @@ export function Feedback({ className }: FeedbackProps) {
                   Long
                 </Group>
               </InputLabel>
-              <ButtonLabel showBorder size={'sm'}>
+              <DisplayLabel showBorder size={'sm'}>
                 {camera?.longitude ? Math.round(camera.longitude * 100) / 100 : '-'}&deg;
-              </ButtonLabel>
+              </DisplayLabel>
             </Stack>
             <Stack gap={'xs'}>
               <InputLabel>
@@ -79,10 +79,10 @@ export function Feedback({ className }: FeedbackProps) {
                   Alt
                 </Group>
               </InputLabel>
-              <ButtonLabel showBorder size={'sm'}>
+              <DisplayLabel showBorder size={'sm'}>
                 {camera?.altitude ? Math.round(camera.altitude * 1) / 1 : '-'}{' '}
                 {camera?.altitudeUnit || ''}
-              </ButtonLabel>
+              </DisplayLabel>
             </Stack>
           </SimpleGrid>
         )}

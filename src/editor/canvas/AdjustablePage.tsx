@@ -3,7 +3,7 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, Box, Tooltip } from '@mantine/core';
 
-import ButtonLabel from '@/components/ButtonLabel';
+import DisplayLabel from '@/components/DisplayLabel';
 import { GripHorizontalIcon, LockIcon, LockOpenIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -116,7 +116,7 @@ export default function AdjustablePage() {
           <>
             {!locked && (
               <Box style={{ position: 'absolute', right: 56, top: 12 }}>
-                <ButtonLabel
+                <DisplayLabel
                   style={{
                     fontSize: 'var(--mantine-font-size-xs)',
                     color: 'var(--mantine-color-gray-2)',
@@ -125,11 +125,11 @@ export default function AdjustablePage() {
                   }}
                 >
                   {pageWidth} x {pageHeight}
-                </ButtonLabel>
+                </DisplayLabel>
               </Box>
             )}
             <Box style={{ padding: 12 }}>
-              <ButtonLabel
+              <DisplayLabel
                 style={{
                   width: 'auto',
                   fontSize: 'var(--mantine-font-size-xs)',
@@ -137,7 +137,7 @@ export default function AdjustablePage() {
                 }}
               >
                 {page.name ? page.name : `Page ${currentPageIndex + 1}`}
-              </ButtonLabel>
+              </DisplayLabel>
             </Box>
             <Box
               style={{
