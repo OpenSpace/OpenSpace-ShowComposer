@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,7 +14,6 @@ import {
   MultiComponent,
   Page
 } from '@/types/components';
-import { cn } from '@/utils/utils';
 
 type MultiOption = {
   component: MultiComponent['id'];
@@ -39,13 +38,12 @@ type SelectedPage = {
   components: string[];
 };
 
-const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, store }) => {
+function ImportShowModal({ isOpen, onClose, store }: ImportShowModalProps) {
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
   const closeWithConfirmation = async (confirm: boolean) => {
-    const response = await confirmStoreImport(confirm, store._tempImportId);
-    console.log('response', response);
+    await confirmStoreImport(confirm, store._tempImportId);
     onClose();
   };
 
@@ -252,88 +250,72 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
   };
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={onClose}
-      centered
-      size={'xl'}
-      title={<span className={'text-gray-900 dark:text-gray-100'}>Import Show</span>}
-    >
-      <Text className={'text-gray-700 dark:text-gray-300'}>
-        Select Pages you want to add to current Show.
-      </Text>
+    <Modal opened={isOpen} onClose={onClose} centered size={'xl'} title={'Import Show'}>
+      <Text>Select Pages you want to add to current Show.</Text>
       <Table>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
               <ToggleComponent
-                //   label="All"
                 value={selectedPages.length === pages.length}
                 setValue={handleSelectAll}
               />
-              {/* <Checkbox
-                  onCheckedChange={handleSelectAll}
-                  checked={selectedPages.size === pages.length}
-                  className="peer"
-                />
-                Select All */}
             </Table.Th>
             <Table.Th>Page</Table.Th>
             <Table.Th>Components</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {pages.map((page) => (
-            <Table.Tr
-              key={page.name}
-              onClick={() => handlePageSelect(page)}
-              // selected={selectedPages.has(page.name)}
-              className={cn(
-                selectedPages.find((p) => p.id === page.id) &&
-                  'bg-gray-100 dark:bg-gray-800'
-              )}
-            >
-              <Table.Td>
-                <Checkbox
-                  className={'peer'}
-                  checked={selectedPages.find((p) => p.id === page.id) !== undefined}
-                  onChange={() => handlePageSelect(page)}
-                />
-              </Table.Td>
-              <Table.Td className={'dark:text-gray-100'}>{page.name}</Table.Td>
-              <Table.Td>
-                {page.components
-                  .filter((v) => !store.boundStore.layouts[v])
-                  .map((componentId, index) => {
-                    const component = store.boundStore.components[componentId];
-                    return (
-                      <span
-                        key={componentId}
-                        className={'text-gray-700 dark:text-gray-300'}
-                      >
-                        {component && component.gui_name?.length > 0
-                          ? component.gui_name
-                          : allComponentLabels.find((v) => v.value === component?.type)
-                              ?.label}
-                        {index <
-                        page.components.filter((v) => !store.boundStore.layouts[v])
-                          .length -
-                          1
-                          ? ', '
-                          : ''}
-                      </span>
-                    );
-                  })}
-              </Table.Td>
-            </Table.Tr>
-          ))}
+          {pages.map((page) => {
+            const isSelected = selectedPages.find((p) => p.id === page.id) !== undefined;
+            return (
+              <Table.Tr
+                key={page.name}
+                onClick={() => handlePageSelect(page)}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: isSelected
+                    ? 'var(--mantine-color-default-hover)'
+                    : undefined
+                }}
+              >
+                <Table.Td>
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => handlePageSelect(page)}
+                  />
+                </Table.Td>
+                <Table.Td>{page.name}</Table.Td>
+                <Table.Td>
+                  {page.components
+                    .filter((v) => !store.boundStore.layouts[v])
+                    .map((componentId, index) => {
+                      const component = store.boundStore.components[componentId];
+                      return (
+                        <Text span key={componentId} c={'dimmed'}>
+                          {component && component.gui_name?.length > 0
+                            ? component.gui_name
+                            : allComponentLabels.find((v) => v.value === component?.type)
+                                ?.label}
+                          {index <
+                          page.components.filter((v) => !store.boundStore.layouts[v])
+                            .length -
+                            1
+                            ? ', '
+                            : ''}
+                        </Text>
+                      );
+                    })}
+                </Table.Td>
+              </Table.Tr>
+            );
+          })}
         </Table.Tbody>
       </Table>
       <Group justify={'flex-end'} mt={'md'}>
         <Button
           variant={'default'}
           onClick={async () => {
-            // onClose();
             await closeWithConfirmation(false);
           }}
         >
@@ -351,6 +333,6 @@ const ImportShowModal: React.FC<ImportShowModalProps> = ({ isOpen, onClose, stor
       </Group>
     </Modal>
   );
-};
+}
 
 export default ImportShowModal;

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Group, InputLabel, Modal, Text, TextInput } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Button, Group, InputLabel, Modal, Stack, Text, TextInput } from '@mantine/core';
 
 import ColorPickerComponent from '@/components/ColorPickerComponent';
 import { useBoundStore } from '@/store/boundStore';
@@ -11,7 +11,7 @@ interface NewPageModalProps {
   newPage: boolean;
 }
 
-const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage }) => {
+function NewPageModal({ isOpen, setIsOpen, newPage }: NewPageModalProps) {
   const currentPage: Page = useBoundStore((state) =>
     state.getPageById(state.currentPage)
   );
@@ -55,23 +55,19 @@ const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage 
           ? 'Set the name and background color for the new page.'
           : 'Update the page name and background color.'}
       </Text>
-      <div className={'grid gap-4'}>
-        <div className={'grid grid-cols-3 items-center gap-4 text-white'}>
-          <InputLabel htmlFor={'pageName'}>Page Name</InputLabel>
-          <TextInput
-            id={'pageName'}
-            className={'col-span-2'}
-            size={'xs'}
-            value={pageName}
-            onChange={(e) => setPageName(e.currentTarget.value)}
-            placeholder={'Enter Page Name'}
-          />
-        </div>
-        <div className={'grid items-center gap-4 text-white'}>
-          <InputLabel htmlFor={'backgroundColor'}>Background Color</InputLabel>
+      <Stack gap={'md'}>
+        <TextInput
+          label={'Page Name'}
+          size={'xs'}
+          value={pageName}
+          onChange={(e) => setPageName(e.currentTarget.value)}
+          placeholder={'Enter Page Name'}
+        />
+        <Stack gap={'xs'}>
+          <InputLabel>Background Color</InputLabel>
           <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
-        </div>
-      </div>
+        </Stack>
+      </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
           Cancel
@@ -82,6 +78,6 @@ const NewPageModal: React.FC<NewPageModalProps> = ({ isOpen, setIsOpen, newPage 
       </Group>
     </Modal>
   );
-};
+}
 
 export default NewPageModal;

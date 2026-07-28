@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
@@ -10,19 +9,16 @@ interface ConfirmationModalProps {
   setOpen: (isOpen: boolean) => void;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+function ConfirmationModal({
   isOpen,
   onConfirm,
   message,
   setOpen
-}) => {
+}: ConfirmationModalProps) {
   return (
     <Modal opened={isOpen} onClose={() => setOpen(false)} centered title={''}>
       <Text>{message}</Text>
       <Group justify={'flex-end'} mt={'md'}>
-        {/* <Button variant={'default'} onClick={() => setOpen(false)}>
-          {getCopy('ConfirmationModal', 'cancel')}
-        </Button> */}
         <Button
           variant={'filled'}
           onClick={() => {
@@ -35,6 +31,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       </Group>
     </Modal>
   );
-};
+}
 
 export default ConfirmationModal;

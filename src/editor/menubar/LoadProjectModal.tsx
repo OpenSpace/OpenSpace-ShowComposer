@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Group, Modal, Text } from '@mantine/core';
+import { useState } from 'react';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  UnstyledButton
+} from '@mantine/core';
 
 import { Project } from '@/api/showbuilder';
 import Pagination from '@/components/Pagination';
@@ -12,12 +21,12 @@ interface LoadProjectModalProps {
   projects: Project[];
 }
 
-const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
+function LoadProjectModal({
   isOpen,
   setIsOpen,
   handleLoadProject,
   projects
-}) => {
+}: LoadProjectModalProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(projects.length / itemsPerPage);
@@ -26,9 +35,6 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
   function goToPage(pageNumber: number) {
     setCurrentPage(pageNumber);
   }
-  useEffect(() => {
-    setSelectedProject(selectedProject);
-  }, [selectedProject]);
 
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -43,45 +49,45 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
       opened={isOpen}
       onClose={() => setIsOpen(false)}
       centered
-      title={
-        <span className={'text-gray-900 dark:text-gray-100'}>
-          {getCopy('LoadProjectModal', 'load_project')}
-        </span>
-      }
+      title={getCopy('LoadProjectModal', 'load_project')}
     >
-      <Text className={'text-gray-700 dark:text-gray-300'}>
-        {getCopy('LoadProjectModal', 'load_project_description')}
-      </Text>
-      <div className={'grid gap-2 text-white'}>
-        <div className={'flex flex-col gap-2'}>
-          {projectsToDisplay.map((project) => (
-            <button
-              key={project.filePath}
-              className={`w-full`}
-              onClick={() => setSelectedProject(project)}
-            >
-              <div
-                className={`flex flex-col items-start justify-start rounded-md border p-2 text-left ${
+      <Text>{getCopy('LoadProjectModal', 'load_project_description')}</Text>
+      <Stack gap={'xs'}>
+        {projectsToDisplay.map((project) => (
+          <UnstyledButton
+            key={project.filePath}
+            w={'100%'}
+            onClick={() => setSelectedProject(project)}
+          >
+            <Box
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                padding: 'var(--mantine-spacing-xs)',
+                borderRadius: 'var(--mantine-radius-md)',
+                border: '1px solid var(--mantine-color-default-border)',
+                textAlign: 'left',
+                outline:
                   selectedProject?.filePath === project.filePath
-                    ? 'outline outline-2 outline-blue-500'
-                    : ''
-                }`}
-              >
-                <h3 className={'text-sm'}>{project.projectName}</h3>
-                <p className={'text-xs text-gray-500'}>
-                  Last Modified: {new Date(project.lastModified).toLocaleString()}
-                </p>
-                <p className={'text-xs text-gray-500'}>
-                  Created: {new Date(project.created).toLocaleString()}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className={'relative flex h-24 w-full items-center justify-center '}>
+                    ? '2px solid var(--mantine-color-blue-5)'
+                    : undefined
+              }}
+            >
+              <Text size={'sm'}>{project.projectName}</Text>
+              <Text size={'xs'} c={'dimmed'}>
+                Last Modified: {new Date(project.lastModified).toLocaleString()}
+              </Text>
+              <Text size={'xs'} c={'dimmed'}>
+                Created: {new Date(project.created).toLocaleString()}
+              </Text>
+            </Box>
+          </UnstyledButton>
+        ))}
+      </Stack>
+      <Center pos={'relative'} h={96}>
         <Pagination currentIndex={currentPage} length={totalPages} setIndex={goToPage} />
-      </div>
+      </Center>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
           Cancel
@@ -102,6 +108,6 @@ const LoadProjectModal: React.FC<LoadProjectModalProps> = ({
       </Group>
     </Modal>
   );
-};
+}
 
 export default LoadProjectModal;
