@@ -5,28 +5,16 @@ import {
   PanelGroup,
   PanelResizeHandle
 } from 'react-resizable-panels';
-import { Button, Divider, ScrollArea } from '@mantine/core';
 import {
-  AlignJustify,
-  BookOpenCheck,
-  CirclePlay,
-  Clock,
-  Code,
-  Compass,
-  GripVertical,
+  Box,
+  Button,
+  Divider,
   Group,
-  Hash,
-  History,
-  Image,
-  LetterText,
-  MessageSquareWarning,
-  Plane,
-  SunMoon,
-  Telescope,
-  ToggleRight,
-  Video,
-  View
-} from 'lucide-react';
+  ScrollArea,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import favicon from '@/assets/images/favicon.png';
@@ -44,6 +32,27 @@ import LayoutEditModal from '@/editor/sidebar/LayoutEditModal';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
 import Undo from '@/editor/sidebar/Undo';
 import { useConnectionStatus } from '@/hooks/util';
+import {
+  AlignJustifyIcon,
+  BookOpenCheckIcon,
+  CirclePlayIcon,
+  ClockIcon,
+  CodeIcon,
+  CompassIcon,
+  GripVerticalIcon,
+  GroupIcon,
+  HashIcon,
+  HistoryIcon,
+  ImageIcon,
+  LetterTextIcon,
+  MessageSquareWarningIcon,
+  PlaneIcon,
+  SunMoonIcon,
+  TelescopeIcon,
+  ToggleRightIcon,
+  VideoIcon,
+  ViewIcon
+} from '@/icons/icons';
 import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';
@@ -54,8 +63,6 @@ import { getCopy } from '@/utils/copyHelpers';
 import ComponentModal from '@/widgets/ComponentModal';
 
 import classes from './Editor.module.css';
-// import { useNavigate } from 'react-router-dom';
-// import TooltipHolder from '@/components/TooltipHolder';
 
 type ComponentTypeData = {
   type: ComponentType;
@@ -63,7 +70,7 @@ type ComponentTypeData = {
   icon: JSX.Element;
 };
 
-const Editor = () => {
+function Editor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -130,45 +137,53 @@ const Editor = () => {
   }, [components]);
 
   const presetComponentTypes: Array<ComponentTypeData> = [
-    { type: 'multi', name: getCopy('Main', 'multi'), icon: <Group /> },
+    { type: 'multi', name: getCopy('Main', 'multi'), icon: <GroupIcon size={20} /> },
     {
       type: 'setfocus',
       name: getCopy('Main', 'setfocus'),
-      icon: <Telescope />
+      icon: <TelescopeIcon size={20} />
     },
-    { type: 'fade', name: getCopy('Main', 'fade'), icon: <SunMoon /> },
-    { type: 'flyto', name: getCopy('Main', 'flyto'), icon: <Plane /> },
-    { type: 'settime', name: getCopy('Main', 'settime'), icon: <History /> },
+    { type: 'fade', name: getCopy('Main', 'fade'), icon: <SunMoonIcon size={20} /> },
+    { type: 'flyto', name: getCopy('Main', 'flyto'), icon: <PlaneIcon size={20} /> },
+    {
+      type: 'settime',
+      name: getCopy('Main', 'settime'),
+      icon: <HistoryIcon size={20} />
+    },
     {
       type: 'setnavstate',
       name: getCopy('Main', 'setnav'),
-      icon: <Compass />
+      icon: <CompassIcon size={20} />
     },
     {
       type: 'sessionplayback',
       name: getCopy('Main', 'playback'),
-      icon: <Video />
+      icon: <VideoIcon size={20} />
     },
     {
       type: 'action',
       name: getCopy('Main', 'action'),
-      icon: <CirclePlay className={'h-5 w-5'} />
+      icon: <CirclePlayIcon size={20} />
     },
-    { type: 'page', name: getCopy('Main', 'page'), icon: <BookOpenCheck /> },
-    { type: 'script', name: getCopy('Main', 'script'), icon: <Code /> }
+    {
+      type: 'page',
+      name: getCopy('Main', 'page'),
+      icon: <BookOpenCheckIcon size={20} />
+    },
+    { type: 'script', name: getCopy('Main', 'script'), icon: <CodeIcon size={20} /> }
   ];
 
   const propertyComponentTypes: Array<ComponentTypeData> = [
-    { type: 'number', name: getCopy('Main', 'number'), icon: <Hash /> },
+    { type: 'number', name: getCopy('Main', 'number'), icon: <HashIcon size={20} /> },
     {
       type: 'boolean',
       name: getCopy('Main', 'boolean'),
-      icon: <ToggleRight />
+      icon: <ToggleRightIcon size={20} />
     },
     {
       type: 'trigger',
       name: getCopy('Main', 'trigger'),
-      icon: <CirclePlay className={'h-5 w-5'} />
+      icon: <CirclePlayIcon size={20} />
     }
   ];
 
@@ -176,41 +191,41 @@ const Editor = () => {
     {
       type: 'richtext',
       name: getCopy('Main', 'richtext'),
-      icon: <AlignJustify />
+      icon: <AlignJustifyIcon size={20} />
     },
-    { type: 'title', name: getCopy('Main', 'title'), icon: <LetterText /> },
-    { type: 'video', name: getCopy('Main', 'video'), icon: <Video /> },
-    { type: 'image', name: getCopy('Main', 'image'), icon: <Image /> }
+    { type: 'title', name: getCopy('Main', 'title'), icon: <LetterTextIcon size={20} /> },
+    { type: 'video', name: getCopy('Main', 'video'), icon: <VideoIcon size={20} /> },
+    { type: 'image', name: getCopy('Main', 'image'), icon: <ImageIcon size={20} /> }
   ];
 
   const timeType = {
     type: 'timepanel',
     name: getCopy('Main', 'timepanel'),
-    icon: <Clock className={'h-5 w-5'} />
+    icon: <ClockIcon size={20} />
   };
 
   const navType = {
     type: 'navpanel',
     name: getCopy('Main', 'navpanel'),
-    icon: <Compass className={'h-5 w-5'} />
+    icon: <CompassIcon size={20} />
   };
 
   const statusType = {
     type: 'statuspanel',
     name: getCopy('Main', 'statuspanel'),
-    icon: <View className={'h-5 w-5'} />
+    icon: <ViewIcon size={20} />
   };
 
   const recordType = {
     type: 'recordpanel',
     name: getCopy('Main', 'recordpanel'),
-    icon: <Video className={'h-5 w-5'} />
+    icon: <VideoIcon size={20} />
   };
 
   const logType = {
     type: 'logpanel',
     name: getCopy('Main', 'logpanel'),
-    icon: <MessageSquareWarning className={'h-5 w-5'} />
+    icon: <MessageSquareWarningIcon size={20} />
   };
 
   const allComponentTypes = [
@@ -295,9 +310,7 @@ const Editor = () => {
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
       <PanelGroup
         direction={'horizontal'}
-        className={
-          ' flex h-screen w-screen  overflow-hidden   border-slate-200 bg-white text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50'
-        }
+        style={{ height: '100vh' }}
         onLayout={(newSizes: number[]) => setSizes(newSizes)}
       >
         <Panel
@@ -307,66 +320,77 @@ const Editor = () => {
           onResize={(size) => handleResize(0, size)}
           collapsedSize={0}
           maxSize={35}
-          className={'h-screen max-w-[320px]'}
+          style={{ maxWidth: 320 }}
         >
-          <div className={'h-full w-full  p-4 pr-2 '}>
-            <div
-              className={
-                'flex h-full flex-col overflow-hidden rounded-lg border dark:border-slate-800'
-              }
+          <Box h={'100%'} p={'md'} pr={'xs'}>
+            <Stack
+              h={'100%'}
+              gap={0}
+              style={{
+                overflow: 'hidden',
+                border: '1px solid var(--mantine-color-default-border)',
+                borderRadius: 'var(--mantine-radius-lg)'
+              }}
             >
-              <div className={' flex-0 felx flex flex-row items-center gap-2 p-2 px-3'}>
-                <img src={favicon} width={20} className={'p-0'} />
-                <h2 className={' scroll-m-20 text-xs font-bold tracking-tight'}>
+              <Group gap={'xs'} py={'xs'} px={'sm'} wrap={'nowrap'}>
+                <img src={favicon} width={20} alt={''} />
+                <Text size={'xs'} fw={700}>
                   {getCopy('Main', 'interface_name')}
-                </h2>
-              </div>
+                </Text>
+              </Group>
               <Divider />
               <GlobalMenuBar />
               <Divider />
-              <div className={'flex  flex-col gap-2 px-4 py-2 @container'}>
+              <Stack gap={'xs'} px={'md'} py={'xs'}>
                 <ConnectionStatusIndicator />
-                <div className={'flex flex-row items-center gap-2  '}>
-                  <div className={'text-xs font-bold '}>
+                <Group gap={'xs'} wrap={'nowrap'}>
+                  <Text size={'xs'} fw={700}>
                     {getCopy('Main', 'project_name')}
-                  </div>
-                  <div className={'text-sm font-normal text-gray-500 dark:text-gray-400'}>
+                  </Text>
+                  <Text size={'sm'} c={'dimmed'}>
                     {projectName}
-                  </div>
-                </div>
+                  </Text>
+                </Group>
                 <Divider />
                 <Undo />
                 <Divider />
-              </div>
+              </Stack>
 
-              <div className={'grid gap-2 p-2 @[167px]:gap-2'}>
-                <h2 className={'ml-2 text-xs font-bold '}>{getCopy('Main', 'layout')}</h2>
+              <Stack gap={'xs'} p={'xs'}>
+                <Text size={'xs'} fw={700} ml={'xs'}>
+                  {getCopy('Main', 'layout')}
+                </Text>
                 <LayoutToolbar />
                 <Divider />
-              </div>
-              <ScrollArea className={'flex-0 @container'} type={'always'}>
-                <div className={'grid gap-2 p-4 @[167px]:gap-4'}>
-                  <h2 className={'text-xs font-bold '}>
+              </Stack>
+              <ScrollArea
+                type={'always'}
+                flex={1}
+                mih={0}
+                style={{ containerType: 'inline-size', containerName: 'palette' }}
+              >
+                <Stack gap={'md'} p={'md'}>
+                  <Text size={'xs'} fw={700}>
                     {getCopy('Main', 'static_components')}
-                  </h2>
-                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                  </Text>
+                  <SimpleGrid cols={2} className={classes.paletteGrid}>
                     {staticComponentTypes.map((v) => (
                       <Button
                         key={v.type}
                         size={'sm'}
                         justify={'space-between'}
                         leftSection={v.icon}
-                        className={'@container'}
+                        style={{ containerType: 'inline-size' }}
                         onClick={() => handleAddComponent(v.type)}
                       >
-                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                        <span className={classes.componentButtonLabel}>{v.name}</span>
                       </Button>
                     ))}
-                  </div>
-                  <h2 className={' text-xs font-bold'}>
+                  </SimpleGrid>
+                  <Text size={'xs'} fw={700}>
                     {getCopy('Main', 'preset_components')}
-                  </h2>
-                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                  </Text>
+                  <SimpleGrid cols={2} className={classes.paletteGrid}>
                     {presetComponentTypes.map((v) => (
                       <Button
                         key={v.type}
@@ -374,14 +398,14 @@ const Editor = () => {
                         variant={'light'}
                         justify={'space-between'}
                         leftSection={v.icon}
-                        className={'@container'}
+                        style={{ containerType: 'inline-size' }}
                         onClick={() => handleAddComponent(v.type)}
                       >
-                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                        <span className={classes.componentButtonLabel}>{v.name}</span>
                       </Button>
                     ))}
-                  </div>
-                  <div className={'col-2 grid grid-cols-2 gap-2 @[167px]:gap-4'}>
+                  </SimpleGrid>
+                  <SimpleGrid cols={2} className={classes.paletteGrid}>
                     {propertyComponentTypes.map((v) => (
                       <Button
                         key={v.type}
@@ -389,36 +413,32 @@ const Editor = () => {
                         variant={'filled'}
                         justify={'space-between'}
                         leftSection={v.icon}
-                        className={'@container'}
+                        style={{ containerType: 'inline-size' }}
                         onClick={() => handleAddComponent(v.type)}
                       >
-                        <span className={'hidden @[40px]:inline'}>{v.name}</span>
+                        <span className={classes.componentButtonLabel}>{v.name}</span>
                       </Button>
                     ))}
-                  </div>
-                </div>
+                  </SimpleGrid>
+                </Stack>
               </ScrollArea>
               <Divider />
-              <Feedback className={'p-4'} />
-            </div>
-          </div>
+              <Box p={'md'}>
+                <Feedback />
+              </Box>
+            </Stack>
+          </Box>
         </Panel>
         {!isPresentMode && (
           <PanelResizeHandle className={classes.resizeHandle}>
             <div className={classes.resizeGrip}>
-              <GripVertical size={10} />
+              <GripVerticalIcon size={10} />
             </div>
           </PanelResizeHandle>
         )}
         <Panel defaultSize={sizes[1]} onResize={(size) => handleResize(1, size)}>
-          <div
-            className={`right relative flex h-full flex-1 flex-col transition-all duration-300 `}
-          >
-            <div
-              className={`dark:text-slate-5 m-0 h-full  w-full border-slate-200 bg-white ${
-                isPresentMode ? 'p-0' : 't p-4 pl-2'
-              } ext-slate-950 dark:border-slate-800 dark:bg-slate-950 `}
-            >
+          <Box pos={'relative'} h={'100%'}>
+            <Box h={'100%'} p={isPresentMode ? 0 : 'md'} pl={isPresentMode ? 0 : 'sm'}>
               <DroppableWorkspace>
                 {/* Static Panels */}
                 {NavPanel && <DraggablePanel component={NavPanel} />}
@@ -486,8 +506,8 @@ const Editor = () => {
                   );
                 })}
               </DroppableWorkspace>
-            </div>
-            <div className={'absolute bottom-7 left-6 flex flex-row gap-2'}>
+            </Box>
+            <Group pos={'absolute'} bottom={28} left={24} gap={'xs'}>
               <ToggleButton
                 tooltipText={getCopy('Main', 'navpanel')}
                 icon={navType.icon}
@@ -523,7 +543,7 @@ const Editor = () => {
                 onClick={() => minimize(LogPosition)}
                 disabled={connectionStatus != ConnectionStatus.Connected}
               />
-            </div>
+            </Group>
             {(!isPresentMode || (showPagination && isPresentMode)) && (
               <Pagination
                 currentIndex={currentPageIndex}
@@ -531,10 +551,10 @@ const Editor = () => {
                 setIndex={goToPage}
               />
             )}
-            <div className={'absolute bottom-7 right-6 flex flex-row gap-2'}>
+            <Box pos={'absolute'} bottom={28} right={24}>
               <PresentModeToggle />
-            </div>
-          </div>
+            </Box>
+          </Box>
           <ComponentModal
             isOpen={isModalOpen}
             onClose={handleModalClose}
@@ -551,6 +571,6 @@ const Editor = () => {
       </PanelGroup>
     </ThemeProvider>
   );
-};
+}
 
 export default Editor;
