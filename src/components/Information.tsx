@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { ActionIcon, Popover } from '@mantine/core';
-import { Info } from 'lucide-react';
+
+import { InfoIcon } from '@/icons/icons';
 
 interface InformationProps {
   content: ReactNode | string;
@@ -28,7 +29,7 @@ export function Information({ content }: InformationProps) {
           aria-label={'More information'}
           onClick={() => setOpened((o) => !o)}
         >
-          <Info size={14} />
+          <InfoIcon size={14} />
         </ActionIcon>
       </Popover.Target>
 

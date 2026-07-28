@@ -1,22 +1,22 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { ActionIcon, Menu } from '@mantine/core';
-import { EllipsisVertical } from 'lucide-react';
 
+import { EllipsisVerticalIcon } from '@/icons/icons';
 import { getCopy } from '@/utils/copyHelpers';
+
 interface DropdownMenuProps {
   items: ReactNode[];
 }
-const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
+function DropdownMenuComponent({ items }: DropdownMenuProps) {
   return (
     <Menu position={'bottom-end'} zIndex={999999}>
       <Menu.Target>
-        <ActionIcon variant={'subtle'} className={'h-4 w-4 hover:bg-slate-900/40'}>
-          <EllipsisVertical
-            className={
-              'h-5 w-5 stroke-slate-500 transition-colors duration-300  group-hover:stroke-white'
-            }
-          />
-          <span className={'sr-only'}>{getCopy('DropdownMenu', 'more')}</span>
+        <ActionIcon
+          variant={'subtle'}
+          size={'sm'}
+          aria-label={getCopy('DropdownMenu', 'more')}
+        >
+          <EllipsisVerticalIcon size={20} />
         </ActionIcon>
       </Menu.Target>
 
@@ -27,5 +27,5 @@ const DropdownMenuComponent: React.FC<DropdownMenuProps> = ({ items }) => {
       </Menu.Dropdown>
     </Menu>
   );
-};
+}
 export default DropdownMenuComponent;
