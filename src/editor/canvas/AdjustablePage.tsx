@@ -117,7 +117,6 @@ export default function AdjustablePage() {
             {!locked && (
               <Box style={{ position: 'absolute', right: 56, top: 12 }}>
                 <ButtonLabel
-                  resize={false}
                   style={{
                     fontSize: 'var(--mantine-font-size-xs)',
                     color: 'var(--mantine-color-gray-2)',

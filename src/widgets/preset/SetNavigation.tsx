@@ -210,9 +210,7 @@ function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
             Navigation State Anchor
           </Group>
         </InputLabel>
-        <ButtonLabel className={'border bg-transparent'}>
-          {navigationState?.Anchor}
-        </ButtonLabel>
+        <ButtonLabel showBorder>{navigationState?.Anchor}</ButtonLabel>
       </Stack>
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <Stack gap={'xs'} style={{ opacity: setTime ? 1 : 0.5 }}>
@@ -222,9 +220,7 @@ function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
               {getCopy('SetNavigation', 'navigation_state_time')}
             </Group>
           </InputLabel>
-          <ButtonLabel className={'border bg-transparent'}>
-            {timeLabel as string}
-          </ButtonLabel>
+          <ButtonLabel showBorder>{timeLabel as string}</ButtonLabel>
         </Stack>
         <ToggleComponent label={'Include Time'} value={setTime} setValue={setSetTime} />
       </Group>

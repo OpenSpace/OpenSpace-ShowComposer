@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { InputLabel } from '@mantine/core';
+import { Box, Group, InputLabel, SimpleGrid, Stack } from '@mantine/core';
 
 import ButtonLabel from '@/components/ButtonLabel';
 import { useProperty } from '@/hooks/properties';
@@ -7,13 +7,12 @@ import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscript
 import { ArrowUpFromDotIcon, ClockIcon, GlobeIcon, TelescopeIcon } from '@/icons/icons';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { formatDate } from '@/utils/time';
-import { cn } from '@/utils/utils';
 
 interface FeedbackProps {
   className?: string;
 }
 
-export function Feedback({ className = '' }: FeedbackProps) {
+export function Feedback({ className }: FeedbackProps) {
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const { timeCapped: time } = useSubscribeToTime(1000);
   const camera = useSubscribeToCamera(500);
@@ -30,74 +29,64 @@ export function Feedback({ className = '' }: FeedbackProps) {
   }, [time]);
 
   return (
-    <div className={className}>
-      <div className={'grid-rows grid gap-2'}>
-        <div
-          className={cn('grid gap-2', {
-            'opacity-100': time,
-            'opacity-50': !time
-          })}
-        >
-          <InputLabel className={'flex items-center justify-start gap-2'}>
-            <ClockIcon size={14} /> Current Time
+    <Box className={className}>
+      <Stack gap={'xs'}>
+        <Stack gap={'xs'} style={{ opacity: time ? 1 : 0.5 }}>
+          <InputLabel>
+            <Group gap={'xs'} wrap={'nowrap'}>
+              <ClockIcon size={14} /> Current Time
+            </Group>
           </InputLabel>
-          <ButtonLabel className={'border bg-transparent'}>{timeLabel}</ButtonLabel>
-        </div>
-        <div />
-        <div
-          className={cn('grid gap-2', {
-            'opacity-100': currentAnchor,
-            'opacity-50': !currentAnchor
-          })}
-        >
-          <InputLabel className={'flex items-center justify-start gap-2'}>
-            <TelescopeIcon size={14} />
-            Current Focus
+          <ButtonLabel showBorder>{timeLabel}</ButtonLabel>
+        </Stack>
+        <Stack gap={'xs'} style={{ opacity: currentAnchor ? 1 : 0.5 }}>
+          <InputLabel>
+            <Group gap={'xs'} wrap={'nowrap'}>
+              <TelescopeIcon size={14} />
+              Current Focus
+            </Group>
           </InputLabel>
-          <ButtonLabel className={'border bg-transparent'}>{currentAnchor}</ButtonLabel>
-        </div>
+          <ButtonLabel showBorder>{currentAnchor}</ButtonLabel>
+        </Stack>
         {camera && (
-          <div className={'mt-2 grid grid-cols-3 gap-2'}>
-            <div className={'flex flex-col gap-2'}>
-              <InputLabel className={'flex items-center justify-start gap-2'}>
-                <GlobeIcon size={14} />
-                Lat
+          <SimpleGrid cols={3} spacing={'xs'} mt={'xs'}>
+            <Stack gap={'xs'}>
+              <InputLabel>
+                <Group gap={'xs'} wrap={'nowrap'}>
+                  <GlobeIcon size={14} />
+                  Lat
+                </Group>
               </InputLabel>
-              <ButtonLabel
-                resize={false}
-                className={'border bg-transparent px-2 text-xs'}
-              >
+              <ButtonLabel showBorder size={'sm'}>
                 {camera?.latitude ? Math.round(camera.latitude * 100) / 100 : '-'}&deg;
               </ButtonLabel>
-            </div>
-            <div className={'flex flex-col gap-2'}>
-              <InputLabel className={'flex items-center justify-start gap-2'}>
-                <GlobeIcon size={14} />
-                Long
+            </Stack>
+            <Stack gap={'xs'}>
+              <InputLabel>
+                <Group gap={'xs'} wrap={'nowrap'}>
+                  <GlobeIcon size={14} />
+                  Long
+                </Group>
               </InputLabel>
-              <ButtonLabel
-                resize={false}
-                className={'border bg-transparent px-2 text-xs'}
-              >
+              <ButtonLabel showBorder size={'sm'}>
                 {camera?.longitude ? Math.round(camera.longitude * 100) / 100 : '-'}&deg;
               </ButtonLabel>
-            </div>
-            <div className={'flex flex-col gap-2'}>
-              <InputLabel className={'flex items-center justify-start gap-2'}>
-                <ArrowUpFromDotIcon size={14} />
-                Alt
+            </Stack>
+            <Stack gap={'xs'}>
+              <InputLabel>
+                <Group gap={'xs'} wrap={'nowrap'}>
+                  <ArrowUpFromDotIcon size={14} />
+                  Alt
+                </Group>
               </InputLabel>
-              <ButtonLabel
-                resize={false}
-                className={'text-nowrap border bg-transparent px-2 text-xs'}
-              >
+              <ButtonLabel showBorder size={'sm'}>
                 {camera?.altitude ? Math.round(camera.altitude * 1) / 1 : '-'}{' '}
                 {camera?.altitudeUnit || ''}
               </ButtonLabel>
-            </div>
-          </div>
+            </Stack>
+          </SimpleGrid>
         )}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 }
