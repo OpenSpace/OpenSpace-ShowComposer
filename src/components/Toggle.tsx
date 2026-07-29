@@ -1,4 +1,3 @@
-import React from 'react';
 import { Checkbox } from '@mantine/core';
 
 interface ToggleComponentProps {
@@ -10,14 +9,14 @@ interface ToggleComponentProps {
   className?: string;
 }
 
-const Toggle: React.FC<ToggleComponentProps> = ({
+function Toggle({
   value,
   setValue,
   disabled = false,
   label,
   labelPosition,
   className = ''
-}) => {
+}: ToggleComponentProps) {
   return (
     <Checkbox
       className={className}
@@ -28,6 +27,6 @@ const Toggle: React.FC<ToggleComponentProps> = ({
       onChange={(event) => setValue(event.currentTarget.checked)}
     />
   );
-};
+}
 
 export default Toggle;
