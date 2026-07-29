@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
 import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import {
@@ -43,7 +41,7 @@ interface ComponentContentProps {
   component: Component;
 }
 
-export const ComponentContent: React.FC<ComponentContentProps> = ({ component }) => {
+export function ComponentContent({ component }: ComponentContentProps) {
   switch (component?.type) {
     case 'title':
       return <TitleGUIComponent component={component as TitleComponent} />;
@@ -90,4 +88,4 @@ export const ComponentContent: React.FC<ComponentContentProps> = ({ component })
     default:
       return <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>;
   }
-};
+}
