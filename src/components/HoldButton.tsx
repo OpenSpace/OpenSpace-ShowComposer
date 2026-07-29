@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 import { ActionIcon, ActionIconProps } from '@mantine/core';
 
 interface HoldButtonProps extends ActionIconProps {
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-const HoldButton: React.FC<HoldButtonProps> = ({ onClick, children, ...props }) => {
+function HoldButton({ onClick, children, ...props }: HoldButtonProps) {
   const clickInterval = useRef<NodeJS.Timeout | null>(null);
   const handleMouseDown = () => {
     onClick();
@@ -30,6 +30,6 @@ const HoldButton: React.FC<HoldButtonProps> = ({ onClick, children, ...props }) 
       {children}
     </ActionIcon>
   );
-};
+}
 
 export default HoldButton;
