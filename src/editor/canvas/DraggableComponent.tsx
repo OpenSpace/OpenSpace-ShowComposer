@@ -144,7 +144,7 @@ export default function DraggableComponent({
         enableResizing={!isPresentMode}
         style={{
           pointerEvents: 'auto',
-          borderRadius: 'var(--mantine-radius-lg)',
+          borderRadius: 'var(--mantine-radius-md)',
           background: isPresentMode
             ? undefined
             : alpha('var(--mantine-color-gray-3)', 0.25),
@@ -170,8 +170,8 @@ export default function DraggableComponent({
               width: '100%',
               cursor: 'move',
               justifyContent: 'flex-end',
-              borderTopLeftRadius: 'var(--mantine-radius-lg)',
-              borderTopRightRadius: 'var(--mantine-radius-lg)',
+              borderTopLeftRadius: 'var(--mantine-radius-md)',
+              borderTopRightRadius: 'var(--mantine-radius-md)',
               transition: 'background-color 300ms',
               height: isSelected ? '100%' : 20,
               backgroundColor: layoutId
@@ -238,7 +238,7 @@ export default function DraggableComponent({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 'var(--mantine-radius-lg)',
+            borderRadius: 'var(--mantine-radius-md)',
             padding: layoutId ? 8 : '8px 16px',
             pointerEvents: component.isDisabled ? 'none' : undefined,
             opacity: component.isDisabled ? 0.25 : undefined
