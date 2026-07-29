@@ -1,20 +1,6 @@
-/* Cascade-layer order so Mantine's styles beat Tailwind's Preflight resets, while
-   explicit Tailwind utility classes still beat Mantine. This statement must come first
-   (before Mantine's CSS registers its `mantine` layer). Remove at Tailwind teardown. */
-@layer tailwind-base, mantine, tailwind-utilities;
-
 @import '@mantine/core/styles.layer.css';
 @import '@mantine/dropzone/styles.layer.css';
 @import '@mantine/tiptap/styles.layer.css';
-
-@layer tailwind-base {
-  @tailwind base;
-}
-
-@layer tailwind-utilities {
-  @tailwind components;
-  @tailwind utilities;
-}
 
 @layer utilities {
   /* Hide arrows in input number fields for a specific class */
