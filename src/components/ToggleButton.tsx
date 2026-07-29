@@ -1,4 +1,3 @@
-import React from 'react';
 import { ActionIcon, Tooltip } from '@mantine/core';
 
 type ToggleButtonProps = {
@@ -9,24 +8,24 @@ type ToggleButtonProps = {
   onClick: () => void;
 };
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({
+function ToggleButton({
   tooltipText,
   icon,
   selected,
   disabled,
   onClick
-}) => {
+}: ToggleButtonProps) {
   return (
     <Tooltip label={tooltipText}>
       <ActionIcon
         disabled={disabled}
         onClick={onClick}
-        className={`z-40 ${!selected ? 'opacity-60' : 'opacity-100'}`}
+        style={{ zIndex: 40, opacity: selected ? 1 : 0.6 }}
       >
         {icon}
       </ActionIcon>
     </Tooltip>
   );
-};
+}
 
 export default ToggleButton;
