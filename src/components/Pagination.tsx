@@ -16,12 +16,13 @@ function Pagination({ currentIndex, length, setIndex }: PaginationProps) {
       left={0}
       w={'100%'}
       mb={24}
-      style={{ zIndex: 49 }}
+      style={{ zIndex: 49, pointerEvents: 'none' }}
     >
       <MantinePagination
         total={length}
         value={currentIndex + 1}
         onChange={(page) => setIndex(page - 1)}
+        style={{ pointerEvents: 'auto' }}
       />
     </Center>
   );
