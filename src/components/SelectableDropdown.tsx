@@ -1,4 +1,3 @@
-import React from 'react';
 import { Select } from '@mantine/core';
 
 type Option = {
@@ -13,12 +12,12 @@ interface SelectableDropdownProps {
   setSelected: (value: string) => void;
 }
 
-const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
+function SelectableDropdown({
   options,
   placeholder = 'Select an option',
   selected,
   setSelected
-}) => {
+}: SelectableDropdownProps) {
   return (
     <Select
       w={'auto'}
@@ -33,6 +32,6 @@ const SelectableDropdown: React.FC<SelectableDropdownProps> = ({
       }}
     />
   );
-};
+}
 
 export default SelectableDropdown;
