@@ -1,19 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Flex, Progress } from '@mantine/core';
 import { throttle } from 'lodash';
+
 interface StatusBarControlledProps {
   progress: number; // Float value between 0 and 1
   debounceDuration: number; // Duration in milliseconds
 }
-import { Progress } from '@mantine/core';
 
-const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
-  progress,
-  debounceDuration
-}) => {
-  // const [_width, _setWidth] = useState(0);
-  const [_progressState, setProgress] = useState(progress);
-
-  const [_isFadingOut, setIsFadingOut] = useState(false);
+function StatusBarControlled({ progress, debounceDuration }: StatusBarControlledProps) {
+  const [, setProgress] = useState(progress);
+  const [, setIsFadingOut] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setThrottleProgress = useCallback(
@@ -47,10 +43,16 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
     };
   }, [progress, debounceDuration, setThrottleProgress]);
   return (
-    <div
-      className={
-        'absolute left-0 top-0 flex h-full w-full flex-col justify-end rounded-lg p-4'
-      }
+    <Flex
+      pos={'absolute'}
+      top={0}
+      left={0}
+      h={'100%'}
+      w={'100%'}
+      direction={'column'}
+      justify={'flex-end'}
+      p={'md'}
+      style={{ borderRadius: 'var(--mantine-radius-lg)' }}
     >
       <Progress
         value={(Math.round(progress * 1000) / 1000) * 100}
@@ -65,8 +67,8 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
           }
         }}
       />
-    </div>
+    </Flex>
   );
-};
+}
 
 export default StatusBarControlled;
