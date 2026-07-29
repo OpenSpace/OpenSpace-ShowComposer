@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
@@ -10,13 +10,13 @@ interface DeleteConfirmationModalProps {
   setOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
 }
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+function DeleteConfirmationModal({
   onConfirm,
   message,
   isOpen: externalIsOpen,
   setOpen: externalSetOpen,
   onClose
-}) => {
+}: DeleteConfirmationModalProps) {
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setOpen = externalSetOpen || internalSetOpen;
@@ -53,5 +53,5 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
       </Group>
     </Modal>
   );
-};
+}
 export default DeleteConfirmationModal;
