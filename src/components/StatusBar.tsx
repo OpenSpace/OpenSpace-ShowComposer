@@ -1,7 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Progress } from '@mantine/core';
-
-import { cn } from '@/utils/utils';
+import { Flex, Progress } from '@mantine/core';
 
 interface StatusBarProps {
   duration: number;
@@ -17,7 +15,7 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [duration, setDuration] = useState(incDuration);
-    const [fadeOutDuration, _setFadeOutDuration] = useState(incFadeDuration);
+    const [fadeOutDuration] = useState(incFadeDuration);
     const triggerAnimation = () => {
       // Reset to 0 first, then flip to animating on the next frame so the fill
       // transitions 0 -> 100 over `duration` (rather than snapping if it was mid-run).
@@ -57,19 +55,21 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
     }, [isAnimatingWidth, duration, fadeOutDuration]);
 
     return (
-      <div
-        className={cn(
-          'absolute left-0 top-0 flex h-full w-full flex-col justify-end p-4 ease-linear',
-          {
-            'pointer-events-none': isAnimatingWidth,
-            'pointer-events-auto': !isAnimatingWidth,
-            'duration-[ms] opacity-0 transition-opacity': isFadingOut,
-            'opacity-100': !isFadingOut
-          }
-        )}
+      <Flex
+        pos={'absolute'}
+        top={0}
+        left={0}
+        h={'100%'}
+        w={'100%'}
+        direction={'column'}
+        justify={'flex-end'}
+        p={'md'}
         style={{
-          transitionDuration: isFadingOut ? `${fadeOutDuration}ms` : '0ms',
-          opacity: !(isAnimatingWidth || isFadingOut) ? 0 : ''
+          pointerEvents: isAnimatingWidth ? 'none' : 'auto',
+          opacity: isAnimatingWidth && !isFadingOut ? 1 : 0,
+          transitionProperty: 'opacity',
+          transitionTimingFunction: 'linear',
+          transitionDuration: isFadingOut ? `${fadeOutDuration}ms` : '0ms'
         }}
       >
         <Progress
@@ -85,7 +85,7 @@ const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
             }
           }}
         />
-      </div>
+      </Flex>
     );
   }
 );
