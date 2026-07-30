@@ -48,9 +48,9 @@ export interface ComponentSlice {
   ) => string | null;
   //   //   copyLayout: (id: LayoutBase['id']) => void;
   removeAllComponents: () => void;
-  asyncPreSubmitOperation: (() => any) | null;
+  asyncPreSubmitOperation: (() => Promise<void>) | null;
   resetAsyncPreSubmitOperation: () => void;
-  setAsyncPreSubmitOperation: (operation: (() => any) | null) => void;
+  setAsyncPreSubmitOperation: (operation: (() => Promise<void>) | null) => void;
   executeAndResetAsyncPreSubmitOperation: () => void;
   createPanels: () => void;
   updatePanel: (
@@ -309,7 +309,7 @@ export const createComponentSlice: ImmerStateCreator<
   },
   asyncPreSubmitOperation: null, // Async operation placeholder, this is mainly used for saving photos to disk on component save
   resetAsyncPreSubmitOperation: () => set({ asyncPreSubmitOperation: null }),
-  setAsyncPreSubmitOperation: (operation: (() => any) | null) =>
+  setAsyncPreSubmitOperation: (operation: (() => Promise<void>) | null) =>
     set({
       asyncPreSubmitOperation: operation
     }),

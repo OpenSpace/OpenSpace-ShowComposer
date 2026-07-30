@@ -31,7 +31,10 @@ export function restrictNumbersToDecimalPlaces<T>(
     for (const key in item) {
       if (typeof item[key] === 'number') {
         // Format number to specified decimal places
-        (item[key] as any) = formatNumber(item[key] as number, decimalPlaces);
+        (item as Record<string, unknown>)[key] = formatNumber(
+          item[key] as number,
+          decimalPlaces
+        );
       } else if (item[key] !== null && typeof item[key] === 'object') {
         // Recursively process nested objects and arrays
         processObject(item[key] as RecursivePartial<T>);
