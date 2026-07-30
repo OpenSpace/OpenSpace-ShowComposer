@@ -209,7 +209,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     try {
       const subscription = apiInstance.subscribeToProperty(propertyName);
       return subscription;
-    } catch (e) {
+    } catch {
       console.error('Cannot subscribe to property, API instance is not connected.');
       return null;
     }
@@ -240,7 +240,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         ...payload
       });
       return topic;
-    } catch (e) {
+    } catch {
       console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }
@@ -257,7 +257,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         event: 'connect'
       });
       return topic;
-    } catch (e) {
+    } catch {
       console.error('Cannot subscribe to topic, API instance is not connected.');
       return null;
     }

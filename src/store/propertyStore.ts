@@ -162,7 +162,6 @@ export const usePropertyStore = create<State>()(
               };
               const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
-                // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription) {
                   // throttledHandleUpdates(
                   throttledHandleUpdates(name, restrictNumbersToDecimalPlaces(data, 4));

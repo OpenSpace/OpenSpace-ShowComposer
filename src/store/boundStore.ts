@@ -2,7 +2,7 @@
 // import diff from 'microdiff';
 import debounce from 'just-debounce-it';
 // import { debounce, isEmpty } from 'lodash';
-import { temporal } from 'zundo';
+import { temporal, type TemporalState } from 'zundo';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -30,6 +30,10 @@ export const useBoundStore = create<BoundStoreState>()(
           {
             limit: 20,
             partialize: (state) => {
+              // These keys are pulled out of `state` purely to EXCLUDE them from the
+              // persisted `rest` (transient UI/save state + action functions that must
+              // not be serialized). They are intentionally unused.
+              /* eslint-disable @typescript-eslint/no-unused-vars */
               const {
                 debouncePositions,
                 endSaveCount,
@@ -47,6 +51,7 @@ export const useBoundStore = create<BoundStoreState>()(
                 addLayouts,
                 ...rest
               } = state;
+              /* eslint-enable @typescript-eslint/no-unused-vars */
 
               return rest;
             },
@@ -55,7 +60,7 @@ export const useBoundStore = create<BoundStoreState>()(
               //   let accumulatedState: Partial<BoundStoreState> = {};
               let firstState: Partial<BoundStoreState> | null = null; // To store the first state
               const myDebouncedFunction = debounce<typeof handleSet>(
-                (_s) => {
+                () => {
                   if (firstState) {
                     handleSet(firstState);
                   }
@@ -128,7 +133,6 @@ export const useBoundStore = create<BoundStoreState>()(
   )
 );
 
-import type { TemporalState } from 'zundo';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
 function useTemporalStore(): TemporalState<BoundStoreState>;
@@ -142,7 +146,7 @@ function useTemporalStore<T>(
   selector?: (state: TemporalState<BoundStoreState>) => T,
   equality?: (a: T, b: T) => boolean
 ) {
-  // @ts-ignore
+  // @ts-expect-error - this is a known issue with zundo's typing for temporal state
   return useStoreWithEqualityFn(useBoundStore.temporal, selector!, equality);
 }
 

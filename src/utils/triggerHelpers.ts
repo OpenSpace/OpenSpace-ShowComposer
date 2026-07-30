@@ -33,6 +33,8 @@ const triggerFade = async (
       //   intDuration,
       // );
       break;
+    default:
+      break;
   }
 };
 
@@ -53,6 +55,8 @@ const triggerBool = async (property: string, action: 'on' | 'off' | 'toggle') =>
       luaApi.invertBooleanProperty(property);
       break;
     }
+    default:
+      break;
   }
 };
 
@@ -101,6 +105,8 @@ async function jumpToNavState(
         delete navState.Timestamp;
       }
       luaApi.navigation.flyToNavigationState(navState, fadeTime);
+      break;
+    default:
       break;
   }
 }
