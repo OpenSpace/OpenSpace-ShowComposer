@@ -29,15 +29,13 @@ export function restrictNumbersToDecimalPlaces<T>(
   // Recursively process the object
   const processObject = (item: RecursivePartial<T>): void => {
     for (const key in item) {
-      if (typeof item[key] === 'number') {
+      const value = item[key];
+      if (typeof value === 'number') {
         // Format number to specified decimal places
-        (item as Record<string, unknown>)[key] = formatNumber(
-          item[key] as number,
-          decimalPlaces
-        );
-      } else if (item[key] !== null && typeof item[key] === 'object') {
+        (item as Record<string, unknown>)[key] = formatNumber(value, decimalPlaces);
+      } else if (value !== null && typeof value === 'object') {
         // Recursively process nested objects and arrays
-        processObject(item[key] as RecursivePartial<T>);
+        processObject(value as RecursivePartial<T>);
       }
     }
   };
