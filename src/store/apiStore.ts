@@ -151,7 +151,7 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         );
         usePropertyStore.getState().setProperties(fadeables);
 
-        const boolProps: Record<string, any> = getActionSceneNodes(
+        const boolProps: Record<string, AnyProperty> = getActionSceneNodes(
           filteredProperties,
           'Bool'
         );

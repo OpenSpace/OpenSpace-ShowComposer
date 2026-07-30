@@ -31,7 +31,7 @@ export interface SettingsStoreState {
   setShowPagination: (show: boolean) => void;
   setGridSize: (size: { rows: number; columns: number }) => void;
   setPresentLocked: (locked: boolean) => void;
-  setScale: (scaleFunc: (prevScale: any) => number) => void;
+  setScale: (scaleFunc: (prevScale: number) => number) => void;
   updatePageSize(width: number, height: number): void;
   setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
   setProjectSettings: (settings: Partial<ProjectSettings>) => void;
