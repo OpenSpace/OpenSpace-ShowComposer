@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { useProperty } from '@/hooks/properties';
@@ -101,7 +101,7 @@ function FocusModal({ component, handleComponentData }: FocusModalProps) {
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Group, NumberInput, Stack, Textarea, TextInput } from '@mantine/core';
 
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
 import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
@@ -136,7 +136,7 @@ function SetTimeModal({ component, handleComponentData }: SetTimeModalProps) {
           setValue={setFadeScene}
         />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

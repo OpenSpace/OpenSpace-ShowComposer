@@ -15,7 +15,7 @@ interface Props {
   componentId?: string;
 }
 
-function BackgroundHolder({
+function BackgroundPicker({
   color,
   setColor,
   backgroundImage,
@@ -40,11 +40,9 @@ function BackgroundHolder({
             {getCopy('Focus', 'background_image')}
           </Text>
           <Image
-            className={
-              backgroundImage.length > 0
-                ? 'h-32 w-32 object-cover'
-                : 'h-16 w-16 object-cover'
-            }
+            w={backgroundImage.length > 0 ? 128 : 64}
+            h={backgroundImage.length > 0 ? 128 : 64}
+            fit={'cover'}
             src={backgroundImage || ''}
             alt={'Loaded'}
           />
@@ -55,4 +53,4 @@ function BackgroundHolder({
   );
 }
 
-export default BackgroundHolder;
+export default BackgroundPicker;

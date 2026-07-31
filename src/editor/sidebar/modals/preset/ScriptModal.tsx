@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import ToggleComponent from '@/components/Toggle';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
@@ -76,7 +76,7 @@ function ScriptModal({ component, handleComponentData }: ScriptModalProps) {
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

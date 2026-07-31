@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import DisplayLabel from '@/components/DisplayLabel';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
@@ -183,7 +183,7 @@ function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

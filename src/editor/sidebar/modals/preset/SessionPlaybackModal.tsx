@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { PlaybackControls } from '@/editor/canvas/widgets/preset/SessionPlaybackWidget';
@@ -128,7 +128,7 @@ function SessionPlaybackModal({
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

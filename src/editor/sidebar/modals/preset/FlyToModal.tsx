@@ -12,7 +12,7 @@ import {
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { useProperty } from '@/hooks/properties';
@@ -243,7 +243,7 @@ function FlyToModal({ component, handleComponentData }: FlyToModalProps) {
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}

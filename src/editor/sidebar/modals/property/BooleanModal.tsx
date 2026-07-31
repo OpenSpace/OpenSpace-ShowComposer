@@ -3,7 +3,7 @@ import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundHolder from '@/components/BackgroundHolder';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
@@ -109,7 +109,7 @@ function BoolModal({ component, handleComponentData }: BoolModalProps) {
         />
         <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
       </Group>
-      <BackgroundHolder
+      <BackgroundPicker
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
