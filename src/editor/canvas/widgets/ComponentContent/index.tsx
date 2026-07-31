@@ -14,7 +14,7 @@ import { BooleanWidget } from '@/editor/canvas/widgets/property/BooleanWidget';
 import { NumberWidget } from '@/editor/canvas/widgets/property/NumberWidget';
 import { TriggerWidget } from '@/editor/canvas/widgets/property/TriggerWidget';
 import { ImageWidget } from '@/editor/canvas/widgets/static/ImageWidget';
-import { RichTextWidget } from '@/editor/canvas/widgets/static/RichText/RichTextWidget';
+import { RichTextWidget } from '@/editor/canvas/widgets/static/RichTextWidget';
 import { TitleWidget } from '@/editor/canvas/widgets/static/TitleWidget';
 import { VideoWidget } from '@/editor/canvas/widgets/static/VideoWidget';
 import {
