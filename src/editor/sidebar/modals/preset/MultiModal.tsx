@@ -18,8 +18,8 @@ import { v4 as uuidv4 } from 'uuid';
 import ColorPickerComponent from '@/components/ColorPickerComponent';
 import ImageUpload from '@/components/ImageUpload';
 import SelectableDropdown from '@/components/SelectableDropdown';
+import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
-import ComponentModal from '@/modals/ComponentModal';
 import { useBoundStore } from '@/store/boundStore';
 import {
   Component,

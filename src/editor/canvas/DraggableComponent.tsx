@@ -4,6 +4,7 @@ import { Rnd } from 'react-rnd';
 import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import { ComponentContent } from '@/editor/canvas/widgets/ComponentContent';
 import {
   CopyIcon,
   EditIcon,
@@ -15,7 +16,6 @@ import { Component, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
-import { ComponentContent } from '@/widgets/ComponentContent';
 
 import classes from './DraggableComponent.module.css';
 

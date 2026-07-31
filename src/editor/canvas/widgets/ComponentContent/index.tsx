@@ -1,3 +1,20 @@
+import { ActionTriggerWidget } from '@/editor/canvas/widgets/preset/ActionTriggerWidget';
+import { FadeWidget } from '@/editor/canvas/widgets/preset/FadeWidget';
+import { FlyToWidget } from '@/editor/canvas/widgets/preset/FlyToWidget';
+import { FocusWidget } from '@/editor/canvas/widgets/preset/FocusWidget';
+import { MultiWidget } from '@/editor/canvas/widgets/preset/MultiWidget';
+import { PageWidget } from '@/editor/canvas/widgets/preset/PageWidget';
+import { ScriptWidget } from '@/editor/canvas/widgets/preset/ScriptWidget';
+import { SessionPlaybackWidget } from '@/editor/canvas/widgets/preset/SessionPlaybackWidget';
+import { SetNavigationWidget } from '@/editor/canvas/widgets/preset/SetNavigationWidget';
+import { SetTimeWidget } from '@/editor/canvas/widgets/preset/SetTimeWidget';
+import { BooleanWidget } from '@/editor/canvas/widgets/property/BooleanWidget';
+import { NumberWidget } from '@/editor/canvas/widgets/property/NumberWidget';
+import { TriggerWidget } from '@/editor/canvas/widgets/property/TriggerWidget';
+import { ImageWidget } from '@/editor/canvas/widgets/static/ImageWidget';
+import { RichTextWidget } from '@/editor/canvas/widgets/static/RichText/RichTextWidget';
+import { TitleWidget } from '@/editor/canvas/widgets/static/TitleWidget';
+import { VideoWidget } from '@/editor/canvas/widgets/static/VideoWidget';
 import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
 import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import {
@@ -20,23 +37,6 @@ import {
 } from '@/store';
 import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-import { ActionTriggerWidget } from '@/widgets/preset/ActionTriggerWidget';
-import { FadeWidget } from '@/widgets/preset/FadeWidget';
-import { FlyToWidget } from '@/widgets/preset/FlyToWidget';
-import { FocusWidget } from '@/widgets/preset/FocusWidget';
-import { MultiWidget } from '@/widgets/preset/MultiWidget';
-import { PageWidget } from '@/widgets/preset/PageWidget';
-import { ScriptWidget } from '@/widgets/preset/ScriptWidget';
-import { SessionPlaybackWidget } from '@/widgets/preset/SessionPlaybackWidget';
-import { SetNavigationWidget } from '@/widgets/preset/SetNavigationWidget';
-import { SetTimeWidget } from '@/widgets/preset/SetTimeWidget';
-import { BooleanWidget } from '@/widgets/property/BooleanWidget';
-import { NumberWidget } from '@/widgets/property/NumberWidget';
-import { TriggerWidget } from '@/widgets/property/TriggerWidget';
-import { ImageWidget } from '@/widgets/static/ImageWidget';
-import { RichTextWidget } from '@/widgets/static/RichText/RichTextWidget';
-import { TitleWidget } from '@/widgets/static/TitleWidget';
-import { VideoWidget } from '@/widgets/static/VideoWidget';
 interface ComponentContentProps {
   component: Component;
 }

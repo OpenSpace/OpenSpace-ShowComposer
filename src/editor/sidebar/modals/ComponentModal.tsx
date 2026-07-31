@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
-import { ActionTriggerModal } from '@/modals/preset/ActionTriggerModal';
-import { FadeModal } from '@/modals/preset/FadeModal';
-import { FlyToModal } from '@/modals/preset/FlyToModal';
-import { FocusModal } from '@/modals/preset/FocusModal';
-import { MultiModal } from '@/modals/preset/MultiModal';
-import { PageModal } from '@/modals/preset/PageModal';
-import { ScriptModal } from '@/modals/preset/ScriptModal';
-import { SessionPlaybackModal } from '@/modals/preset/SessionPlaybackModal';
-import { SetNavModal } from '@/modals/preset/SetNavigationModal';
-import { SetTimeModal } from '@/modals/preset/SetTimeModal';
-import { BoolModal } from '@/modals/property/BooleanModal';
-import { NumberModal } from '@/modals/property/NumberModal';
-import { TriggerModal } from '@/modals/property/TriggerModal';
-import { ImageModal } from '@/modals/static/ImageModal';
-import { RichTextModal } from '@/modals/static/RichText/RichTextModal';
-import { TitleModal } from '@/modals/static/TitleModal';
-import { VideoModal } from '@/modals/static/VideoModal';
+import { ActionTriggerModal } from '@/editor/sidebar/modals/preset/ActionTriggerModal';
+import { FadeModal } from '@/editor/sidebar/modals/preset/FadeModal';
+import { FlyToModal } from '@/editor/sidebar/modals/preset/FlyToModal';
+import { FocusModal } from '@/editor/sidebar/modals/preset/FocusModal';
+import { MultiModal } from '@/editor/sidebar/modals/preset/MultiModal';
+import { PageModal } from '@/editor/sidebar/modals/preset/PageModal';
+import { ScriptModal } from '@/editor/sidebar/modals/preset/ScriptModal';
+import { SessionPlaybackModal } from '@/editor/sidebar/modals/preset/SessionPlaybackModal';
+import { SetNavModal } from '@/editor/sidebar/modals/preset/SetNavigationModal';
+import { SetTimeModal } from '@/editor/sidebar/modals/preset/SetTimeModal';
+import { BoolModal } from '@/editor/sidebar/modals/property/BooleanModal';
+import { NumberModal } from '@/editor/sidebar/modals/property/NumberModal';
+import { TriggerModal } from '@/editor/sidebar/modals/property/TriggerModal';
+import { ImageModal } from '@/editor/sidebar/modals/static/ImageModal';
+import { RichTextModal } from '@/editor/sidebar/modals/static/RichText/RichTextModal';
+import { TitleModal } from '@/editor/sidebar/modals/static/TitleModal';
+import { VideoModal } from '@/editor/sidebar/modals/static/VideoModal';
 import {
   BooleanComponent,
   Component,

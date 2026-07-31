@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { InputLabel, Stack } from '@mantine/core';
 
 import ColorPickerComponent from '@/components/ColorPickerComponent';
+import { RichTextEditor } from '@/editor/canvas/widgets/static/RichText/RichTextEditor';
 import { RichTextComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
-import { RichTextEditor } from '@/widgets/static/RichText/RichTextEditor';
 
 interface RichTextModalProps {
   component: RichTextComponent | null;

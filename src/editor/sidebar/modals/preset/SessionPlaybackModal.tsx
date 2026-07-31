@@ -5,12 +5,12 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundHolder from '@/components/BackgroundHolder';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
+import { PlaybackControls } from '@/editor/canvas/widgets/preset/SessionPlaybackWidget';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
-import { PlaybackControls } from '@/widgets/preset/SessionPlaybackWidget';
 
 interface SessionPlaybackModalProps {
   component: SessionPlaybackComponent | null;

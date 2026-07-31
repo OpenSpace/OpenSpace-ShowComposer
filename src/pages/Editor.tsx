@@ -30,6 +30,7 @@ import PresentModeToggle from '@/editor/canvas/PresentModeToggle';
 import GlobalMenuBar from '@/editor/menubar/GlobalMenuBar';
 import LayoutEditModal from '@/editor/sidebar/LayoutEditModal';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
+import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
 import Undo from '@/editor/sidebar/Undo';
 import { useConnectionStatus } from '@/hooks/util';
 import {
@@ -53,7 +54,6 @@ import {
   VideoIcon,
   ViewIcon
 } from '@/icons/icons';
-import ComponentModal from '@/modals/ComponentModal';
 import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Stack, Text, TextInput } from '@mantine/core';
 
+import { VideoContent } from '@/editor/canvas/widgets/static/VideoWidget';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
-import { VideoContent } from '@/widgets/static/VideoWidget';
 
 interface VideoModalProps {
   component: VideoComponent | null;
