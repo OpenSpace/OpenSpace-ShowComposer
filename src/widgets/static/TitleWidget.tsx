@@ -61,7 +61,7 @@ interface TitleGUIProps {
   component: TitleComponent;
 }
 
-function TitleGUIComponent({ component }: TitleGUIProps) {
+function TitleWidget({ component }: TitleGUIProps) {
   const [fontSize, setFontSize] = useState(16);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -113,4 +113,4 @@ function TitleGUIComponent({ component }: TitleGUIProps) {
   );
 }
 
-export { TitleGUIComponent };
+export { TitleWidget };

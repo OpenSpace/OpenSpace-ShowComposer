@@ -11,7 +11,7 @@ interface PageGUIProps {
   shouldRender?: boolean;
 }
 
-function PageGUIComponent({ component, shouldRender = true }: PageGUIProps) {
+function PageWidget({ component, shouldRender = true }: PageGUIProps) {
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const goToPage = useBoundStore((state) => state.goToPage);
 
@@ -43,4 +43,4 @@ function PageGUIComponent({ component, shouldRender = true }: PageGUIProps) {
   );
 }
 
-export { PageGUIComponent };
+export { PageWidget };

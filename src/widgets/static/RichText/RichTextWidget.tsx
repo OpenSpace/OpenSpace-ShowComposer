@@ -6,7 +6,7 @@ interface RichTextGUIProps {
   component: RichTextComponent;
 }
 
-function RichTextGUIComponent({ component }: RichTextGUIProps) {
+function RichTextWidget({ component }: RichTextGUIProps) {
   return (
     <Box
       pos={'absolute'}
@@ -35,4 +35,4 @@ function RichTextGUIComponent({ component }: RichTextGUIProps) {
   );
 }
 
-export { RichTextGUIComponent };
+export { RichTextWidget };

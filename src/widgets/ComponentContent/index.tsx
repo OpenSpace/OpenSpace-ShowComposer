@@ -20,23 +20,23 @@ import {
 } from '@/store';
 import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-import { ActionTriggerGUIComponent } from '@/widgets/preset/ActionTrigger';
-import { FadeGUIComponent } from '@/widgets/preset/Fade';
-import { FlyToGUIComponent } from '@/widgets/preset/FlyTo';
-import { FocusComponent } from '@/widgets/preset/Focus';
-import { MultiGUIComponent } from '@/widgets/preset/Multi';
-import { PageGUIComponent } from '@/widgets/preset/Page';
-import { ScriptGUIComponent } from '@/widgets/preset/Script';
-import { SessionPlaybackGUIComponent } from '@/widgets/preset/SessionPlayback';
-import { SetNavGUIComponent } from '@/widgets/preset/SetNavigation';
-import { SetTimeComponent } from '@/widgets/preset/SetTime';
-import { BoolGUIComponent } from '@/widgets/property/Boolean';
-import { NumberGUIComponent } from '@/widgets/property/Number';
-import { TriggerGUIComponent } from '@/widgets/property/Trigger';
-import { ImageGUIComponent } from '@/widgets/static/Image';
-import { RichTextGUIComponent } from '@/widgets/static/RichText/RichText';
-import { TitleGUIComponent } from '@/widgets/static/Title';
-import { VideoGUIComponent } from '@/widgets/static/Video';
+import { ActionTriggerWidget } from '@/widgets/preset/ActionTriggerWidget';
+import { FadeWidget } from '@/widgets/preset/FadeWidget';
+import { FlyToWidget } from '@/widgets/preset/FlyToWidget';
+import { FocusWidget } from '@/widgets/preset/FocusWidget';
+import { MultiWidget } from '@/widgets/preset/MultiWidget';
+import { PageWidget } from '@/widgets/preset/PageWidget';
+import { ScriptWidget } from '@/widgets/preset/ScriptWidget';
+import { SessionPlaybackWidget } from '@/widgets/preset/SessionPlaybackWidget';
+import { SetNavigationWidget } from '@/widgets/preset/SetNavigationWidget';
+import { SetTimeWidget } from '@/widgets/preset/SetTimeWidget';
+import { BooleanWidget } from '@/widgets/property/BooleanWidget';
+import { NumberWidget } from '@/widgets/property/NumberWidget';
+import { TriggerWidget } from '@/widgets/property/TriggerWidget';
+import { ImageWidget } from '@/widgets/static/ImageWidget';
+import { RichTextWidget } from '@/widgets/static/RichText/RichTextWidget';
+import { TitleWidget } from '@/widgets/static/TitleWidget';
+import { VideoWidget } from '@/widgets/static/VideoWidget';
 interface ComponentContentProps {
   component: Component;
 }
@@ -44,47 +44,43 @@ interface ComponentContentProps {
 export function ComponentContent({ component }: ComponentContentProps) {
   switch (component?.type) {
     case 'title':
-      return <TitleGUIComponent component={component as TitleComponent} />;
+      return <TitleWidget component={component as TitleComponent} />;
     case 'video':
-      return <VideoGUIComponent component={component as VideoComponent} />;
+      return <VideoWidget component={component as VideoComponent} />;
     case 'image':
-      return <ImageGUIComponent component={component as ImageComponent} />;
+      return <ImageWidget component={component as ImageComponent} />;
     case 'richtext':
-      return <RichTextGUIComponent component={component as RichTextComponent} />;
+      return <RichTextWidget component={component as RichTextComponent} />;
     case 'timepanel':
       return <TimeDatePicker />;
     case 'settime':
-      return <SetTimeComponent component={component as SetTimeType} />;
+      return <SetTimeWidget component={component as SetTimeType} />;
     case 'navpanel':
       return <FlightControlPanel />;
     case 'sessionplayback':
-      return (
-        <SessionPlaybackGUIComponent component={component as SessionPlaybackComponent} />
-      );
+      return <SessionPlaybackWidget component={component as SessionPlaybackComponent} />;
     case 'setnavstate':
-      return <SetNavGUIComponent component={component as SetNavComponent} />;
+      return <SetNavigationWidget component={component as SetNavComponent} />;
     case 'flyto':
-      return <FlyToGUIComponent component={component as FlyToComponent} />;
+      return <FlyToWidget component={component as FlyToComponent} />;
     case 'fade':
-      return <FadeGUIComponent component={component as FadeComponent} />;
+      return <FadeWidget component={component as FadeComponent} />;
     case 'setfocus':
-      return <FocusComponent component={component as SetFocusComponent} />;
+      return <FocusWidget component={component as SetFocusComponent} />;
     case 'boolean':
-      return <BoolGUIComponent component={component as BooleanComponent} />;
+      return <BooleanWidget component={component as BooleanComponent} />;
     case 'number':
-      return <NumberGUIComponent component={component as NumberComponent} />;
+      return <NumberWidget component={component as NumberComponent} />;
     case 'trigger':
-      return <TriggerGUIComponent component={component as TriggerComponent} />;
+      return <TriggerWidget component={component as TriggerComponent} />;
     case 'multi':
-      return <MultiGUIComponent component={component as MultiComponent} />;
+      return <MultiWidget component={component as MultiComponent} />;
     case 'page':
-      return <PageGUIComponent component={component as PageComponent} />;
+      return <PageWidget component={component as PageComponent} />;
     case 'action':
-      return (
-        <ActionTriggerGUIComponent component={component as ActionTriggerComponent} />
-      );
+      return <ActionTriggerWidget component={component as ActionTriggerComponent} />;
     case 'script':
-      return <ScriptGUIComponent component={component as ScriptComponent} />;
+      return <ScriptWidget component={component as ScriptComponent} />;
     default:
       return <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>;
   }

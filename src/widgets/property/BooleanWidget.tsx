@@ -14,7 +14,7 @@ interface BoolGUIProps {
   shouldRender?: boolean;
 }
 
-function BoolGUIComponent({ component, shouldRender = true }: BoolGUIProps) {
+function BooleanWidget({ component, shouldRender = true }: BoolGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [value] = useProperty('BoolProperty', component.property);
@@ -79,4 +79,4 @@ function BoolGUIComponent({ component, shouldRender = true }: BoolGUIProps) {
   );
 }
 
-export { BoolGUIComponent };
+export { BooleanWidget };

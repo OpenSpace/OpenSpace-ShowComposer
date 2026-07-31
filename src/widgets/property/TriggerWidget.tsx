@@ -14,7 +14,7 @@ interface TriggerGUIProps {
   shouldRender?: boolean;
 }
 
-function TriggerGUIComponent({ component, shouldRender = true }: TriggerGUIProps) {
+function TriggerWidget({ component, shouldRender = true }: TriggerGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [, , meta] = useProperty('TriggerProperty', component.property);
@@ -52,4 +52,4 @@ function TriggerGUIComponent({ component, shouldRender = true }: TriggerGUIProps
   );
 }
 
-export { TriggerGUIComponent };
+export { TriggerWidget };

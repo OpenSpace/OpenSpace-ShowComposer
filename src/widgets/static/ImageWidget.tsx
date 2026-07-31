@@ -6,7 +6,7 @@ interface ImageGUIProps {
   component: ImageComponent;
 }
 
-function ImageGUIComponent({ component }: ImageGUIProps) {
+function ImageWidget({ component }: ImageGUIProps) {
   return (
     <Image
       src={component.backgroundImage}
@@ -21,4 +21,4 @@ function ImageGUIComponent({ component }: ImageGUIProps) {
   );
 }
 
-export { ImageGUIComponent };
+export { ImageWidget };

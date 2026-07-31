@@ -4,7 +4,7 @@ import { Stack, Text, TextInput } from '@mantine/core';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-import { VideoContent } from './Video';
+import { VideoContent } from './VideoWidget';
 
 interface VideoModalProps {
   component: VideoComponent | null;

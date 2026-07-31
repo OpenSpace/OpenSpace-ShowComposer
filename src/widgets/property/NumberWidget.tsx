@@ -27,7 +27,7 @@ interface NumberGUIProps {
   component: NumberComponent;
 }
 
-function NumberGUIComponent({ component }: NumberGUIProps) {
+function NumberWidget({ component }: NumberGUIProps) {
   const updateComponent = useBoundStore((state) => state.updateComponent);
 
   const [value] = useProperty('FloatProperty', component.property);
@@ -119,4 +119,4 @@ function NumberGUIComponent({ component }: NumberGUIProps) {
   );
 }
 
-export { NumberGUIComponent };
+export { NumberWidget };

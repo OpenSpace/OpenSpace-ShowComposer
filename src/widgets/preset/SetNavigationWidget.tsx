@@ -9,12 +9,12 @@ import { useBoundStore } from '@/store/boundStore';
 import { SetNavComponent } from '@/types/components';
 import { jumpToNavState } from '@/utils/triggerHelpers';
 
-interface SetNavGUIComponentProps {
+interface SetNavWidgetProps {
   component: SetNavComponent;
   shouldRender?: boolean;
 }
 
-function SetNavGUIComponent({ component, shouldRender = true }: SetNavGUIComponentProps) {
+function SetNavigationWidget({ component, shouldRender = true }: SetNavWidgetProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const {
@@ -89,4 +89,4 @@ function SetNavGUIComponent({ component, shouldRender = true }: SetNavGUICompone
   );
 }
 
-export { SetNavGUIComponent };
+export { SetNavigationWidget };

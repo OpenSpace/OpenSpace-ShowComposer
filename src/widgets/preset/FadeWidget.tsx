@@ -15,7 +15,7 @@ interface FadeGUIProps {
   shouldRender?: boolean;
 }
 
-function FadeGUIComponent({ component, shouldRender = true }: FadeGUIProps) {
+function FadeWidget({ component, shouldRender = true }: FadeGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [opacity] = useProperty('FloatProperty', component.property);
@@ -89,4 +89,4 @@ function FadeGUIComponent({ component, shouldRender = true }: FadeGUIProps) {
   );
 }
 
-export { FadeGUIComponent };
+export { FadeWidget };

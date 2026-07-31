@@ -52,7 +52,7 @@ interface VideoGUIProps {
   component: VideoComponent;
 }
 
-function VideoGUIComponent({ component }: VideoGUIProps) {
+function VideoWidget({ component }: VideoGUIProps) {
   return (
     <Center
       pos={'absolute'}
@@ -67,4 +67,4 @@ function VideoGUIComponent({ component }: VideoGUIProps) {
   );
 }
 
-export { VideoContent, VideoGUIComponent };
+export { VideoContent, VideoWidget };

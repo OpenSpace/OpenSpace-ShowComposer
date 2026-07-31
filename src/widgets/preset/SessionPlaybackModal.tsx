@@ -10,7 +10,7 @@ import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/component
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
-import { PlaybackControls } from '@/widgets/preset/SessionPlayback';
+import { PlaybackControls } from '@/widgets/preset/SessionPlaybackWidget';
 
 interface SessionPlaybackModalProps {
   component: SessionPlaybackComponent | null;

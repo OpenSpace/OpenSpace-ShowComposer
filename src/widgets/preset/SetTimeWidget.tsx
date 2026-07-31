@@ -14,7 +14,7 @@ interface SetTimeComponentProps {
   component: SetTimeType;
 }
 
-function SetTimeComponent({ component }: SetTimeComponentProps) {
+function SetTimeWidget({ component }: SetTimeComponentProps) {
   const luaApi = useOpenSpaceApi();
   useSubscribeToTime();
   const updateComponent = useBoundStore((state) => state.updateComponent);
@@ -74,4 +74,4 @@ function SetTimeComponent({ component }: SetTimeComponentProps) {
   );
 }
 
-export { SetTimeComponent };
+export { SetTimeWidget };

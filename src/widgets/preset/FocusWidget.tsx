@@ -4,36 +4,47 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import ComponentContainer from '@/components/ComponentContainer';
 import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
+import {
+  NavigationAimKey,
+  NavigationAnchorKey,
+  RetargetAnchorKey
+} from '@/store/apiStore';
 import { useBoundStore } from '@/store/boundStore';
-import { ActionTriggerComponent } from '@/types/components';
-import { triggerAction } from '@/utils/triggerHelpers';
+import { SetFocusComponent } from '@/types/components';
 
-interface ActionTriggerGUIProps {
-  component: ActionTriggerComponent;
+interface FocusGUIProps {
+  component: SetFocusComponent;
   shouldRender?: boolean;
 }
 
-function ActionTriggerGUIComponent({
-  component,
-  shouldRender = true
-}: ActionTriggerGUIProps) {
+function FocusWidget({ component, shouldRender = true }: FocusGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
+  // Reading Renderable.Enabled lets us check whether the scene node exists.
+  const [enabledValue] = useProperty(
+    'BoolProperty',
+    `Scene.${component.property}.Renderable.Enabled`
+  );
+
+  useSubscribeToProperty(NavigationAnchorKey);
 
   useEffect(() => {
     if (luaApi) {
       updateComponent(component.id, {
         triggerAction: () => {
-          triggerAction(component.action);
+          luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
+          luaApi.setPropertyValueSingle(NavigationAnchorKey, component.property);
+          luaApi.setPropertyValueSingle(NavigationAimKey, '');
         },
-        isDisabled: false
+        isDisabled: enabledValue === undefined
       });
     } else {
       updateComponent(component.id, {
         isDisabled: true
       });
     }
-  }, [component.id, component.action, luaApi]);
+  }, [component.id, component.property, luaApi, enabledValue]);
 
   if (!shouldRender) {
     return null;
@@ -57,4 +68,4 @@ function ActionTriggerGUIComponent({
   );
 }
 
-export { ActionTriggerGUIComponent };
+export { FocusWidget };

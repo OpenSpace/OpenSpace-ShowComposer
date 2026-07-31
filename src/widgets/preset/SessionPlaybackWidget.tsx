@@ -68,7 +68,7 @@ interface SessionPlaybackGUIProps {
   shouldRender?: boolean;
 }
 
-function SessionPlaybackGUIComponent({
+function SessionPlaybackWidget({
   component,
   shouldRender = true
 }: SessionPlaybackGUIProps) {
@@ -142,4 +142,4 @@ function SessionPlaybackGUIComponent({
   );
 }
 
-export { PlaybackControls, SessionPlaybackGUIComponent };
+export { PlaybackControls, SessionPlaybackWidget };

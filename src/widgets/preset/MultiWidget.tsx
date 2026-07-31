@@ -17,12 +17,12 @@ import {
 } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
-import { BoolGUIComponent } from '../property/Boolean';
-import { TriggerGUIComponent } from '../property/Trigger';
+import { BooleanWidget } from '../property/BooleanWidget';
+import { TriggerWidget } from '../property/TriggerWidget';
 
-import { FadeGUIComponent } from './Fade';
-import { FlyToGUIComponent } from './FlyTo';
-import { FocusComponent } from './Focus';
+import { FadeWidget } from './FadeWidget';
+import { FlyToWidget } from './FlyToWidget';
+import { FocusWidget } from './FocusWidget';
 
 // Mounts each sub-component's GUI with shouldRender={false} so it registers its
 // triggerAction/subscriptions in the store without drawing anything
@@ -30,7 +30,7 @@ function renderByType(component: MultiOption) {
   switch (component?.type) {
     case 'flyto':
       return (
-        <FlyToGUIComponent
+        <FlyToWidget
           key={component.id}
           component={component as FlyToComponent}
           shouldRender={false}
@@ -38,7 +38,7 @@ function renderByType(component: MultiOption) {
       );
     case 'fade':
       return (
-        <FadeGUIComponent
+        <FadeWidget
           key={component.id}
           component={component as FadeComponent}
           shouldRender={false}
@@ -46,7 +46,7 @@ function renderByType(component: MultiOption) {
       );
     case 'setfocus':
       return (
-        <FocusComponent
+        <FocusWidget
           key={component.id}
           component={component as SetFocusComponent}
           shouldRender={false}
@@ -54,7 +54,7 @@ function renderByType(component: MultiOption) {
       );
     case 'boolean':
       return (
-        <BoolGUIComponent
+        <BooleanWidget
           key={component.id}
           component={component as BooleanComponent}
           shouldRender={false}
@@ -62,7 +62,7 @@ function renderByType(component: MultiOption) {
       );
     case 'trigger':
       return (
-        <TriggerGUIComponent
+        <TriggerWidget
           key={component.id}
           component={component as TriggerComponent}
           shouldRender={false}
@@ -73,11 +73,11 @@ function renderByType(component: MultiOption) {
   }
 }
 
-interface MultiGUIComponentProps {
+interface MultiWidgetProps {
   component: MultiComponent;
 }
 
-function MultiGUIComponent({ component }: MultiGUIComponentProps) {
+function MultiWidget({ component }: MultiWidgetProps) {
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
@@ -170,4 +170,4 @@ function MultiGUIComponent({ component }: MultiGUIComponentProps) {
   );
 }
 
-export { MultiGUIComponent };
+export { MultiWidget };

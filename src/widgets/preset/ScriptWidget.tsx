@@ -13,7 +13,7 @@ interface ScriptGUIProps {
   shouldRender?: boolean;
 }
 
-function ScriptGUIComponent({ component, shouldRender = true }: ScriptGUIProps) {
+function ScriptWidget({ component, shouldRender = true }: ScriptGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
 
@@ -54,4 +54,4 @@ function ScriptGUIComponent({ component, shouldRender = true }: ScriptGUIProps) 
   );
 }
 
-export { ScriptGUIComponent };
+export { ScriptWidget };

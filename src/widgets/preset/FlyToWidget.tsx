@@ -13,7 +13,7 @@ interface FlyToGUIProps {
   shouldRender?: boolean;
 }
 
-function FlyToGUIComponent({ component, shouldRender = true }: FlyToGUIProps) {
+function FlyToWidget({ component, shouldRender = true }: FlyToGUIProps) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const fadeOutDuration = 400; // 1 second fade out
@@ -86,4 +86,4 @@ function FlyToGUIComponent({ component, shouldRender = true }: FlyToGUIProps) {
   );
 }
 
-export { FlyToGUIComponent };
+export { FlyToWidget };
