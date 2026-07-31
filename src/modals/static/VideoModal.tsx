@@ -3,8 +3,7 @@ import { Stack, Text, TextInput } from '@mantine/core';
 
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
-
-import { VideoContent } from './VideoWidget';
+import { VideoContent } from '@/widgets/static/VideoWidget';
 
 interface VideoModalProps {
   component: VideoComponent | null;

@@ -4,8 +4,7 @@ import { InputLabel, Stack } from '@mantine/core';
 import ColorPickerComponent from '@/components/ColorPickerComponent';
 import { RichTextComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
-
-import { RichTextEditor } from './RichTextEditor';
+import { RichTextEditor } from '@/widgets/static/RichText/RichTextEditor';
 
 interface RichTextModalProps {
   component: RichTextComponent | null;

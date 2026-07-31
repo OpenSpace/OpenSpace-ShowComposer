@@ -19,6 +19,7 @@ import ColorPickerComponent from '@/components/ColorPickerComponent';
 import ImageUpload from '@/components/ImageUpload';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
+import ComponentModal from '@/modals/ComponentModal';
 import { useBoundStore } from '@/store/boundStore';
 import {
   Component,
@@ -30,7 +31,6 @@ import {
   multiOptions as MultiOptions
 } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-import ComponentModal from '@/widgets/ComponentModal';
 
 // One entry in a Multi's ordered list of chained/parallel sub-components
 interface MultiType {

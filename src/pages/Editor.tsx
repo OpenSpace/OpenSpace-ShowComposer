@@ -53,6 +53,7 @@ import {
   VideoIcon,
   ViewIcon
 } from '@/icons/icons';
+import ComponentModal from '@/modals/ComponentModal';
 import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';
@@ -60,7 +61,6 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 import { MultiComponent } from '@/types/components';
 import { ConnectionStatus } from '@/types/enums';
 import { getCopy } from '@/utils/copyHelpers';
-import ComponentModal from '@/widgets/ComponentModal';
 
 import classes from './Editor.module.css';
 

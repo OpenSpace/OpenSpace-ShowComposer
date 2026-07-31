@@ -1,6 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
+import { ActionTriggerModal } from '@/modals/preset/ActionTriggerModal';
+import { FadeModal } from '@/modals/preset/FadeModal';
+import { FlyToModal } from '@/modals/preset/FlyToModal';
+import { FocusModal } from '@/modals/preset/FocusModal';
+import { MultiModal } from '@/modals/preset/MultiModal';
+import { PageModal } from '@/modals/preset/PageModal';
+import { ScriptModal } from '@/modals/preset/ScriptModal';
+import { SessionPlaybackModal } from '@/modals/preset/SessionPlaybackModal';
+import { SetNavModal } from '@/modals/preset/SetNavigationModal';
+import { SetTimeModal } from '@/modals/preset/SetTimeModal';
+import { BoolModal } from '@/modals/property/BooleanModal';
+import { NumberModal } from '@/modals/property/NumberModal';
+import { TriggerModal } from '@/modals/property/TriggerModal';
+import { ImageModal } from '@/modals/static/ImageModal';
+import { RichTextModal } from '@/modals/static/RichText/RichTextModal';
+import { TitleModal } from '@/modals/static/TitleModal';
+import { VideoModal } from '@/modals/static/VideoModal';
 import {
   BooleanComponent,
   Component,
@@ -27,23 +44,6 @@ import {
   SetNavComponent
 } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-import { ActionTriggerModal } from '@/widgets/preset/ActionTriggerModal';
-import { FadeModal } from '@/widgets/preset/FadeModal';
-import { FlyToModal } from '@/widgets/preset/FlyToModal';
-import { FocusModal } from '@/widgets/preset/FocusModal';
-import { MultiModal } from '@/widgets/preset/MultiModal';
-import { PageModal } from '@/widgets/preset/PageModal';
-import { ScriptModal } from '@/widgets/preset/ScriptModal';
-import { SessionPlaybackModal } from '@/widgets/preset/SessionPlaybackModal';
-import { SetNavModal } from '@/widgets/preset/SetNavigationModal';
-import { SetTimeModal } from '@/widgets/preset/SetTimeModal';
-import { BoolModal } from '@/widgets/property/BooleanModal';
-import { NumberModal } from '@/widgets/property/NumberModal';
-import { TriggerModal } from '@/widgets/property/TriggerModal';
-import { ImageModal } from '@/widgets/static/ImageModal';
-import { RichTextModal } from '@/widgets/static/RichText/RichTextModal';
-import { TitleModal } from '@/widgets/static/TitleModal';
-import { VideoModal } from '@/widgets/static/VideoModal';
 
 interface ComponentModalProps {
   isOpen: boolean;
