@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Group, InputLabel, Modal, Stack, Text, TextInput } from '@mantine/core';
 
-import ColorPickerComponent from '@/components/ColorPickerComponent';
+import ColorPicker from '@/components/ColorPicker';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, Page } from '@/types/components';
 
@@ -65,7 +65,7 @@ function NewPageModal({ isOpen, setIsOpen, newPage }: NewPageModalProps) {
         />
         <Stack gap={'xs'}>
           <InputLabel>Background Color</InputLabel>
-          <ColorPickerComponent color={backgroundColor} setColor={setBackgroundColor} />
+          <ColorPicker color={backgroundColor} setColor={setBackgroundColor} />
         </Stack>
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>

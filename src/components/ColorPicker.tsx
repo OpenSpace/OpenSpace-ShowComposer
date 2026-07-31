@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   ColorInput,
-  ColorPicker,
+  ColorPicker as MantineColorPicker,
   ColorSwatch,
   convertHsvaTo,
   isColorValid,
@@ -55,7 +55,7 @@ interface Props {
   setColor: (color: string) => void;
 }
 
-function ColorPickerComponent({ color, setColor }: Props) {
+function ColorPicker({ color, setColor }: Props) {
   const [opened, setOpened] = useState(false);
   // Local state for the text fields so partial/invalid typing isn't overwritten by the
   // controlled value (prop `color`); re-sync whenever the color changes from elsewhere
@@ -88,7 +88,7 @@ function ColorPickerComponent({ color, setColor }: Props) {
       </Popover.Target>
       <Popover.Dropdown>
         <Stack gap={'sm'} w={230}>
-          <ColorPicker
+          <MantineColorPicker
             format={'rgba'}
             value={color}
             onChange={setColor}
@@ -146,4 +146,4 @@ function ColorPickerComponent({ color, setColor }: Props) {
   );
 }
 
-export default ColorPickerComponent;
+export default ColorPicker;

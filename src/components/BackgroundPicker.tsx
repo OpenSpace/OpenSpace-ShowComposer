@@ -3,7 +3,7 @@ import { SimpleGrid, Stack, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
 
-import ColorPickerComponent from './ColorPickerComponent';
+import ColorPicker from './ColorPicker';
 import Image from './Image';
 import ImageUpload from './ImageUpload';
 
@@ -33,7 +33,7 @@ function BackgroundPicker({
           <Text size={'sm'} fw={500}>
             Background Color
           </Text>
-          <ColorPickerComponent color={color} setColor={setColor} />
+          <ColorPicker color={color} setColor={setColor} />
         </Stack>
         <Stack gap={'md'}>
           <Text size={'sm'} fw={500}>

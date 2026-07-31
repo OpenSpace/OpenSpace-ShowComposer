@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import ColorPickerComponent from '@/components/ColorPickerComponent';
+import ColorPicker from '@/components/ColorPicker';
 import ImageUpload from '@/components/ImageUpload';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
@@ -400,7 +400,7 @@ function MultiModal({ component, handleComponentData }: MultiModalProps) {
           />
           <Stack gap={'xs'}>
             <InputLabel>Background Color</InputLabel>
-            <ColorPickerComponent color={color} setColor={setColor} />
+            <ColorPicker color={color} setColor={setColor} />
           </Stack>
           <Stack gap={'xs'}>
             <InputLabel>{getCopy('Multi', 'background_image')}</InputLabel>

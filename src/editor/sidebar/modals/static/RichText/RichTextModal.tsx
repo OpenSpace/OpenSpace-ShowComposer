@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { InputLabel, Stack } from '@mantine/core';
 
-import ColorPickerComponent from '@/components/ColorPickerComponent';
+import ColorPicker from '@/components/ColorPicker';
 import { RichTextComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 
@@ -24,7 +24,7 @@ function RichTextModal({ component, handleComponentData }: RichTextModalProps) {
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>Background Color</InputLabel>
-        <ColorPickerComponent color={color} setColor={setColor} />
+        <ColorPicker color={color} setColor={setColor} />
       </Stack>
       <RichTextEditor content={text} setContent={setText} />
     </Stack>
