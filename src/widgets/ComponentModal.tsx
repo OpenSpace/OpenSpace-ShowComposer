@@ -27,23 +27,23 @@ import {
   SetNavComponent
 } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-import { ActionTriggerModal } from '@/widgets/preset/ActionTrigger';
-import { FadeModal } from '@/widgets/preset/Fade';
-import { FlyToModal } from '@/widgets/preset/FlyTo';
-import { FocusModal } from '@/widgets/preset/Focus';
-import { MultiModal } from '@/widgets/preset/Multi';
-import { PageModal } from '@/widgets/preset/Page';
-import { ScriptModal } from '@/widgets/preset/Script';
-import { SessionPlaybackModal } from '@/widgets/preset/SessionPlayback';
-import { SetNavModal } from '@/widgets/preset/SetNavigation';
-import { SetTimeModal } from '@/widgets/preset/SetTime';
-import { BoolModal } from '@/widgets/property/Boolean';
-import { NumberModal } from '@/widgets/property/Number';
-import { TriggerModal } from '@/widgets/property/Trigger';
-import { ImageModal } from '@/widgets/static/Image';
-import { RichTextModal } from '@/widgets/static/RichText/RichText';
-import { TitleModal } from '@/widgets/static/Title';
-import { VideoModal } from '@/widgets/static/Video';
+import { ActionTriggerModal } from '@/widgets/preset/ActionTriggerModal';
+import { FadeModal } from '@/widgets/preset/FadeModal';
+import { FlyToModal } from '@/widgets/preset/FlyToModal';
+import { FocusModal } from '@/widgets/preset/FocusModal';
+import { MultiModal } from '@/widgets/preset/MultiModal';
+import { PageModal } from '@/widgets/preset/PageModal';
+import { ScriptModal } from '@/widgets/preset/ScriptModal';
+import { SessionPlaybackModal } from '@/widgets/preset/SessionPlaybackModal';
+import { SetNavModal } from '@/widgets/preset/SetNavigationModal';
+import { SetTimeModal } from '@/widgets/preset/SetTimeModal';
+import { BoolModal } from '@/widgets/property/BooleanModal';
+import { NumberModal } from '@/widgets/property/NumberModal';
+import { TriggerModal } from '@/widgets/property/TriggerModal';
+import { ImageModal } from '@/widgets/static/ImageModal';
+import { RichTextModal } from '@/widgets/static/RichText/RichTextModal';
+import { TitleModal } from '@/widgets/static/TitleModal';
+import { VideoModal } from '@/widgets/static/VideoModal';
 
 interface ComponentModalProps {
   isOpen: boolean;

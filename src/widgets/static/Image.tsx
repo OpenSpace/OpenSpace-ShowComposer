@@ -1,9 +1,6 @@
-import { useCallback, useState } from 'react';
-import { Image, InputLabel, Stack } from '@mantine/core';
+import { Image } from '@mantine/core';
 
-import ImageUpload from '@/components/ImageUpload';
 import { ImageComponent } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface ImageGUIProps {
   component: ImageComponent;
@@ -24,28 +21,4 @@ function ImageGUIComponent({ component }: ImageGUIProps) {
   );
 }
 
-interface ImageModalProps {
-  component: ImageComponent | null;
-  handleComponentData: (data: Partial<ImageComponent>) => void;
-}
-
-function ImageModal({ component, handleComponentData }: ImageModalProps) {
-  const [url, setUrl] = useState(component?.backgroundImage || '');
-
-  const handleImageChange = useCallback(
-    (value: string) => {
-      setUrl(value);
-      handleComponentData({ backgroundImage: value });
-    },
-    [handleComponentData]
-  );
-
-  return (
-    <Stack gap={'md'}>
-      <InputLabel>{getCopy('Image', 'image')}</InputLabel>
-      <ImageUpload value={url} onChange={handleImageChange} />
-    </Stack>
-  );
-}
-
-export { ImageGUIComponent, ImageModal };
+export { ImageGUIComponent };

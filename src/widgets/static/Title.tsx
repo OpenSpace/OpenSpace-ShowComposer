@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button, Center, Group, TextInput } from '@mantine/core';
+import { Box, Center } from '@mantine/core';
 import { throttle } from 'lodash';
 
 import { TitleComponent } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 1000;
@@ -115,34 +113,4 @@ function TitleGUIComponent({ component }: TitleGUIProps) {
   );
 }
 
-interface TitleModalProps {
-  component: TitleComponent | null;
-  handleComponentData: (data: Partial<TitleComponent>) => void;
-}
-
-function TitleModal({ component, handleComponentData }: TitleModalProps) {
-  const currentPageTitle = useBoundStore(
-    (state) => state.getPageById(state.currentPage).name ?? ''
-  );
-  const [text, setText] = useState(component?.text ?? currentPageTitle);
-
-  useEffect(() => {
-    handleComponentData({ text });
-  }, [text, handleComponentData]);
-
-  return (
-    <Group align={'flex-end'}>
-      <TextInput
-        label={getCopy('Title', 'title')}
-        value={text}
-        onChange={(e) => setText(e.currentTarget.value)}
-        flex={1}
-      />
-      <Button variant={'default'} onClick={() => setText(currentPageTitle ?? '')}>
-        {getCopy('Title', 'pageTitle')}
-      </Button>
-    </Group>
-  );
-}
-
-export { TitleGUIComponent, TitleModal };
+export { TitleGUIComponent };

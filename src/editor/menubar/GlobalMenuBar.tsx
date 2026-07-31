@@ -7,11 +7,9 @@ import ConfirmationModal from '@/editor/menubar/ConfirmationModal';
 import ImportShowModal from '@/editor/menubar/ImportShowModal';
 import LoadProjectModal from '@/editor/menubar/LoadProjectModal';
 import NewPageModal from '@/editor/menubar/NewPageModal';
-import {
-  NewProjectModal,
-  ProjectSettingsModal,
-  WorkspaceSettingsModal
-} from '@/editor/menubar/NewProjectModal';
+import { NewProjectModal } from '@/editor/menubar/NewProjectModal';
+import { ProjectSettingsModal } from '@/editor/menubar/ProjectSettingsModal';
+import { WorkspaceSettingsModal } from '@/editor/menubar/WorkspaceSettingsModal';
 import {
   BoundStoreState,
   useBoundStore,
