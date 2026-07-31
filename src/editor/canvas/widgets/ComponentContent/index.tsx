@@ -1,3 +1,5 @@
+import { FlightControlPanel } from '@/editor/canvas/panels/FlightControlPanel/FlightControlPanel';
+import { TimeDatePicker } from '@/editor/canvas/panels/TimeDatePicker/TimeDatePicker';
 import { ActionTriggerWidget } from '@/editor/canvas/widgets/preset/ActionTriggerWidget';
 import { FadeWidget } from '@/editor/canvas/widgets/preset/FadeWidget';
 import { FlyToWidget } from '@/editor/canvas/widgets/preset/FlyToWidget';
@@ -15,8 +17,6 @@ import { ImageWidget } from '@/editor/canvas/widgets/static/ImageWidget';
 import { RichTextWidget } from '@/editor/canvas/widgets/static/RichText/RichTextWidget';
 import { TitleWidget } from '@/editor/canvas/widgets/static/TitleWidget';
 import { VideoWidget } from '@/editor/canvas/widgets/static/VideoWidget';
-import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
-import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import {
   BooleanComponent,
   Component,

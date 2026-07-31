@@ -3,12 +3,12 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, Box } from '@mantine/core';
 
+import { FeedbackPanel } from '@/editor/canvas/panels/FeedbackPanel/FeedbackPanel';
+import { FlightControlPanel } from '@/editor/canvas/panels/FlightControlPanel/FlightControlPanel';
+import { LogPanel } from '@/editor/canvas/panels/LogPanel/LogPanel';
+import { SessionPanel } from '@/editor/canvas/panels/SessionPanel/SessionPanel';
+import { TimeDatePicker } from '@/editor/canvas/panels/TimeDatePicker/TimeDatePicker';
 import { GripHorizontalIcon, MinusIcon } from '@/icons/icons';
-import { FeedbackPanel } from '@/panels/FeedbackPanel/FeedbackPanel';
-import { FlightControlPanel } from '@/panels/FlightControlPanel/FlightControlPanel';
-import { LogPanel } from '@/panels/LogPanel/LogPanel';
-import { SessionPanel } from '@/panels/SessionPanel/SessionPanel';
-import { TimeDatePicker } from '@/panels/TimeDatePicker/TimeDatePicker';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import {
