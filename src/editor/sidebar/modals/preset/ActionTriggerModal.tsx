@@ -9,12 +9,12 @@ import { ActionTriggerComponent, ComponentBaseColors } from '@/types/components'
 import { Action } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ActionTriggerModalProps {
+interface Props {
   component: ActionTriggerComponent | null;
   handleComponentData: (data: Partial<ActionTriggerComponent>) => void;
 }
 
-function ActionTriggerModal({ component, handleComponentData }: ActionTriggerModalProps) {
+function ActionTriggerModal({ component, handleComponentData }: Props) {
   const [action, setAction] = useState<string>(component?.action || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);

@@ -9,7 +9,7 @@ import { getCopy } from '@/utils/copyHelpers';
 
 const OUTPUT_FRAMERATE = 60;
 
-interface PlaybackSwitchProps {
+interface Props {
   shouldOutputFrames: boolean;
   loopPlayback: boolean;
   filenamePlayback: string;
@@ -21,7 +21,7 @@ export function PlaybackSwitch({
   loopPlayback,
   filenamePlayback,
   toggleRecording
-}: PlaybackSwitchProps) {
+}: Props) {
   const luaApi = useOpenSpaceApi();
   const { state } = useSubscribeToSessionRecording();
 

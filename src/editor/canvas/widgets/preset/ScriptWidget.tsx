@@ -8,12 +8,12 @@ import { useBoundStore } from '@/store/boundStore';
 import { ScriptComponent } from '@/types/components';
 import { sendLuaScript } from '@/utils/triggerHelpers';
 
-interface ScriptGUIProps {
+interface Props {
   component: ScriptComponent;
   shouldRender?: boolean;
 }
 
-function ScriptWidget({ component, shouldRender = true }: ScriptGUIProps) {
+function ScriptWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
 

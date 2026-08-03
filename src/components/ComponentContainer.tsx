@@ -1,6 +1,6 @@
 import { Flex } from '@mantine/core';
 
-interface ComponentContainerProps {
+interface Props {
   children: React.ReactNode;
   onClick?: () => void;
   backgroundImage?: string;
@@ -14,7 +14,7 @@ function ComponentContainer({
   backgroundImage,
   backgroundColor,
   style
-}: ComponentContainerProps) {
+}: Props) {
   return (
     <Flex
       pos={'absolute'}

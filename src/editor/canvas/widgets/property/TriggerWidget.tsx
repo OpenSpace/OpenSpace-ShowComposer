@@ -9,12 +9,12 @@ import { TriggerComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { triggerTrigger } from '@/utils/triggerHelpers';
 
-interface TriggerGUIProps {
+interface Props {
   component: TriggerComponent;
   shouldRender?: boolean;
 }
 
-function TriggerWidget({ component, shouldRender = true }: TriggerGUIProps) {
+function TriggerWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [, , meta] = useProperty('TriggerProperty', component.property);

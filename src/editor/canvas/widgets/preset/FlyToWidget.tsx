@@ -8,12 +8,12 @@ import StatusBar, { StatusBarRef } from '@/components/StatusBar';
 import { useBoundStore } from '@/store/boundStore';
 import { FlyToComponent } from '@/types/components';
 
-interface FlyToGUIProps {
+interface Props {
   component: FlyToComponent;
   shouldRender?: boolean;
 }
 
-function FlyToWidget({ component, shouldRender = true }: FlyToGUIProps) {
+function FlyToWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const fadeOutDuration = 400; // 1 second fade out

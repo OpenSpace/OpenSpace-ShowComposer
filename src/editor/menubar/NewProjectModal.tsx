@@ -15,7 +15,7 @@ import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface NewProjectModalProps {
+interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   handleLoadProjects: () => void | null;
@@ -25,7 +25,7 @@ function NewProjectModal({
   isOpen,
   setIsOpen,
   handleLoadProjects
-}: NewProjectModalProps) {
+}: Props) {
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({

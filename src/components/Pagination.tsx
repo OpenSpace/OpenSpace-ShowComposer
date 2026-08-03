@@ -1,6 +1,6 @@
 import { Center, Pagination as MantinePagination } from '@mantine/core';
 
-interface PaginationProps {
+interface Props {
   currentIndex: number;
   length: number;
   setIndex: (index: number) => void;
@@ -8,7 +8,7 @@ interface PaginationProps {
 
 // The rest of the app is 0-indexed (currentIndex / setIndex), while Mantine's
 // Pagination is 1-based so we need to add/subtract 1 when passing values to it
-function Pagination({ currentIndex, length, setIndex }: PaginationProps) {
+function Pagination({ currentIndex, length, setIndex }: Props) {
   return (
     <Center
       pos={'absolute'}

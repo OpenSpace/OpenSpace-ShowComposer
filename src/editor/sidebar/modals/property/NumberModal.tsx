@@ -19,12 +19,12 @@ import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface NumberModalProps {
+interface Props {
   component: NumberComponent | null;
   handleComponentData: (data: Partial<NumberComponent>) => void;
 }
 
-function NumberModal({ component, handleComponentData }: NumberModalProps) {
+function NumberModal({ component, handleComponentData }: Props) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');

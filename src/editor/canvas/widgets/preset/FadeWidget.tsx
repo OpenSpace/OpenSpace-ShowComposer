@@ -10,12 +10,12 @@ import { FadeComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { triggerFade } from '@/utils/triggerHelpers';
 
-interface FadeGUIProps {
+interface Props {
   component: FadeComponent;
   shouldRender?: boolean;
 }
 
-function FadeWidget({ component, shouldRender = true }: FadeGUIProps) {
+function FadeWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [opacity] = useProperty('FloatProperty', component.property);

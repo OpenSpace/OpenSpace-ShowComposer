@@ -13,12 +13,12 @@ import {
 import { useBoundStore } from '@/store/boundStore';
 import { SetFocusComponent } from '@/types/components';
 
-interface FocusGUIProps {
+interface Props {
   component: SetFocusComponent;
   shouldRender?: boolean;
 }
 
-function FocusWidget({ component, shouldRender = true }: FocusGUIProps) {
+function FocusWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   // Reading Renderable.Enabled lets us check whether the scene node exists.

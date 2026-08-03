@@ -21,12 +21,12 @@ import { NavigationState } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 
-interface SetNavModalProps {
+interface Props {
   component: SetNavComponent | null;
   handleComponentData: (data: Partial<SetNavComponent>) => void;
 }
 
-function SetNavModal({ component, handleComponentData }: SetNavModalProps) {
+function SetNavModal({ component, handleComponentData }: Props) {
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time } = useSubscribeToTime();
   const [navigationState, setNavigationState] = useState<NavigationState | undefined>(

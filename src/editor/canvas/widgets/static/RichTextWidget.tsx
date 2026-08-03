@@ -2,11 +2,11 @@ import { Box, Typography } from '@mantine/core';
 
 import { RichTextComponent } from '@/store';
 
-interface RichTextGUIProps {
+interface Props {
   component: RichTextComponent;
 }
 
-function RichTextWidget({ component }: RichTextGUIProps) {
+function RichTextWidget({ component }: Props) {
   return (
     <Box
       pos={'absolute'}

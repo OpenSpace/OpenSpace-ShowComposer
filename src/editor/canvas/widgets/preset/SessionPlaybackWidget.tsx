@@ -1,77 +1,23 @@
 import { useEffect, useMemo } from 'react';
-import { Button, SimpleGrid, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import ComponentContainer from '@/components/ComponentContainer';
 import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { PlaybackControls } from '@/editor/canvas/widgets/preset/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import { SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 
-interface PlaybackControlsProps {
-  recordingState: RecordingState;
-  file: string;
-  onTogglePlayback: () => void;
-  onTogglePlaybackPaused: () => void;
-}
-
-// Renders the play/pause/stop controls for the current session-recording state.
-// Shared by both the canvas widget and its edit modal
-function PlaybackControls({
-  recordingState,
-  file,
-  onTogglePlayback,
-  onTogglePlaybackPaused
-}: PlaybackControlsProps) {
-  switch (recordingState) {
-    case RecordingState.Idle:
-      return file ? (
-        <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlayback}>
-          {getCopy('SessionPlayback', 'play')}
-        </Button>
-      ) : null;
-    case RecordingState.Playing:
-      return (
-        <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PauseIcon size={16} />} onClick={onTogglePlaybackPaused}>
-            {getCopy('SessionPlayback', 'pause')}
-          </Button>
-          <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
-            {getCopy('SessionPlayback', 'stop')}
-          </Button>
-        </SimpleGrid>
-      );
-    case RecordingState.Paused:
-      return (
-        <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlaybackPaused}>
-            {getCopy('SessionPlayback', 'resume')}
-          </Button>
-          <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
-            {getCopy('SessionPlayback', 'stop')}
-          </Button>
-        </SimpleGrid>
-      );
-    case RecordingState.Recording:
-    default:
-      return null;
-  }
-}
-
-interface SessionPlaybackGUIProps {
+interface Props {
   component: SessionPlaybackComponent;
   shouldRender?: boolean;
 }
 
-function SessionPlaybackWidget({
-  component,
-  shouldRender = true
-}: SessionPlaybackGUIProps) {
+function SessionPlaybackWidget({ component, shouldRender = true }: Props) {
   const { file, loop, gui_name, gui_description } = component;
   const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
   const luaApi = useOpenSpaceApi();
@@ -142,4 +88,4 @@ function SessionPlaybackWidget({
   );
 }
 
-export { PlaybackControls, SessionPlaybackWidget };
+export { SessionPlaybackWidget };

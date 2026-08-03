@@ -19,7 +19,7 @@ import { roundToNearest } from '@/utils/math';
 
 import classes from './DraggableComponent.module.css';
 
-interface DraggableComponentProps {
+interface Props {
   component: Component;
   layoutId?: string;
   onEdit: () => void;
@@ -33,7 +33,7 @@ export default function DraggableComponent({
   onEdit,
   onCopy = () => {},
   onDelete
-}: DraggableComponentProps) {
+}: Props) {
   const position = useBoundStore((state) => state.positions[component?.id || '']);
   const updatePosition = useBoundStore((state) => state.updatePosition);
   const tempPosition = useBoundStore((state) => state.tempPositions[component.id]);

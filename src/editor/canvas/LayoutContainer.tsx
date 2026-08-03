@@ -24,7 +24,7 @@ import { roundToNearest } from '@/utils/math';
 
 import classes from './LayoutContainer.module.css';
 
-interface LayoutContainerProps {
+interface Props {
   layout: LayoutBase;
   children?: ReactNode;
   handleOpenEditModal: () => void;
@@ -40,7 +40,7 @@ export function LayoutContainer({
   layout,
   children,
   handleOpenEditModal
-}: LayoutContainerProps) {
+}: Props) {
   const layoutPosition = useBoundStore((state) => state.positions[layout?.id || '']);
 
   const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);

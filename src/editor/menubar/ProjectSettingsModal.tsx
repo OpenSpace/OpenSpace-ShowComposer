@@ -5,11 +5,11 @@ import Toggle from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ProjectSettingsModalProps {
+interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
-function ProjectSettingsModal({ isOpen, setIsOpen }: ProjectSettingsModalProps) {
+function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({

@@ -7,12 +7,12 @@ import { ComponentBaseColors } from '@/types/components';
 
 import { RichTextEditor } from './RichTextEditor';
 
-interface RichTextModalProps {
+interface Props {
   component: RichTextComponent | null;
   handleComponentData: (data: Partial<RichTextComponent>) => void;
 }
 
-function RichTextModal({ component, handleComponentData }: RichTextModalProps) {
+function RichTextModal({ component, handleComponentData }: Props) {
   const [text, setText] = useState(component?.text || '');
   const [color, setColor] = useState(component?.color || ComponentBaseColors.richtext);
 

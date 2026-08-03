@@ -1,6 +1,6 @@
 import { ActionIcon, Tooltip } from '@mantine/core';
 
-type ToggleButtonProps = {
+type Props = {
   tooltipText: string;
   icon: JSX.Element;
   selected: boolean;
@@ -14,7 +14,7 @@ function ToggleButton({
   selected,
   disabled,
   onClick
-}: ToggleButtonProps) {
+}: Props) {
   return (
     <Tooltip label={tooltipText}>
       <ActionIcon

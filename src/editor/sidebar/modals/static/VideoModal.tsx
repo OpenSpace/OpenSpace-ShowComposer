@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Stack, Text, TextInput } from '@mantine/core';
 
-import { VideoContent } from '@/editor/canvas/widgets/static/VideoWidget';
+import { VideoContent } from '@/editor/canvas/widgets/static/VideoContent';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface VideoModalProps {
+interface Props {
   component: VideoComponent | null;
   handleComponentData: (data: Partial<VideoComponent>) => void;
 }
 
-function VideoModal({ component, handleComponentData }: VideoModalProps) {
+function VideoModal({ component, handleComponentData }: Props) {
   const [url, setUrl] = useState(component?.url || '');
 
   function handleUrlChange(value: string) {

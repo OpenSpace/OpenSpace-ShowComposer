@@ -15,13 +15,13 @@ const BLOCK_FORMATS = [
 const HEADING_LEVELS = { h1: 1, h2: 2, h3: 3 } as const;
 type HeadingKey = keyof typeof HEADING_LEVELS;
 
-interface RichTextEditorProps {
+interface Props {
   content: string;
   setContent: (content: string) => void;
 }
 
 // See docs here: https://mantine.dev/x/tiptap/ and here https://tiptap.dev/docs/examples/basics/default-text-editor
-export function RichTextEditor({ content, setContent }: RichTextEditorProps) {
+export function RichTextEditor({ content, setContent }: Props) {
   const editor = useEditor({
     // Toolbar-only editor: no markdown input/paste conversion, and the block/mark types
     // that have no toolbar button are disabled so they can't be created at all.

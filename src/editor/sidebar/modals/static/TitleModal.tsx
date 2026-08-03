@@ -5,12 +5,12 @@ import { TitleComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface TitleModalProps {
+interface Props {
   component: TitleComponent | null;
   handleComponentData: (data: Partial<TitleComponent>) => void;
 }
 
-function TitleModal({ component, handleComponentData }: TitleModalProps) {
+function TitleModal({ component, handleComponentData }: Props) {
   const currentPageTitle = useBoundStore(
     (state) => state.getPageById(state.currentPage).name ?? ''
   );

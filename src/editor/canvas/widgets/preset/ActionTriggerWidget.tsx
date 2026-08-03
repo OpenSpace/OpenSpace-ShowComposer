@@ -8,12 +8,12 @@ import { useBoundStore } from '@/store/boundStore';
 import { ActionTriggerComponent } from '@/types/components';
 import { triggerAction } from '@/utils/triggerHelpers';
 
-interface ActionTriggerGUIProps {
+interface Props {
   component: ActionTriggerComponent;
   shouldRender?: boolean;
 }
 
-function ActionTriggerWidget({ component, shouldRender = true }: ActionTriggerGUIProps) {
+function ActionTriggerWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
 

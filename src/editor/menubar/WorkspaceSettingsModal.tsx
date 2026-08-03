@@ -4,12 +4,12 @@ import { Button, Group, Modal, NumberInput, Stack, Text, TextInput } from '@mant
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface WorkspaceSettingsModalProps {
+interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-function WorkspaceSettingsModal({ isOpen, setIsOpen }: WorkspaceSettingsModalProps) {
+function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({

@@ -2,7 +2,7 @@ import { ReactElement, useState } from 'react';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
-interface DeleteConfirmationModalProps {
+interface Props {
   onConfirm: () => void;
   message: string;
   triggerButton?: ReactElement;
@@ -16,7 +16,7 @@ function DeleteConfirmationModal({
   isOpen: externalIsOpen,
   setOpen: externalSetOpen,
   onClose
-}: DeleteConfirmationModalProps) {
+}: Props) {
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setOpen = externalSetOpen || internalSetOpen;

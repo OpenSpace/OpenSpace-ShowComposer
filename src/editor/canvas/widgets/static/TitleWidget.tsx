@@ -57,11 +57,11 @@ function calculateMaxFontSize(text: string, boxWidth: number, boxHeight: number)
   return min;
 }
 
-interface TitleGUIProps {
+interface Props {
   component: TitleComponent;
 }
 
-function TitleWidget({ component }: TitleGUIProps) {
+function TitleWidget({ component }: Props) {
   const [fontSize, setFontSize] = useState(16);
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -2,7 +2,7 @@ import { Button, Group, Modal, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ConfirmationModalProps {
+interface Props {
   isOpen: boolean;
   onConfirm: () => void;
   message: string;
@@ -14,7 +14,7 @@ function ConfirmationModal({
   onConfirm,
   message,
   setOpen
-}: ConfirmationModalProps) {
+}: Props) {
   return (
     <Modal opened={isOpen} onClose={() => setOpen(false)} centered title={''}>
       <Text>{message}</Text>

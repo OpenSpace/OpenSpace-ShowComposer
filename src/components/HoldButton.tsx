@@ -1,12 +1,12 @@
 import { ReactNode, useRef } from 'react';
 import { ActionIcon, ActionIconProps } from '@mantine/core';
 
-interface HoldButtonProps extends ActionIconProps {
+interface Props extends ActionIconProps {
   onClick: () => void;
   children: ReactNode;
 }
 
-function HoldButton({ onClick, children, ...props }: HoldButtonProps) {
+function HoldButton({ onClick, children, ...props }: Props) {
   const clickInterval = useRef<NodeJS.Timeout | null>(null);
   const handleMouseDown = () => {
     onClick();

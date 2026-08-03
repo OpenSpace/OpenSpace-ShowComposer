@@ -5,13 +5,13 @@ import ColorPicker from '@/components/ColorPicker';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, Page } from '@/types/components';
 
-interface NewPageModalProps {
+interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   newPage: boolean;
 }
 
-function NewPageModal({ isOpen, setIsOpen, newPage }: NewPageModalProps) {
+function NewPageModal({ isOpen, setIsOpen, newPage }: Props) {
   const currentPage: Page = useBoundStore((state) =>
     state.getPageById(state.currentPage)
   );

@@ -42,12 +42,12 @@ interface MultiType {
   id: string;
 }
 
-interface MultiModalProps {
+interface Props {
   component: MultiComponent | null;
   handleComponentData: (data: Partial<MultiComponent>) => void;
 }
 
-function MultiModal({ component, handleComponentData }: MultiModalProps) {
+function MultiModal({ component, handleComponentData }: Props) {
   const [items, setItems] = useState<MultiType[]>(
     component
       ? component.components.map((v) => ({

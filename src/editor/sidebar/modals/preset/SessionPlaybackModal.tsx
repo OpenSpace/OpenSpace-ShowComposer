@@ -5,22 +5,19 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
-import { PlaybackControls } from '@/editor/canvas/widgets/preset/SessionPlaybackWidget';
+import { PlaybackControls } from '@/editor/canvas/widgets/preset/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface SessionPlaybackModalProps {
+interface Props {
   component: SessionPlaybackComponent | null;
   handleComponentData: (data: Partial<SessionPlaybackComponent>) => void;
 }
 
-function SessionPlaybackModal({
-  component,
-  handleComponentData
-}: SessionPlaybackModalProps) {
+function SessionPlaybackModal({ component, handleComponentData }: Props) {
   const luaApi = useOpenSpaceApi();
   const sessionRecording = useSubscribeToSessionRecording();
   const fileList = sessionRecording.files || [];

@@ -3,7 +3,7 @@ import { Box } from '@mantine/core';
 
 type DisplayLabelSize = 'sm' | 'md';
 
-interface DisplayLabelProps {
+interface Props {
   children: ReactNode;
   showBorder?: boolean;
   size?: DisplayLabelSize;
@@ -26,7 +26,7 @@ function DisplayLabel({
   showBorder = false,
   size = 'md',
   style
-}: DisplayLabelProps) {
+}: Props) {
   return (
     <Box
       style={{

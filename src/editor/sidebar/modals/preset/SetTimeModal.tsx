@@ -10,12 +10,12 @@ import { ComponentBaseColors } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 
-interface SetTimeModalProps {
+interface Props {
   component: SetTimeType | null;
   handleComponentData: (data: Partial<SetTimeType>) => void;
 }
 
-function SetTimeModal({ component, handleComponentData }: SetTimeModalProps) {
+function SetTimeModal({ component, handleComponentData }: Props) {
   const { timeCapped: time } = useSubscribeToTime();
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(component?.interpolate || false);

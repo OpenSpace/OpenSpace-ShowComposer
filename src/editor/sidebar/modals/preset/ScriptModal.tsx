@@ -7,12 +7,12 @@ import ToggleComponent from '@/components/Toggle';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ScriptModalProps {
+interface Props {
   component: ScriptComponent | null;
   handleComponentData: (data: Partial<ScriptComponent>) => void;
 }
 
-function ScriptModal({ component, handleComponentData }: ScriptModalProps) {
+function ScriptModal({ component, handleComponentData }: Props) {
   const [script, setScript] = useState<string>(component?.script || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);

@@ -9,12 +9,12 @@ import { BooleanComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { triggerBool } from '@/utils/triggerHelpers';
 
-interface BoolGUIProps {
+interface Props {
   component: BooleanComponent;
   shouldRender?: boolean;
 }
 
-function BooleanWidget({ component, shouldRender = true }: BoolGUIProps) {
+function BooleanWidget({ component, shouldRender = true }: Props) {
   const luaApi = useOpenSpaceApi();
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const [value] = useProperty('BoolProperty', component.property);

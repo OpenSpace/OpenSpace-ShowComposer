@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Flex, Progress } from '@mantine/core';
 import { throttle } from 'lodash';
 
-interface StatusBarControlledProps {
+interface Props {
   progress: number; // Float value between 0 and 1
   debounceDuration: number; // Duration in milliseconds
 }
 
-function StatusBarControlled({ progress, debounceDuration }: StatusBarControlledProps) {
+function StatusBarControlled({ progress, debounceDuration }: Props) {
   const [, setProgress] = useState(progress);
   const [, setIsFadingOut] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);

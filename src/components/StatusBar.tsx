@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Flex, Progress } from '@mantine/core';
 
-interface StatusBarProps {
+interface Props {
   duration: number;
   fadeOutDuration: number;
 }
@@ -10,7 +10,7 @@ export interface StatusBarRef {
   triggerAnimation: () => void;
 }
 
-const StatusBar = forwardRef<StatusBarRef, StatusBarProps>(
+const StatusBar = forwardRef<StatusBarRef, Props>(
   ({ duration: incDuration, fadeOutDuration: incFadeDuration }, ref) => {
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);

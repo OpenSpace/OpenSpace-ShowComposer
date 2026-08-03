@@ -9,7 +9,7 @@ type DateData = {
   relative: boolean;
 };
 
-interface DateTimeStepperProps {
+interface Props {
   date: Date | string;
   onChange: (data: DateData) => void;
 }
@@ -52,7 +52,7 @@ function formatDatePart(part: (typeof dateParts)[number], date: Date): string | 
   }
 }
 
-export function DateTimeStepper({ date, onChange }: DateTimeStepperProps) {
+export function DateTimeStepper({ date, onChange }: Props) {
   if (date === undefined) {
     return null;
   }

@@ -4,10 +4,10 @@ import { ActionIcon, Menu } from '@mantine/core';
 import { EllipsisVerticalIcon } from '@/icons/icons';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface DropdownMenuProps {
+interface Props {
   items: ReactNode[];
 }
-function DropdownMenuComponent({ items }: DropdownMenuProps) {
+function DropdownMenuComponent({ items }: Props) {
   return (
     <Menu position={'bottom-end'} zIndex={999999}>
       <Menu.Target>

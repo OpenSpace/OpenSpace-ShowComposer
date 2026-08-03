@@ -2,11 +2,11 @@ import { Image } from '@mantine/core';
 
 import { ImageComponent } from '@/store';
 
-interface ImageGUIProps {
+interface Props {
   component: ImageComponent;
 }
 
-function ImageWidget({ component }: ImageGUIProps) {
+function ImageWidget({ component }: Props) {
   return (
     <Image
       src={component.backgroundImage}

@@ -8,11 +8,11 @@ import { ArrowUpFromDotIcon, ClockIcon, GlobeIcon, TelescopeIcon } from '@/icons
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { formatDate } from '@/utils/time';
 
-interface FeedbackProps {
+interface Props {
   className?: string;
 }
 
-export function Feedback({ className }: FeedbackProps) {
+export function Feedback({ className }: Props) {
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const { timeCapped: time } = useSubscribeToTime(1000);
   const camera = useSubscribeToCamera(500);

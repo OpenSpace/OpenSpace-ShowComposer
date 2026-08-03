@@ -20,12 +20,12 @@ import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface FadeModalProps {
+interface Props {
   component: FadeComponent | null;
   handleComponentData: (data: Partial<FadeComponent>) => void;
 }
 
-function FadeModal({ component, handleComponentData }: FadeModalProps) {
+function FadeModal({ component, handleComponentData }: Props) {
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)

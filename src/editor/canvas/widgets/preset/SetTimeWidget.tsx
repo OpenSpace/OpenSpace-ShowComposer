@@ -10,11 +10,11 @@ import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { jumpToTime } from '@/utils/time';
 
-interface SetTimeComponentProps {
+interface Props {
   component: SetTimeType;
 }
 
-function SetTimeWidget({ component }: SetTimeComponentProps) {
+function SetTimeWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
   useSubscribeToTime();
   const updateComponent = useBoundStore((state) => state.updateComponent);

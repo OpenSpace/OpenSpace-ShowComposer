@@ -45,7 +45,7 @@ import {
 } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ComponentModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   onCancel?: () => void;
@@ -68,7 +68,7 @@ export default function ComponentModal({
   type,
   initialData = {},
   icon
-}: ComponentModalProps) {
+}: Props) {
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const removeComponent = useBoundStore((state) => state.removeComponent);

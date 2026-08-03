@@ -23,7 +23,7 @@ type MultiOption = {
   chained: boolean;
 };
 
-interface ImportShowModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   store: {
@@ -38,7 +38,7 @@ type SelectedPage = {
   components: string[];
 };
 
-function ImportShowModal({ isOpen, onClose, store }: ImportShowModalProps) {
+function ImportShowModal({ isOpen, onClose, store }: Props) {
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 

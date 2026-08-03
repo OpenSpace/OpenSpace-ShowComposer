@@ -1,6 +1,6 @@
 import { Checkbox } from '@mantine/core';
 
-interface ToggleComponentProps {
+interface Props {
   value: boolean;
   setValue: (value: boolean) => void;
   label?: string;
@@ -16,7 +16,7 @@ function Toggle({
   label,
   labelPosition,
   className = ''
-}: ToggleComponentProps) {
+}: Props) {
   return (
     <Checkbox
       className={className}

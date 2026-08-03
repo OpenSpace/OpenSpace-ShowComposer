@@ -14,7 +14,7 @@ import { Project } from '@/api/showbuilder';
 import Pagination from '@/components/Pagination';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface LoadProjectModalProps {
+interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   handleLoadProject: (project: Project) => void;
@@ -26,7 +26,7 @@ function LoadProjectModal({
   setIsOpen,
   handleLoadProject,
   projects
-}: LoadProjectModalProps) {
+}: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(projects.length / itemsPerPage);

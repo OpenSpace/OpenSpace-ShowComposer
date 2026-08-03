@@ -73,11 +73,11 @@ function renderByType(component: MultiOption) {
   }
 }
 
-interface MultiWidgetProps {
+interface Props {
   component: MultiComponent;
 }
 
-function MultiWidget({ component }: MultiWidgetProps) {
+function MultiWidget({ component }: Props) {
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);

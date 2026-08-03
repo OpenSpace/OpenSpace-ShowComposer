@@ -6,12 +6,12 @@ import { Information } from '@/components/Information';
 import { useBoundStore } from '@/store/boundStore';
 import { PageComponent } from '@/types/components';
 
-interface PageGUIProps {
+interface Props {
   component: PageComponent;
   shouldRender?: boolean;
 }
 
-function PageWidget({ component, shouldRender = true }: PageGUIProps) {
+function PageWidget({ component, shouldRender = true }: Props) {
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const goToPage = useBoundStore((state) => state.goToPage);
 

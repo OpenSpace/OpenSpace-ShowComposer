@@ -15,7 +15,7 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface LayoutEditModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   layoutId: string | null;
@@ -25,7 +25,7 @@ export default function LayoutEditModal({
   isOpen,
   onClose,
   layoutId
-}: LayoutEditModalProps) {
+}: Props) {
   const gridSettings = useSettingsStore((state) => state.gridSize);
   const gridSize = useBoundStore((state) => ({
     columns: layoutId

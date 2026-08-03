@@ -10,12 +10,12 @@ import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface TriggerModalProps {
+interface Props {
   component: TriggerComponent | null;
   handleComponentData: (data: Partial<TriggerComponent>) => void;
 }
 
-function TriggerModal({ component, handleComponentData }: TriggerModalProps) {
+function TriggerModal({ component, handleComponentData }: Props) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');

@@ -23,7 +23,7 @@ import { ComponentBaseColors, FlyToComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface FlyToModalProps {
+interface Props {
   component: FlyToComponent | null;
   handleComponentData: (data: Partial<FlyToComponent>) => void;
 }
@@ -33,7 +33,7 @@ type Option = {
   shouldGeo: boolean;
 };
 
-function FlyToModal({ component, handleComponentData }: FlyToModalProps) {
+function FlyToModal({ component, handleComponentData }: Props) {
   const camera = useSubscribeToCamera(500);
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const profile = useSubscribeToProfile();

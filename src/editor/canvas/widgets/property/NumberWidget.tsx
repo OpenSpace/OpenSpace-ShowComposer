@@ -23,11 +23,11 @@ function toPosition(value: number, min: number, max: number, exponent: number) {
   return min + Math.pow(normalized, 1 / exponent) * range;
 }
 
-interface NumberGUIProps {
+interface Props {
   component: NumberComponent;
 }
 
-function NumberWidget({ component }: NumberGUIProps) {
+function NumberWidget({ component }: Props) {
   const updateComponent = useBoundStore((state) => state.updateComponent);
 
   const [value] = useProperty('FloatProperty', component.property);

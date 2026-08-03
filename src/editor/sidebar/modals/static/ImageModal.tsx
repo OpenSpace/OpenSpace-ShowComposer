@@ -5,12 +5,12 @@ import ImageUpload from '@/components/ImageUpload';
 import { ImageComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface ImageModalProps {
+interface Props {
   component: ImageComponent | null;
   handleComponentData: (data: Partial<ImageComponent>) => void;
 }
 
-function ImageModal({ component, handleComponentData }: ImageModalProps) {
+function ImageModal({ component, handleComponentData }: Props) {
   const [url, setUrl] = useState(component?.backgroundImage || '');
 
   const handleImageChange = useCallback(

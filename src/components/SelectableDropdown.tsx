@@ -5,7 +5,7 @@ type Option = {
   label: string;
 };
 
-interface SelectableDropdownProps {
+interface Props {
   options: string[] | Option[];
   selected: string | undefined;
   placeholder?: string;
@@ -17,7 +17,7 @@ function SelectableDropdown({
   placeholder = 'Select an option',
   selected,
   setSelected
-}: SelectableDropdownProps) {
+}: Props) {
   return (
     <Select
       w={'auto'}

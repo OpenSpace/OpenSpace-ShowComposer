@@ -12,12 +12,12 @@ import { ComponentBaseColors, SetFocusComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface FocusModalProps {
+interface Props {
   component: SetFocusComponent | null;
   handleComponentData: (data: Partial<SetFocusComponent>) => void;
 }
 
-function FocusModal({ component, handleComponentData }: FocusModalProps) {
+function FocusModal({ component, handleComponentData }: Props) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');

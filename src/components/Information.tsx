@@ -3,11 +3,11 @@ import { ActionIcon, Popover } from '@mantine/core';
 
 import { InfoIcon } from '@/icons/icons';
 
-interface InformationProps {
+interface Props {
   content: ReactNode | string;
 }
 
-export function Information({ content }: InformationProps) {
+export function Information({ content }: Props) {
   const [opened, setOpened] = useState(false);
 
   if (!content) {

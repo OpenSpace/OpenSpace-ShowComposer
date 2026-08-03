@@ -22,7 +22,7 @@ import { roundToNearest } from '@/utils/math';
 
 import classes from './DraggablePanel.module.css';
 
-interface PanelProps {
+interface Props {
   component:
     | TimeComponent
     | NavComponent
@@ -37,7 +37,7 @@ export default function DraggablePanel({
   component,
   originX = 0,
   originY = 0
-}: PanelProps) {
+}: Props) {
   const position = useBoundStore((state) => state.positions[component.id]);
   const updatePosition = useBoundStore((state) => state.updatePosition);
 

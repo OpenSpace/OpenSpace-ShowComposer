@@ -12,12 +12,12 @@ import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 import { getCopy } from '@/utils/copyHelpers';
 
-interface BoolModalProps {
+interface Props {
   component: BooleanComponent | null;
   handleComponentData: (data: Partial<BooleanComponent>) => void;
 }
 
-function BoolModal({ component, handleComponentData }: BoolModalProps) {
+function BoolModal({ component, handleComponentData }: Props) {
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');

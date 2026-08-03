@@ -37,11 +37,11 @@ import {
 } from '@/store';
 import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
-interface ComponentContentProps {
+interface Props {
   component: Component;
 }
 
-export function ComponentContent({ component }: ComponentContentProps) {
+export function ComponentContent({ component }: Props) {
   switch (component?.type) {
     case 'title':
       return <TitleWidget component={component as TitleComponent} />;
