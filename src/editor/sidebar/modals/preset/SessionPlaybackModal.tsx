@@ -3,9 +3,9 @@ import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundPicker from '@/components/BackgroundPicker';
+import { PlaybackControls } from '@/components/PlaybackControls';
 import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
-import { PlaybackControls } from '@/editor/canvas/widgets/preset/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';

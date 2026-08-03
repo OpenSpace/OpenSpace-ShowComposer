@@ -5,7 +5,7 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import ComponentContainer from '@/components/ComponentContainer';
 import DisplayLabel from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import { PlaybackControls } from '@/editor/canvas/widgets/preset/PlaybackControls';
+import { PlaybackControls } from '@/components/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { useBoundStore } from '@/store/boundStore';
 import { SessionPlaybackComponent } from '@/types/components';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Stack, Text, TextInput } from '@mantine/core';
 
-import { VideoContent } from '@/editor/canvas/widgets/static/VideoContent';
+import { VideoContent } from '@/components/VideoContent';
 import { VideoComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
