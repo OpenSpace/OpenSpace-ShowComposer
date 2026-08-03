@@ -1,7 +1,6 @@
 import { ActionIcon, Divider, Group, Popover, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { TooltipHolder } from '@/components/TooltipHolder';
 import { GridSettings } from '@/editor/sidebar/GridSettings';
 import { ColumnIcon, LayoutGridIcon, RowIcon, SettingsIcon } from '@/icons/icons';
 import { LayoutType, useSettingsStore } from '@/store';
@@ -28,7 +27,7 @@ export function LayoutToolbar() {
 
   return (
     <Group gap={'xs'}>
-      <TooltipHolder content={'Row'}>
+      <Tooltip label={'Row'}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -36,9 +35,9 @@ export function LayoutToolbar() {
         >
           <RowIcon size={20} />
         </ActionIcon>
-      </TooltipHolder>
+      </Tooltip>
       <Divider orientation={'vertical'} />
-      <TooltipHolder content={'Column'}>
+      <Tooltip label={'Column'}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -46,9 +45,9 @@ export function LayoutToolbar() {
         >
           <ColumnIcon size={20} />
         </ActionIcon>
-      </TooltipHolder>
+      </Tooltip>
       <Divider orientation={'vertical'} />
-      <TooltipHolder content={'Grid'}>
+      <Tooltip label={'Grid'}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -56,7 +55,7 @@ export function LayoutToolbar() {
         >
           <LayoutGridIcon size={20} />
         </ActionIcon>
-      </TooltipHolder>
+      </Tooltip>
       <Divider orientation={'vertical'} />
       <Popover
         opened={opened}
