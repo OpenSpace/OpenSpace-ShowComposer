@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
 
 import BackgroundPicker from '@/components/BackgroundPicker';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, PageComponent } from '@/types/components';
@@ -59,13 +58,16 @@ function PageModal({ component, handleComponentData }: Props) {
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{getCopy('Page', 'page_number')}</InputLabel>
-        <SelectableDropdown
-          options={pages.map((v, i) => ({
+        <Select
+          allowDeselect={false}
+          data={pages.map((v, i) => ({
             value: (i + 1).toString(),
             label: v.name ? v.name : 'Page ' + (i + 1).toString()
           }))}
-          selected={page.toString()}
-          setSelected={(v: string) => handlePageChange(parseInt(v))}
+          placeholder={'Select an option'}
+          value={page.toString()}
+          disabled={pages.length === 0}
+          onChange={(value) => value && handlePageChange(parseInt(value))}
         />
       </Stack>
       <Group align={'flex-end'} wrap={'nowrap'}>

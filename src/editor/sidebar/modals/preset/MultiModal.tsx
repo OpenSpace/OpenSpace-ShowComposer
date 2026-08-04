@@ -5,6 +5,7 @@ import {
   Group,
   InputLabel,
   NumberInput,
+  Select,
   SimpleGrid,
   Stack,
   Tabs,
@@ -17,7 +18,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import ColorPicker from '@/components/ColorPicker';
 import ImageUpload from '@/components/ImageUpload';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
@@ -247,22 +247,24 @@ function MultiModal({ component, handleComponentData }: Props) {
       <Tabs.Panel value={'multi'}>
         <Stack gap={'md'}>
           <SimpleGrid cols={2}>
-            <SelectableDropdown
+            <Select
+              allowDeselect={false}
               placeholder={'Add Existing Component'}
-              options={availableOptions.map((component) => ({
+              data={availableOptions.map((component) => ({
                 value: component,
                 label: getComponentById(component)?.gui_name
               }))}
-              selected={undefined}
-              setSelected={(id: string) => {
-                addItem(id);
-              }}
+              value={null}
+              disabled={availableOptions.length === 0}
+              onChange={(value) => value && addItem(value)}
             />
-            <SelectableDropdown
+            <Select
+              allowDeselect={false}
               placeholder={'Add New Component'}
-              options={MultiOptions}
-              selected={undefined}
-              setSelected={(type: string) => handleAddComponent(type as ComponentType)}
+              data={MultiOptions}
+              value={null}
+              disabled={MultiOptions.length === 0}
+              onChange={(value) => value && handleAddComponent(value as ComponentType)}
             />
           </SimpleGrid>
           <Text size={'sm'} c={'dimmed'}>

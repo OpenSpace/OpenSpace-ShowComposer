@@ -4,6 +4,7 @@ import {
   Group,
   InputLabel,
   NumberInput,
+  Select,
   Stack,
   Textarea,
   TextInput
@@ -12,7 +13,6 @@ import {
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import DisplayLabel from '@/components/DisplayLabel';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
@@ -152,14 +152,19 @@ function SetNavModal({ component, handleComponentData }: Props) {
         />
         <Stack flex={1} gap={'xs'}>
           <InputLabel>{getCopy('SetNavigation', 'transition_mode')}</InputLabel>
-          <SelectableDropdown
-            options={[
+          <Select
+            allowDeselect={false}
+            data={[
               { label: 'Jump', value: 'jump' },
               { label: 'Fade In/Out', value: 'fade' },
               { label: 'Fly', value: 'fly' }
             ]}
-            selected={mode}
-            setSelected={(value) => {
+            placeholder={'Select an option'}
+            value={mode}
+            onChange={(value) => {
+              if (value === null) {
+                return;
+              }
               if (!lockName) {
                 setGuiName(
                   `${

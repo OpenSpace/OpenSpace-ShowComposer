@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Box, Stack, Table, Text } from '@mantine/core';
+import { Box, Select, Stack, Table, Text } from '@mantine/core';
 import { LogLevel, LogMessage } from 'openspace-api-js/types';
 
-import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToErrorLog } from '@/hooks/topicSubscriptions';
 
 const logLevelOptions: { value: LogLevel; label: string }[] = [
@@ -61,11 +60,13 @@ export function LogPanel() {
       </Text>
 
       <Box px={'md'}>
-        <SelectableDropdown
-          options={logLevelOptions}
-          selected={logLevel}
-          setSelected={handleLogLevelChange}
+        <Select
+          allowDeselect={false}
+          data={logLevelOptions}
           placeholder={'Select log level'}
+          value={logLevel}
+          disabled={logLevelOptions.length === 0}
+          onChange={(value) => value && handleLogLevelChange(value)}
         />
       </Box>
 

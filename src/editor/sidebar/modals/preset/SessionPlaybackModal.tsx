@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import { PlaybackControls } from '@/components/PlaybackControls';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
@@ -100,11 +99,13 @@ function SessionPlaybackModal({ component, handleComponentData }: Props) {
         />
         <Stack gap={'xs'}>
           <InputLabel>{getCopy('SessionPlayback', 'playback_file')}</InputLabel>
-          <SelectableDropdown
+          <Select
+            allowDeselect={false}
+            data={fileList}
             placeholder={'Select playback file...'}
-            options={fileList}
-            setSelected={(value: string) => handleFileChange(value)}
-            selected={file}
+            value={file || null}
+            disabled={fileList.length === 0}
+            onChange={(value) => value && handleFileChange(value)}
           />
           <PlaybackControls
             recordingState={recordingState}

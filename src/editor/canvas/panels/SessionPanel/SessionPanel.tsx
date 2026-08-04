@@ -5,13 +5,13 @@ import {
   Divider,
   Group,
   InputLabel,
+  Select,
   Stack,
   Text,
   TextInput
 } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { CircleIcon } from '@/icons/icons';
 import { RecordingState } from '@/types/enums';
@@ -130,11 +130,13 @@ export function SessionPanel() {
         <Stack gap={'xs'}>
           <InputLabel>{getCopy('SessionPanel', 'playback_file')}</InputLabel>
           <Stack w={'100%'} gap={'xs'}>
-            <SelectableDropdown
+            <Select
+              allowDeselect={false}
+              data={files}
               placeholder={'Select playback file...'}
-              options={files}
-              setSelected={(value: string) => setFilenamePlayback(value)}
-              selected={filenamePlayback}
+              value={filenamePlayback || null}
+              disabled={files.length === 0}
+              onChange={(value) => value && setFilenamePlayback(value)}
             />
             <PlaybackSwitch
               shouldOutputFrames={shouldOutputFrames}

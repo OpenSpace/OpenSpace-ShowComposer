@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, InputLabel, NumberInput, SimpleGrid, Stack, Text } from '@mantine/core';
+import {
+  Button,
+  InputLabel,
+  NumberInput,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
 import { getCopy } from '@/utils/copyHelpers';
@@ -90,11 +97,12 @@ export function DeltaTimeControls() {
       <SimpleGrid cols={2} spacing={'xs'}>
         <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
         <InputLabel>{`${stepSize} / second`}</InputLabel>
-        <SelectableDropdown
+        <Select
+          allowDeselect={false}
+          data={Object.values(Steps)}
           placeholder={'Select a Unit'}
-          options={Object.values(Steps)}
-          selected={stepSize}
-          setSelected={setStepSize}
+          value={stepSize}
+          onChange={(value) => value && setStepSize(value)}
         />
         <NumberInput
           min={-1000}

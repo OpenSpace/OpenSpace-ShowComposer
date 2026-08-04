@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
+import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 
 import BackgroundPicker from '@/components/BackgroundPicker';
-import SelectableDropdown from '@/components/SelectableDropdown';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { BooleanComponent, Toggle, usePropertyStore } from '@/store';
@@ -92,10 +91,12 @@ function BoolModal({ component, handleComponentData }: Props) {
       </Stack>
       <Stack gap={'xs'}>
         <InputLabel>{getCopy('Boolean', 'action_type')}</InputLabel>
-        <SelectableDropdown
-          options={['toggle', 'on', 'off']}
-          selected={action}
-          setSelected={setAction}
+        <Select
+          allowDeselect={false}
+          data={['toggle', 'on', 'off']}
+          placeholder={'Select an option'}
+          value={action}
+          onChange={(value) => value && setAction(value)}
         />
       </Stack>
       <Group align={'flex-end'} wrap={'nowrap'}>
