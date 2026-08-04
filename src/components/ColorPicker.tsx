@@ -146,4 +146,4 @@ function ColorPicker({ color, setColor }: Props) {
   );
 }
 
-export default ColorPicker;
+export { ColorPicker };

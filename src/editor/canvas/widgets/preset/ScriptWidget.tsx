@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { useBoundStore } from '@/store/boundStore';
 import { ScriptComponent } from '@/types/components';

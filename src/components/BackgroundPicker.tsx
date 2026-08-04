@@ -3,9 +3,9 @@ import { SimpleGrid, Stack, Text } from '@mantine/core';
 
 import { getCopy } from '@/utils/copyHelpers';
 
-import ColorPicker from './ColorPicker';
-import Image from './Image';
-import ImageUpload from './ImageUpload';
+import { ColorPicker } from './ColorPicker';
+import { Image } from './Image';
+import { ImageUpload } from './ImageUpload';
 
 interface Props {
   color: string;
@@ -53,4 +53,4 @@ function BackgroundPicker({
   );
 }
 
-export default BackgroundPicker;
+export { BackgroundPicker };

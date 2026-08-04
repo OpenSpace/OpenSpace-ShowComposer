@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { InputLabel, Stack } from '@mantine/core';
 
-import ColorPicker from '@/components/ColorPicker';
+import { ColorPicker } from '@/components/ColorPicker';
 import { RichTextComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 

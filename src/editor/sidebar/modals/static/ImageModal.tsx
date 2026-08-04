@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { InputLabel, Stack } from '@mantine/core';
 
-import ImageUpload from '@/components/ImageUpload';
+import { ImageUpload } from '@/components/ImageUpload';
 import { ImageComponent } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 

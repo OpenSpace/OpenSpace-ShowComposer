@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import StatusBarControlled from '@/components/StatusBarControlled';
+import { StatusBarControlled } from '@/components/StatusBarControlled';
 import { useProperty } from '@/hooks/properties';
 import { FadeComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';

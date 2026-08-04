@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Box, Group, InputLabel, SimpleGrid, Stack } from '@mantine/core';
 
-import DisplayLabel from '@/components/DisplayLabel';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { ArrowUpFromDotIcon, ClockIcon, GlobeIcon, TelescopeIcon } from '@/icons/icons';

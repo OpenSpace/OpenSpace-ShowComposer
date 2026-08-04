@@ -3,7 +3,7 @@ import { InputLabel, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { PlaybackControls } from '@/components/PlaybackControls';
-import ToggleComponent from '@/components/Toggle';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';

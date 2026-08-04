@@ -60,7 +60,7 @@ enum AsyncStatus {
   True = 'true',
   Pending = 'pending'
 }
-export default function ComponentModal({
+export function ComponentModal({
   isOpen,
   onClose,
   onCancel,

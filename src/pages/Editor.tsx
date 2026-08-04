@@ -20,18 +20,18 @@ import { v4 as uuidv4 } from 'uuid';
 import favicon from '@/assets/images/favicon.png';
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
 import { Feedback } from '@/components/Feedback';
-import Pagination from '@/components/Pagination';
-import ToggleButton from '@/components/ToggleButton';
-import DraggableComponent from '@/editor/canvas/DraggableComponent';
-import DraggablePanel from '@/editor/canvas/DraggablePanel';
-import DroppableWorkspace from '@/editor/canvas/DroppableWorkspace';
+import { Pagination } from '@/components/Pagination';
+import { ToggleButton } from '@/components/ToggleButton';
+import { DraggableComponent } from '@/editor/canvas/DraggableComponent';
+import { DraggablePanel } from '@/editor/canvas/DraggablePanel';
+import { DroppableWorkspace } from '@/editor/canvas/DroppableWorkspace';
 import { LayoutContainer } from '@/editor/canvas/LayoutContainer';
-import PresentModeToggle from '@/editor/canvas/PresentModeToggle';
-import GlobalMenuBar from '@/editor/menubar/GlobalMenuBar';
-import LayoutEditModal from '@/editor/sidebar/LayoutEditModal';
+import { PresentModeToggle } from '@/editor/canvas/PresentModeToggle';
+import { GlobalMenuBar } from '@/editor/menubar/GlobalMenuBar';
+import { LayoutEditModal } from '@/editor/sidebar/LayoutEditModal';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
-import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
-import Undo from '@/editor/sidebar/Undo';
+import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
+import { Undo } from '@/editor/sidebar/Undo';
 import { useConnectionStatus } from '@/hooks/util';
 import {
   AlignJustifyIcon,
@@ -573,4 +573,4 @@ function Editor() {
   );
 }
 
-export default Editor;
+export { Editor };

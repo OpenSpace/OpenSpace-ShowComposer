@@ -41,4 +41,4 @@ function ComponentContainer({
   );
 }
 
-export default ComponentContainer;
+export { ComponentContainer };

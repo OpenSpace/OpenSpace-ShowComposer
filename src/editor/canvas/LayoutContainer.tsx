@@ -3,7 +3,7 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, Box, Menu } from '@mantine/core';
 
-import Placeholder from '@/editor/canvas/Placeholder';
+import { Placeholder } from '@/editor/canvas/Placeholder';
 import {
   ColumnIcon,
   CopyIcon,
@@ -36,11 +36,7 @@ const typeIcons = {
   grid: <LayoutGridIcon size={24} />
 };
 
-export function LayoutContainer({
-  layout,
-  children,
-  handleOpenEditModal
-}: Props) {
+export function LayoutContainer({ layout, children, handleOpenEditModal }: Props) {
   const layoutPosition = useBoundStore((state) => state.positions[layout?.id || '']);
 
   const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);

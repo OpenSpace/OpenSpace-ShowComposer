@@ -8,7 +8,7 @@ const useQuery = () => {
   return new URLSearchParams(window.location.search);
 };
 
-export default function PresentModeToggle() {
+export function PresentModeToggle() {
   const togglePresentMode = useSettingsStore((state) => state.togglePresentMode);
   const setPresentLocked = useSettingsStore((state) => state.setPresentLocked);
   const isPresentMode = useSettingsStore((state) => state.presentMode);

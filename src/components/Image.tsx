@@ -44,4 +44,4 @@ function Image({ src, alt, className, fit, ...props }: Props) {
   );
 }
 
-export default Image;
+export { Image };

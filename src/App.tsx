@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 
-import Editor from '@/pages/Editor';
+import { Editor } from '@/pages/Editor';
 import { Hub } from '@/pages/Hub';
 import { cssVariablesResolver, theme } from '@/theme/mantineTheme';
 
 import { LuaApiProvider } from './api/LuaApiProvider';
-import basePath from './utils/basePath';
+import { basePath } from './utils/basePath';
 
 function App() {
   return (
@@ -27,4 +27,4 @@ function App() {
   );
 }
 
-export default App;
+export { App };

@@ -3,7 +3,7 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
-import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
 import { ComponentContent } from '@/editor/canvas/widgets/ComponentContent';
 import {
   CopyIcon,
@@ -27,7 +27,7 @@ interface Props {
   onDelete: () => void;
 }
 
-export default function DraggableComponent({
+export function DraggableComponent({
   component,
   layoutId,
   onEdit,

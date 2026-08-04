@@ -90,4 +90,4 @@ const StatusBar = forwardRef<StatusBarRef, Props>(
   }
 );
 
-export default StatusBar;
+export { StatusBar };

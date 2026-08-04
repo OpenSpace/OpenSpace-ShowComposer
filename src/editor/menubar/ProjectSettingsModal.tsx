@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Group, Modal, Stack, Text, Textarea, TextInput } from '@mantine/core';
 
-import Toggle from '@/components/Toggle';
+import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 

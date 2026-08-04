@@ -8,13 +8,7 @@ type Props = {
   onClick: () => void;
 };
 
-function ToggleButton({
-  tooltipText,
-  icon,
-  selected,
-  disabled,
-  onClick
-}: Props) {
+function ToggleButton({ tooltipText, icon, selected, disabled, onClick }: Props) {
   return (
     <Tooltip label={tooltipText}>
       <ActionIcon
@@ -28,4 +22,4 @@ function ToggleButton({
   );
 }
 
-export default ToggleButton;
+export { ToggleButton };

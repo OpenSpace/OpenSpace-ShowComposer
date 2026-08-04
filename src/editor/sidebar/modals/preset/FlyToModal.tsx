@@ -3,7 +3,7 @@ import { Button, Group, InputLabel, NumberInput, SimpleGrid, Stack } from '@mant
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
-import ToggleComponent from '@/components/Toggle';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { useProperty } from '@/hooks/properties';

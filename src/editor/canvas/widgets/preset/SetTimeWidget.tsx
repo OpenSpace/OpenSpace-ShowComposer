@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { StatusBar, StatusBarRef } from '@/components/StatusBar';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';

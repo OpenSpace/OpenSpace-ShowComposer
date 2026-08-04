@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { useBoundStore } from '@/store/boundStore';
 import { PageComponent } from '@/types/components';

@@ -10,7 +10,7 @@ import {
   TextInput
 } from '@mantine/core';
 
-import Toggle from '@/components/Toggle';
+import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -21,11 +21,7 @@ interface Props {
   layoutId: string | null;
 }
 
-export default function LayoutEditModal({
-  isOpen,
-  onClose,
-  layoutId
-}: Props) {
+export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
   const gridSettings = useSettingsStore((state) => state.gridSize);
   const gridSize = useBoundStore((state) => ({
     columns: layoutId

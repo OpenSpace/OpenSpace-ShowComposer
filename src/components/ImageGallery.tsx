@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 
-import Image from '@/components/Image';
+import { Image } from '@/components/Image';
 import { UploadIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -177,4 +177,4 @@ function ImageGallery({
   );
 }
 
-export default ImageGallery;
+export { ImageGallery };

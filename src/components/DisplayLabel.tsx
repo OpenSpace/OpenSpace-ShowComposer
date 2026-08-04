@@ -21,12 +21,7 @@ const sizeStyles: Record<DisplayLabelSize, CSSProperties> = {
   }
 };
 
-function DisplayLabel({
-  children,
-  showBorder = false,
-  size = 'md',
-  style
-}: Props) {
+function DisplayLabel({ children, showBorder = false, size = 'md', style }: Props) {
   return (
     <Box
       style={{
@@ -51,4 +46,4 @@ function DisplayLabel({
   );
 }
 
-export default DisplayLabel;
+export { DisplayLabel };

@@ -29,4 +29,4 @@ function Toggle({
   );
 }
 
-export default Toggle;
+export { Toggle };

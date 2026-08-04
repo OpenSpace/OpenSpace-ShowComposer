@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Group, NumberInput, Stack } from '@mantine/core';
 
 import { DateTimeStepper } from '@/components/DateTimeStepper';
-import ToggleComponent from '@/components/Toggle';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';

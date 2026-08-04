@@ -33,11 +33,7 @@ interface Props {
   originY?: number;
 }
 
-export default function DraggablePanel({
-  component,
-  originX = 0,
-  originY = 0
-}: Props) {
+export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
   const position = useBoundStore((state) => state.positions[component.id]);
   const updatePosition = useBoundStore((state) => state.updatePosition);
 

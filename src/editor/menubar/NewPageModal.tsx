@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Group, InputLabel, Modal, Stack, Text, TextInput } from '@mantine/core';
 
-import ColorPicker from '@/components/ColorPicker';
+import { ColorPicker } from '@/components/ColorPicker';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, Page } from '@/types/components';
 
@@ -80,4 +80,4 @@ function NewPageModal({ isOpen, setIsOpen, newPage }: Props) {
   );
 }
 
-export default NewPageModal;
+export { NewPageModal };

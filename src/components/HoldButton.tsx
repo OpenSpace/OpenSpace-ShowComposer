@@ -32,4 +32,4 @@ function HoldButton({ onClick, children, ...props }: Props) {
   );
 }
 
-export default HoldButton;
+export { HoldButton };

@@ -3,7 +3,7 @@ import { Box } from '@mantine/core';
 
 import { useBoundStore } from '@/store/boundStore';
 
-export default function SelectionTool() {
+export function SelectionTool() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });

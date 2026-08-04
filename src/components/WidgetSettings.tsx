@@ -1,7 +1,7 @@
 import { Group, Textarea, TextInput } from '@mantine/core';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
+import { BackgroundPicker } from '@/components/BackgroundPicker';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {

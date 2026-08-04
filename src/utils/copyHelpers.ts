@@ -1,4 +1,4 @@
-import basePath from './basePath';
+import { basePath } from './basePath';
 
 type CopyData = {
   [component: string]: {

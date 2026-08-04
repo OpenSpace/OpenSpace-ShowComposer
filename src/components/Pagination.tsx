@@ -28,4 +28,4 @@ function Pagination({ currentIndex, length, setIndex }: Props) {
   );
 }
 
-export default Pagination;
+export { Pagination };

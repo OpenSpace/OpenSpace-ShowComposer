@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react';
 import { Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { PlaybackControls } from '@/components/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';

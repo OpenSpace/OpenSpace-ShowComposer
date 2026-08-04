@@ -2,14 +2,14 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Badge, Box } from '@mantine/core';
 
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
-import AdjustablePage from '@/editor/canvas/AdjustablePage';
-import ScaleGUI from '@/editor/canvas/ScaleGUI';
-import SelectionTool from '@/editor/canvas/SelectionTool';
+import { AdjustablePage } from '@/editor/canvas/AdjustablePage';
+import { ScaleGUI } from '@/editor/canvas/ScaleGUI';
+import { SelectionTool } from '@/editor/canvas/SelectionTool';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-export default function DroppableWorkspace({ children }: { children: ReactNode }) {
+export function DroppableWorkspace({ children }: { children: ReactNode }) {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const scale = useSettingsStore((state) => state.pageScale);

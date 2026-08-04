@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Group, InputLabel, NumberInput, Slider, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import ComponentContainer from '@/components/ComponentContainer';
+import { ComponentContainer } from '@/components/ComponentContainer';
 import { Information } from '@/components/Information';
 import { useProperty } from '@/hooks/properties';
 import { NumberComponent } from '@/store';

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { InputLabel, Stack, Text } from '@mantine/core';
 
-import ComponentContainer from '@/components/ComponentContainer';
-import DisplayLabel from '@/components/DisplayLabel';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import StatusBar, { StatusBarRef } from '@/components/StatusBar';
+import { StatusBar, StatusBarRef } from '@/components/StatusBar';
 import { useBoundStore } from '@/store/boundStore';
 import {
   BooleanComponent,

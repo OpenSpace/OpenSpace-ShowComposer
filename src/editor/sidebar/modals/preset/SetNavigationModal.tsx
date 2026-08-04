@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import DisplayLabel from '@/components/DisplayLabel';
-import ToggleComponent from '@/components/Toggle';
+import { DisplayLabel } from '@/components/DisplayLabel';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';

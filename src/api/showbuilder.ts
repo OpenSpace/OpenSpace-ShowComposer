@@ -1,6 +1,6 @@
 import { BoundStoreState } from '@/store/boundStore';
 import { SettingsStoreState } from '@/store/settingsStore';
-import basePath from '@/utils/basePath';
+import { basePath } from '@/utils/basePath';
 
 // One file to catch all calls to the showbuilder backend api. The base path is the same for both dev and production,
 // in dev mode the base path is "/showcomposer/" and in production the dist folder is served in a folder called "showcomposer"

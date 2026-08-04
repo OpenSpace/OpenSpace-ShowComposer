@@ -10,7 +10,7 @@ import {
   TextInput
 } from '@mantine/core';
 
-import Toggle from '@/components/Toggle';
+import { Toggle } from '@/components/Toggle';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
@@ -21,11 +21,7 @@ interface Props {
   handleLoadProjects: () => void | null;
 }
 
-function NewProjectModal({
-  isOpen,
-  setIsOpen,
-  handleLoadProjects
-}: Props) {
+function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({

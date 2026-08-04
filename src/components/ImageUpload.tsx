@@ -6,7 +6,7 @@ import { fetchGalleryImages, uploadImage } from '@/api/showbuilder';
 import { useBoundStore } from '@/store/boundStore';
 import { getCopy } from '@/utils/copyHelpers';
 
-import ImageGallery from './ImageGallery';
+import { ImageGallery } from './ImageGallery';
 
 interface Props {
   value: string;
@@ -94,4 +94,4 @@ function ImageUpload({ value, onChange }: Props) {
   );
 }
 
-export default ImageUpload;
+export { ImageUpload };

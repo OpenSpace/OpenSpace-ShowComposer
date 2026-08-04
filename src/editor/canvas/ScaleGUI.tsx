@@ -1,11 +1,11 @@
 import { NumberInput, Stack } from '@mantine/core';
 
-import HoldButton from '@/components/HoldButton';
+import { HoldButton } from '@/components/HoldButton';
 import { ZoomInIcon, ZoomOutIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { getCopy } from '@/utils/copyHelpers';
 
-export default function ScaleGUI() {
+export function ScaleGUI() {
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
   const zoomIn = () => {

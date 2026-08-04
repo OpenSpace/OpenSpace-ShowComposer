@@ -3,7 +3,7 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, Box, Tooltip } from '@mantine/core';
 
-import DisplayLabel from '@/components/DisplayLabel';
+import { DisplayLabel } from '@/components/DisplayLabel';
 import { GripHorizontalIcon, LockIcon, LockOpenIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -11,7 +11,7 @@ import { Page } from '@/types/components';
 
 import classes from './AdjustablePage.module.css';
 
-export default function AdjustablePage() {
+export function AdjustablePage() {
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);

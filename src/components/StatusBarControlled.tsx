@@ -71,4 +71,4 @@ function StatusBarControlled({ progress, debounceDuration }: Props) {
   );
 }
 
-export default StatusBarControlled;
+export { StatusBarControlled };

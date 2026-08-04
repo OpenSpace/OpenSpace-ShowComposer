@@ -15,7 +15,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { WidgetSettings } from '@/components/WidgetSettings';
-import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
+import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import {

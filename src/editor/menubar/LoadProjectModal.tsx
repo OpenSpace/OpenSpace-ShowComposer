@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 
 import { Project } from '@/api/showbuilder';
-import Pagination from '@/components/Pagination';
+import { Pagination } from '@/components/Pagination';
 import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
@@ -21,12 +21,7 @@ interface Props {
   projects: Project[];
 }
 
-function LoadProjectModal({
-  isOpen,
-  setIsOpen,
-  handleLoadProject,
-  projects
-}: Props) {
+function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(projects.length / itemsPerPage);
@@ -110,4 +105,4 @@ function LoadProjectModal({
   );
 }
 
-export default LoadProjectModal;
+export { LoadProjectModal };

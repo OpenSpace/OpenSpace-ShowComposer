@@ -3,7 +3,7 @@ import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { confirmStoreImport } from '@/api/showbuilder';
-import ToggleComponent from '@/components/Toggle';
+import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
 import { SettingsStoreState } from '@/store/settingsStore';
@@ -335,4 +335,4 @@ function ImportShowModal({ isOpen, onClose, store }: Props) {
   );
 }
 
-export default ImportShowModal;
+export { ImportShowModal };

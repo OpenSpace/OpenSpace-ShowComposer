@@ -54,4 +54,4 @@ function DeleteConfirmationModal({
     </Modal>
   );
 }
-export default DeleteConfirmationModal;
+export { DeleteConfirmationModal };

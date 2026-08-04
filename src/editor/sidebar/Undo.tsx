@@ -3,7 +3,7 @@ import { ActionIcon, Button, Group, Text } from '@mantine/core';
 import { RedoIcon, UndoIcon } from '@/icons/icons';
 import { useBoundStoreTemporal } from '@/store/boundStore';
 
-export default function Undo() {
+export function Undo() {
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state
   );
