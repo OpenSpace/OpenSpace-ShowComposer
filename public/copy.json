@@ -1,4 +1,8 @@
 {
+  "WidgetSettings": {
+    "component_name": "Component Name",
+    "gui_description": "Gui Description"
+  },
   "Main": {
     "project_name": "Current Show:  ",
     "interface_name": "OpenSpace Showcomposer",

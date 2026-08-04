@@ -1,20 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Group,
-  InputLabel,
-  NumberInput,
-  Select,
-  Stack,
-  Textarea,
-  TextInput
-} from '@mantine/core';
+import { Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
@@ -158,29 +149,17 @@ function FadeModal({ component, handleComponentData }: Props) {
           }
         />
       </Group>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Fade', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('Fade', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

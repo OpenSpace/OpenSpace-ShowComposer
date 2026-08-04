@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { InputLabel, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { BooleanComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
@@ -99,29 +98,17 @@ function BoolModal({ component, handleComponentData }: Props) {
           onChange={(value) => value && setAction(value)}
         />
       </Stack>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Boolean', 'component_name')}
-          placeholder={'Name of Component'}
-          value={gui_name}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={gui_name}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('Boolean', 'gui_description')}
-        value={gui_description}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={gui_description}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

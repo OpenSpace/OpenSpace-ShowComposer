@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Group, NumberInput, Stack, Textarea, TextInput } from '@mantine/core';
+import { Button, Group, NumberInput, Stack } from '@mantine/core';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
 import ToggleComponent from '@/components/Toggle';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
@@ -21,8 +21,10 @@ function SetTimeModal({ component, handleComponentData }: Props) {
   const [interpolate, setInterpolate] = useState(component?.interpolate || false);
   const [intDuration, setIntDuration] = useState(component?.intDuration || 4);
   const [fadeScene, setFadeScene] = useState(component?.fadeScene || false);
-  const [guiName, setGuiName] = useState(component?.gui_name);
-  const [guiDescription, setGuiDescription] = useState(component?.gui_description);
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiDescription, setGuiDescription] = useState<string>(
+    component?.gui_description || ''
+  );
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
@@ -103,17 +105,6 @@ function SetTimeModal({ component, handleComponentData }: Props) {
         {getCopy('SetTime', 'set_time_to_now')}
       </Button>
       <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('SetTime', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <Group align={'flex-end'} wrap={'nowrap'}>
         <NumberInput
           flex={1}
           id={'duration'}
@@ -136,18 +127,17 @@ function SetTimeModal({ component, handleComponentData }: Props) {
           setValue={setFadeScene}
         />
       </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('SetTime', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

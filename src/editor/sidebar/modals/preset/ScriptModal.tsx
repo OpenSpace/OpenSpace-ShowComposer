@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Box, Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
+import { Box, InputLabel, Stack } from '@mantine/core';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
 
@@ -65,29 +64,17 @@ function ScriptModal({ component, handleComponentData }: Props) {
           />
         </Box>
       </Stack>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Fade', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('Fade', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

@@ -1,19 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Button,
-  Group,
-  InputLabel,
-  NumberInput,
-  Select,
-  Stack,
-  Textarea,
-  TextInput
-} from '@mantine/core';
+import { Button, Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import BackgroundPicker from '@/components/BackgroundPicker';
 import DisplayLabel from '@/components/DisplayLabel';
 import ToggleComponent from '@/components/Toggle';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
@@ -36,8 +27,10 @@ function SetNavModal({ component, handleComponentData }: Props) {
   const [intDuration, setIntDuration] = useState(component?.intDuration || 1.0);
   const [mode, setMode] = useState<'jump' | 'fade' | 'fly'>(component?.mode || 'jump');
   const [setTime, setSetTime] = useState<boolean>(component?.setTime || true);
-  const [guiName, setGuiName] = useState(component?.gui_name);
-  const [guiDescription, setGuiDescription] = useState(component?.gui_description);
+  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
+  const [guiDescription, setGuiDescription] = useState<string>(
+    component?.gui_description || ''
+  );
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
@@ -177,29 +170,17 @@ function SetNavModal({ component, handleComponentData }: Props) {
           />
         </Stack>
       </Group>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Fade', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('SetNavigation', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

@@ -10,13 +10,11 @@ import {
   Stack,
   Tabs,
   Text,
-  Textarea,
-  TextInput,
   Tooltip
 } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
@@ -388,25 +386,15 @@ function MultiModal({ component, handleComponentData }: Props) {
       </Tabs.Panel>
       <Tabs.Panel value={'visual'}>
         <Stack gap={'md'}>
-          <TextInput
-            id={'guiname'}
-            label={getCopy('Multi', 'component_name')}
-            placeholder={'Name of Component'}
-            value={guiName}
-            onChange={(e) => setGuiName(e.currentTarget.value)}
-          />
-          <BackgroundPicker
+          <WidgetSettings
+            guiName={guiName}
+            setGuiName={setGuiName}
             color={color}
             setColor={setColor}
             backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
-          />
-          <Textarea
-            id={'description'}
-            label={getCopy('Multi', 'gui_description')}
-            value={guiDescription}
-            onChange={(e) => setGuiDescription(e.currentTarget.value)}
-            placeholder={'Type your message here.'}
+            guiDescription={guiDescription}
+            setGuiDescription={setGuiDescription}
           />
         </Stack>
       </Tabs.Panel>

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { InputLabel, Select, Stack } from '@mantine/core';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, PageComponent } from '@/types/components';
 import { getCopy } from '@/utils/copyHelpers';
@@ -70,29 +69,17 @@ function PageModal({ component, handleComponentData }: Props) {
           onChange={(value) => value && handlePageChange(parseInt(value))}
         />
       </Stack>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Page', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('Page', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

@@ -1,20 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Button,
-  Group,
-  InputLabel,
-  NumberInput,
-  SimpleGrid,
-  Stack,
-  Textarea,
-  TextInput
-} from '@mantine/core';
+import { Button, Group, InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
 import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { usePropertyStore } from '@/store';
@@ -232,29 +223,17 @@ function FlyToModal({ component, handleComponentData }: Props) {
           />
         </SimpleGrid>
       )}
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Fade', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('FlyTo', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

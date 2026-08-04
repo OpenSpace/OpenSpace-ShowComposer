@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Group, InputLabel, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { InputLabel, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
-import BackgroundPicker from '@/components/BackgroundPicker';
 import { PlaybackControls } from '@/components/PlaybackControls';
 import ToggleComponent from '@/components/Toggle';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
@@ -115,29 +115,17 @@ function SessionPlaybackModal({ component, handleComponentData }: Props) {
           />
         </Stack>
       </Stack>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('SessionPlayback', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('SessionPlayback', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );

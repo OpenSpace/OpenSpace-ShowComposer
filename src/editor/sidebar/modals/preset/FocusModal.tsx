@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, Stack, Textarea, TextInput } from '@mantine/core';
+import { InputLabel, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
-import BackgroundPicker from '@/components/BackgroundPicker';
-import ToggleComponent from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
+import { WidgetSettings } from '@/components/WidgetSettings';
 import { useProperty } from '@/hooks/properties';
 import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
@@ -90,29 +89,17 @@ function FocusModal({ component, handleComponentData }: Props) {
           searchPlaceholder={'Search the Scene...'}
         />
       </Stack>
-      <Group align={'flex-end'} wrap={'nowrap'}>
-        <TextInput
-          flex={3}
-          id={'guiname'}
-          label={getCopy('Focus', 'component_name')}
-          placeholder={'Name of Component'}
-          value={guiName}
-          onChange={(e) => setGuiName(e.currentTarget.value)}
-        />
-        <ToggleComponent label={'Lock Name'} value={lockName} setValue={setLockName} />
-      </Group>
-      <BackgroundPicker
+      <WidgetSettings
+        guiName={guiName}
+        setGuiName={setGuiName}
+        lockName={lockName}
+        setLockName={setLockName}
         color={color}
         setColor={setColor}
         backgroundImage={backgroundImage}
         setBackgroundImage={setBackgroundImage}
-      />
-      <Textarea
-        id={'description'}
-        label={getCopy('Focus', 'gui_description')}
-        value={guiDescription}
-        onChange={(e) => setGuiDescription(e.currentTarget.value)}
-        placeholder={'Type your message here.'}
+        guiDescription={guiDescription}
+        setGuiDescription={setGuiDescription}
       />
     </Stack>
   );
