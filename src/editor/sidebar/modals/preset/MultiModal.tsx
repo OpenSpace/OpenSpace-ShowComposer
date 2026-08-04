@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import {
   ActionIcon,
@@ -16,8 +16,7 @@ import {
 } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import ColorPicker from '@/components/ColorPicker';
-import ImageUpload from '@/components/ImageUpload';
+import BackgroundPicker from '@/components/BackgroundPicker';
 import ComponentModal from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
@@ -58,10 +57,6 @@ function MultiModal({ component, handleComponentData }: Props) {
   );
   const [backgroundImage, setBackgroundImage] = useState<string>(
     component?.backgroundImage || ''
-  );
-  const handleImageChange = useCallback(
-    (image: string) => setBackgroundImage(image),
-    [setBackgroundImage]
   );
   const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
   const updateComponent = useBoundStore((state) => state.updateComponent);
@@ -400,14 +395,12 @@ function MultiModal({ component, handleComponentData }: Props) {
             value={guiName}
             onChange={(e) => setGuiName(e.currentTarget.value)}
           />
-          <Stack gap={'xs'}>
-            <InputLabel>Background Color</InputLabel>
-            <ColorPicker color={color} setColor={setColor} />
-          </Stack>
-          <Stack gap={'xs'}>
-            <InputLabel>{getCopy('Multi', 'background_image')}</InputLabel>
-            <ImageUpload value={backgroundImage} onChange={handleImageChange} />
-          </Stack>
+          <BackgroundPicker
+            color={color}
+            setColor={setColor}
+            backgroundImage={backgroundImage}
+            setBackgroundImage={setBackgroundImage}
+          />
           <Textarea
             id={'description'}
             label={getCopy('Multi', 'gui_description')}
