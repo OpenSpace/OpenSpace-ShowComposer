@@ -1,5 +1,4 @@
-import { Image } from '@mantine/core';
-
+import { Image } from '@/components/Image';
 import { ImageComponent } from '@/store';
 
 interface Props {
