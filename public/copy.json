@@ -1,7 +1,9 @@
 {
   "WidgetSettings": {
     "component_name": "Component Name",
-    "gui_description": "Gui Description"
+    "gui_description": "Gui Description",
+    "background_color": "Background Color",
+    "background_image": "Background Image"
   },
   "Main": {
     "project_name": "Current Show:  ",
