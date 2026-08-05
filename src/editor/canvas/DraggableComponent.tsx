@@ -148,7 +148,7 @@ export function DraggableComponent({
           background: isPresentMode
             ? undefined
             : alpha('var(--mantine-color-gray-3)', 0.25),
-          opacity: isMultiLoading ? 0.25 : 1,
+          opacity: isMultiLoading || component.isDisabled ? 0.25 : 1,
           zIndex: isHighlighted ? 999 : undefined,
           boxShadow: isHighlighted
             ? `0 10px 15px -3px ${alpha('var(--mantine-color-gray-4)', 0.5)}`
@@ -240,8 +240,7 @@ export function DraggableComponent({
             justifyContent: 'center',
             borderRadius: 'var(--mantine-radius-md)',
             padding: layoutId ? 8 : '8px 16px',
-            pointerEvents: component.isDisabled ? 'none' : undefined,
-            opacity: component.isDisabled ? 0.25 : undefined
+            pointerEvents: component.isDisabled ? 'none' : undefined
           }}
         >
           <ComponentContent component={component} />
