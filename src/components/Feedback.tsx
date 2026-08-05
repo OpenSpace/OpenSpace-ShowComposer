@@ -31,61 +31,61 @@ export function Feedback({ className }: Props) {
   return (
     <Box className={className}>
       <Stack gap={'xs'}>
-        <Stack gap={'xs'} style={{ opacity: time ? 1 : 0.5 }}>
+        <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               <ClockIcon size={14} /> Current Time
             </Group>
           </InputLabel>
-          <DisplayLabel showBorder>{timeLabel}</DisplayLabel>
+          <DisplayLabel showBorder>{timeLabel || '-'}</DisplayLabel>
         </Stack>
-        <Stack gap={'xs'} style={{ opacity: currentAnchor ? 1 : 0.5 }}>
+        <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               <TelescopeIcon size={14} />
               Current Focus
             </Group>
           </InputLabel>
-          <DisplayLabel showBorder>{currentAnchor}</DisplayLabel>
+          <DisplayLabel showBorder>{currentAnchor || '-'}</DisplayLabel>
         </Stack>
-        {camera && (
-          <SimpleGrid cols={3} spacing={'xs'} mt={'xs'}>
-            <Stack gap={'xs'}>
-              <InputLabel>
-                <Group gap={'xs'} wrap={'nowrap'}>
-                  <GlobeIcon size={14} />
-                  Lat
-                </Group>
-              </InputLabel>
-              <DisplayLabel showBorder size={'sm'}>
-                {camera?.latitude ? Math.round(camera.latitude * 100) / 100 : '-'}&deg;
-              </DisplayLabel>
-            </Stack>
-            <Stack gap={'xs'}>
-              <InputLabel>
-                <Group gap={'xs'} wrap={'nowrap'}>
-                  <GlobeIcon size={14} />
-                  Long
-                </Group>
-              </InputLabel>
-              <DisplayLabel showBorder size={'sm'}>
-                {camera?.longitude ? Math.round(camera.longitude * 100) / 100 : '-'}&deg;
-              </DisplayLabel>
-            </Stack>
-            <Stack gap={'xs'}>
-              <InputLabel>
-                <Group gap={'xs'} wrap={'nowrap'}>
-                  <ArrowUpFromDotIcon size={14} />
-                  Alt
-                </Group>
-              </InputLabel>
-              <DisplayLabel showBorder size={'sm'}>
-                {camera?.altitude ? Math.round(camera.altitude * 1) / 1 : '-'}{' '}
-                {camera?.altitudeUnit || ''}
-              </DisplayLabel>
-            </Stack>
-          </SimpleGrid>
-        )}
+        <SimpleGrid cols={3} spacing={'xs'} mt={'xs'}>
+          <Stack gap={'xs'}>
+            <InputLabel>
+              <Group gap={'xs'} wrap={'nowrap'}>
+                <GlobeIcon size={14} />
+                Lat
+              </Group>
+            </InputLabel>
+            <DisplayLabel showBorder size={'sm'}>
+              {camera?.latitude != null ? Math.round(camera.latitude * 100) / 100 : '-'}
+              &deg;
+            </DisplayLabel>
+          </Stack>
+          <Stack gap={'xs'}>
+            <InputLabel>
+              <Group gap={'xs'} wrap={'nowrap'}>
+                <GlobeIcon size={14} />
+                Long
+              </Group>
+            </InputLabel>
+            <DisplayLabel showBorder size={'sm'}>
+              {camera?.longitude != null ? Math.round(camera.longitude * 100) / 100 : '-'}
+              &deg;
+            </DisplayLabel>
+          </Stack>
+          <Stack gap={'xs'}>
+            <InputLabel>
+              <Group gap={'xs'} wrap={'nowrap'}>
+                <ArrowUpFromDotIcon size={14} />
+                Alt
+              </Group>
+            </InputLabel>
+            <DisplayLabel showBorder size={'sm'}>
+              {camera?.altitude != null ? Math.round(camera.altitude) : '-'}{' '}
+              {camera?.altitudeUnit || ''}
+            </DisplayLabel>
+          </Stack>
+        </SimpleGrid>
       </Stack>
     </Box>
   );
