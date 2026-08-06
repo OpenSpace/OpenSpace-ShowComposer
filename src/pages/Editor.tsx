@@ -1,10 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  ImperativePanelHandle,
-  Panel,
-  PanelGroup,
-  PanelResizeHandle
-} from 'react-resizable-panels';
+import { useEffect, useState } from 'react';
+import { ActionIcon, Box, Flex } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Canvas } from '@/editor/canvas/Canvas';
@@ -12,12 +7,14 @@ import { getComponentTypes } from '@/editor/componentTypes';
 import { LayoutEditModal } from '@/editor/sidebar/LayoutEditModal';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { Sidebar } from '@/editor/sidebar/Sidebar';
-import { GripVerticalIcon } from '@/icons/icons';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/icons/icons';
 import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
-import classes from './Editor.module.css';
+// The sidebar behaves as a push-drawer: it is either fully open at this width or
+// fully collapsed to zero, never a partial width.
+const SIDEBAR_WIDTH = 320;
 
 function Editor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +31,8 @@ function Editor() {
   const currentPage = useBoundStore((state) => state.currentPage);
   const pagesLength = useBoundStore((state) => state.pages?.length);
 
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   const { allComponentTypes } = getComponentTypes();
 
   useEffect(() => {
@@ -41,6 +40,11 @@ function Editor() {
       addPage();
     }
   }, []);
+
+  // Present mode hides the sidebar entirely; leaving it restores the drawer.
+  useEffect(() => {
+    setSidebarOpen(!isPresentMode);
+  }, [isPresentMode]);
 
   const handleAddComponent = (type: ComponentType) => {
     const newId = uuidv4();
@@ -64,64 +68,46 @@ function Editor() {
     setCurrentComponentId(null);
   };
 
-  const panelRef = useRef<ImperativePanelHandle>(null);
-
-  const [sizes, setSizes] = useState<number[]>([25, 75]); // Initial sizes for two panels
-
-  const handleResize = (panelIndex: number, newSize: number) => {
-    setSizes((prevSizes) => {
-      const updatedSizes = [...prevSizes];
-      updatedSizes[panelIndex] = newSize;
-      return updatedSizes;
-    });
-  };
-
-  const [, setCollapsing] = useState(false);
-  const collapsePanel = (perc: number) => {
-    const panel = panelRef.current;
-    setCollapsing(true);
-    if (panel) {
-      panel.resize(perc);
-      setTimeout(() => {
-        setCollapsing(false);
-      }, 300);
-    }
-  };
-
-  useEffect(() => {
-    if (isPresentMode) {
-      collapsePanel(0);
-    } else {
-      collapsePanel(25);
-    }
-  }, [isPresentMode]);
-
   return (
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>
-      <PanelGroup
-        direction={'horizontal'}
-        style={{ height: '100vh' }}
-        onLayout={(newSizes: number[]) => setSizes(newSizes)}
-      >
-        <Panel
-          collapsible
-          ref={panelRef}
-          defaultSize={sizes[0]}
-          onResize={(size) => handleResize(0, size)}
-          collapsedSize={0}
-          maxSize={35}
-          style={{ maxWidth: 320 }}
+      <Flex h={'100vh'} w={'100%'} style={{ overflow: 'hidden' }}>
+        <Box
+          style={{
+            flex: `0 0 ${sidebarOpen ? SIDEBAR_WIDTH : 0}px`,
+            width: sidebarOpen ? SIDEBAR_WIDTH : 0,
+            overflow: 'hidden',
+            transition: 'flex-basis 300ms ease, width 300ms ease'
+          }}
         >
-          <Sidebar onAddComponent={handleAddComponent} />
-        </Panel>
-        {!isPresentMode && (
-          <PanelResizeHandle className={classes.resizeHandle}>
-            <div className={classes.resizeGrip}>
-              <GripVerticalIcon size={10} />
-            </div>
-          </PanelResizeHandle>
-        )}
-        <Panel defaultSize={sizes[1]} onResize={(size) => handleResize(1, size)}>
+          <Box w={SIDEBAR_WIDTH} h={'100%'}>
+            <Sidebar onAddComponent={handleAddComponent} />
+          </Box>
+        </Box>
+        <Box pos={'relative'} style={{ flex: 1, minWidth: 0 }} h={'100%'}>
+          {!isPresentMode && (
+            <ActionIcon
+              variant={'default'}
+              radius={'xs'}
+              w={20}
+              miw={20}
+              h={40}
+              onClick={() => setSidebarOpen((open) => !open)}
+              pos={'absolute'}
+              top={'50%'}
+              left={0}
+              style={{
+                transform: sidebarOpen ? 'translate(-50%, -50%)' : 'translateY(-50%)',
+                transition: 'transform 300ms ease',
+                zIndex: 50
+              }}
+            >
+              {sidebarOpen ? (
+                <ChevronLeftIcon size={14} />
+              ) : (
+                <ChevronRightIcon size={14} />
+              )}
+            </ActionIcon>
+          )}
           <Canvas onEditComponent={handleEditComponent} onEditLayout={handleEditLayout} />
           <ComponentModal
             isOpen={isModalOpen}
@@ -135,8 +121,8 @@ function Editor() {
             layoutId={currentLayoutId}
             onClose={() => setShowEditModal(false)}
           />
-        </Panel>
-      </PanelGroup>
+        </Box>
+      </Flex>
     </ThemeProvider>
   );
 }

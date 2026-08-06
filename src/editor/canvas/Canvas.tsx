@@ -96,7 +96,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
 
   return (
     <Box pos={'relative'} h={'100%'}>
-      <Box h={'100%'} p={isPresentMode ? 0 : 'md'} pl={isPresentMode ? 0 : 'sm'}>
+      <Box h={'100%'} p={isPresentMode ? 0 : 'md'} pl={isPresentMode ? 0 : 'xs'}>
         <DroppableWorkspace>
           {/* Static Panels */}
           {NavPanel && <DraggablePanel component={NavPanel} />}

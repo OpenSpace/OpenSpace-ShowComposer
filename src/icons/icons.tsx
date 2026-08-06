@@ -5,6 +5,8 @@ export {
   LuBookOpenCheck as BookOpenCheckIcon,
   LuCheck as CheckIcon,
   LuChevronDown as ChevronDownIcon,
+  LuChevronLeft as ChevronLeftIcon,
+  LuChevronRight as ChevronRightIcon,
   LuChevronsUpDown as ChevronsUpDownIcon,
   LuChevronUp as ChevronUpIcon,
   LuCircleCheck as CircleCheckIcon,
