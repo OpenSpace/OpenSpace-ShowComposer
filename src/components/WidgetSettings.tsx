@@ -2,7 +2,7 @@ import { Group, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/co
 
 import { ColorPicker } from '@/components/ColorPicker';
 import { Image } from '@/components/Image';
-import { ImageUpload } from '@/components/ImageUpload';
+import { ImageUpload } from '@/components/ImageUpload/ImageUpload';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { getCopy } from '@/utils/copyHelpers';
 
