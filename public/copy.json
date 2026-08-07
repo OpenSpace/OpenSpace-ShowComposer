@@ -10,6 +10,7 @@
     "interface_name": "OpenSpace Showcomposer",
     "static_components": "Static Components",
     "preset_components": "Preset Components",
+    "property_components": "Property Components",
     "multi": "Multi",
     "fade": "Fade",
     "flyto": "Fly To",

@@ -114,6 +114,9 @@ export function Sidebar({ onAddComponent }: Props) {
                 </Button>
               ))}
             </SimpleGrid>
+            <Text size={'xs'} fw={700}>
+              {getCopy('Main', 'property_components')}
+            </Text>
             <SimpleGrid cols={2} className={classes.paletteGrid}>
               {propertyComponentTypes.map((v) => (
                 <Button
