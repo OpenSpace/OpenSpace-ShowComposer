@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Group } from '@mantine/core';
 
 import { Pagination } from '@/components/Pagination';
@@ -16,7 +17,6 @@ import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';
 import { MultiComponent } from '@/types/components';
 import { ConnectionStatus } from '@/types/enums';
-import { getCopy } from '@/utils/copyHelpers';
 
 import { DraggableComponent } from './DraggableComponent';
 import { DraggablePanel } from './DraggablePanel';
@@ -30,6 +30,7 @@ interface Props {
 }
 
 export function Canvas({ onEditComponent, onEditLayout }: Props) {
+  const { t } = useTranslation('main');
   const components = useBoundStore((state) => state.components);
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const removeComponent = useBoundStore((state) => state.removeComponent);
@@ -167,35 +168,35 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       </Box>
       <Group pos={'absolute'} bottom={28} left={24} gap={'xs'}>
         <ToggleButton
-          tooltipText={getCopy('Main', 'navpanel')}
+          tooltipText={t('nav-panel')}
           icon={<CompassIcon size={20} />}
           selected={NavPosition?.minimized}
           onClick={() => minimize(NavPosition)}
           disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
-          tooltipText={getCopy('Main', 'timepanel')}
+          tooltipText={t('time-panel')}
           icon={<ClockIcon size={20} />}
           selected={TimePosition?.minimized}
           onClick={() => minimize(TimePosition)}
           disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
-          tooltipText={getCopy('Main', 'statuspanel')}
+          tooltipText={t('status-panel')}
           icon={<ViewIcon size={20} />}
           selected={StatusPosition?.minimized}
           onClick={() => minimize(StatusPosition)}
           disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
-          tooltipText={getCopy('Main', 'recordpanel')}
+          tooltipText={t('record-panel')}
           icon={<VideoIcon size={20} />}
           selected={RecordPosition?.minimized}
           onClick={() => minimize(RecordPosition)}
           disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
-          tooltipText={getCopy('Main', 'logpanel')}
+          tooltipText={t('log-panel')}
           icon={<MessageSquareWarningIcon size={20} />}
           selected={LogPosition?.minimized}
           onClick={() => minimize(LogPosition)}

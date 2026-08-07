@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -12,12 +13,11 @@ import {
 import favicon from '@/assets/images/favicon.png';
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
 import { Feedback } from '@/components/Feedback';
-import { getComponentTypes } from '@/editor/componentTypes';
+import { useComponentTypes } from '@/editor/componentTypes';
 import { GlobalMenuBar } from '@/editor/menubar/GlobalMenuBar';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
 import { Undo } from '@/editor/sidebar/Undo';
 import { ComponentType, useSettingsStore } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 import classes from './Sidebar.module.css';
 
@@ -26,9 +26,10 @@ interface Props {
 }
 
 export function Sidebar({ onAddComponent }: Props) {
+  const { t } = useTranslation('main');
   const projectName = useSettingsStore((state) => state.projectName);
   const { staticComponentTypes, presetComponentTypes, propertyComponentTypes } =
-    getComponentTypes();
+    useComponentTypes();
 
   return (
     <Box h={'100%'} p={'md'} pr={'xs'}>
@@ -44,7 +45,7 @@ export function Sidebar({ onAddComponent }: Props) {
         <Group gap={'xs'} py={'xs'} px={'sm'} wrap={'nowrap'}>
           <img src={favicon} width={20} alt={''} />
           <Text size={'xs'} fw={700}>
-            {getCopy('Main', 'interface_name')}
+            {t('interface-name')}
           </Text>
         </Group>
         <Divider />
@@ -54,7 +55,7 @@ export function Sidebar({ onAddComponent }: Props) {
           <ConnectionStatusIndicator />
           <Group gap={'xs'} wrap={'nowrap'}>
             <Text size={'xs'} fw={700}>
-              {getCopy('Main', 'project_name')}
+              {t('project-name')}
             </Text>
             <Text size={'sm'} c={'dimmed'}>
               {projectName}
@@ -67,7 +68,7 @@ export function Sidebar({ onAddComponent }: Props) {
 
         <Stack gap={'xs'} p={'xs'}>
           <Text size={'xs'} fw={700} ml={'xs'}>
-            {getCopy('Main', 'layout')}
+            {t('layout')}
           </Text>
           <LayoutToolbar />
           <Divider />
@@ -80,7 +81,7 @@ export function Sidebar({ onAddComponent }: Props) {
         >
           <Stack gap={'md'} p={'md'}>
             <Text size={'xs'} fw={700}>
-              {getCopy('Main', 'static_components')}
+              {t('static-components')}
             </Text>
             <SimpleGrid cols={2} className={classes.paletteGrid}>
               {staticComponentTypes.map((v) => (
@@ -97,7 +98,7 @@ export function Sidebar({ onAddComponent }: Props) {
               ))}
             </SimpleGrid>
             <Text size={'xs'} fw={700}>
-              {getCopy('Main', 'preset_components')}
+              {t('preset-components')}
             </Text>
             <SimpleGrid cols={2} className={classes.paletteGrid}>
               {presetComponentTypes.map((v) => (
@@ -115,7 +116,7 @@ export function Sidebar({ onAddComponent }: Props) {
               ))}
             </SimpleGrid>
             <Text size={'xs'} fw={700}>
-              {getCopy('Main', 'property_components')}
+              {t('property-components')}
             </Text>
             <SimpleGrid cols={2} className={classes.paletteGrid}>
               {propertyComponentTypes.map((v) => (

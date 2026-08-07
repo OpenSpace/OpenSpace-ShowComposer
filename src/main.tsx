@@ -1,5 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
+import './localization/config';
+
 import { App } from './App';
 
 import './index.css';
