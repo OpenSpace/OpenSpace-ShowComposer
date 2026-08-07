@@ -95,7 +95,7 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
           position: 'relative',
           height: '100%',
           width: '100%',
-          borderRadius: 'var(--mantine-radius-lg)',
+          borderRadius: isPresentMode ? 0 : 'var(--mantine-radius-lg)',
           border: '1px solid var(--mantine-color-dark-4)',
           backgroundColor: 'var(--mantine-color-dark-6)',
           color: 'var(--mantine-color-dimmed)',
