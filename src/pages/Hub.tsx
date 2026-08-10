@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -16,11 +17,11 @@ import { loadProject, loadProjects, Project } from '@/api/showbuilder';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
-import { getCopy } from '@/utils/copyHelpers';
 
 type LoadStatus = 'loading' | 'error' | 'ready';
 
 export function Hub() {
+  const { t } = useTranslation('load-project-modal');
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -153,7 +154,7 @@ export function Hub() {
                   }
                 }}
               >
-                {getCopy('LoadProjectModal', 'edit_project')}
+                {t('edit-project')}
               </Button>
               <Button
                 variant={'filled'}
@@ -164,7 +165,7 @@ export function Hub() {
                   }
                 }}
               >
-                {getCopy('LoadProjectModal', 'add_project')}
+                {t('add-project')}
               </Button>
             </Group>
           )}

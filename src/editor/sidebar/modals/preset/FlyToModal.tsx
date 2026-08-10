@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
 import { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
@@ -12,7 +13,6 @@ import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { ComponentBaseColors, FlyToComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: FlyToComponent | null;
@@ -25,6 +25,7 @@ type Option = {
 };
 
 function FlyToModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('fly-to');
   const camera = useSubscribeToCamera(500);
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const profile = useSubscribeToProfile();
@@ -161,7 +162,7 @@ function FlyToModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('FlyTo', 'target')}</InputLabel>
+        <InputLabel>{t('target')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
@@ -175,7 +176,7 @@ function FlyToModal({ component, handleComponentData }: Props) {
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <NumberInput
           id={'duration'}
-          label={getCopy('FlyTo', 'flight_duration')}
+          label={t('flight-duration')}
           placeholder={'Duration to Flight'}
           value={intDuration}
           onChange={(value) =>
@@ -183,20 +184,20 @@ function FlyToModal({ component, handleComponentData }: Props) {
           }
         />
         <Button variant={'filled'} size={'xs'} onClick={setFromOpenspace}>
-          {getCopy('FlyTo', 'set_target_from_openspace')}
+          {t('set-target-from-openspace')}
         </Button>
         <ToggleComponent
           value={geo}
           disabled={!hasGeoOption}
           setValue={setGeo}
-          label={getCopy('FlyTo', 'set_coordinates/altitude')}
+          label={t('set-coordinates-altitude')}
         />
       </Group>
       {hasGeoOption && geo && (
         <SimpleGrid cols={3}>
           <NumberInput
             id={'alt'}
-            label={getCopy('FlyTo', 'alt')}
+            label={t('alt')}
             placeholder={'Altitude'}
             value={alt}
             onChange={(value) =>
@@ -205,8 +206,8 @@ function FlyToModal({ component, handleComponentData }: Props) {
           />
           <NumberInput
             id={'lat'}
-            label={getCopy('FlyTo', 'latitude')}
-            placeholder={getCopy('FlyTo', 'latitude')}
+            label={t('latitude')}
+            placeholder={t('latitude')}
             value={lat}
             onChange={(value) =>
               setLat(typeof value === 'number' ? value : parseFloat(value))
@@ -214,8 +215,8 @@ function FlyToModal({ component, handleComponentData }: Props) {
           />
           <NumberInput
             id={'long'}
-            label={getCopy('FlyTo', 'longitude')}
-            placeholder={getCopy('FlyTo', 'longitude')}
+            label={t('longitude')}
+            placeholder={t('longitude')}
             value={long}
             onChange={(value) =>
               setLong(typeof value === 'number' ? value : parseFloat(value))

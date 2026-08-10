@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import {
   ActionIcon,
@@ -27,7 +28,6 @@ import {
   MultiOption,
   multiOptions as MultiOptions
 } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 
 // One entry in a Multi's ordered list of chained/parallel sub-components
 interface MultiType {
@@ -45,6 +45,7 @@ interface Props {
 }
 
 function MultiModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('multi');
   const [items, setItems] = useState<MultiType[]>(
     component
       ? component.components.map((v) => ({
@@ -234,8 +235,8 @@ function MultiModal({ component, handleComponentData }: Props) {
   return (
     <Tabs defaultValue={'multi'}>
       <Tabs.List>
-        <Tabs.Tab value={'multi'}>{getCopy('Multi', 'multi_settings')}</Tabs.Tab>
-        <Tabs.Tab value={'visual'}>{getCopy('Multi', 'visual_settings')}</Tabs.Tab>
+        <Tabs.Tab value={'multi'}>{t('multi-settings')}</Tabs.Tab>
+        <Tabs.Tab value={'visual'}>{t('visual-settings')}</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value={'multi'}>
         <Stack gap={'md'}>
@@ -261,8 +262,8 @@ function MultiModal({ component, handleComponentData }: Props) {
             />
           </SimpleGrid>
           <Text size={'sm'} c={'dimmed'}>
-            <b>{getCopy('Multi', 'delay:')}</b>
-            {getCopy('Multi', 'delay_copy')}
+            <b>{t('delay-label')}</b>
+            {t('delay-copy')}
           </Text>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={'droppable'}>
@@ -296,17 +297,11 @@ function MultiModal({ component, handleComponentData }: Props) {
                               maw={200}
                               label={
                                 <>
-                                  <b>{getCopy('Multi', 'chained_items:')}</b>
-                                  {getCopy(
-                                    'Multi',
-                                    'these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.'
-                                  )}
+                                  <b>{t('chained-items')}</b>
+                                  {t('chained-help')}
                                   <br />
-                                  <b>{getCopy('Multi', 'unchained_items:')}</b>
-                                  {getCopy(
-                                    'Multi',
-                                    'these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.'
-                                  )}
+                                  <b>{t('unchained-items')}</b>
+                                  {t('unchained-help')}
                                 </>
                               }
                             >
@@ -328,7 +323,7 @@ function MultiModal({ component, handleComponentData }: Props) {
                               </ActionIcon>
                             </Tooltip>
                             <Group gap={'xs'} wrap={'nowrap'}>
-                              <InputLabel>{getCopy('Multi', 'delay')}</InputLabel>
+                              <InputLabel>{t('delay')}</InputLabel>
                               <NumberInput
                                 w={80}
                                 name={'delay'}
@@ -345,7 +340,7 @@ function MultiModal({ component, handleComponentData }: Props) {
                               />
                             </Group>
                             <Group gap={'xs'} wrap={'nowrap'}>
-                              <Tooltip label={getCopy('Multi', 'edit_component')}>
+                              <Tooltip label={t('edit-component')}>
                                 <ActionIcon
                                   variant={'subtle'}
                                   onClick={() => {
@@ -363,7 +358,7 @@ function MultiModal({ component, handleComponentData }: Props) {
                                   <EditIcon size={20} />
                                 </ActionIcon>
                               </Tooltip>
-                              <Tooltip label={getCopy('Multi', 'remove_from_component')}>
+                              <Tooltip label={t('remove-from-component')}>
                                 <ActionIcon
                                   variant={'subtle'}
                                   onClick={() => removeItem(item.id)}

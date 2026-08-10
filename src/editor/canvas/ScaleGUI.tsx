@@ -1,11 +1,12 @@
+import { useTranslation } from 'react-i18next';
 import { NumberInput, Stack } from '@mantine/core';
 
 import { HoldButton } from '@/components/HoldButton';
 import { ZoomInIcon, ZoomOutIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 export function ScaleGUI() {
+  const { t } = useTranslation('scale-gui');
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
   const zoomIn = () => {
@@ -25,7 +26,7 @@ export function ScaleGUI() {
           setScale(() => (typeof value === 'number' ? value : parseFloat(value)) / 100)
         }
         hideControls
-        suffix={`${getCopy('ScaleGUI', '%')}`}
+        suffix={`${t('percent')}`}
         styles={{ input: { textAlign: 'center' } }}
       />
       <HoldButton onClick={zoomOut}>

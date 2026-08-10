@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, Box, Menu } from '@mantine/core';
 
@@ -19,7 +20,6 @@ import {
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { LayoutBase } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
 
 import classes from './LayoutContainer.module.css';
@@ -37,6 +37,7 @@ const typeIcons = {
 };
 
 export function LayoutContainer({ layout, children, handleOpenEditModal }: Props) {
+  const { t } = useTranslation('draggable-component');
   const layoutPosition = useBoundStore((state) => state.positions[layout?.id || '']);
 
   const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);
@@ -217,17 +218,17 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Item leftSection={<EditIcon />} onClick={handleOpenEditModal}>
-                  {getCopy('DraggableComponent', 'edit')}
+                  {t('edit')}
                 </Menu.Item>
                 <Menu.Item leftSection={<CopyIcon />} onClick={() => copyLayout(id)}>
-                  {getCopy('DraggableComponent', 'copy')}
+                  {t('copy')}
                 </Menu.Item>
                 <Menu.Item
                   leftSection={<TrashIcon />}
                   color={'red'}
                   onClick={() => deleteLayout(id)}
                 >
-                  {getCopy('DraggableComponent', 'delete')}
+                  {t('delete')}
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>

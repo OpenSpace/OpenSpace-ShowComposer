@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Group,
@@ -13,7 +14,6 @@ import {
 import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
+  const { t } = useTranslation('layout-edit-modal');
   const gridSettings = useSettingsStore((state) => state.gridSize);
   const gridSize = useBoundStore((state) => ({
     columns: layoutId
@@ -67,16 +68,16 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
       onClose={onClose}
       centered
       size={510}
-      title={getCopy('LayoutEditModal', 'edit_layout')}
+      title={t('edit-layout')}
     >
       <Stack gap={'xs'}>
         {layoutType == 'grid' && (
           <>
             <Text size={'lg'} fw={600}>
-              {getCopy('LayoutEditModal', 'grid_size')}
+              {t('grid-size')}
             </Text>
             <Text size={'sm'} c={'dimmed'}>
-              {getCopy('LayoutEditModal', 'grid_size_description')}
+              {t('grid-size-description')}
             </Text>
             <SimpleGrid cols={2} mt={'md'}>
               <TextInput
@@ -93,9 +94,7 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
           </>
         )}
         <Group gap={'xs'}>
-          <InputLabel htmlFor={'persistent'}>
-            {getCopy('LayoutEditModal', 'persist_across_pages')}
-          </InputLabel>
+          <InputLabel htmlFor={'persistent'}>{t('persist-across-pages')}</InputLabel>
           <Toggle value={persistent} setValue={setPersistent} />
         </Group>
       </Stack>

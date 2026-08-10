@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   InputLabel,
@@ -12,11 +13,11 @@ import {
 import { useOpenSpaceApi } from '@/api/hooks';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
-import { getCopy } from '@/utils/copyHelpers';
 
 import { round10, StepPrecisions, Steps, StepSizes, updateDeltaTime } from './utils';
 
 export function DeltaTimeControls() {
+  const { t } = useTranslation('time-date-picker');
   const [stepSize, setStepSize] = useState('Seconds');
   const [paused, setPaused] = useState(false);
   const [localDelta, setLocalDelta] = useState(0);
@@ -95,7 +96,7 @@ export function DeltaTimeControls() {
   return (
     <Stack gap={'xl'}>
       <SimpleGrid cols={2} spacing={'xs'}>
-        <InputLabel>{getCopy('TimeDatePicker', 'simulation_speed')}</InputLabel>
+        <InputLabel>{t('simulation-speed')}</InputLabel>
         <InputLabel>{`${stepSize} / second`}</InputLabel>
         <Select
           allowDeselect={false}

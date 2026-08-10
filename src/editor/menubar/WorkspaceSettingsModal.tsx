@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Modal, NumberInput, Stack, Text, TextInput } from '@mantine/core';
 
 import { useSettingsStore } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface Props {
 }
 
 function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
+  const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({
@@ -44,33 +45,33 @@ function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
       <Text>Update your workspace settings here</Text>
       <Stack gap={'xs'}>
         <Text size={'sm'} fw={600}>
-          {getCopy('ConnectionSettings', 'openspace_connection')}
+          {t('connection-settings:openspace-connection')}
         </Text>
         <Text size={'sm'} c={'dimmed'}>
-          {getCopy('ConnectionSettings', 'address_copy')}
+          {t('connection-settings:address-copy')}
         </Text>
         <TextInput
-          label={getCopy('NewProjectModal', 'ip_address')}
+          label={t('ip-address')}
           size={'xs'}
           value={ip}
           onChange={(e) => setIp(e.currentTarget.value)}
           placeholder={'Enter IP'}
         />
         <TextInput
-          label={getCopy('NewProjectModal', 'port')}
+          label={t('port')}
           size={'xs'}
           value={port}
           onChange={(e) => setPort(e.currentTarget.value)}
           placeholder={'Enter Port'}
         />
         <Text size={'sm'} fw={600}>
-          {getCopy('NewProjectModal', 'default_page_size')}
+          {t('default-page-size')}
         </Text>
         <Text size={'sm'} c={'dimmed'}>
-          {getCopy('NewProjectModal', 'default_page_size_copy')}
+          {t('default-page-size-copy')}
         </Text>
         <NumberInput
-          label={getCopy('NewProjectModal', 'page_width')}
+          label={t('page-width')}
           size={'xs'}
           allowDecimal={false}
           value={pageWidth}
@@ -80,7 +81,7 @@ function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
           placeholder={'Enter Default Page Width'}
         />
         <NumberInput
-          label={getCopy('NewProjectModal', 'page_height')}
+          label={t('page-height')}
           size={'xs'}
           allowDecimal={false}
           value={pageHeight}
@@ -92,7 +93,7 @@ function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
-          {getCopy('NewProjectModal', 'cancel')}
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
           Save Settings

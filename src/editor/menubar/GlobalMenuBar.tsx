@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
 
 import { loadProject, loadProjects, Project } from '@/api/showbuilder';
@@ -16,7 +17,6 @@ import {
   useBoundStoreTemporal
 } from '@/store/boundStore';
 import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
-import { getCopy } from '@/utils/copyHelpers';
 import { exportProject, loadStoreToServer, saveProject } from '@/utils/saveProject';
 
 interface LoadedStore {
@@ -26,6 +26,7 @@ interface LoadedStore {
 }
 
 export function GlobalMenuBar() {
+  const { t } = useTranslation('page-button-menu');
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state
   );
@@ -199,7 +200,7 @@ export function GlobalMenuBar() {
               }}
             >
               <NumberInput
-                label={getCopy('PageButtonMenu', 'width')}
+                label={t('width')}
                 size={'xs'}
                 allowDecimal={false}
                 value={pageWidth}
@@ -211,7 +212,7 @@ export function GlobalMenuBar() {
                 }
               />
               <NumberInput
-                label={getCopy('PageButtonMenu', 'height')}
+                label={t('height')}
                 size={'xs'}
                 allowDecimal={false}
                 value={pageHeight}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
@@ -8,7 +9,6 @@ import { WidgetSettings } from '@/components/WidgetSettings';
 import { BooleanComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: BooleanComponent | null;
@@ -16,6 +16,7 @@ interface Props {
 }
 
 function BoolModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('boolean');
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -78,7 +79,7 @@ function BoolModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Boolean', 'property')}</InputLabel>
+        <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -89,7 +90,7 @@ function BoolModal({ component, handleComponentData }: Props) {
         />
       </Stack>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Boolean', 'action_type')}</InputLabel>
+        <InputLabel>{t('action-type')}</InputLabel>
         <Select
           allowDeselect={false}
           data={['toggle', 'on', 'off']}

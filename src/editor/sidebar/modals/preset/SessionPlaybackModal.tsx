@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: SessionPlaybackComponent | null;
@@ -17,6 +17,7 @@ interface Props {
 }
 
 function SessionPlaybackModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('session-playback');
   const luaApi = useOpenSpaceApi();
   const sessionRecording = useSubscribeToSessionRecording();
   const fileList = sessionRecording.files || [];
@@ -91,14 +92,10 @@ function SessionPlaybackModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('SessionPlayback', 'play_session')}</InputLabel>
-        <ToggleComponent
-          label={getCopy('SessionPlayback', 'loop_playback')}
-          value={loop}
-          setValue={setLoop}
-        />
+        <InputLabel>{t('play-session')}</InputLabel>
+        <ToggleComponent label={t('loop-playback')} value={loop} setValue={setLoop} />
         <Stack gap={'xs'}>
-          <InputLabel>{getCopy('SessionPlayback', 'playback_file')}</InputLabel>
+          <InputLabel>{t('playback-file')}</InputLabel>
           <Select
             allowDeselect={false}
             data={fileList}

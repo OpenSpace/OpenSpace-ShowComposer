@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   ActionIcon,
   Box,
@@ -14,7 +15,6 @@ import { Information } from '@/components/Information';
 import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
 import { RefreshCcwDotIcon, Rotate3dIcon, ZoomInIcon } from '@/icons/icons';
-import { getCopy } from '@/utils/copyHelpers';
 
 // Sent on pointer/touch release to stop all camera motion.
 const IDLE_INPUT_STATE_COMMAND: FlightControllerInputStateCommand = {
@@ -30,34 +30,32 @@ const IDLE_INPUT_STATE_COMMAND: FlightControllerInputStateCommand = {
 };
 
 function InfoBox() {
+  const { t } = useTranslation('flight-control-panel');
   return (
     <>
-      <Text>
-        {getCopy('FlightControlPanel', 'interact_with_the_area_to_control_the_camera.')}
-      </Text>
+      <Text>{t('interact-hint')}</Text>
       <Text mt={'xs'} fw={700}>
-        {getCopy('FlightControlPanel', 'mouse_controls:')}
+        {t('mouse-controls')}
       </Text>
-      <Text>{getCopy('FlightControlPanel', 'click_and_drag_to_rotate._hold')}</Text>
+      <Text>{t('click-drag-hint')}</Text>
       <List withPadding>
-        <List.Item>{getCopy('FlightControlPanel', 'shift_to_pan')}</List.Item>
-        <List.Item>{getCopy('FlightControlPanel', 'control_info')}</List.Item>
+        <List.Item>{t('shift-to-pan')}</List.Item>
+        <List.Item>{t('control-info')}</List.Item>
       </List>
       <Text mt={'xs'} fw={700}>
-        {getCopy('FlightControlPanel', 'touch_controls:')}
+        {t('touch-controls')}
       </Text>
       <List withPadding>
-        <List.Item>{getCopy('FlightControlPanel', '1_finger_to_rotate')}</List.Item>
-        <List.Item>{getCopy('FlightControlPanel', '2_fingers_to_pan')}</List.Item>
-        <List.Item>
-          {getCopy('FlightControlPanel', '3_fingers_to_zoom_(y-axis)_or_roll_(x-axis)')}
-        </List.Item>
+        <List.Item>{t('1-finger-to-rotate')}</List.Item>
+        <List.Item>{t('2-fingers-to-pan')}</List.Item>
+        <List.Item>{t('three-finger-zoom-hint')}</List.Item>
       </List>
     </>
   );
 }
 
 export function FlightControlPanel() {
+  const { t } = useTranslation('flight-control-panel');
   const [rotationFriction = false, setRotationFriction] = useProperty(
     'BoolProperty',
     'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction'
@@ -161,10 +159,10 @@ export function FlightControlPanel() {
       style={{ zIndex: 9 }}
     >
       <Stack w={'100%'} gap={'xs'} px={'md'}>
-        <InputLabel>{getCopy('FlightControlPanel', 'camera_friction')}</InputLabel>
+        <InputLabel>{t('camera-friction')}</InputLabel>
         <Group w={'100%'} justify={'center'} gap={'xs'}>
           <Group gap={'xs'}>
-            <Tooltip label={getCopy('FlightControlPanel', 'rotation_friction')}>
+            <Tooltip label={t('rotation-friction')}>
               <ActionIcon
                 size={'lg'}
                 onClick={() => setRotationFriction(!rotationFriction)}
@@ -174,7 +172,7 @@ export function FlightControlPanel() {
                 <Rotate3dIcon size={20} />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label={getCopy('FlightControlPanel', 'zoom_friction')}>
+            <Tooltip label={t('zoom-friction')}>
               <ActionIcon
                 size={'lg'}
                 onClick={() => setZoomFriction(!zoomFriction)}
@@ -184,7 +182,7 @@ export function FlightControlPanel() {
                 <ZoomInIcon size={20} />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label={getCopy('FlightControlPanel', 'roll_friction')}>
+            <Tooltip label={t('roll-friction')}>
               <ActionIcon
                 size={'lg'}
                 onClick={() => setRollFriction(!rollFriction)}
@@ -202,7 +200,7 @@ export function FlightControlPanel() {
       </Stack>
       <Stack w={'100%'} align={'center'} gap={'xs'} px={'md'}>
         <Group w={'100%'} gap={'xs'}>
-          <InputLabel>{getCopy('FlightControlPanel', 'control_area')}</InputLabel>
+          <InputLabel>{t('control-area')}</InputLabel>
           <Information content={<InfoBox />} />
         </Group>
         <Box

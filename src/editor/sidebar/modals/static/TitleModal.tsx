@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, TextInput } from '@mantine/core';
 
 import { TitleComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: TitleComponent | null;
@@ -11,6 +11,7 @@ interface Props {
 }
 
 function TitleModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('title');
   const currentPageTitle = useBoundStore(
     (state) => state.getPageById(state.currentPage).name ?? ''
   );
@@ -23,13 +24,13 @@ function TitleModal({ component, handleComponentData }: Props) {
   return (
     <Group align={'flex-end'}>
       <TextInput
-        label={getCopy('Title', 'title')}
+        label={t('title')}
         value={text}
         onChange={(e) => setText(e.currentTarget.value)}
         flex={1}
       />
       <Button variant={'default'} onClick={() => setText(currentPageTitle ?? '')}>
-        {getCopy('Title', 'pageTitle')}
+        {t('pagetitle')}
       </Button>
     </Group>
   );

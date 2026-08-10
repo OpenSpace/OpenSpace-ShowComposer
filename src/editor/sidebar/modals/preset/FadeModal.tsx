@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
 import { AnyProperty } from 'openspace-api-js/types';
@@ -9,7 +10,6 @@ import { WidgetSettings } from '@/components/WidgetSettings';
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: FadeComponent | null;
@@ -17,6 +17,7 @@ interface Props {
 }
 
 function FadeModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('fade');
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
@@ -115,7 +116,7 @@ function FadeModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Fade', 'property')}</InputLabel>
+        <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}
@@ -127,7 +128,7 @@ function FadeModal({ component, handleComponentData }: Props) {
       </Stack>
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <Stack gap={'xs'}>
-          <InputLabel>{getCopy('Fade', 'action_type')}</InputLabel>
+          <InputLabel>{t('action-type')}</InputLabel>
           <Select
             allowDeselect={false}
             data={['toggle', 'on', 'off']}
@@ -138,7 +139,7 @@ function FadeModal({ component, handleComponentData }: Props) {
         </Stack>
         <NumberInput
           id={'duration'}
-          label={getCopy('Fade', 'fade_duration')}
+          label={t('fade-duration')}
           placeholder={'Duration to Fade'}
           min={0}
           max={20}

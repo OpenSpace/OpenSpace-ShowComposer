@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 
 import { ImageUpload } from '@/components/ImageUpload/ImageUpload';
 import { ImageComponent } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: ImageComponent | null;
@@ -11,6 +11,7 @@ interface Props {
 }
 
 function ImageModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('image');
   const [url, setUrl] = useState(component?.backgroundImage || '');
 
   const handleImageChange = useCallback(
@@ -23,7 +24,7 @@ function ImageModal({ component, handleComponentData }: Props) {
 
   return (
     <Stack gap={'md'}>
-      <InputLabel>{getCopy('Image', 'image')}</InputLabel>
+      <InputLabel>{t('image')}</InputLabel>
       <ImageUpload value={url} onChange={handleImageChange} />
     </Stack>
   );

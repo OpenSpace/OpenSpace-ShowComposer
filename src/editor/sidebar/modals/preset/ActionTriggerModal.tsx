@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
@@ -6,7 +7,6 @@ import { WidgetSettings } from '@/components/WidgetSettings';
 import { usePropertyStore } from '@/store';
 import { ActionTriggerComponent, ComponentBaseColors } from '@/types/components';
 import { Action } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: ActionTriggerComponent | null;
@@ -14,6 +14,7 @@ interface Props {
 }
 
 function ActionTriggerModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('action-trigger');
   const [action, setAction] = useState<string>(component?.action || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
@@ -59,7 +60,7 @@ function ActionTriggerModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Action', 'action')}</InputLabel>
+        <InputLabel>{t('action')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(actions)}
           selectOption={(v: string) => handleActionChange(actions[v])}

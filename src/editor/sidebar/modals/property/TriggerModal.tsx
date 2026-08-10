@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -7,7 +8,6 @@ import { WidgetSettings } from '@/components/WidgetSettings';
 import { TriggerComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: TriggerComponent | null;
@@ -15,6 +15,7 @@ interface Props {
 }
 
 function TriggerModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('trigger');
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
@@ -74,7 +75,7 @@ function TriggerModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Trigger', 'property')}</InputLabel>
+        <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => setProperty(sortedKeys[v])}

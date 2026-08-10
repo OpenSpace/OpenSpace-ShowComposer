@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Select, Stack } from '@mantine/core';
 
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, PageComponent } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: PageComponent | null;
@@ -12,6 +12,7 @@ interface Props {
 }
 
 function PageModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('page');
   const pages = useBoundStore((state) => state.pages);
   const [page, setPage] = useState<number>(component?.page || 1);
   const [guiName, setGuiName] = useState<string>(component?.gui_name || 'Go to Page 1');
@@ -56,7 +57,7 @@ function PageModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Page', 'page_number')}</InputLabel>
+        <InputLabel>{t('page-number')}</InputLabel>
         <Select
           allowDeselect={false}
           data={pages.map((v, i) => ({

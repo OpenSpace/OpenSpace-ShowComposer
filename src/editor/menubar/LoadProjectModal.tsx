@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -12,7 +13,6 @@ import {
 
 import { Project } from '@/api/showbuilder';
 import { Pagination } from '@/components/Pagination';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface Props {
 }
 
 function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Props) {
+  const { t } = useTranslation('load-project-modal');
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(projects.length / itemsPerPage);
@@ -44,9 +45,9 @@ function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Pr
       opened={isOpen}
       onClose={() => setIsOpen(false)}
       centered
-      title={getCopy('LoadProjectModal', 'load_project')}
+      title={t('load-project')}
     >
-      <Text>{getCopy('LoadProjectModal', 'load_project_description')}</Text>
+      <Text>{t('load-project-description')}</Text>
       <Stack gap={'xs'}>
         {projectsToDisplay.map((project) => (
           <UnstyledButton
@@ -98,7 +99,7 @@ function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Pr
             }
           }}
         >
-          {getCopy('LoadProjectModal', 'add_project')}
+          {t('add-project')}
         </Button>
       </Group>
     </Modal>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AspectRatio,
   Button,
@@ -15,7 +16,6 @@ import { Dropzone } from '@mantine/dropzone';
 import { Image } from '@/components/Image';
 import { UploadIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 import styles from './ImageGallery.module.css';
 
@@ -38,6 +38,7 @@ function ImageGallery({
   onClose,
   setUploadFile
 }: Props) {
+  const { t } = useTranslation('image-gallery');
   const resetAsyncPreSubmitOperation = useBoundStore(
     (state) => state.resetAsyncPreSubmitOperation
   );
@@ -70,18 +71,18 @@ function ImageGallery({
     <Modal
       opened={opened}
       onClose={handleCancel}
-      title={getCopy('ImageGallery', 'image_gallery')}
+      title={t('image-gallery')}
       centered
       size={520}
     >
       <Stack gap={'md'}>
         <Text size={'sm'} c={'dimmed'}>
-          {getCopy('ImageGallery', 'choose_an_image')}
+          {t('choose-an-image')}
         </Text>
         <SimpleGrid cols={2} spacing={'sm'}>
           <Stack gap={'xs'}>
             <Text size={'sm'} fw={500}>
-              {getCopy('ImageGallery', 'seleted_image:')}
+              {t('seleted-image')}
             </Text>
             <Card withBorder radius={'md'} padding={0} style={{ overflow: 'hidden' }}>
               <AspectRatio ratio={1}>
@@ -95,7 +96,7 @@ function ImageGallery({
           </Stack>
           <Stack gap={'xs'}>
             <Text size={'sm'} fw={500}>
-              {getCopy('ImageGallery', 'upload_new_image:')}
+              {t('upload-new-image')}
             </Text>
             <AspectRatio ratio={1}>
               <Dropzone
@@ -114,7 +115,7 @@ function ImageGallery({
                 <Stack align={'center'} gap={'xs'}>
                   <UploadIcon size={32} />
                   <Text size={'sm'} ta={'center'}>
-                    {getCopy('ImageGallery', 'upload')}
+                    {t('upload')}
                   </Text>
                 </Stack>
               </Dropzone>
@@ -151,7 +152,7 @@ function ImageGallery({
         </SimpleGrid>
         <Group justify={'flex-end'} gap={'sm'}>
           <Button variant={'outline'} onClick={handleCancel}>
-            {getCopy('ImageGallery', 'cancel')}
+            {t('cancel')}
           </Button>
           <Button
             disabled={selectedImage.length === 0}
@@ -160,7 +161,7 @@ function ImageGallery({
               onClose();
             }}
           >
-            {getCopy('ImageGallery', 'add_image')}
+            {t('add-image')}
           </Button>
         </Group>
         {totalPages > 1 && (

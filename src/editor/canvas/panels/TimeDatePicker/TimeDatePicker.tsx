@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Button, InputLabel, SimpleGrid, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 
 import { DeltaTimeControls } from './DeltaTimeControls';
 
 export function TimeDatePicker() {
+  const { t } = useTranslation('time-date-picker');
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time, targetDeltaTime } = useSubscribeToTime(1000);
   console.log(targetDeltaTime);
@@ -90,7 +91,7 @@ export function TimeDatePicker() {
   return (
     <Stack gap={'xs'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('TimeDatePicker', 'select_date')}</InputLabel>
+        <InputLabel>{t('select-date')}</InputLabel>
         <DateTimeStepper date={time} onChange={changeDate} />
       </Stack>
       <DeltaTimeControls />
@@ -99,9 +100,9 @@ export function TimeDatePicker() {
           variant={targetDeltaTime == 1 ? 'filled' : 'default'}
           onClick={setToRealTime}
         >
-          {getCopy('TimeDatePicker', 'realtime')}
+          {t('realtime')}
         </Button>
-        <Button onClick={setTimeToNow}>{getCopy('TimeDatePicker', 'now')}</Button>
+        <Button onClick={setTimeToNow}>{t('now')}</Button>
       </SimpleGrid>
       <Box
         ta={'center'}

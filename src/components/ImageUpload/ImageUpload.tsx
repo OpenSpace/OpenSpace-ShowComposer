@@ -1,10 +1,10 @@
 import { type ChangeEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { fetchGalleryImages, uploadImage } from '@/api/showbuilder';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 import { ImageGallery } from './ImageGallery';
 
@@ -15,6 +15,7 @@ interface Props {
 }
 
 function ImageUpload({ value, onChange }: Props) {
+  const { t } = useTranslation('image-upload');
   const setAsyncPreSubmitOperation = useBoundStore(
     (state) => state.setAsyncPreSubmitOperation
   );
@@ -66,7 +67,7 @@ function ImageUpload({ value, onChange }: Props) {
   return (
     <Stack gap={'md'}>
       <Text size={'sm'} fw={500}>
-        {getCopy('ImageUpload', 'set_image_url')}
+        {t('set-image-url')}
       </Text>
       <Group align={'center'} gap={'sm'} wrap={'nowrap'}>
         <TextInput
@@ -76,10 +77,10 @@ function ImageUpload({ value, onChange }: Props) {
           onChange={handleURLChange}
         />
         <Text flex={1} ta={'center'}>
-          {getCopy('ImageUpload', 'or')}
+          {t('or')}
         </Text>
         <Button flex={2} onClick={openGallery}>
-          {getCopy('ImageUpload', 'select_image')}
+          {t('select-image')}
         </Button>
       </Group>
       <ImageGallery

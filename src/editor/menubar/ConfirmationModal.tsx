@@ -1,6 +1,5 @@
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Modal, Text } from '@mantine/core';
-
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -10,6 +9,7 @@ interface Props {
 }
 
 function ConfirmationModal({ isOpen, onConfirm, message, setOpen }: Props) {
+  const { t } = useTranslation('confirmation-modal');
   return (
     <Modal opened={isOpen} onClose={() => setOpen(false)} centered title={''}>
       <Text>{message}</Text>
@@ -21,7 +21,7 @@ function ConfirmationModal({ isOpen, onConfirm, message, setOpen }: Props) {
             setOpen(false);
           }}
         >
-          {getCopy('ConfirmationModal', 'ok')}
+          {t('ok')}
         </Button>
       </Group>
     </Modal>

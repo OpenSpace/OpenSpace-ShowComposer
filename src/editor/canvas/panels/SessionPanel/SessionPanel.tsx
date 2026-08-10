@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Checkbox,
@@ -16,11 +17,11 @@ import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { CircleIcon } from '@/icons/icons';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 
 import { PlaybackSwitch } from './PlaybackSwitch';
 
 export function SessionPanel() {
+  const { t } = useTranslation('session-panel');
   const [useTextFormat, setUseTextFormat] = useState(false);
   const [filenameRecording, setFilenameRecording] = useState('');
   const [filenamePlayback, setFilenamePlayback] = useState<string>('');
@@ -76,14 +77,14 @@ export function SessionPanel() {
   return (
     <Stack m={'xs'} gap={'xs'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('SessionPanel', 'record_session')}</InputLabel>
+        <InputLabel>{t('record-session')}</InputLabel>
         <Checkbox
-          label={getCopy('SessionPanel', 'text_file_format')}
+          label={t('text-file-format')}
           checked={useTextFormat}
           onChange={(event) => setUseTextFormat(event.currentTarget.checked)}
         />
         <Stack gap={'xs'} w={'100%'}>
-          <InputLabel>{getCopy('SessionPanel', 'name_of_recording')}</InputLabel>
+          <InputLabel>{t('name-of-recording')}</InputLabel>
           <Group w={'100%'} gap={'xs'} wrap={'nowrap'} align={'center'}>
             <TextInput
               flex={1}
@@ -101,12 +102,12 @@ export function SessionPanel() {
               flex={'0 0 auto'}
               onClick={toggleRecording}
             >
-              {getCopy('SessionPanel', 'record')}
+              {t('record')}
             </Button>
           </Group>
           {nameIsTaken && isInputFocused && (
             <Text c={'red.5'} size={'sm'}>
-              {getCopy('SessionPanel', 'name_is_already_taken.')}
+              {t('name-is-already-taken')}
             </Text>
           )}
         </Stack>
@@ -114,21 +115,21 @@ export function SessionPanel() {
       <Divider />
 
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('SessionPanel', 'play_session')}</InputLabel>
+        <InputLabel>{t('play-session')}</InputLabel>
         <Stack gap={'xs'}>
           <Checkbox
-            label={getCopy('SessionPanel', 'loop_playback')}
+            label={t('loop-playback')}
             checked={loopPlayback}
             onChange={(event) => onLoopPlaybackChange(event.currentTarget.checked)}
           />
           <Checkbox
-            label={getCopy('SessionPanel', 'output_frames')}
+            label={t('output-frames')}
             checked={shouldOutputFrames}
             onChange={(event) => onShouldUpdateFramesChange(event.currentTarget.checked)}
           />
         </Stack>
         <Stack gap={'xs'}>
-          <InputLabel>{getCopy('SessionPanel', 'playback_file')}</InputLabel>
+          <InputLabel>{t('playback-file')}</InputLabel>
           <Stack w={'100%'} gap={'xs'}>
             <Select
               allowDeselect={false}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stack, Text, TextInput } from '@mantine/core';
 
 import { VideoContent } from '@/components/VideoContent';
 import { VideoComponent } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: VideoComponent | null;
@@ -11,6 +11,7 @@ interface Props {
 }
 
 function VideoModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('video');
   const [url, setUrl] = useState(component?.url || '');
 
   function handleUrlChange(value: string) {
@@ -20,13 +21,13 @@ function VideoModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <TextInput
-        label={getCopy('Video', 'video')}
+        label={t('video')}
         placeholder={'URL'}
         value={url}
         onChange={(e) => handleUrlChange(e.currentTarget.value)}
       />
       <Text size={'sm'} c={'dimmed'} mt={'xs'} mb={'md'}>
-        {getCopy('Video', 'video_helper_text')}
+        {t('video-helper-text')}
       </Text>
       <VideoContent url={url} />
     </Stack>

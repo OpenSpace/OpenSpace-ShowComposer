@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack, Text } from '@mantine/core';
 
 import { ComponentContainer } from '@/components/ComponentContainer';
@@ -15,7 +16,6 @@ import {
   SetFocusComponent,
   TriggerComponent
 } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 
 import { BooleanWidget } from '../property/BooleanWidget';
 import { TriggerWidget } from '../property/TriggerWidget';
@@ -78,6 +78,7 @@ interface Props {
 }
 
 function MultiWidget({ component }: Props) {
+  const { t } = useTranslation('multi');
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
@@ -152,7 +153,7 @@ function MultiWidget({ component }: Props) {
           <Text>{component.gui_name}</Text>
           {currentItems.length > 0 && (
             <Stack gap={4}>
-              <InputLabel>{getCopy('Multi', 'current_items:')}</InputLabel>
+              <InputLabel>{t('current-items')}</InputLabel>
               {currentItems.map((v) => (
                 <InputLabel key={v}>{v}</InputLabel>
               ))}

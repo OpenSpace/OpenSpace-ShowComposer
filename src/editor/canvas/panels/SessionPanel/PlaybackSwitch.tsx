@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button, SimpleGrid } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -5,7 +6,6 @@ import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 
 const OUTPUT_FRAMERATE = 60;
 
@@ -22,6 +22,7 @@ export function PlaybackSwitch({
   filenamePlayback,
   toggleRecording
 }: Props) {
+  const { t } = useTranslation('session-panel');
   const luaApi = useOpenSpaceApi();
   const { state } = useSubscribeToSessionRecording();
 
@@ -59,23 +60,23 @@ export function PlaybackSwitch({
     case RecordingState.Idle:
       return filenamePlayback ? (
         <Button leftSection={<PlayIcon size={20} />} onClick={togglePlayback}>
-          {getCopy('SessionPanel', 'play')}
+          {t('play')}
         </Button>
       ) : null;
     case RecordingState.Recording:
       return (
         <Button leftSection={<SquareIcon size={20} />} onClick={toggleRecording}>
-          {getCopy('SessionPanel', 'stop_recording')}
+          {t('stop-recording')}
         </Button>
       );
     case RecordingState.Playing:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
           <Button leftSection={<PauseIcon size={20} />} onClick={togglePlaybackPaused}>
-            {getCopy('SessionPanel', 'pause')}
+            {t('pause')}
           </Button>
           <Button leftSection={<SquareIcon size={20} />} onClick={togglePlayback}>
-            {getCopy('SessionPanel', 'stop')}
+            {t('stop')}
           </Button>
         </SimpleGrid>
       );
@@ -83,10 +84,10 @@ export function PlaybackSwitch({
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
           <Button leftSection={<PlayIcon size={20} />} onClick={togglePlaybackPaused}>
-            {getCopy('SessionPanel', 'resume')}
+            {t('resume')}
           </Button>
           <Button leftSection={<SquareIcon size={20} />} onClick={togglePlayback}>
-            {getCopy('SessionPanel', 'stop')}
+            {t('stop')}
           </Button>
         </SimpleGrid>
       );

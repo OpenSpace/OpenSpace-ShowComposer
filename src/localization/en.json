@@ -1,9 +1,9 @@
 {
-  "WidgetSettings": {
-    "component_name": "Component Name",
-    "gui_description": "Gui Description",
-    "background_color": "Background Color",
-    "background_image": "Background Image"
+  "widget-settings": {
+    "component-name": "Component Name",
+    "gui-description": "Gui Description",
+    "background-color": "Background Color",
+    "background-image": "Background Image"
   },
   "main": {
     "project-name": "Current Show:  ",
@@ -36,253 +36,253 @@
     "layout": "Layout Components",
     "current-show": "Current Show"
   },
-  "AdjustablePage": {
+  "adjustable-page": {
     "page": "Page"
   },
-  "ComponentModal": {
-    "unknown_component_type": "Unknown component type",
-    "configure_copy": "Configure your component and add it to the workspace.",
+  "component-modal": {
+    "unknown-component-type": "Unknown component type",
+    "configure-copy": "Configure your component and add it to the workspace.",
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create"
   },
-  "ConnectionSettings": {
-    "openspace_connection_settings": "OpenSpace Connection Settings",
-    "openspace_connection": "Openspace Connection",
-    "address_copy": "Set the IP address and port of the OpenSpace instance you want to\n              connect to.",
-    "ip_address": "IP Address",
+  "connection-settings": {
+    "openspace-connection-settings": "OpenSpace Connection Settings",
+    "openspace-connection": "Openspace Connection",
+    "address-copy": "Set the IP address and port of the OpenSpace instance you want to\n              connect to.",
+    "ip-address": "IP Address",
     "port": "Port",
     "cancel": "Cancel",
-    "apply_settings": "Apply Settings",
+    "apply-settings": "Apply Settings",
     "connected": "connected",
     "connecting": "connecting",
     "disconnected": "disconnected",
-    "openspace_status:": "OpenSpace Status:"
+    "openspace-status": "OpenSpace Status:"
   },
-  "DarkModeToggle": {
-    "toggle_theme": "Toggle theme",
+  "dark-mode-toggle": {
+    "toggle-theme": "Toggle theme",
     "light": "Light",
     "dark": "Dark"
   },
-  "DeleteConfirmationModal": {
-    "delete_all_components": "Delete all components",
-    "confirmation_text": "Are you absolutely sure?",
+  "delete-confirmation-modal": {
+    "delete-all-components": "Delete all components",
+    "confirmation-text": "Are you absolutely sure?",
     "cancel": "Cancel",
     "delete": "Delete"
   },
-  "DraggableComponent": {
-    "unknown_component_type": "Unknown component type",
+  "draggable-component": {
+    "unknown-component-type": "Unknown component type",
     "edit": "Edit",
     "delete": "Delete",
     "copy": "Copy"
   },
-  "DropdownMenu": {
+  "dropdown-menu": {
     "more": "More"
   },
-  "DroppableWorkspace": {
-    "edit_mode": "Edit Mode"
+  "droppable-workspace": {
+    "edit-mode": "Edit Mode"
   },
-  "FeedbackPanel": {
-    "current_time": "Current Time",
-    "current_focus": "Current Focus",
+  "feedback-panel": {
+    "current-time": "Current Time",
+    "current-focus": "Current Focus",
     "lat": "Lat",
-    "°": "°",
+    "degrees": "°",
     "long": "Long",
     "alt": "Alt"
   },
-  "PageButtonMenu": {
-    "page_settings": "Page Settings",
-    "add_page": "Add Page",
-    "delete_page": "Delete Page",
-    "screen_presets": "Screen Presets",
+  "page-button-menu": {
+    "page-settings": "Page Settings",
+    "add-page": "Add Page",
+    "delete-page": "Delete Page",
+    "screen-presets": "Screen Presets",
     "width": "Width",
     "height": "Height"
   },
-  "PresentModeToggle": {
+  "present-mode-toggle": {
     "outline": "outline"
   },
-  "ScaleGUI": {
-    "%": "%"
+  "scale-gui": {
+    "percent": "%"
   },
-  "SubscriptionPanel": {
-    "active_subscriptions": "Active Subscriptions",
-    "active_property_subscriptions": "Active Property Subscriptions",
-    "subscribers:": "Subscribers:",
-    "no_active_subscriptions.": "No active subscriptions."
+  "subscription-panel": {
+    "active-subscriptions": "Active Subscriptions",
+    "active-property-subscriptions": "Active Property Subscriptions",
+    "subscribers": "Subscribers:",
+    "no-active-subscriptions": "No active subscriptions."
   },
-  "BottomDrawer": {
+  "bottom-drawer": {
     "close": "Close"
   },
-  "ImageGallery": {
-    "image_gallery": "Image Gallery",
-    "choose_an_image": "Choose an image from your gallery or upload or link to a new\n              image.",
-    "seleted_image:": "Seleted Image:",
-    "upload_new_image:": "Upload New Image:",
+  "image-gallery": {
+    "image-gallery": "Image Gallery",
+    "choose-an-image": "Choose an image from your gallery or upload or link to a new\n              image.",
+    "seleted-image": "Seleted Image:",
+    "upload-new-image": "Upload New Image:",
     "upload": "Upload",
     "cancel": "Cancel",
-    "add_image": "Add Image"
+    "add-image": "Add Image"
   },
-  "ImageUpload": {
-    "set_image_url": "Set Image Url",
+  "image-upload": {
+    "set-image-url": "Set Image Url",
     "or": "or",
-    "select_image": "Select Image"
+    "select-image": "Select Image"
   },
-  "VirtualizedCombobox": {
-    "no_item_found.": "No item found."
+  "virtualized-combobox": {
+    "no-item-found": "No item found."
   },
-  "Fade": {
+  "fade": {
     "property": "Property",
-    "action_type": "Action Type",
-    "fade_duration": "Fade Duration",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "action-type": "Action Type",
+    "fade-duration": "Fade Duration",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "Script": {
+  "script": {
     "script": "Lua Script"
   },
-  "FlyTo": {
+  "fly-to": {
     "target": "Target",
-    "flight_duration": "Flight Duration",
-    "set_target_from_openspace": "Set Target from OpenSpace",
-    "set_coordinates/altitude": "Set Coordinates/Altitude",
+    "flight-duration": "Flight Duration",
+    "set-target-from-openspace": "Set Target from OpenSpace",
+    "set-coordinates-altitude": "Set Coordinates/Altitude",
     "alt": "Alt",
     "latitude": "Latitude",
     "longitude": "Longitude",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "Focus": {
+  "focus": {
     "property": "Property",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "Multi": {
-    "multi_settings": "Multi Settings",
-    "visual_settings": "Visual Settings",
-    "delay:": "Delay:",
-    "delay_copy": "This delay is applied differently based on the item's\n            chaining status: For chained items, the delay is added after the\n            completion of the previous item's duration. For unchained items, the\n            delay is from the start the beginning of the workflow or the start\n            time of the previous item.",
-    "chained_items:": "Chained Items:",
-    "these_items_start_their_operation_after_the_previous_item_has_completed_its_duration.": "These items start their\n                              operation after the previous item has completed\n                              its duration.",
-    "unchained_items:": "Unchained Items:",
-    "these_run_concurrently_with_the_previous_item,_not_waiting_for_the_previous_operations_to_complete.": "These run concurrently\n                              with the previous item, not waiting for the\n                              previous operations to complete.",
+  "multi": {
+    "multi-settings": "Multi Settings",
+    "visual-settings": "Visual Settings",
+    "delay-label": "Delay:",
+    "delay-copy": "This delay is applied differently based on the item's\n            chaining status: For chained items, the delay is added after the\n            completion of the previous item's duration. For unchained items, the\n            delay is from the start the beginning of the workflow or the start\n            time of the previous item.",
+    "chained-items": "Chained Items:",
+    "chained-help": "These items start their\n                              operation after the previous item has completed\n                              its duration.",
+    "unchained-items": "Unchained Items:",
+    "unchained-help": "These run concurrently\n                              with the previous item, not waiting for the\n                              previous operations to complete.",
     "delay": "Delay",
-    "edit_component": "Edit Component",
-    "remove_from_component": "Remove from Component",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description",
-    "current_items:": "Current Items:"
+    "edit-component": "Edit Component",
+    "remove-from-component": "Remove from Component",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description",
+    "current-items": "Current Items:"
   },
-  "Page": {
-    "page_number": "Page Number",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+  "page": {
+    "page-number": "Page Number",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "SessionPlayback": {
+  "session-playback": {
     "play": "Play",
     "pause": "Pause",
     "stop": "Stop",
     "resume": "Resume",
-    "play_session": "Play Session",
-    "force_time_change_to_recorded_time": "Force time change to recorded time",
-    "loop_playback": "Loop Playback",
-    "playback_file": "Playback File",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "play-session": "Play Session",
+    "force-time-change-to-recorded-time": "Force time change to recorded time",
+    "loop-playback": "Loop Playback",
+    "playback-file": "Playback File",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "SetNavigation": {
-    "save_current_navigation_state": "Set from Current Navigation State",
-    "navigation_state_time": "Navigation State Time",
-    "fade_duration": "Transition Duration",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description",
-    "transition_mode": "Transition Mode"
+  "set-navigation": {
+    "save-current-navigation-state": "Set from Current Navigation State",
+    "navigation-state-time": "Navigation State Time",
+    "fade-duration": "Transition Duration",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description",
+    "transition-mode": "Transition Mode"
   },
-  "SetTime": {
-    "set_time_to_now": "Set Time To Now",
-    "component_name": "Component Name",
-    "fade_duration": "Fade Duration",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+  "set-time": {
+    "set-time-to-now": "Set Time To Now",
+    "component-name": "Component Name",
+    "fade-duration": "Fade Duration",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "Boolean": {
+  "boolean": {
     "property": "Property",
-    "action_type": "Action Type",
-    "component_name": "Component Name",
-    "gui_description": "Gui Description"
+    "action-type": "Action Type",
+    "component-name": "Component Name",
+    "gui-description": "Gui Description"
   },
-  "Number": {
+  "number": {
     "property": "Property",
-    "range_min": "Range Min",
-    "range_max": "Range Max",
+    "range-min": "Range Min",
+    "range-max": "Range Max",
     "step": "Step",
     "exponent": "Exponent",
-    "component_name": "Component Name",
-    "background_image": "Background Image",
-    "gui_description": "Gui Description"
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
   },
-  "Trigger": {
+  "trigger": {
     "property": "Property",
-    "component_name": "Component Name",
-    "gui_description": "Gui Description"
+    "component-name": "Component Name",
+    "gui-description": "Gui Description"
   },
-  "FlightControlPanel": {
-    "interact_with_the_area_to_control_the_camera.": "Interact with the area to control the camera.",
-    "mouse_controls:": "Mouse controls:",
-    "click_and_drag_to_rotate._hold": "Click and drag to rotate. Hold",
-    "shift_to_pan": "SHIFT to pan",
-    "control_info": "ALT(option on Mac) to zoom (y-axis) or roll (x-axis)",
-    "touch_controls:": "Touch controls:",
-    "1_finger_to_rotate": "1 finger to rotate",
-    "2_fingers_to_pan": "2 fingers to pan",
-    "3_fingers_to_zoom_(y-axis)_or_roll_(x-axis)": "3 fingers to zoom (y-axis) or roll (x-axis)",
-    "camera_friction": "Camera Friction",
-    "rotation_friction": "Rotation Friction",
+  "flight-control-panel": {
+    "interact-hint": "Interact with the area to control the camera.",
+    "mouse-controls": "Mouse controls:",
+    "click-drag-hint": "Click and drag to rotate. Hold",
+    "shift-to-pan": "SHIFT to pan",
+    "control-info": "ALT(option on Mac) to zoom (y-axis) or roll (x-axis)",
+    "touch-controls": "Touch controls:",
+    "1-finger-to-rotate": "1 finger to rotate",
+    "2-fingers-to-pan": "2 fingers to pan",
+    "three-finger-zoom-hint": "3 fingers to zoom (y-axis) or roll (x-axis)",
+    "camera-friction": "Camera Friction",
+    "rotation-friction": "Rotation Friction",
     "icon": "icon",
-    "zoom_friction": "Zoom Friction",
-    "roll_friction": "Roll Friction",
-    "control_area": "Control Area"
+    "zoom-friction": "Zoom Friction",
+    "roll-friction": "Roll Friction",
+    "control-area": "Control Area"
   },
-  "Image": {
+  "image": {
     "image": "Image"
   },
-  "SessionPanel": {
-    "name_of_recording": "Name of recording",
+  "session-panel": {
+    "name-of-recording": "Name of recording",
     "fps": "FPS",
-    "text_file_format": "Text file format",
+    "text-file-format": "Text file format",
     "play": "Play",
-    "stop_recording": "Stop Recording",
+    "stop-recording": "Stop Recording",
     "pause": "Pause",
     "stop": "Stop",
     "resume": "Resume",
-    "record_session": "Record Session",
+    "record-session": "Record Session",
     "record": "Record",
-    "name_is_already_taken.": "Name is already taken.",
-    "play_session": "Play Session",
-    "force_time_change_to_recorded_time": "Force time change to recorded time",
-    "loop_playback": "Loop Playback",
-    "output_frames": "Output Frames",
-    "playback_file": "Playback File"
+    "name-is-already-taken": "Name is already taken.",
+    "play-session": "Play Session",
+    "force-time-change-to-recorded-time": "Force time change to recorded time",
+    "loop-playback": "Loop Playback",
+    "output-frames": "Output Frames",
+    "playback-file": "Playback File"
   },
-  "TimeDatePicker": {
-    "select_date": "Select Date",
-    "simulation_speed": "Simulation Speed",
+  "time-date-picker": {
+    "select-date": "Select Date",
+    "simulation-speed": "Simulation Speed",
     "realtime": "Realtime",
     "now": "Now"
   },
-  "Title": {
+  "title": {
     "title": "Title",
-    "pageTitle": "Set from Page Title"
+    "pagetitle": "Set from Page Title"
   },
-  "Video": {
+  "video": {
     "video": "Video",
-    "video_helper_text": "Video URL can be Vimeo, Youtube, or direct video link."
+    "video-helper-text": "Video URL can be Vimeo, Youtube, or direct video link."
   },
   "dialog": {
     "close": "Close"
@@ -290,44 +290,47 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next",
-    "more_pages": "More pages"
+    "more-pages": "More pages"
   },
   "sheet": {
     "close": "Close"
   },
-  "NewProjectModal": {
-    "new_project": "Create a New Show",
-    "update_project_header": "Update Show",
-    "project_details": "Some Preliminary Settings for your new show.",
-    "project_name": "Show Name",
-    "project_name_copy": "Enter the name of the show you want to create.",
-    "project_description": "Show Description",
-    "ip_address": "IP Address",
+  "new-project-modal": {
+    "new-project": "Create a New Show",
+    "update-project-header": "Update Show",
+    "project-details": "Some Preliminary Settings for your new show.",
+    "project-name": "Show Name",
+    "project-name-copy": "Enter the name of the show you want to create.",
+    "project-description": "Show Description",
+    "ip-address": "IP Address",
     "port": "Port",
     "cancel": "Cancel",
-    "default_page_size": "Default Page Size",
-    "default_page_size_copy": "The default page size for the presented show.",
-    "page_width": "Page Width",
-    "page_height": "Page Height",
-    "create_project": "Create Show",
-    "update_project": "Update Show",
-    "default_screen_space_position": "Default Screen Space Position",
-    "load_project": "Load Show"
+    "default-page-size": "Default Page Size",
+    "default-page-size-copy": "The default page size for the presented show.",
+    "page-width": "Page Width",
+    "page-height": "Page Height",
+    "create-project": "Create Show",
+    "update-project": "Update Show",
+    "default-screen-space-position": "Default Screen Space Position",
+    "load-project": "Load Show"
   },
-  "LayoutEditModal": {
-    "edit_layout": "Edit Layout",
-    "grid_size": "Grid Size",
-    "grid_size_description": "This will also change default grid size.",
-    "persist_across_pages": "Persist Across Pages"
+  "layout-edit-modal": {
+    "edit-layout": "Edit Layout",
+    "grid-size": "Grid Size",
+    "grid-size-description": "This will also change default grid size.",
+    "persist-across-pages": "Persist Across Pages"
   },
-  "LoadProjectModal": {
-    "load_project": "Open Show",
-    "load_project_description": "Choose a show to open.",
+  "load-project-modal": {
+    "load-project": "Open Show",
+    "load-project-description": "Choose a show to open.",
     "cancel": "Cancel",
-    "add_project": "Open Show",
-    "edit_project": "Edit Show"
+    "add-project": "Open Show",
+    "edit-project": "Edit Show"
   },
-  "ConfirmationModal": {
+  "confirmation-modal": {
     "ok": "OK"
+  },
+  "action-trigger": {
+    "action": "Action"
   }
 }

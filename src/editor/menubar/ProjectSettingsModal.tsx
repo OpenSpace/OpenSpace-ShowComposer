@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Modal, Stack, Text, Textarea, TextInput } from '@mantine/core';
 
 import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
+  const { t } = useTranslation('new-project-modal');
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({
@@ -49,22 +50,22 @@ function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
       opened={isOpen}
       onClose={() => setIsOpen(false)}
       centered
-      title={getCopy('NewProjectModal', 'update_project_header')}
+      title={t('update-project-header')}
     >
-      <Text>{getCopy('NewProjectModal', 'project_details')}</Text>
+      <Text>{t('project-details')}</Text>
       <Text size={'xl'} fw={600} my={'xs'}>
         Show Settings
       </Text>
       <Stack gap={'xs'}>
         <TextInput
-          label={getCopy('NewProjectModal', 'project_name')}
+          label={t('project-name')}
           size={'xs'}
           value={projectName}
           onChange={(e) => setProjectName(e.currentTarget.value)}
           placeholder={'Enter Project Name'}
         />
         <Textarea
-          label={getCopy('NewProjectModal', 'project_description')}
+          label={t('project-description')}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
           placeholder={'Type your description here.'}
@@ -77,10 +78,10 @@ function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
-          {getCopy('NewProjectModal', 'cancel')}
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          {getCopy('NewProjectModal', 'update_project')}
+          {t('update-project')}
         </Button>
       </Group>
     </Modal>

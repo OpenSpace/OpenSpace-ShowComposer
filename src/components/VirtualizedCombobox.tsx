@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Combobox,
@@ -12,7 +13,6 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import Fuse from 'fuse.js';
 
 import { CheckIcon, ChevronsUpDownIcon, SearchIcon } from '@/icons/icons';
-import { getCopy } from '@/utils/copyHelpers';
 
 // Renders a delimited path with the leading segment prominent and the rest dimmed
 function ColoredPath({ value, delimiter }: { value: string; delimiter: string }) {
@@ -56,6 +56,7 @@ export function VirtualizedCombobox({
   delimiter = '>',
   presets = null
 }: Props) {
+  const { t } = useTranslation('virtualized-combobox');
   const [search, setSearch] = useState('');
   // The highlighted option is tracked by index so it stays correct even when the top
   // rows are virtualized out of the DOM
@@ -169,9 +170,7 @@ export function VirtualizedCombobox({
         />
         <Combobox.Options>
           {items.length === 0 ? (
-            <Combobox.Empty>
-              {getCopy('VirtualizedCombobox', 'no_item_found.')}
-            </Combobox.Empty>
+            <Combobox.Empty>{t('no-item-found')}</Combobox.Empty>
           ) : (
             <Box ref={scrollRef} mah={300} style={{ overflowY: 'auto' }}>
               <Box pos={'relative'} h={virtualizer.getTotalSize()}>

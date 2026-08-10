@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
-import { getCopy } from '@/utils/copyHelpers';
 interface Props {
   onConfirm: () => void;
   message: string;
@@ -17,6 +17,7 @@ function DeleteConfirmationModal({
   setOpen: externalSetOpen,
   onClose
 }: Props) {
+  const { t } = useTranslation('delete-confirmation-modal');
   const [internalIsOpen, internalSetOpen] = useState<boolean>(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setOpen = externalSetOpen || internalSetOpen;
@@ -26,7 +27,7 @@ function DeleteConfirmationModal({
       opened={isOpen}
       onClose={() => setOpen(false)}
       centered
-      title={getCopy('DeleteConfirmationModal', 'confirmation_text')}
+      title={t('confirmation-text')}
     >
       <Text>{message}</Text>
       <Group justify={'flex-end'} mt={'md'}>
@@ -39,7 +40,7 @@ function DeleteConfirmationModal({
             }
           }}
         >
-          {getCopy('DeleteConfirmationModal', 'cancel')}
+          {t('cancel')}
         </Button>
         <Button
           variant={'filled'}
@@ -48,7 +49,7 @@ function DeleteConfirmationModal({
             setOpen(false);
           }}
         >
-          {getCopy('DeleteConfirmationModal', 'delete')}
+          {t('delete')}
         </Button>
       </Group>
     </Modal>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, Modal, Text } from '@mantine/core';
 
 import { ActionTriggerModal } from '@/editor/sidebar/modals/preset/ActionTriggerModal';
@@ -43,7 +44,6 @@ import {
   SessionPlaybackComponent,
   SetNavComponent
 } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -69,6 +69,7 @@ export function ComponentModal({
   initialData = {},
   icon
 }: Props) {
+  const { t } = useTranslation('component-modal');
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const removeComponent = useBoundStore((state) => state.removeComponent);
@@ -312,7 +313,7 @@ export function ComponentModal({
       );
       break;
     default:
-      content = <Text>{getCopy('ComponentModal', 'unknown_component_type')}</Text>;
+      content = <Text>{t('unknown-component-type')}</Text>;
   }
 
   return (
@@ -336,17 +337,15 @@ export function ComponentModal({
       }
     >
       <Text size={'sm'} c={'dimmed'} mb={'md'}>
-        {getCopy('ComponentModal', 'configure_copy')}
+        {t('configure-copy')}
       </Text>
       {content}
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={handleCancel}>
-          {getCopy('ComponentModal', 'cancel')}
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          {component
-            ? getCopy('ComponentModal', 'save')
-            : getCopy('ComponentModal', 'create')}
+          {component ? t('save') : t('create')}
         </Button>
       </Group>
     </Modal>

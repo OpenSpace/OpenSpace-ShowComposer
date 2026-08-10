@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -8,7 +9,6 @@ import { NumberComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: NumberComponent | null;
@@ -16,6 +16,7 @@ interface Props {
 }
 
 function NumberModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('number');
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
@@ -97,7 +98,7 @@ function NumberModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Number', 'property')}</InputLabel>
+        <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => setProperty(sortedKeys[v])}
@@ -110,7 +111,7 @@ function NumberModal({ component, handleComponentData }: Props) {
       <SimpleGrid cols={4}>
         <NumberInput
           id={'min'}
-          label={getCopy('Number', 'range_min')}
+          label={t('range-min')}
           placeholder={'Slider Min'}
           value={min || 0}
           onChange={(value) =>
@@ -119,7 +120,7 @@ function NumberModal({ component, handleComponentData }: Props) {
         />
         <NumberInput
           id={'max'}
-          label={getCopy('Number', 'range_max')}
+          label={t('range-max')}
           placeholder={'Slider Max'}
           value={max || 0}
           onChange={(value) =>
@@ -128,7 +129,7 @@ function NumberModal({ component, handleComponentData }: Props) {
         />
         <NumberInput
           id={'step'}
-          label={getCopy('Number', 'step')}
+          label={t('step')}
           placeholder={'Slider Step'}
           value={step || 0}
           onChange={(value) =>
@@ -137,7 +138,7 @@ function NumberModal({ component, handleComponentData }: Props) {
         />
         <NumberInput
           id={'exp'}
-          label={getCopy('Number', 'exponent')}
+          label={t('exponent')}
           placeholder={'Slider Exponent'}
           value={exponent || 0}
           onChange={(value) =>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -9,7 +10,6 @@ import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
 import { ComponentBaseColors, SetFocusComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: SetFocusComponent | null;
@@ -17,6 +17,7 @@ interface Props {
 }
 
 function FocusModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('focus');
   const properties = usePropertyStore(useShallow((state) => state.properties));
   const [property, setProperty] = useState<string>(component?.property || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
@@ -79,7 +80,7 @@ function FocusModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Focus', 'property')}</InputLabel>
+        <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => handlePropertyChange(sortedKeys[v])}

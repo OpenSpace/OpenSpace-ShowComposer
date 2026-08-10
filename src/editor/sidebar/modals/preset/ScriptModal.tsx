@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, InputLabel, Stack } from '@mantine/core';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ComponentBaseColors, ScriptComponent } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   component: ScriptComponent | null;
@@ -12,6 +12,7 @@ interface Props {
 }
 
 function ScriptModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('script');
   const [script, setScript] = useState<string>(component?.script || '');
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
@@ -47,7 +48,7 @@ function ScriptModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>{getCopy('Script', 'script')}</InputLabel>
+        <InputLabel>{t('script')}</InputLabel>
         <Box style={{ maxHeight: '300px', overflowY: 'auto', resize: 'vertical' }}>
           <CodeEditor
             value={script}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
@@ -14,7 +15,6 @@ import {
 } from '@/icons/icons';
 import { Component, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 import { roundToNearest } from '@/utils/math';
 
 import classes from './DraggableComponent.module.css';
@@ -34,6 +34,7 @@ export function DraggableComponent({
   onCopy = () => {},
   onDelete
 }: Props) {
+  const { t } = useTranslation('draggable-component');
   const position = useBoundStore((state) => state.positions[component?.id || '']);
   const updatePosition = useBoundStore((state) => state.updatePosition);
   const tempPosition = useBoundStore((state) => state.tempPositions[component.id]);
@@ -211,17 +212,17 @@ export function DraggableComponent({
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Item leftSection={<EditIcon />} onClick={onEdit}>
-                    {getCopy('DraggableComponent', 'edit')}
+                    {t('edit')}
                   </Menu.Item>
                   <Menu.Item leftSection={<CopyIcon />} onClick={onCopy}>
-                    {getCopy('DraggableComponent', 'copy')}
+                    {t('copy')}
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<TrashIcon />}
                     color={'red'}
                     onClick={handleDeleteClick}
                   >
-                    {getCopy('DraggableComponent', 'delete')}
+                    {t('delete')}
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

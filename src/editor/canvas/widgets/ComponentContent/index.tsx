@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { FlightControlPanel } from '@/editor/canvas/panels/FlightControlPanel/FlightControlPanel';
 import { TimeDatePicker } from '@/editor/canvas/panels/TimeDatePicker/TimeDatePicker';
 import { ActionTriggerWidget } from '@/editor/canvas/widgets/preset/ActionTriggerWidget';
@@ -36,12 +38,12 @@ import {
   VideoComponent
 } from '@/store';
 import { ActionTriggerComponent, ScriptComponent } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 interface Props {
   component: Component;
 }
 
 export function ComponentContent({ component }: Props) {
+  const { t } = useTranslation('draggable-component');
   switch (component?.type) {
     case 'title':
       return <TitleWidget component={component as TitleComponent} />;
@@ -82,6 +84,6 @@ export function ComponentContent({ component }: Props) {
     case 'script':
       return <ScriptWidget component={component as ScriptComponent} />;
     default:
-      return <div>{getCopy('DraggableComponent', 'unknown_component_type')}</div>;
+      return <div>{t('unknown-component-type')}</div>;
   }
 }

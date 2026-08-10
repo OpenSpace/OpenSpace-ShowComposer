@@ -1,8 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { Button, SimpleGrid } from '@mantine/core';
 
 import { PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
 import { RecordingState } from '@/types/enums';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   recordingState: RecordingState;
@@ -19,21 +19,22 @@ function PlaybackControls({
   onTogglePlayback,
   onTogglePlaybackPaused
 }: Props) {
+  const { t } = useTranslation('session-playback');
   switch (recordingState) {
     case RecordingState.Idle:
       return file ? (
         <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlayback}>
-          {getCopy('SessionPlayback', 'play')}
+          {t('play')}
         </Button>
       ) : null;
     case RecordingState.Playing:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
           <Button leftSection={<PauseIcon size={16} />} onClick={onTogglePlaybackPaused}>
-            {getCopy('SessionPlayback', 'pause')}
+            {t('pause')}
           </Button>
           <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
-            {getCopy('SessionPlayback', 'stop')}
+            {t('stop')}
           </Button>
         </SimpleGrid>
       );
@@ -41,10 +42,10 @@ function PlaybackControls({
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
           <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlaybackPaused}>
-            {getCopy('SessionPlayback', 'resume')}
+            {t('resume')}
           </Button>
           <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
-            {getCopy('SessionPlayback', 'stop')}
+            {t('stop')}
           </Button>
         </SimpleGrid>
       );

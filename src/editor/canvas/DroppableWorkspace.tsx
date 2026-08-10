@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Box } from '@mantine/core';
 
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
@@ -7,9 +8,9 @@ import { ScaleGUI } from '@/editor/canvas/ScaleGUI';
 import { SelectionTool } from '@/editor/canvas/SelectionTool';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 export function DroppableWorkspace({ children }: { children: ReactNode }) {
+  const { t } = useTranslation('droppable-workspace');
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const scale = useSettingsStore((state) => state.pageScale);
@@ -114,7 +115,7 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
               backgroundColor: 'var(--mantine-color-dark-5)'
             }}
           >
-            {getCopy('DroppableWorkspace', 'edit_mode')}
+            {t('edit-mode')}
           </Badge>
         )}
 

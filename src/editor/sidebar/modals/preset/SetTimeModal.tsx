@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, NumberInput, Stack } from '@mantine/core';
 
 import { DateTimeStepper } from '@/components/DateTimeStepper';
@@ -7,7 +8,6 @@ import { WidgetSettings } from '@/components/WidgetSettings';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
-import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
 }
 
 function SetTimeModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('set-time');
   const { timeCapped: time } = useSubscribeToTime();
   const [componentTime, setCompontentTime] = useState(component?.time || time);
   const [interpolate, setInterpolate] = useState(component?.interpolate || false);
@@ -102,13 +103,13 @@ function SetTimeModal({ component, handleComponentData }: Props) {
           setCompontentTime(newTime);
         }}
       >
-        {getCopy('SetTime', 'set_time_to_now')}
+        {t('set-time-to-now')}
       </Button>
       <Group align={'flex-end'} wrap={'nowrap'}>
         <NumberInput
           flex={1}
           id={'duration'}
-          label={getCopy('SetTime', 'fade_duration')}
+          label={t('fade-duration')}
           placeholder={'Duration to Fade'}
           value={intDuration}
           onChange={(value) =>

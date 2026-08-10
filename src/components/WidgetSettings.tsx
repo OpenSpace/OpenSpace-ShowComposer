@@ -1,10 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Group, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
 
 import { ColorPicker } from '@/components/ColorPicker';
 import { Image } from '@/components/Image';
 import { ImageUpload } from '@/components/ImageUpload/ImageUpload';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   guiName: string;
@@ -33,11 +33,12 @@ function WidgetSettings({
   lockName,
   setLockName
 }: Props) {
+  const { t } = useTranslation('widget-settings');
   const nameInput = (
     <TextInput
       flex={3}
       id={'guiname'}
-      label={getCopy('WidgetSettings', 'component_name')}
+      label={t('component-name')}
       placeholder={'Name of Component'}
       value={guiName}
       onChange={(e) => setGuiName(e.currentTarget.value)}
@@ -58,13 +59,13 @@ function WidgetSettings({
         <SimpleGrid cols={2} spacing={'md'}>
           <Stack gap={'md'}>
             <Text size={'sm'} fw={500}>
-              {getCopy('WidgetSettings', 'background_color')}
+              {t('background-color')}
             </Text>
             <ColorPicker color={color} setColor={setColor} />
           </Stack>
           <Stack gap={'md'}>
             <Text size={'sm'} fw={500}>
-              {getCopy('WidgetSettings', 'background_image')}
+              {t('background-image')}
             </Text>
             <Image
               w={backgroundImage.length > 0 ? 128 : 64}
@@ -79,7 +80,7 @@ function WidgetSettings({
       </Stack>
       <Textarea
         id={'description'}
-        label={getCopy('WidgetSettings', 'gui_description')}
+        label={t('gui-description')}
         value={guiDescription}
         onChange={(e) => setGuiDescription(e.currentTarget.value)}
         placeholder={'Type your message here.'}

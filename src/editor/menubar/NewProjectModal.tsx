@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Group,
@@ -13,7 +14,6 @@ import {
 import { Toggle } from '@/components/Toggle';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { getCopy } from '@/utils/copyHelpers';
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface Props {
 }
 
 function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
+  const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
   const initialState = useSettingsStore((state) => ({
@@ -83,22 +84,22 @@ function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
       opened={isOpen}
       onClose={() => setIsOpen(false)}
       centered
-      title={getCopy('NewProjectModal', 'new_project')}
+      title={t('new-project')}
     >
-      <Text>{getCopy('NewProjectModal', 'project_details')}</Text>
+      <Text>{t('project-details')}</Text>
       <Text size={'xl'} fw={600} my={'xs'}>
         Show Settings
       </Text>
       <Stack gap={'xs'}>
         <TextInput
-          label={getCopy('NewProjectModal', 'project_name')}
+          label={t('project-name')}
           size={'xs'}
           value={projectName}
           onChange={(e) => setProjectName(e.currentTarget.value)}
           placeholder={'Enter Project Name'}
         />
         <Textarea
-          label={getCopy('NewProjectModal', 'project_description')}
+          label={t('project-description')}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
           placeholder={'Type your description here.'}
@@ -112,33 +113,33 @@ function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
           Workspace Settings
         </Text>
         <Text size={'sm'} fw={600}>
-          {getCopy('ConnectionSettings', 'openspace_connection')}
+          {t('connection-settings:openspace-connection')}
         </Text>
         <Text size={'sm'} c={'dimmed'}>
-          {getCopy('ConnectionSettings', 'address_copy')}
+          {t('connection-settings:address-copy')}
         </Text>
         <TextInput
-          label={getCopy('NewProjectModal', 'ip_address')}
+          label={t('ip-address')}
           size={'xs'}
           value={ip}
           onChange={(e) => setIp(e.currentTarget.value)}
           placeholder={'Enter IP'}
         />
         <TextInput
-          label={getCopy('NewProjectModal', 'port')}
+          label={t('port')}
           size={'xs'}
           value={port}
           onChange={(e) => setPort(e.currentTarget.value)}
           placeholder={'Enter Port'}
         />
         <Text size={'sm'} fw={600}>
-          {getCopy('NewProjectModal', 'default_page_size')}
+          {t('default-page-size')}
         </Text>
         <Text size={'sm'} c={'dimmed'}>
-          {getCopy('NewProjectModal', 'default_page_size_copy')}
+          {t('default-page-size-copy')}
         </Text>
         <NumberInput
-          label={getCopy('NewProjectModal', 'page_width')}
+          label={t('page-width')}
           size={'xs'}
           allowDecimal={false}
           value={pageWidth}
@@ -148,7 +149,7 @@ function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
           placeholder={'Enter Default Page Width'}
         />
         <NumberInput
-          label={getCopy('NewProjectModal', 'page_height')}
+          label={t('page-height')}
           size={'xs'}
           allowDecimal={false}
           value={pageHeight}
@@ -160,14 +161,14 @@ function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
-          {getCopy('NewProjectModal', 'cancel')}
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          {getCopy('NewProjectModal', 'create_project')}
+          {t('create-project')}
         </Button>
         {handleLoadProjects && (
           <Button variant={'filled'} onClick={handleLoadProjects}>
-            {getCopy('NewProjectModal', 'load_project')}
+            {t('load-project')}
           </Button>
         )}
       </Group>

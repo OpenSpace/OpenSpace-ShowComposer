@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -9,7 +10,6 @@ import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
 import { NavigationState } from '@/types/types';
-import { getCopy } from '@/utils/copyHelpers';
 import { formatDate } from '@/utils/time';
 
 interface Props {
@@ -18,6 +18,7 @@ interface Props {
 }
 
 function SetNavModal({ component, handleComponentData }: Props) {
+  const { t } = useTranslation('set-navigation');
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time } = useSubscribeToTime();
   const [navigationState, setNavigationState] = useState<NavigationState | undefined>(
@@ -107,7 +108,7 @@ function SetNavModal({ component, handleComponentData }: Props) {
   return (
     <Stack gap={'md'}>
       <Button variant={'filled'} onClick={getNavigationState}>
-        {getCopy('SetNavigation', 'save_current_navigation_state')}
+        {t('save-current-navigation-state')}
       </Button>
       <Stack gap={'xs'}>
         <InputLabel>
@@ -123,7 +124,7 @@ function SetNavModal({ component, handleComponentData }: Props) {
           <InputLabel>
             <Group gap={4} wrap={'nowrap'}>
               <ClockIcon size={14} />
-              {getCopy('SetNavigation', 'navigation_state_time')}
+              {t('navigation-state-time')}
             </Group>
           </InputLabel>
           <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
@@ -134,7 +135,7 @@ function SetNavModal({ component, handleComponentData }: Props) {
         <NumberInput
           flex={1}
           id={'duration'}
-          label={getCopy('SetNavigation', 'fade_duration')}
+          label={t('fade-duration')}
           disabled={mode === 'jump'}
           style={{ opacity: mode !== 'jump' ? 1 : 0.5 }}
           placeholder={'Duration to Fade'}
@@ -144,7 +145,7 @@ function SetNavModal({ component, handleComponentData }: Props) {
           }
         />
         <Stack flex={1} gap={'xs'}>
-          <InputLabel>{getCopy('SetNavigation', 'transition_mode')}</InputLabel>
+          <InputLabel>{t('transition-mode')}</InputLabel>
           <Select
             allowDeselect={false}
             data={[
