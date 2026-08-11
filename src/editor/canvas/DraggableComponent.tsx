@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import { Rnd } from 'react-rnd';
 import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
 import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
-import { ComponentContent } from '@/editor/canvas/widgets/ComponentContent';
 import {
   CopyIcon,
   EditIcon,
@@ -21,6 +20,7 @@ import classes from './DraggableComponent.module.css';
 
 interface Props {
   component: Component;
+  children: ReactNode;
   layoutId?: string;
   onEdit: () => void;
   onCopy?: () => void;
@@ -29,6 +29,7 @@ interface Props {
 
 export function DraggableComponent({
   component,
+  children,
   layoutId,
   onEdit,
   onCopy = () => {},
@@ -77,9 +78,11 @@ export function DraggableComponent({
     });
   };
 
-  const isMultiLoading = component.isMulti?.includes('pending');
-  const isHidden = component.isMulti?.includes('true');
-  const hideOnPresent = component.isDisabled && isPresentMode;
+  // Components that belong to a multi (during edit or saved) should not render on the canvas
+  if (component.isMulti !== 'false') {
+    return null;
+  }
+
   const isHighlighted = (isDragging || isSelected) && !isPresentMode;
 
   const getComponentPosition = () => {
@@ -149,15 +152,11 @@ export function DraggableComponent({
           background: isPresentMode
             ? undefined
             : alpha('var(--mantine-color-gray-3)', 0.25),
-          opacity: isMultiLoading || component.isDisabled ? 0.25 : 1,
           zIndex: isHighlighted ? 999 : undefined,
           boxShadow: isHighlighted
             ? `0 10px 15px -3px ${alpha('var(--mantine-color-gray-4)', 0.5)}`
             : undefined,
-          transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none',
-          // FIX: Because the component needs to be mounted to run its effects, we have to do some
-          // trickery to hide it from view when it's in a multi state
-          ...(isHidden || hideOnPresent ? { display: 'none' } : {})
+          transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none'
         }}
       >
         {!isPresentMode && (
@@ -240,11 +239,10 @@ export function DraggableComponent({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 'var(--mantine-radius-md)',
-            padding: layoutId ? 8 : '8px 16px',
-            pointerEvents: component.isDisabled ? 'none' : undefined
+            padding: layoutId ? 8 : '8px 16px'
           }}
         >
-          <ComponentContent component={component} />
+          {children}
         </Box>
       </Rnd>
       <DeleteConfirmationModal

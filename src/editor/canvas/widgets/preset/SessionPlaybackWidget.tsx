@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -7,22 +7,20 @@ import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { PlaybackControls } from '@/components/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { useBoundStore } from '@/store/boundStore';
 import { SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 
 interface Props {
   component: SessionPlaybackComponent;
-  shouldRender?: boolean;
 }
 
-function SessionPlaybackWidget({ component, shouldRender = true }: Props) {
+function SessionPlaybackWidget({ component }: Props) {
   const { file, loop, gui_name, gui_description } = component;
   const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
   const luaApi = useOpenSpaceApi();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
   const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
+  const disabled = !luaApi;
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
@@ -46,29 +44,11 @@ function SessionPlaybackWidget({ component, shouldRender = true }: Props) {
     luaApi?.sessionRecording.togglePlaybackPause();
   }
 
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          togglePlayback();
-        },
-        isDisabled: false
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [luaApi, file, loop, isIdle]);
-
-  if (!shouldRender) {
-    return null;
-  }
-
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
+      disabled={disabled}
     >
       <Stack align={'center'} gap={'xs'}>
         {gui_name || gui_description ? (

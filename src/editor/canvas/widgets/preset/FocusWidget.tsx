@@ -1,62 +1,32 @@
-import { useEffect } from 'react';
-
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { componentActions } from '@/editor/componentActions';
 import { useProperty, useSubscribeToProperty } from '@/hooks/properties';
-import {
-  NavigationAimKey,
-  NavigationAnchorKey,
-  RetargetAnchorKey
-} from '@/store/apiStore';
-import { useBoundStore } from '@/store/boundStore';
+import { NavigationAnchorKey } from '@/store/apiStore';
 import { SetFocusComponent } from '@/types/components';
 
 interface Props {
   component: SetFocusComponent;
-  shouldRender?: boolean;
 }
 
-function FocusWidget({ component, shouldRender = true }: Props) {
+function FocusWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
-  // Reading Renderable.Enabled lets us check whether the scene node exists.
-  const [enabledValue] = useProperty(
+  useSubscribeToProperty(NavigationAnchorKey);
+  // Reading Renderable.Enabled tells us whether the scene node exists.
+  const [enabled] = useProperty(
     'BoolProperty',
     `Scene.${component.property}.Renderable.Enabled`
   );
-
-  useSubscribeToProperty(NavigationAnchorKey);
-
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          luaApi.setPropertyValueSingle(RetargetAnchorKey, null);
-          luaApi.setPropertyValueSingle(NavigationAnchorKey, component.property);
-          luaApi.setPropertyValueSingle(NavigationAimKey, '');
-        },
-        isDisabled: enabledValue === undefined
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [component.id, component.property, luaApi, enabledValue]);
-
-  if (!shouldRender) {
-    return null;
-  }
+  const disabled = !luaApi || enabled === undefined;
 
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      onClick={() => {
-        component.triggerAction?.();
-      }}
+      disabled={disabled}
+      onClick={componentActions.setfocus(component)}
     >
       {component.gui_name || component.gui_description ? (
         <DisplayLabel>

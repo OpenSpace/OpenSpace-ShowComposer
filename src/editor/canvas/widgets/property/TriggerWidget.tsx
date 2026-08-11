@@ -1,48 +1,27 @@
-import { useEffect } from 'react';
-
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import { TriggerComponent } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { triggerTrigger } from '@/utils/triggerHelpers';
 
 interface Props {
   component: TriggerComponent;
-  shouldRender?: boolean;
 }
 
-function TriggerWidget({ component, shouldRender = true }: Props) {
+function TriggerWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
+  // Trigger properties carry no value, so existence is checked via metadata.
   const [, , meta] = useProperty('TriggerProperty', component.property);
-
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          triggerTrigger(component.property);
-        },
-        isDisabled: meta === undefined
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [component.id, component.property, luaApi, meta, updateComponent]);
-
-  if (!shouldRender) {
-    return null;
-  }
+  const disabled = !luaApi || meta === undefined;
 
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      onClick={() => component.triggerAction?.()}
+      disabled={disabled}
+      onClick={componentActions.trigger(component)}
     >
       <DisplayLabel>
         {component.gui_name}

@@ -1,11 +1,14 @@
 import { Flex } from '@mantine/core';
 
+import { useSettingsStore } from '@/store';
+
 interface Props {
   children: React.ReactNode;
   onClick?: () => void;
   backgroundImage?: string;
   backgroundColor?: string;
   style?: React.CSSProperties;
+  disabled?: boolean;
 }
 
 function ComponentContainer({
@@ -13,8 +16,19 @@ function ComponentContainer({
   onClick,
   backgroundImage,
   backgroundColor,
-  style
+  style,
+  disabled = false
 }: Props) {
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
+
+  // A disabled widget is hidden outright in present mode; in edit mode it dims and stops
+  // responding to clicks.
+  const disabledStyle: React.CSSProperties = disabled
+    ? isPresentMode
+      ? { display: 'none' }
+      : { opacity: 0.25, pointerEvents: 'none' }
+    : {};
+
   return (
     <Flex
       pos={'absolute'}
@@ -33,7 +47,8 @@ function ComponentContainer({
         backgroundPosition: 'center',
         backgroundImage: `url(${backgroundImage})`,
         backgroundColor: backgroundColor,
-        ...style
+        ...style,
+        ...disabledStyle
       }}
     >
       {children}

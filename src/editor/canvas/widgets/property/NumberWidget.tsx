@@ -4,10 +4,9 @@ import { Group, InputLabel, NumberInput, Slider, Stack } from '@mantine/core';
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { Information } from '@/components/Information';
+import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import { NumberComponent } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { triggerNumber } from '@/utils/triggerHelpers';
 
 // Slider position -> the value sent to OpenSpace
 function getScale(position: number, min: number, max: number, exponent: number) {
@@ -28,12 +27,11 @@ interface Props {
 }
 
 function NumberWidget({ component }: Props) {
-  const updateComponent = useBoundStore((state) => state.updateComponent);
-
+  const luaApi = useOpenSpaceApi();
   const [value] = useProperty('FloatProperty', component.property);
   const [tempValue, setTempValue] = useState<number>(value ?? 0);
-
-  const luaApi = useOpenSpaceApi();
+  // Disabled when disconnected or the property does not exist.
+  const disabled = !luaApi || value === undefined;
 
   const range = component.max - component.min;
 
@@ -41,25 +39,11 @@ function NumberWidget({ component }: Props) {
     setTempValue(value ?? 0);
   }, [value]);
 
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: (_value: number) => {
-          triggerNumber(component.property, _value);
-        },
-        isDisabled: value === undefined
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [component.id, component.property, luaApi, value, updateComponent]);
-
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
+      disabled={disabled}
     >
       <Stack w={'85%'} gap={'md'} py={'md'}>
         <Group gap={'xs'} wrap={'nowrap'}>
@@ -82,7 +66,7 @@ function NumberWidget({ component }: Props) {
           step={component.step}
           scale={(v) => getScale(v, component.min, component.max, component.exponent)}
           onChange={(v) =>
-            component.triggerAction?.(
+            componentActions.number(component)(
               getScale(v, component.min, component.max, component.exponent)
             )
           }
@@ -104,13 +88,13 @@ function NumberWidget({ component }: Props) {
               String(event.source) === 'increment' ||
               String(event.source) === 'decrement'
             ) {
-              component.triggerAction?.(numeric);
+              componentActions.number(component)(numeric);
             }
           }}
-          onBlur={() => component.triggerAction?.(tempValue)}
+          onBlur={() => componentActions.number(component)(tempValue)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              component.triggerAction?.(tempValue);
+              componentActions.number(component)(tempValue);
             }
           }}
         />

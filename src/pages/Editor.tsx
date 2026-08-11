@@ -3,7 +3,7 @@ import { ActionIcon, Box, Flex } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Canvas } from '@/editor/canvas/Canvas';
-import { useComponentTypes } from '@/editor/componentTypes';
+import { componentsData } from '@/editor/componentsData';
 import { LayoutEditModal } from '@/editor/sidebar/LayoutEditModal';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { Sidebar } from '@/editor/sidebar/Sidebar';
@@ -32,8 +32,6 @@ function Editor() {
   const pagesLength = useBoundStore((state) => state.pages?.length);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  const { allComponentTypes } = useComponentTypes();
 
   useEffect(() => {
     if (pagesLength == 0 && currentPage == '') {
@@ -114,7 +112,11 @@ function Editor() {
             onClose={handleModalClose}
             componentId={currentComponentId}
             type={currentComponentType}
-            icon={allComponentTypes.find((v) => v.type == currentComponentType)?.icon}
+            icon={
+              currentComponentType
+                ? componentsData[currentComponentType]?.renderIcon()
+                : undefined
+            }
           />
           <LayoutEditModal
             isOpen={showEditModal}

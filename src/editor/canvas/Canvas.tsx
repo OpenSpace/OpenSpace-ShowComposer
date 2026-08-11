@@ -4,6 +4,7 @@ import { Box, Group } from '@mantine/core';
 
 import { Pagination } from '@/components/Pagination';
 import { ToggleButton } from '@/components/ToggleButton';
+import { renderComponentWidget } from '@/editor/componentsData';
 import { useConnectionStatus } from '@/hooks/util';
 import {
   ClockIcon,
@@ -133,7 +134,9 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
                       onEdit={() => onEditComponent(childId)}
                       onDelete={() => handleDeleteComponent(childId)}
                       onCopy={() => handleCopyComponent(childId)}
-                    />
+                    >
+                      {renderComponentWidget(component)}
+                    </DraggableComponent>
                   );
                 })}
               </LayoutContainer>
@@ -161,7 +164,9 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
                 onEdit={() => onEditComponent(componentId)}
                 onDelete={() => handleDeleteComponent(componentId)}
                 onCopy={() => handleCopyComponent(componentId)}
-              />
+              >
+                {renderComponentWidget(component)}
+              </DraggableComponent>
             );
           })}
         </DroppableWorkspace>

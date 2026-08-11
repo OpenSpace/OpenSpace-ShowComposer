@@ -50,7 +50,6 @@ export interface ComponentBase {
   lockName?: boolean;
   gui_name: string;
   gui_description: string;
-  isDisabled: boolean;
   color?: string;
 }
 
@@ -115,7 +114,6 @@ export interface SessionPlaybackComponent extends ComponentBase {
   file: string;
   loop: boolean;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface FlyToComponent extends ComponentBase {
@@ -127,7 +125,6 @@ export interface FlyToComponent extends ComponentBase {
   long?: number;
   alt?: number;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface FadeComponent extends ComponentBase {
@@ -136,7 +133,6 @@ export interface FadeComponent extends ComponentBase {
   intDuration: number;
   action: Toggle;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface SetTimeComponent extends ComponentBase {
@@ -146,7 +142,6 @@ export interface SetTimeComponent extends ComponentBase {
   interpolate: boolean;
   fadeScene: boolean;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface SetNavComponent extends ComponentBase {
@@ -158,20 +153,17 @@ export interface SetNavComponent extends ComponentBase {
   mode: 'jump' | 'fade' | 'fly';
   backgroundImage: string;
   intDuration: number;
-  triggerAction: () => void;
 }
 export interface SetFocusComponent extends ComponentBase {
   type: 'setfocus';
   property: string;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface ActionTriggerComponent extends ComponentBase {
   type: 'action';
   action: string;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface BooleanComponent extends ComponentBase {
@@ -179,7 +171,6 @@ export interface BooleanComponent extends ComponentBase {
   property: string;
   action: Toggle;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 export interface NumberComponent extends ComponentBase {
   type: 'number';
@@ -189,26 +180,22 @@ export interface NumberComponent extends ComponentBase {
   exponent: number;
   property: string;
   backgroundImage: string;
-  triggerAction: (value: number) => void;
 }
 export interface TriggerComponent extends ComponentBase {
   type: 'trigger';
   property: string;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 export interface ScriptComponent extends ComponentBase {
   type: 'script';
   script: string;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface PageComponent extends ComponentBase {
   type: 'page';
   page: number;
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export interface LayoutBase {
@@ -236,68 +223,6 @@ export type MultiOption =
   | ActionTriggerComponent
   | ScriptComponent;
 
-export const staticComponents = [
-  { value: 'richtext', label: 'Rich Text' },
-  { value: 'title', label: 'Title' },
-  { value: 'video', label: 'Video' },
-  { value: 'image', label: 'Image' }
-];
-export const presetComponents = [
-  { value: 'fade', label: 'Fade' },
-  { value: 'setfocus', label: 'Set Focus' },
-  { value: 'setnavstate', label: 'Set Navigation' },
-  { value: 'flyto', label: 'Fly To' },
-  { value: 'settime', label: 'Set Time' },
-  { value: 'multi', label: 'Multi' },
-  { value: 'sessionplayback', label: 'Session Playback' },
-  { value: 'page', label: 'Go To Page' },
-  { value: 'action', label: 'Trigger Action' },
-  { value: 'script', label: 'Lua Script' }
-];
-
-export const propertyComponents = [
-  { value: 'boolean', label: 'Boolean' },
-  { value: 'number', label: 'Number' },
-  { value: 'trigger', label: 'Trigger' }
-];
-
-export const allComponentLabels = [
-  ...presetComponents,
-  ...staticComponents,
-  ...propertyComponents
-];
-
-export const multiOptions = [
-  { value: 'trigger', label: 'Trigger' },
-  { value: 'boolean', label: 'Boolean' },
-  { value: 'fade', label: 'Fade' },
-  { value: 'setfocus', label: 'Set Focus' },
-  { value: 'flyto', label: 'Fly To' },
-  { value: 'settime', label: 'Set Time' },
-  { value: 'sessionplayback', label: 'Session Playback' },
-  { value: 'setnavstate', label: 'Set Navigation' },
-  { value: 'action', label: 'Trigger Action' },
-  { value: 'page', label: 'Go To Page' },
-  { value: 'script', label: 'Lua Script' }
-];
-
-//create typeguard to determing if opbject is of type MultiOption
-export const isMultiOption = (option: Component): option is MultiOption => {
-  return (
-    option.type === 'trigger' ||
-    option.type === 'boolean' ||
-    option.type === 'fade' ||
-    option.type === 'setfocus' ||
-    option.type === 'flyto' ||
-    option.type === 'settime' ||
-    option.type === 'sessionplayback' ||
-    option.type === 'setnavstate' ||
-    option.type === 'action' ||
-    option.type === 'page' ||
-    option.type === 'script'
-  );
-};
-
 export interface MultiComponent extends ComponentBase {
   type: 'multi';
   components: {
@@ -308,7 +233,6 @@ export interface MultiComponent extends ComponentBase {
     chained: boolean;
   }[];
   backgroundImage: string;
-  triggerAction: () => void;
 }
 
 export type Component =
@@ -330,6 +254,34 @@ export type Component =
   | ActionTriggerComponent
   | MultiComponent
   | ScriptComponent;
+
+// Maps each component `type` string to its concrete component interface. Panels / `default` have
+// no dedicated widget/modal, so the base type suffices.
+export type ComponentFor = {
+  fade: FadeComponent;
+  flyto: FlyToComponent;
+  setfocus: SetFocusComponent;
+  settime: SetTimeComponent;
+  setnavstate: SetNavComponent;
+  action: ActionTriggerComponent;
+  script: ScriptComponent;
+  sessionplayback: SessionPlaybackComponent;
+  page: PageComponent;
+  boolean: BooleanComponent;
+  number: NumberComponent;
+  trigger: TriggerComponent;
+  multi: MultiComponent;
+  richtext: RichTextComponent;
+  title: TitleComponent;
+  video: VideoComponent;
+  image: ImageComponent;
+  timepanel: ComponentBase;
+  navpanel: ComponentBase;
+  statuspanel: ComponentBase;
+  recordpanel: ComponentBase;
+  logpanel: ComponentBase;
+  default: ComponentBase;
+};
 
 export type ImmerStateCreator<T, TBase> = StateCreator<
   T,

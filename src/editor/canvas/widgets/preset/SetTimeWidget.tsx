@@ -1,14 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { StatusBar, StatusBarRef } from '@/components/StatusBar';
+import { componentActions } from '@/editor/componentActions';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { SetTimeComponent as SetTimeType } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { jumpToTime } from '@/utils/time';
 
 interface Props {
   component: SetTimeType;
@@ -16,33 +15,9 @@ interface Props {
 
 function SetTimeWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
+  // Keep the time topic subscribed so jumpToTime has a current time to interpolate from.
   useSubscribeToTime();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          jumpToTime(
-            new Date(component.time),
-            component.interpolate,
-            component.intDuration,
-            component.fadeScene
-          );
-        },
-        isDisabled: false
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [
-    component.time,
-    component.interpolate,
-    component.intDuration,
-    component.fadeScene,
-    luaApi
-  ]);
+  const disabled = !luaApi;
 
   // Fadetime is in seconds
   const fadeOutDuration = 400; // 1 second fade out
@@ -54,8 +29,9 @@ function SetTimeWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
+      disabled={disabled}
       onClick={() => {
-        component.triggerAction?.();
+        componentActions.settime(component)();
         triggerAnimation();
       }}
     >

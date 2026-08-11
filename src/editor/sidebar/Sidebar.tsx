@@ -13,7 +13,7 @@ import {
 import favicon from '@/assets/images/favicon.png';
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
 import { Feedback } from '@/components/Feedback';
-import { useComponentTypes } from '@/editor/componentTypes';
+import { componentPalette } from '@/editor/componentsData';
 import { GlobalMenuBar } from '@/editor/menubar/GlobalMenuBar';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
 import { Undo } from '@/editor/sidebar/Undo';
@@ -28,8 +28,9 @@ interface Props {
 export function Sidebar({ onAddComponent }: Props) {
   const { t } = useTranslation('main');
   const projectName = useSettingsStore((state) => state.projectName);
-  const { staticComponentTypes, presetComponentTypes, propertyComponentTypes } =
-    useComponentTypes();
+  const staticComponentTypes = componentPalette.filter((d) => d.group === 'static');
+  const presetComponentTypes = componentPalette.filter((d) => d.group === 'preset');
+  const propertyComponentTypes = componentPalette.filter((d) => d.group === 'property');
 
   return (
     <Box h={'100%'} p={'md'} pr={'xs'}>
@@ -89,11 +90,11 @@ export function Sidebar({ onAddComponent }: Props) {
                   key={v.type}
                   size={'sm'}
                   justify={'space-between'}
-                  leftSection={v.icon}
+                  leftSection={v.renderIcon()}
                   style={{ containerType: 'inline-size' }}
                   onClick={() => onAddComponent(v.type)}
                 >
-                  <span className={classes.componentButtonLabel}>{v.name}</span>
+                  <span className={classes.componentButtonLabel}>{t(v.nameKey)}</span>
                 </Button>
               ))}
             </SimpleGrid>
@@ -107,11 +108,11 @@ export function Sidebar({ onAddComponent }: Props) {
                   size={'sm'}
                   variant={'light'}
                   justify={'space-between'}
-                  leftSection={v.icon}
+                  leftSection={v.renderIcon()}
                   style={{ containerType: 'inline-size' }}
                   onClick={() => onAddComponent(v.type)}
                 >
-                  <span className={classes.componentButtonLabel}>{v.name}</span>
+                  <span className={classes.componentButtonLabel}>{t(v.nameKey)}</span>
                 </Button>
               ))}
             </SimpleGrid>
@@ -125,11 +126,11 @@ export function Sidebar({ onAddComponent }: Props) {
                   size={'sm'}
                   variant={'filled'}
                   justify={'space-between'}
-                  leftSection={v.icon}
+                  leftSection={v.renderIcon()}
                   style={{ containerType: 'inline-size' }}
                   onClick={() => onAddComponent(v.type)}
                 >
-                  <span className={classes.componentButtonLabel}>{v.name}</span>
+                  <span className={classes.componentButtonLabel}>{t(v.nameKey)}</span>
                 </Button>
               ))}
             </SimpleGrid>

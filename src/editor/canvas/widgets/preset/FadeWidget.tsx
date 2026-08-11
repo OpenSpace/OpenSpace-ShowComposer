@@ -1,54 +1,25 @@
-import { useEffect } from 'react';
-
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { StatusBarControlled } from '@/components/StatusBarControlled';
+import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import { FadeComponent } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { triggerFade } from '@/utils/triggerHelpers';
 
 interface Props {
   component: FadeComponent;
-  shouldRender?: boolean;
 }
 
-function FadeWidget({ component, shouldRender = true }: Props) {
+function FadeWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
   const [opacity] = useProperty('FloatProperty', component.property);
   const [fadeValue] = useProperty(
     'FloatProperty',
     component?.property?.replace('.Opacity', '.Fade') ?? ''
   );
-
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          triggerFade(component.property, component.intDuration, component.action);
-        },
-        isDisabled: opacity === undefined
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [
-    component.id,
-    component.action,
-    component.intDuration,
-    component.property,
-    opacity,
-    luaApi
-  ]);
-
-  if (!shouldRender) {
-    return null;
-  }
+  // Disabled when disconnected or the opacity property does not exist.
+  const disabled = !luaApi || opacity === undefined;
 
   // Reflect the value of fade on the card outline: faded in (green),
   // faded out (red), transitioning/disconnected (grey)
@@ -63,6 +34,7 @@ function FadeWidget({ component, shouldRender = true }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
+      disabled={disabled}
       style={{
         top: '4px',
         left: '4px',
@@ -72,9 +44,7 @@ function FadeWidget({ component, shouldRender = true }: Props) {
         outlineOffset: '2px',
         transition: 'outline-color 300ms'
       }}
-      onClick={() => {
-        component.triggerAction?.();
-      }}
+      onClick={componentActions.fade(component)}
     >
       {fadeValue !== undefined ? (
         <StatusBarControlled progress={fadeValue} debounceDuration={0} />

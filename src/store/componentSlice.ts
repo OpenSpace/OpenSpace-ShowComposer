@@ -335,8 +335,7 @@ export const createComponentSlice: ImmerStateCreator<
         type: 'timepanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Time Panel',
-        gui_description: '',
-        isDisabled: false
+        gui_description: ''
       };
 
       state.navpanel = {
@@ -344,32 +343,28 @@ export const createComponentSlice: ImmerStateCreator<
         type: 'navpanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Nav Panel',
-        gui_description: '',
-        isDisabled: false
+        gui_description: ''
       };
       state.statuspanel = {
         id: statuspanelId,
         type: 'statuspanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Status Panel',
-        gui_description: '',
-        isDisabled: false
+        gui_description: ''
       };
       state.recordpanel = {
         id: recordpanelId,
         type: 'recordpanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Record Panel',
-        gui_description: '',
-        isDisabled: false
+        gui_description: ''
       };
       state.logpanel = {
         id: logpanelId,
         type: 'logpanel',
         isMulti: 'false' as MultiState,
         gui_name: 'Error Log Panel',
-        gui_description: '',
-        isDisabled: false
+        gui_description: ''
       };
     });
     get().addPosition(navpanelId, {

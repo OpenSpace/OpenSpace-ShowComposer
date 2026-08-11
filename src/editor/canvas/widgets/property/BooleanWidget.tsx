@@ -1,49 +1,20 @@
-import { useEffect } from 'react';
-
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import { BooleanComponent } from '@/store';
-import { useBoundStore } from '@/store/boundStore';
-import { triggerBool } from '@/utils/triggerHelpers';
 
 interface Props {
   component: BooleanComponent;
-  shouldRender?: boolean;
 }
 
-function BooleanWidget({ component, shouldRender = true }: Props) {
+function BooleanWidget({ component }: Props) {
   const luaApi = useOpenSpaceApi();
-  const updateComponent = useBoundStore((state) => state.updateComponent);
   const [value] = useProperty('BoolProperty', component.property);
-
-  useEffect(() => {
-    if (luaApi) {
-      updateComponent(component.id, {
-        triggerAction: () => {
-          triggerBool(component.property, component.action);
-        },
-        isDisabled: value === undefined
-      });
-    } else {
-      updateComponent(component.id, {
-        isDisabled: true
-      });
-    }
-  }, [
-    component.id,
-    component.action,
-    component.property,
-    value,
-    luaApi,
-    updateComponent
-  ]);
-
-  if (!shouldRender) {
-    return null;
-  }
+  // Disabled when disconnected or the property does not exist.
+  const disabled = !luaApi || value === undefined;
 
   // Reflect the property state on the card outline: on (green), off (red),
   // unknown/disconnected (grey)
@@ -58,6 +29,7 @@ function BooleanWidget({ component, shouldRender = true }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
+      disabled={disabled}
       style={{
         top: '4px',
         left: '4px',
@@ -67,9 +39,7 @@ function BooleanWidget({ component, shouldRender = true }: Props) {
         outlineOffset: '2px',
         transition: 'outline-color 300ms'
       }}
-      onClick={() => {
-        component.triggerAction?.();
-      }}
+      onClick={componentActions.boolean(component)}
     >
       <DisplayLabel>
         {component.gui_name}

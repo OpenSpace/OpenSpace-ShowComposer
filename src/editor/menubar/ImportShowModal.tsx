@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { confirmStoreImport } from '@/api/showbuilder';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
+import { componentsData } from '@/editor/componentsData';
 import { Position, useSettingsStore } from '@/store';
 import { BoundStoreState, useBoundStore } from '@/store/boundStore';
 import { SettingsStoreState } from '@/store/settingsStore';
-import {
-  allComponentLabels,
-  ComponentBase,
-  LayoutBase,
-  MultiComponent,
-  Page
-} from '@/types/components';
+import { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
 
 type MultiOption = {
   component: MultiComponent['id'];
@@ -39,6 +35,7 @@ type SelectedPage = {
 };
 
 function ImportShowModal({ isOpen, onClose, store }: Props) {
+  const { t } = useTranslation('main');
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
@@ -291,12 +288,16 @@ function ImportShowModal({ isOpen, onClose, store }: Props) {
                     .filter((v) => !store.boundStore.layouts[v])
                     .map((componentId, index) => {
                       const component = store.boundStore.components[componentId];
+                      const nameKey = component
+                        ? componentsData[component.type]?.nameKey
+                        : undefined;
                       return (
                         <Text span key={componentId} c={'dimmed'}>
                           {component && component.gui_name?.length > 0
                             ? component.gui_name
-                            : allComponentLabels.find((v) => v.value === component?.type)
-                                ?.label}
+                            : nameKey
+                              ? t(nameKey)
+                              : ''}
                           {index <
                           page.components.filter((v) => !store.boundStore.layouts[v])
                             .length -

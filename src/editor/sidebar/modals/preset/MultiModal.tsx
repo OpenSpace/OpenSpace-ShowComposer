@@ -16,6 +16,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { componentPalette, componentsData } from '@/editor/componentsData';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
@@ -23,10 +24,8 @@ import {
   Component,
   ComponentBaseColors,
   ComponentType,
-  isMultiOption,
   MultiComponent,
-  MultiOption,
-  multiOptions as MultiOptions
+  MultiOption
 } from '@/types/components';
 
 // One entry in a Multi's ordered list of chained/parallel sub-components
@@ -45,7 +44,7 @@ interface Props {
 }
 
 function MultiModal({ component, handleComponentData }: Props) {
-  const { t } = useTranslation('multi');
+  const { t } = useTranslation(['multi', 'main']);
   const [items, setItems] = useState<MultiType[]>(
     component
       ? component.components.map((v) => ({
@@ -64,10 +63,17 @@ function MultiModal({ component, handleComponentData }: Props) {
   const removeComponent = useBoundStore((state) => state.removeComponent);
   // only return components that can be type MultiOption
   const multiOptions: Component['id'][] = useBoundStore((state) =>
-    Object.keys(state.components).filter((c: Component['id']) =>
-      isMultiOption(getComponentById(c))
-    )
+    Object.keys(state.components).filter((comp: Component['id']) => {
+      const component = getComponentById(comp);
+      if (!component) return false;
+      return componentsData[component.type]?.isMultiOption ?? false;
+    })
   );
+  // The component types that can be added to a Multi, to be used as Select options
+  const multiOptionData = componentPalette
+    .filter((data) => data.isMultiOption)
+    .map((data) => ({ value: data.type, label: t(`main:${data.nameKey}`) }));
+
   const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
   const [guiDescription, setGuiDescription] = useState<string>(
     component?.gui_description || ''
@@ -255,9 +261,9 @@ function MultiModal({ component, handleComponentData }: Props) {
             <Select
               allowDeselect={false}
               placeholder={'Add New Component'}
-              data={MultiOptions}
+              data={multiOptionData}
               value={null}
-              disabled={MultiOptions.length === 0}
+              disabled={multiOptionData.length === 0}
               onChange={(value) => value && handleAddComponent(value as ComponentType)}
             />
           </SimpleGrid>
