@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Group, InputLabel, NumberInput, Slider, Stack } from '@mantine/core';
 
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
@@ -27,11 +26,8 @@ interface Props {
 }
 
 function NumberWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
   const [value] = useProperty('FloatProperty', component.property);
   const [tempValue, setTempValue] = useState<number>(value ?? 0);
-  // Disabled when disconnected or the property does not exist.
-  const disabled = !luaApi || value === undefined;
 
   const range = component.max - component.min;
 
@@ -43,7 +39,6 @@ function NumberWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
     >
       <Stack w={'85%'} gap={'md'} py={'md'}>
         <Group gap={'xs'} wrap={'nowrap'}>

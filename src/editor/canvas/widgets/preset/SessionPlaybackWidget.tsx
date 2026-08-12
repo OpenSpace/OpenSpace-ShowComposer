@@ -20,7 +20,6 @@ function SessionPlaybackWidget({ component }: Props) {
   const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
   const luaApi = useOpenSpaceApi();
   const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
-  const disabled = !luaApi;
 
   function startPlayback() {
     luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
@@ -48,7 +47,6 @@ function SessionPlaybackWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
     >
       <Stack align={'center'} gap={'xs'}>
         {gui_name || gui_description ? (

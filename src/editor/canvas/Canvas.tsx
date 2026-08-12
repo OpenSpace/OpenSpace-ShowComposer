@@ -5,7 +5,6 @@ import { Box, Group } from '@mantine/core';
 import { Pagination } from '@/components/Pagination';
 import { ToggleButton } from '@/components/ToggleButton';
 import { renderComponentWidget } from '@/editor/componentsData';
-import { useConnectionStatus } from '@/hooks/util';
 import {
   ClockIcon,
   CompassIcon,
@@ -17,7 +16,6 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';
 import { MultiComponent } from '@/types/components';
-import { ConnectionStatus } from '@/types/enums';
 
 import { DraggableComponent } from './DraggableComponent';
 import { DraggablePanel } from './DraggablePanel';
@@ -57,8 +55,6 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
   const currentPageIndex = useBoundStore((state) => state.currentPageIndex);
   const pagesLength = useBoundStore((state) => state.pages?.length);
   const goToPage = useBoundStore((state) => state.goToPage);
-
-  const connectionStatus = useConnectionStatus();
 
   useEffect(() => {
     if (
@@ -177,35 +173,30 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
           icon={<CompassIcon size={20} />}
           selected={NavPosition?.minimized}
           onClick={() => minimize(NavPosition)}
-          disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
           tooltipText={t('time-panel')}
           icon={<ClockIcon size={20} />}
           selected={TimePosition?.minimized}
           onClick={() => minimize(TimePosition)}
-          disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
           tooltipText={t('status-panel')}
           icon={<ViewIcon size={20} />}
           selected={StatusPosition?.minimized}
           onClick={() => minimize(StatusPosition)}
-          disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
           tooltipText={t('record-panel')}
           icon={<VideoIcon size={20} />}
           selected={RecordPosition?.minimized}
           onClick={() => minimize(RecordPosition)}
-          disabled={connectionStatus != ConnectionStatus.Connected}
         />
         <ToggleButton
           tooltipText={t('log-panel')}
           icon={<MessageSquareWarningIcon size={20} />}
           selected={LogPosition?.minimized}
           onClick={() => minimize(LogPosition)}
-          disabled={connectionStatus != ConnectionStatus.Connected}
         />
       </Group>
       {(!isPresentMode || (showPagination && isPresentMode)) && (

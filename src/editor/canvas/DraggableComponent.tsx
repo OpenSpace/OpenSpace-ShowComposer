@@ -5,6 +5,7 @@ import { Rnd } from 'react-rnd';
 import { ActionIcon, alpha, Box, Menu } from '@mantine/core';
 
 import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
+import { useIsConnected } from '@/hooks/util';
 import {
   CopyIcon,
   EditIcon,
@@ -46,6 +47,8 @@ export function DraggableComponent({
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const selectedComponents = useBoundStore((state) => state.selectedComponents);
   const isSelected = useBoundStore((state) => state.positions[component.id]?.selected);
+  // isConnected drives the disabled state
+  const isConnected = useIsConnected();
   if (!component || !component.id || !position) {
     return null;
   }
@@ -239,11 +242,29 @@ export function DraggableComponent({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 'var(--mantine-radius-md)',
-            padding: layoutId ? 8 : '8px 16px'
+            padding: layoutId ? 8 : '8px 16px',
+            opacity: isConnected ? 1 : 0.25,
+            transition: 'opacity 300ms'
           }}
         >
           {children}
         </Box>
+        {/*
+          Overlay to disable a component when OS is disconnected. Swallows clicks with 
+          "not-allowed" cursor (stronger than "none" which can be overridden by children).
+          Sits below the drag handle and the kebab menu in z-index so they are still clickable.
+        */}
+        {!isConnected && (
+          <Box
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 50,
+              borderRadius: 'var(--mantine-radius-md)',
+              cursor: 'not-allowed'
+            }}
+          />
+        )}
       </Rnd>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}

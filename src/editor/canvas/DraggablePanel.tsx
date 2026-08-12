@@ -8,6 +8,7 @@ import { FlightControlPanel } from '@/editor/canvas/panels/FlightControlPanel/Fl
 import { LogPanel } from '@/editor/canvas/panels/LogPanel/LogPanel';
 import { SessionPanel } from '@/editor/canvas/panels/SessionPanel/SessionPanel';
 import { TimeDatePicker } from '@/editor/canvas/panels/TimeDatePicker/TimeDatePicker';
+import { useIsConnected } from '@/hooks/util';
 import { GripHorizontalIcon, MinusIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
@@ -40,6 +41,9 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const scale = useSettingsStore((state) => state.pageScaleThrottled);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
+  // isConnected drives the disabled state
+  const isConnected = useIsConnected();
+
   if (!position || !component) return null;
 
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
@@ -115,6 +119,7 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
         style={{
           position: 'absolute',
           top: 0,
+          zIndex: 99,
           height: 30,
           width: '100%',
           cursor: 'move'
@@ -134,12 +139,39 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
           <GripHorizontalIcon className={classes.grip} />
         </Box>
       </Box>
-      <Box style={{ position: 'absolute', right: 4, top: 4 }}>
+      <Box style={{ position: 'absolute', right: 4, top: 4, zIndex: 99 }}>
         <ActionIcon variant={'subtle'} size={'sm'} onClick={minimize}>
           <MinusIcon size={16} />
         </ActionIcon>
       </Box>
-      <Box style={{ marginTop: 4, padding: 12 }}>{inner()}</Box>
+      <Box
+        style={{
+          position: 'relative',
+          zIndex: 0,
+          marginTop: 4,
+          padding: 12,
+          opacity: isConnected ? 1 : 0.25,
+          transition: 'opacity 300ms'
+        }}
+      >
+        {inner()}
+      </Box>
+      {/*
+          Overlay to disable a panel when OS is disconnected. Swallows clicks with 
+          "not-allowed" cursor (stronger than "none" which can be overridden by children).
+          Sits below the drag handle and the kebab menu in z-index so they are still clickable.
+        */}
+      {!isConnected && (
+        <Box
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 50,
+            borderRadius: 'var(--mantine-radius-md)',
+            cursor: 'not-allowed'
+          }}
+        />
+      )}
     </Rnd>
   );
 }

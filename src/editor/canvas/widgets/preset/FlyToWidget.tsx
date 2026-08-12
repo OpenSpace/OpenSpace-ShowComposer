@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -13,10 +12,8 @@ interface Props {
 }
 
 function FlyToWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  const disabled = !luaApi;
   const triggerAnimation = () => {
     statusBarRef.current?.triggerAnimation();
   };
@@ -25,7 +22,6 @@ function FlyToWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
       onClick={() => {
         componentActions.flyto(component)();
         triggerAnimation();

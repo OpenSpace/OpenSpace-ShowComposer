@@ -1,4 +1,3 @@
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -10,14 +9,10 @@ interface Props {
 }
 
 function ScriptWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
-  const disabled = !luaApi;
-
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
       onClick={componentActions.script(component)}
     >
       {component.gui_name || component.gui_description ? (

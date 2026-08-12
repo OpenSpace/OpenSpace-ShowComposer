@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -14,10 +13,8 @@ interface Props {
 }
 
 function SetTimeWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
   // Keep the time topic subscribed so jumpToTime has a current time to interpolate from.
   useSubscribeToTime();
-  const disabled = !luaApi;
 
   // Fadetime is in seconds
   const fadeOutDuration = 400; // 1 second fade out
@@ -29,7 +26,6 @@ function SetTimeWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
       onClick={() => {
         componentActions.settime(component)();
         triggerAnimation();

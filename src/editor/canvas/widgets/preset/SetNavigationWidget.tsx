@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -14,8 +13,6 @@ interface Props {
 
 function SetNavigationWidget({ component }: Props) {
   const { gui_description, gui_name, backgroundImage, color } = component;
-  const luaApi = useOpenSpaceApi();
-  const disabled = !luaApi;
 
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
@@ -27,7 +24,6 @@ function SetNavigationWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={backgroundImage}
       backgroundColor={color}
-      disabled={disabled}
       onClick={() => {
         componentActions.setnavstate(component)();
         triggerAnimation();

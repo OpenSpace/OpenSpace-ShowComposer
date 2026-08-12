@@ -1,4 +1,3 @@
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -11,10 +10,7 @@ interface Props {
 }
 
 function BooleanWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
   const [value] = useProperty('BoolProperty', component.property);
-  // Disabled when disconnected or the property does not exist.
-  const disabled = !luaApi || value === undefined;
 
   // Reflect the property state on the card outline: on (green), off (red),
   // unknown/disconnected (grey)
@@ -29,7 +25,6 @@ function BooleanWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
       style={{
         top: '4px',
         left: '4px',

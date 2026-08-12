@@ -4,18 +4,13 @@ type Props = {
   tooltipText: string;
   icon: JSX.Element;
   selected: boolean;
-  disabled: boolean;
   onClick: () => void;
 };
 
-function ToggleButton({ tooltipText, icon, selected, disabled, onClick }: Props) {
+function ToggleButton({ tooltipText, icon, selected, onClick }: Props) {
   return (
     <Tooltip label={tooltipText}>
-      <ActionIcon
-        disabled={disabled}
-        onClick={onClick}
-        style={{ zIndex: 40, opacity: selected ? 1 : 0.6 }}
-      >
+      <ActionIcon onClick={onClick} style={{ zIndex: 40, opacity: selected ? 1 : 0.6 }}>
         {icon}
       </ActionIcon>
     </Tooltip>

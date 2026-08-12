@@ -1,4 +1,3 @@
-import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
@@ -12,14 +11,10 @@ interface Props {
 }
 
 function FadeWidget({ component }: Props) {
-  const luaApi = useOpenSpaceApi();
-  const [opacity] = useProperty('FloatProperty', component.property);
   const [fadeValue] = useProperty(
     'FloatProperty',
     component?.property?.replace('.Opacity', '.Fade') ?? ''
   );
-  // Disabled when disconnected or the opacity property does not exist.
-  const disabled = !luaApi || opacity === undefined;
 
   // Reflect the value of fade on the card outline: faded in (green),
   // faded out (red), transitioning/disconnected (grey)
@@ -34,7 +29,6 @@ function FadeWidget({ component }: Props) {
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
-      disabled={disabled}
       style={{
         top: '4px',
         left: '4px',
