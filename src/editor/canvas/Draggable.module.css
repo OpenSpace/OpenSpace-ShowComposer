@@ -3,6 +3,6 @@
   transition: color 300ms;
 }
 
-.dragHandle:hover .grip {
+.handle:hover .grip {
   color: var(--mantine-color-white);
 }

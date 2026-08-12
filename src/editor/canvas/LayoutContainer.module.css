@@ -11,12 +11,3 @@
 .layout[data-present='true'] {
   outline: none;
 }
-
-.grip {
-  color: var(--mantine-color-gray-6);
-  transition: color 300ms;
-}
-
-.handle:hover .grip {
-  color: var(--mantine-color-white);
-}

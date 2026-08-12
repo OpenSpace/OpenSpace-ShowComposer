@@ -1,16 +1,16 @@
 import { ReactNode } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
-import { Rnd } from 'react-rnd';
-import { ActionIcon, Box, Menu } from '@mantine/core';
+import { ActionIcon, Menu } from '@mantine/core';
 
+import { Draggable } from '@/editor/canvas/Draggable';
 import { Placeholder } from '@/editor/canvas/Placeholder';
+import { zIndex } from '@/editor/canvas/zIndex';
 import {
   ColumnIcon,
   CopyIcon,
   EditIcon,
   EllipsisVerticalIcon,
-  GripHorizontalIcon,
   LayoutGridIcon,
   PinIcon,
   PinOffIcon,
@@ -38,9 +38,15 @@ const typeIcons = {
 
 export function LayoutContainer({ layout, children, handleOpenEditModal }: Props) {
   const { t } = useTranslation('draggable-component');
+
   const layoutPosition = useBoundStore((state) => state.positions[layout?.id || '']);
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
 
   const handleLayoutDrop = useBoundStore((state) => state.handleLayoutDrop);
+  const updatePosition = useBoundStore((state) => state.updatePosition);
+  const updateLayout = useBoundStore((state) => state.updateLayout);
+  const deleteLayout = useBoundStore((state) => state.deleteLayout);
+  const copyLayout = useBoundStore((state) => state.copyLayout);
 
   const { x, y, width, height } = layoutPosition || {
     x: 0,
@@ -48,6 +54,7 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
     width: 0,
     height: 0
   };
+
   const {
     id,
     type,
@@ -57,14 +64,8 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
     columns,
     padding
   } = layout;
+  const isGrid = type === 'grid';
 
-  const updatePosition = useBoundStore((state) => state.updatePosition);
-  const updateLayout = useBoundStore((state) => state.updateLayout);
-  const deleteLayout = useBoundStore((state) => state.deleteLayout);
-  const copyLayout = useBoundStore((state) => state.copyLayout);
-
-  const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const scale = useSettingsStore((state) => state.pageScaleThrottled);
   if (!layout || !layout.id || !layoutPosition) {
     return null;
   }
@@ -78,6 +79,7 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
       persistent: !layout.persistent
     });
   };
+
   const handleResize = (
     _e: DraggableEvent,
     _direction:
@@ -126,154 +128,92 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
     });
   };
 
-  const isGrid = type === 'grid';
-
   return (
-    <Rnd
-      default={{
-        x,
-        y,
-        width,
-        height
-      }}
+    <Draggable
       position={{ x, y }}
-      dragHandleClassName={'drag-handle'}
       size={{ width, height }}
-      minWidth={100}
-      minHeight={100}
-      scale={isPresentMode ? 1.0 : scale}
       onDragStop={handleDragStop}
       onResizeStop={handleResize}
       bounds={'parent'}
-      enableResizing={!isPresentMode}
-      disableDragging={isPresentMode}
       className={classes.layout}
       data-present={isPresentMode}
+      leftSection={typeIcons[type]}
+      rightSection={
+        <>
+          {layout.persistent ? (
+            <PinIcon
+              size={16}
+              onClick={handlePin}
+              style={{ cursor: 'pointer', color: 'var(--mantine-color-white)' }}
+            />
+          ) : (
+            <PinOffIcon
+              size={16}
+              onClick={handlePin}
+              style={{ cursor: 'pointer', color: 'var(--mantine-color-dimmed)' }}
+            />
+          )}
+          <Menu position={'bottom-end'} zIndex={zIndex.menu}>
+            <Menu.Target>
+              <ActionIcon variant={'subtle'}>
+                <EllipsisVerticalIcon />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item leftSection={<EditIcon />} onClick={handleOpenEditModal}>
+                {t('edit')}
+              </Menu.Item>
+              <Menu.Item leftSection={<CopyIcon />} onClick={() => copyLayout(id)}>
+                {t('copy')}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<TrashIcon />}
+                color={'red'}
+                onClick={() => deleteLayout(id)}
+              >
+                {t('delete')}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </>
+      }
       style={{
-        zIndex: 9999,
-        borderRadius: isPresentMode ? undefined : 'var(--mantine-radius-lg)',
-        backgroundColor: isPresentMode
-          ? undefined
-          : 'color-mix(in srgb, var(--mantine-color-dark-9) 50%, transparent)',
-        pointerEvents: isPresentMode ? undefined : 'auto'
+        zIndex: zIndex.layout,
+        ...(isPresentMode
+          ? { background: 'transparent', boxShadow: 'none' }
+          : {
+              background:
+                'color-mix(in srgb, var(--mantine-color-dark-9) 50%, transparent)',
+              pointerEvents: 'auto'
+            })
       }}
     >
-      {!isPresentMode && (
-        <Box
-          className={`drag-handle ${classes.handle}`}
-          style={{
-            position: 'absolute',
-            top: 0,
-            zIndex: 99,
-            display: 'flex',
-            width: '100%',
-            cursor: 'move',
-            justifyContent: 'flex-end',
-            borderTopLeftRadius: 'var(--mantine-radius-lg)',
-            borderTopRightRadius: 'var(--mantine-radius-lg)'
-          }}
-        >
-          <Box
-            style={{
-              position: 'absolute',
-              display: 'flex',
-              width: '100%',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 4
-            }}
-          >
-            <GripHorizontalIcon className={classes.grip} />
-          </Box>
-          <Box
-            style={{
-              position: 'relative',
-              zIndex: 99,
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'flex-end',
-              gap: 8,
-              padding: '4px 8px'
-            }}
-          >
-            {layout.persistent ? (
-              <PinIcon
-                size={16}
-                onClick={handlePin}
-                style={{ cursor: 'pointer', color: 'var(--mantine-color-white)' }}
-              />
-            ) : (
-              <PinOffIcon
-                size={16}
-                onClick={handlePin}
-                style={{ cursor: 'pointer', color: 'var(--mantine-color-dimmed)' }}
-              />
-            )}
-            <Menu position={'bottom-end'} zIndex={999999}>
-              <Menu.Target>
-                <ActionIcon variant={'subtle'}>
-                  <EllipsisVerticalIcon />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item leftSection={<EditIcon />} onClick={handleOpenEditModal}>
-                  {t('edit')}
-                </Menu.Item>
-                <Menu.Item leftSection={<CopyIcon />} onClick={() => copyLayout(id)}>
-                  {t('copy')}
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={<TrashIcon />}
-                  color={'red'}
-                  onClick={() => deleteLayout(id)}
-                >
-                  {t('delete')}
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Box>
-          <Box
-            style={{
-              position: 'absolute',
-              left: 8,
-              top: 4,
-              fontSize: 'var(--mantine-font-size-xs)',
-              color: 'var(--mantine-color-white)'
-            }}
-          >
-            {typeIcons[type]}
-          </Box>
-        </Box>
+      {children}
+      {!isPresentMode && !isGrid && (
+        <Placeholder
+          type={type}
+          childWidth={childWidth}
+          childHeight={childHeight}
+          padding={layout.padding}
+          columns={layout.columns}
+        />
       )}
-      <Box style={{ height: '100%', width: '100%' }}>
-        {children}
-        {!isPresentMode && !isGrid && (
-          <Placeholder
-            type={type}
-            childWidth={childWidth}
-            childHeight={childHeight}
-            padding={layout.padding}
-            columns={layout.columns}
-          />
-        )}
-        {!isPresentMode &&
-          isGrid &&
-          layout.children.map((_childId, index) => {
-            return (
-              <Placeholder
-                type={type}
-                hidden={_childId != null}
-                index={index}
-                childWidth={childWidth}
-                childHeight={childHeight}
-                padding={padding}
-                columns={columns}
-                key={index}
-              />
-            );
-          })}
-      </Box>
-    </Rnd>
+      {!isPresentMode &&
+        isGrid &&
+        layout.children.map((_childId, index) => {
+          return (
+            <Placeholder
+              type={type}
+              hidden={_childId != null}
+              index={index}
+              childWidth={childWidth}
+              childHeight={childHeight}
+              padding={padding}
+              columns={columns}
+              key={index}
+            />
+          );
+        })}
+    </Draggable>
   );
 }
