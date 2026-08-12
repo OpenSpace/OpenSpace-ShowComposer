@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { CSSProperties, ReactNode, useState } from 'react';
 import { Props as RndProps, Rnd } from 'react-rnd';
 import { Box } from '@mantine/core';
 
@@ -16,6 +16,7 @@ interface Props extends RndProps {
   leftSection?: ReactNode;
   rightSection?: ReactNode;
   dragAnywhere?: boolean;
+  dragStyle?: CSSProperties;
 }
 
 export function Draggable({
@@ -23,8 +24,10 @@ export function Draggable({
   leftSection,
   rightSection,
   dragAnywhere = false,
+  dragStyle,
   minWidth = 50,
   minHeight = 50,
+  resizeGrid = [25, 25],
   disableDragging,
   enableResizing,
   onDragStart,
@@ -41,7 +44,7 @@ export function Draggable({
     <Rnd
       {...rndProps}
       dragHandleClassName={dragAnywhere ? '' : DRAG_HANDLE_CLASS}
-      resizeGrid={[25, 25]}
+      resizeGrid={resizeGrid}
       minWidth={minWidth}
       minHeight={minHeight}
       scale={isPresentMode ? 1.0 : pageScale}
@@ -60,7 +63,8 @@ export function Draggable({
         boxShadow: isDragging
           ? '0 10px 24px rgba(0, 0, 0, 0.6)'
           : '0 2px 8px rgba(0, 0, 0, 0.4)',
-        ...style
+        ...style,
+        ...(isDragging ? dragStyle : {})
       }}
     >
       {!isDragDisabled && (

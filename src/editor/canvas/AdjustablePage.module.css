@@ -1,8 +1,0 @@
-.grip {
-  color: var(--mantine-color-gray-6);
-  transition: color 300ms;
-}
-
-.page:hover .grip {
-  color: var(--mantine-color-white);
-}
