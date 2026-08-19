@@ -13,9 +13,9 @@ import {
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 
+import { uploadImage } from '@/api/showbuilder';
 import { Image } from '@/components/Image';
 import { UploadIcon } from '@/icons/icons';
-import { useBoundStore } from '@/store/boundStore';
 
 import styles from './ImageGallery.module.css';
 
@@ -25,7 +25,6 @@ interface Props {
   selectedImage: string;
   onSelectImage: (imageUrl: string) => void;
   onClose: () => void;
-  setUploadFile: (file: File | null) => void;
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -35,15 +34,13 @@ function ImageGallery({
   images,
   selectedImage: initialImage,
   onSelectImage,
-  onClose,
-  setUploadFile
+  onClose
 }: Props) {
   const { t } = useTranslation('image-gallery');
-  const resetAsyncPreSubmitOperation = useBoundStore(
-    (state) => state.resetAsyncPreSubmitOperation
-  );
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedImage, setSelectedImage] = useState(initialImage);
+  const [droppedFile, setDroppedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const totalPages = Math.ceil(images.length / ITEMS_PER_PAGE);
   const startIndex = currentPage * ITEMS_PER_PAGE;
@@ -57,13 +54,31 @@ function ImageGallery({
     const [file] = files;
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
-      setUploadFile(file);
+      setDroppedFile(file);
     }
   }
 
-  // Closing (X / Esc / click-away / Cancel) discards any pending upload operation
+  async function handleAddImage() {
+    if (droppedFile) {
+      setUploading(true);
+      try {
+        const path = await uploadImage(droppedFile);
+        onSelectImage(path);
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+        setUploading(false);
+        return; // keep the gallery open so the user can retry
+      }
+      setUploading(false);
+      setDroppedFile(null);
+    } else {
+      onSelectImage(selectedImage);
+    }
+    onClose();
+  }
+
   function handleCancel() {
-    resetAsyncPreSubmitOperation();
+    setDroppedFile(null);
     onClose();
   }
 
@@ -130,7 +145,10 @@ function ImageGallery({
               radius={'md'}
               padding={0}
               className={styles.thumbnail}
-              onClick={() => setSelectedImage(image)}
+              onClick={() => {
+                setSelectedImage(image);
+                setDroppedFile(null);
+              }}
               style={{ overflow: 'hidden', cursor: 'pointer' }}
             >
               <AspectRatio ratio={1}>
@@ -155,11 +173,9 @@ function ImageGallery({
             {t('cancel')}
           </Button>
           <Button
+            loading={uploading}
             disabled={selectedImage.length === 0}
-            onClick={() => {
-              onSelectImage(selectedImage);
-              onClose();
-            }}
+            onClick={handleAddImage}
           >
             {t('add-image')}
           </Button>

@@ -6,60 +6,69 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
 import { NavigationState } from '@/types/types';
 import { formatDate } from '@/utils/time';
 
-interface Props {
-  component: SetNavComponent | null;
-  handleComponentData: (data: Partial<SetNavComponent>) => void;
-}
+const DEFAULTS: Omit<SetNavComponent, 'id'> = {
+  type: 'setnavstate',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  time: '',
+  setTime: true,
+  mode: 'jump',
+  intDuration: 1,
+  backgroundImage: '',
+  color: ComponentBaseColors.setnavstate
+};
 
-function SetNavModal({ component, handleComponentData }: Props) {
+function SetNavModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'setnavstate'>) {
   const { t } = useTranslation('set-navigation');
+  const [data, setData] = useState<SetNavComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time } = useSubscribeToTime();
-  const [navigationState, setNavigationState] = useState<NavigationState | undefined>(
-    component?.navigationState
-  );
-  const [componentTime, setCompontentTime] = useState(component?.time || time);
-  const [intDuration, setIntDuration] = useState(component?.intDuration || 1.0);
-  const [mode, setMode] = useState<'jump' | 'fade' | 'fly'>(component?.mode || 'jump');
-  const [setTime, setSetTime] = useState<boolean>(component?.setTime || true);
-  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
-  const [guiDescription, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.setnavstate
-  );
+
+  const { navigationState } = data;
+  const componentTime = data.time || time;
+  const { intDuration, mode, setTime } = data;
+
+  const placeholders = navigationState?.Anchor
+    ? {
+        name: `${mode.charAt(0).toUpperCase() + mode.slice(1)} to Navigation State : ${
+          navigationState.Anchor
+        }`,
+        description: ''
+      }
+    : { name: '', description: '' };
 
   const getNavigationState = async () => {
     if (!luaApi) return;
     const navState = (await luaApi.navigation.getNavigationState()) as NavigationState;
-
-    setNavigationState(navState);
-    setCompontentTime(time);
-    if (!lockName) {
-      setGuiName(
-        `${mode.charAt(0).toUpperCase() + mode.slice(1)} to Navigation State : ${
-          navState.Anchor
-        }`
-      );
-    }
+    handleData({ navigationState: navState, time });
   };
 
   useEffect(() => {
-    if (!component?.navigationState) {
+    if (!data.navigationState) {
       getNavigationState();
     }
-  }, [component?.navigationState]);
+  }, [data.navigationState]);
 
   const timeLabel = useMemo(() => {
     if (componentTime) {
@@ -72,38 +81,14 @@ function SetNavModal({ component, handleComponentData }: Props) {
     return componentTime;
   }, [componentTime, time]);
 
-  useEffect(() => {
-    if (component) {
-      setSetTime(component.setTime);
-    }
-  }, [component]);
+  function handleData(patch: Partial<SetNavComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
 
-  useEffect(() => {
-    handleComponentData({
-      time: componentTime,
-      mode,
-      setTime,
-      lockName,
-      gui_name: guiName,
-      gui_description: guiDescription,
-      backgroundImage,
-      navigationState,
-      intDuration,
-      color
-    });
-  }, [
-    navigationState,
-    componentTime,
-    mode,
-    setTime,
-    lockName,
-    guiName,
-    guiDescription,
-    backgroundImage,
-    intDuration,
-    color,
-    handleComponentData
-  ]);
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
 
   return (
     <Stack gap={'md'}>
@@ -129,7 +114,11 @@ function SetNavModal({ component, handleComponentData }: Props) {
           </InputLabel>
           <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
         </Stack>
-        <ToggleComponent label={'Include Time'} value={setTime} setValue={setSetTime} />
+        <ToggleComponent
+          label={'Include Time'}
+          value={setTime}
+          setValue={(v) => handleData({ setTime: v })}
+        />
       </Group>
       <Group align={'flex-end'} wrap={'nowrap'}>
         <NumberInput
@@ -141,7 +130,9 @@ function SetNavModal({ component, handleComponentData }: Props) {
           placeholder={'Duration to Fade'}
           value={intDuration}
           onChange={(value) =>
-            setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+            handleData({
+              intDuration: typeof value === 'number' ? value : parseFloat(value)
+            })
           }
         />
         <Stack flex={1} gap={'xs'}>
@@ -159,30 +150,17 @@ function SetNavModal({ component, handleComponentData }: Props) {
               if (value === null) {
                 return;
               }
-              if (!lockName) {
-                setGuiName(
-                  `${
-                    value.charAt(0).toUpperCase() + value.slice(1)
-                  } to Navigation State : ${navigationState?.Anchor}`
-                );
-              }
-              setMode(value as 'jump' | 'fade' | 'fly');
+              handleData({ mode: value as 'jump' | 'fade' | 'fly' });
             }}
           />
         </Stack>
       </Group>
       <WidgetSettings
-        guiName={guiName}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={guiDescription}
-        setGuiDescription={setGuiDescription}
+        data={data}
+        handleData={handleData}
+        placeholders={placeholders}
       />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

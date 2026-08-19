@@ -32,6 +32,9 @@ async function triggerFade(
     console.log('No Api Access');
     return;
   }
+  if (!property) {
+    return;
+  }
 
   switch (action) {
     case 'on':
@@ -58,6 +61,9 @@ async function triggerBool(property: string, action: 'on' | 'off' | 'toggle') {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
+    return;
+  }
+  if (!property) {
     return;
   }
   switch (action) {
@@ -87,6 +93,9 @@ async function triggerTrigger(property: string) {
     console.log('No Api Access');
     return;
   }
+  if (!property) {
+    return;
+  }
   luaApi.setPropertyValueSingle(property, null);
 }
 
@@ -97,6 +106,9 @@ async function triggerTrigger(property: string) {
  * @param newValue - The value to set.
  */
 async function triggerNumber(property: string, newValue: number) {
+  if (!property) {
+    return;
+  }
   const { luaApi } = useOpenSpaceApiStore.getState();
   luaApi?.setPropertyValueSingle(property, newValue);
 }
@@ -183,6 +195,9 @@ function triggerFocus(property: string) {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
+    return;
+  }
+  if (!property) {
     return;
   }
   luaApi.setPropertyValueSingle(RetargetAnchorKey, null);

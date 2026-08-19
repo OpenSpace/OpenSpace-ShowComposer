@@ -47,7 +47,6 @@ export interface ComponentBase {
   parentLayout?: LayoutBase['id'];
   isMulti: MultiState;
   type: ComponentType;
-  lockName?: boolean;
   gui_name: string;
   gui_description: string;
   color?: string;
@@ -146,7 +145,7 @@ export interface SetTimeComponent extends ComponentBase {
 
 export interface SetNavComponent extends ComponentBase {
   type: 'setnavstate';
-  navigationState: NavigationState;
+  navigationState?: NavigationState;
   time: Date | string;
   setTime: boolean;
   // fadeScene: boolean;

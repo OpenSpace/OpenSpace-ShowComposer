@@ -18,6 +18,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { componentPalette, componentsData } from '@/editor/componentsData';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import {
@@ -28,7 +33,6 @@ import {
   MultiOption
 } from '@/types/components';
 
-// One entry in a Multi's ordered list of chained/parallel sub-components
 interface MultiType {
   component: MultiOption['id'];
   buffer: number;
@@ -38,25 +42,37 @@ interface MultiType {
   id: string;
 }
 
-interface Props {
-  component: MultiComponent | null;
-  handleComponentData: (data: Partial<MultiComponent>) => void;
-}
+const DEFAULTS: Omit<MultiComponent, 'components' | 'id'> = {
+  type: 'multi',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  backgroundImage: '',
+  color: ComponentBaseColors.multi
+};
 
-function MultiModal({ component, handleComponentData }: Props) {
+function MultiModal({
+  component,
+  componentId,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'multi'>) {
   const { t } = useTranslation(['multi', 'main']);
-  const [items, setItems] = useState<MultiType[]>(
-    component
-      ? component.components.map((v) => ({
+  const [data, setData] = useState<MultiComponent>(
+    () => component ?? { ...DEFAULTS, components: [], id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
+  const placeholders = { name: '', description: '' };
+  const [items, setItems] = useState<MultiType[]>(() =>
+    data.components
+      ? data.components.map((v) => ({
           ...v,
           id: v.component
         }))
       : []
   );
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
   const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
+  const components = useBoundStore((state) => state.components);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const copyComponent = useBoundStore((state) => state.copyComponent);
@@ -74,13 +90,6 @@ function MultiModal({ component, handleComponentData }: Props) {
     .filter((data) => data.isMultiOption)
     .map((data) => ({ value: data.type, label: t(`main:${data.nameKey}`) }));
 
-  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
-  const [guiDescription, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.multi
-  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState('');
   const [currentComponentType, setCurrentComponentType] = useState<ComponentType | ''>(
@@ -191,20 +200,17 @@ function MultiModal({ component, handleComponentData }: Props) {
     setAvailableOptions(
       multiOptions.filter((component) => !items.some((item) => item.id === component))
     );
-    handleComponentData({
+    handleData({
       components: items.map((v) => ({
         component: v.component,
         startTime: v.startTime,
         endTime: v.endTime,
         buffer: v.buffer,
         chained: v.chained
-      })),
-      backgroundImage,
-      gui_description: guiDescription,
-      gui_name: guiName,
-      color
+      }))
     });
-  }, [items, backgroundImage, guiName, guiDescription, color]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -238,8 +244,27 @@ function MultiModal({ component, handleComponentData }: Props) {
     removeComponent(id);
   };
 
+  function handleData(patch: Partial<MultiComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    Object.entries(components)
+      .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
+      .forEach(([id, c]) => {
+        if (c.isMulti === 'pendingSave') {
+          updateComponent(id, { isMulti: 'true' });
+        } else if (c.isMulti === 'pendingDelete') {
+          removeComponent(id);
+        }
+      });
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
   return (
-    <Tabs defaultValue={'multi'}>
+    <>
+      <Tabs defaultValue={'multi'}>
       <Tabs.List>
         <Tabs.Tab value={'multi'}>{t('multi-settings')}</Tabs.Tab>
         <Tabs.Tab value={'visual'}>{t('visual-settings')}</Tabs.Tab>
@@ -388,18 +413,14 @@ function MultiModal({ component, handleComponentData }: Props) {
       <Tabs.Panel value={'visual'}>
         <Stack gap={'md'}>
           <WidgetSettings
-            guiName={guiName}
-            setGuiName={setGuiName}
-            color={color}
-            setColor={setColor}
-            backgroundImage={backgroundImage}
-            setBackgroundImage={setBackgroundImage}
-            guiDescription={guiDescription}
-            setGuiDescription={setGuiDescription}
+            data={data}
+            handleData={handleData}
+            placeholders={placeholders}
           />
         </Stack>
       </Tabs.Panel>
-
+      </Tabs>
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
       <ComponentModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -413,7 +434,7 @@ function MultiModal({ component, handleComponentData }: Props) {
         initialData={initialData}
         type={currentComponentType}
       />
-    </Tabs>
+    </>
   );
 }
 

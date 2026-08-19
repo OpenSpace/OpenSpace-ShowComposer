@@ -28,10 +28,9 @@ function ComponentContainer({
       style={{
         cursor: 'pointer',
         borderRadius: 'var(--mantine-radius-md)',
-        // cover and center the background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
         backgroundColor: backgroundColor,
         ...style
       }}

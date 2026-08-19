@@ -13,7 +13,6 @@ export function TimeDatePicker() {
   const { t } = useTranslation('time-date-picker');
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time, targetDeltaTime } = useSubscribeToTime(1000);
-  console.log(targetDeltaTime);
   const timeLabel = useMemo(() => {
     if (time) {
       try {

@@ -7,6 +7,11 @@ import { useShallow } from 'zustand/react/shallow';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { usePropertyStore } from '@/store';
@@ -14,18 +19,33 @@ import { NavigationAnchorKey } from '@/store/apiStore';
 import { ComponentBaseColors, FlyToComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 
-interface Props {
-  component: FlyToComponent | null;
-  handleComponentData: (data: Partial<FlyToComponent>) => void;
-}
+const DEFAULTS: Omit<FlyToComponent, 'id'> = {
+  type: 'flyto',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  intDuration: 4,
+  backgroundImage: '',
+  color: ComponentBaseColors.flyto
+};
 
 type Option = {
   name: string;
   shouldGeo: boolean;
 };
 
-function FlyToModal({ component, handleComponentData }: Props) {
+function FlyToModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'flyto'>) {
   const { t } = useTranslation('fly-to');
+  const [data, setData] = useState<FlyToComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const camera = useSubscribeToCamera(500);
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const profile = useSubscribeToProfile();
@@ -45,24 +65,21 @@ function FlyToModal({ component, handleComponentData }: Props) {
     )
   );
 
+  const geo = data.geo ?? false;
+  const long = data.long ?? 0;
+  const lat = data.lat ?? 0;
+  const alt = data.alt ?? 0;
+  const intDuration = data.intDuration ?? 4;
+  const target = data.target ?? '';
+
+  const placeholders = target
+    ? {
+        name: `Fly To ${formatName(target)}`,
+        description: `Fly to ${formatName(target)}`
+      }
+    : { name: '', description: '' };
+
   const [options, setOptions] = useState<Option[]>();
-  const [geo, setGeo] = useState<boolean>(component?.geo || false);
-  const [long, setLong] = useState<number>(component?.long || 0);
-  const [lat, setLat] = useState<number>(component?.lat || 0);
-  const [alt, setAlt] = useState<number>(component?.alt || 0);
-  const [intDuration, setIntDuration] = useState<number>(component?.intDuration || 4);
-  const [target, setTarget] = useState<string>(component?.target || '');
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
-  const [guiDescription, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.flyto
-  );
 
   useEffect(() => {
     setFavorites(profile.markNodes);
@@ -77,68 +94,34 @@ function FlyToModal({ component, handleComponentData }: Props) {
     );
   }, [favorites]);
 
-  useEffect(() => {
-    if (component) {
-      setGeo(component?.geo || false);
-    }
-  }, [component]);
+  const hasGeoOption: boolean = useMemo(
+    () =>
+      (options && target && options.find((option) => option.name === target)?.shouldGeo) ||
+      false,
+    [target, options]
+  );
 
-  const hasGeoOption: boolean = useMemo(() => {
-    const shouldGeo =
-      options && target && options.find((option) => option.name === target)?.shouldGeo;
-    if (!shouldGeo) {
-      setGeo(false);
+  // A target without geo support can't be flown to geographically, so clear the flag.
+  useEffect(() => {
+    if (!hasGeoOption && geo) {
+      setData((prev) => ({ ...prev, geo: false }));
     }
-    return shouldGeo || false;
-  }, [target, options]);
+  }, [hasGeoOption, geo]);
 
   const setFromOpenspace = () => {
     const shouldGeo = options?.find((option) => option.name === currentAnchor)?.shouldGeo;
-    setTarget(String(currentAnchor));
     if (shouldGeo) {
-      setLat(camera.latitude || 0);
-      setLong(camera.longitude || 0);
-      setAlt(Math.round(camera.altitudeMeters || 0));
-      setGeo(true);
+      handleData({
+        target: String(currentAnchor),
+        lat: camera.latitude || 0,
+        long: camera.longitude || 0,
+        alt: Math.round(camera.altitudeMeters || 0),
+        geo: true
+      });
+    } else {
+      handleData({ target: String(currentAnchor) });
     }
   };
-
-  const handleTargetChange = (target: string) => {
-    setTarget(target);
-    if (!lockName) {
-      setGuiName(`Fly To ${formatName(target)}`);
-      setGuiDescription(`Fly to ${formatName(target)}`);
-    }
-  };
-
-  useEffect(() => {
-    handleComponentData({
-      geo,
-      lat,
-      long,
-      alt,
-      target,
-      intDuration,
-      lockName,
-      gui_name: guiName,
-      gui_description: guiDescription,
-      backgroundImage,
-      color
-    });
-  }, [
-    geo,
-    intDuration,
-    lat,
-    long,
-    alt,
-    target,
-    lockName,
-    guiName,
-    guiDescription,
-    backgroundImage,
-    color,
-    handleComponentData
-  ]);
 
   const sortedKeys: Record<string, string> = useMemo(
     () =>
@@ -159,13 +142,22 @@ function FlyToModal({ component, handleComponentData }: Props) {
     [properties]
   );
 
+  function handleData(patch: Partial<FlyToComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{t('target')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
-          selectOption={(v: string) => handleTargetChange(sortedKeys[v])}
+          selectOption={(v: string) => handleData({ target: sortedKeys[v] })}
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
           }
@@ -180,7 +172,9 @@ function FlyToModal({ component, handleComponentData }: Props) {
           placeholder={'Duration to Flight'}
           value={intDuration}
           onChange={(value) =>
-            setIntDuration(typeof value === 'number' ? value : parseFloat(value))
+            handleData({
+              intDuration: typeof value === 'number' ? value : parseFloat(value)
+            })
           }
         />
         <Button variant={'filled'} size={'xs'} onClick={setFromOpenspace}>
@@ -189,7 +183,7 @@ function FlyToModal({ component, handleComponentData }: Props) {
         <ToggleComponent
           value={geo}
           disabled={!hasGeoOption}
-          setValue={setGeo}
+          setValue={(value) => handleData({ geo: value })}
           label={t('set-coordinates-altitude')}
         />
       </Group>
@@ -201,7 +195,7 @@ function FlyToModal({ component, handleComponentData }: Props) {
             placeholder={'Altitude'}
             value={alt}
             onChange={(value) =>
-              setAlt(typeof value === 'number' ? value : parseFloat(value))
+              handleData({ alt: typeof value === 'number' ? value : parseFloat(value) })
             }
           />
           <NumberInput
@@ -210,7 +204,7 @@ function FlyToModal({ component, handleComponentData }: Props) {
             placeholder={t('latitude')}
             value={lat}
             onChange={(value) =>
-              setLat(typeof value === 'number' ? value : parseFloat(value))
+              handleData({ lat: typeof value === 'number' ? value : parseFloat(value) })
             }
           />
           <NumberInput
@@ -219,23 +213,17 @@ function FlyToModal({ component, handleComponentData }: Props) {
             placeholder={t('longitude')}
             value={long}
             onChange={(value) =>
-              setLong(typeof value === 'number' ? value : parseFloat(value))
+              handleData({ long: typeof value === 'number' ? value : parseFloat(value) })
             }
           />
         </SimpleGrid>
       )}
       <WidgetSettings
-        guiName={guiName}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={guiDescription}
-        setGuiDescription={setGuiDescription}
+        data={data}
+        handleData={handleData}
+        placeholders={placeholders}
       />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

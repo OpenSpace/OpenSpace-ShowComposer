@@ -1,82 +1,75 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { NumberComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 
-interface Props {
-  component: NumberComponent | null;
-  handleComponentData: (data: Partial<NumberComponent>) => void;
-}
+const DEFAULTS: Omit<NumberComponent, 'id'> = {
+  type: 'number',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  property: '',
+  min: 0.1,
+  max: 100,
+  step: 0.1,
+  exponent: 1,
+  backgroundImage: '',
+  color: ComponentBaseColors.number
+};
 
-function NumberModal({ component, handleComponentData }: Props) {
+function NumberModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'number'>) {
   const { t } = useTranslation('number');
+  const [data, setData] = useState<NumberComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const properties = usePropertyStore(useShallow((state) => state.properties));
-  const [property, setProperty] = useState<string>(component?.property || '');
-  const [guiName, setGuiName] = useState<string>(component?.gui_name || '');
-  const [guiDescription, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.number
-  );
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [min, setMin] = useState<number>(component?.min || 0.1);
-  const [max, setMax] = useState<number>(component?.max || 100);
-  const [step, setStep] = useState<number>(component?.step || 0.1);
-  const [exponent, setExponent] = useState<number>(component?.exponent || 1);
 
-  useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData || !propertyData.metaData) return;
-    const { additionalData } = propertyData.metaData as {
-      additionalData: AdditionalDataNumber;
-    };
-    setMax(additionalData.max);
-    setMin(additionalData.min);
-    setStep(additionalData.step);
-    setExponent(additionalData.exponent);
-    if (!lockName) {
-      setGuiName(formatName(propertyData.uri));
-      setGuiDescription(propertyData.metaData.description);
+  const { property, min, max, step, exponent } = data;
+
+  const boundProperty = properties[property];
+  const placeholders = boundProperty
+    ? {
+        name: formatName(boundProperty.uri),
+        description: boundProperty.metaData?.description ?? ''
+      }
+    : { name: '', description: '' };
+
+  const selectProperty = (uri: string) => {
+    const propertyData = usePropertyStore.getState().properties[uri];
+    const additionalData = (
+      propertyData?.metaData as { additionalData?: AdditionalDataNumber } | undefined
+    )?.additionalData;
+    if (additionalData) {
+      handleData({
+        property: uri,
+        min: additionalData.min,
+        max: additionalData.max,
+        step: additionalData.step,
+        exponent: additionalData.exponent
+      });
+    } else {
+      handleData({ property: uri });
     }
-  }, [property]);
-
-  useEffect(() => {
-    handleComponentData({
-      property,
-      min,
-      max,
-      step,
-      exponent,
-      gui_name: guiName,
-      gui_description: guiDescription,
-      lockName,
-      backgroundImage,
-      color
-    });
-  }, [
-    property,
-    min,
-    max,
-    step,
-    exponent,
-    guiName,
-    guiDescription,
-    lockName,
-    backgroundImage,
-    color,
-    handleComponentData
-  ]);
+  };
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter(
@@ -95,13 +88,23 @@ function NumberModal({ component, handleComponentData }: Props) {
       acc[newValue] = key;
       return acc;
     }, {});
+
+  function handleData(patch: Partial<NumberComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
-          selectOption={(v: string) => setProperty(sortedKeys[v])}
+          selectOption={(v: string) => selectProperty(sortedKeys[v])}
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
@@ -115,7 +118,7 @@ function NumberModal({ component, handleComponentData }: Props) {
           placeholder={'Slider Min'}
           value={min || 0}
           onChange={(value) =>
-            setMin(typeof value === 'number' ? value : parseFloat(value))
+            handleData({ min: typeof value === 'number' ? value : parseFloat(value) })
           }
         />
         <NumberInput
@@ -124,7 +127,7 @@ function NumberModal({ component, handleComponentData }: Props) {
           placeholder={'Slider Max'}
           value={max || 0}
           onChange={(value) =>
-            setMax(typeof value === 'number' ? value : parseFloat(value))
+            handleData({ max: typeof value === 'number' ? value : parseFloat(value) })
           }
         />
         <NumberInput
@@ -133,7 +136,7 @@ function NumberModal({ component, handleComponentData }: Props) {
           placeholder={'Slider Step'}
           value={step || 0}
           onChange={(value) =>
-            setStep(typeof value === 'number' ? value : parseFloat(value))
+            handleData({ step: typeof value === 'number' ? value : parseFloat(value) })
           }
         />
         <NumberInput
@@ -142,22 +145,18 @@ function NumberModal({ component, handleComponentData }: Props) {
           placeholder={'Slider Exponent'}
           value={exponent || 0}
           onChange={(value) =>
-            setExponent(typeof value === 'number' ? value : parseFloat(value))
+            handleData({
+              exponent: typeof value === 'number' ? value : parseFloat(value)
+            })
           }
         />
       </SimpleGrid>
       <WidgetSettings
-        guiName={guiName}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={guiDescription}
-        setGuiDescription={setGuiDescription}
+        data={data}
+        handleData={handleData}
+        placeholders={placeholders}
       />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

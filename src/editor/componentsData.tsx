@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { ActionTriggerWidget } from '@/editor/canvas/widgets/preset/ActionTriggerWidget';
 import { FadeWidget } from '@/editor/canvas/widgets/preset/FadeWidget';
 import { FlyToWidget } from '@/editor/canvas/widgets/preset/FlyToWidget';
@@ -30,6 +28,7 @@ import { SetTimeModal } from '@/editor/sidebar/modals/preset/SetTimeModal';
 import { BoolModal } from '@/editor/sidebar/modals/property/BooleanModal';
 import { NumberModal } from '@/editor/sidebar/modals/property/NumberModal';
 import { TriggerModal } from '@/editor/sidebar/modals/property/TriggerModal';
+import { ComponentModalChildProps } from '@/editor/sidebar/modals/saveComponent';
 import { ImageModal } from '@/editor/sidebar/modals/static/ImageModal';
 import { RichTextModal } from '@/editor/sidebar/modals/static/RichText/RichTextModal';
 import { TitleModal } from '@/editor/sidebar/modals/static/TitleModal';
@@ -53,8 +52,6 @@ import {
 } from '@/icons/icons';
 import { Resources } from '@/localization/resources';
 import { Component, ComponentFor, ComponentType } from '@/types/components';
-// The setter a modal receives (mirrors ComponentModal's useState setter)
-type SetComponentData = Dispatch<SetStateAction<Partial<Component>>>;
 
 // Keys available in the `main` i18next namespace - the label source for the sidebar + modal title
 type MainKey = keyof Resources['en']['main'];
@@ -66,11 +63,9 @@ type ComponentDescriptor<K extends ComponentType> = {
   renderIcon: (size?: number) => JSX.Element;
   isMultiOption: boolean;
   renderWidget: (c: ComponentFor[K]) => JSX.Element;
-  // c can be null: in create mode the modal is opened before a component exists.
-  renderModal?: (c: ComponentFor[K] | null, set: SetComponentData) => JSX.Element;
+  renderModal?: (props: ComponentModalChildProps<K>) => JSX.Element;
 };
 
-// One table to rule them all: the sidebar, the multi-option picker, widgets and modals are all derived from this table.
 export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } = {
   multi: {
     type: 'multi',
@@ -79,7 +74,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <GroupIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <MultiWidget component={c} />,
-    renderModal: (c, set) => <MultiModal component={c} handleComponentData={set} />
+    renderModal: (props) => <MultiModal {...props} />
   },
   setfocus: {
     type: 'setfocus',
@@ -88,7 +83,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <TelescopeIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FocusWidget component={c} />,
-    renderModal: (c, set) => <FocusModal component={c} handleComponentData={set} />
+    renderModal: (props) => <FocusModal {...props} />
   },
   fade: {
     type: 'fade',
@@ -97,7 +92,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <SunMoonIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FadeWidget component={c} />,
-    renderModal: (c, set) => <FadeModal component={c} handleComponentData={set} />
+    renderModal: (props) => <FadeModal {...props} />
   },
   flyto: {
     type: 'flyto',
@@ -106,7 +101,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <PlaneIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FlyToWidget component={c} />,
-    renderModal: (c, set) => <FlyToModal component={c} handleComponentData={set} />
+    renderModal: (props) => <FlyToModal {...props} />
   },
   settime: {
     type: 'settime',
@@ -115,7 +110,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <HistoryIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SetTimeWidget component={c} />,
-    renderModal: (c, set) => <SetTimeModal component={c} handleComponentData={set} />
+    renderModal: (props) => <SetTimeModal {...props} />
   },
   setnavstate: {
     type: 'setnavstate',
@@ -124,7 +119,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <CompassIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SetNavigationWidget component={c} />,
-    renderModal: (c, set) => <SetNavModal component={c} handleComponentData={set} />
+    renderModal: (props) => <SetNavModal {...props} />
   },
   sessionplayback: {
     type: 'sessionplayback',
@@ -133,9 +128,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <VideoIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SessionPlaybackWidget component={c} />,
-    renderModal: (c, set) => (
-      <SessionPlaybackModal component={c} handleComponentData={set} />
-    )
+    renderModal: (props) => <SessionPlaybackModal {...props} />
   },
   action: {
     type: 'action',
@@ -144,9 +137,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <CirclePlayIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <ActionTriggerWidget component={c} />,
-    renderModal: (c, set) => (
-      <ActionTriggerModal component={c} handleComponentData={set} />
-    )
+    renderModal: (props) => <ActionTriggerModal {...props} />
   },
   page: {
     type: 'page',
@@ -155,7 +146,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <BookOpenCheckIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <PageWidget component={c} />,
-    renderModal: (c, set) => <PageModal component={c} handleComponentData={set} />
+    renderModal: (props) => <PageModal {...props} />
   },
   script: {
     type: 'script',
@@ -164,7 +155,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <CodeIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <ScriptWidget component={c} />,
-    renderModal: (c, set) => <ScriptModal component={c} handleComponentData={set} />
+    renderModal: (props) => <ScriptModal {...props} />
   },
   number: {
     type: 'number',
@@ -173,7 +164,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <HashIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <NumberWidget component={c} />,
-    renderModal: (c, set) => <NumberModal component={c} handleComponentData={set} />
+    renderModal: (props) => <NumberModal {...props} />
   },
   boolean: {
     type: 'boolean',
@@ -182,7 +173,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <ToggleRightIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <BooleanWidget component={c} />,
-    renderModal: (c, set) => <BoolModal component={c} handleComponentData={set} />
+    renderModal: (props) => <BoolModal {...props} />
   },
   trigger: {
     type: 'trigger',
@@ -191,7 +182,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <CirclePlayIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <TriggerWidget component={c} />,
-    renderModal: (c, set) => <TriggerModal component={c} handleComponentData={set} />
+    renderModal: (props) => <TriggerModal {...props} />
   },
   richtext: {
     type: 'richtext',
@@ -200,7 +191,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <AlignJustifyIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <RichTextWidget component={c} />,
-    renderModal: (c, set) => <RichTextModal component={c} handleComponentData={set} />
+    renderModal: (props) => <RichTextModal {...props} />
   },
   title: {
     type: 'title',
@@ -209,7 +200,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <LetterTextIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <TitleWidget component={c} />,
-    renderModal: (c, set) => <TitleModal component={c} handleComponentData={set} />
+    renderModal: (props) => <TitleModal {...props} />
   },
   video: {
     type: 'video',
@@ -218,7 +209,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <VideoIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <VideoWidget component={c} />,
-    renderModal: (c, set) => <VideoModal component={c} handleComponentData={set} />
+    renderModal: (props) => <VideoModal {...props} />
   },
   image: {
     type: 'image',
@@ -227,19 +218,14 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     renderIcon: (s = 20) => <ImageIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <ImageWidget component={c} />,
-    renderModal: (c, set) => <ImageModal component={c} handleComponentData={set} />
+    renderModal: (props) => <ImageModal {...props} />
   }
 };
 
-// A flat list of the table's entries for the sidebar palette + multi-option picker. Order follows
-// the table's insertion order (preset, then property, then static).
-// TODO: once the ComponentTypes are only the components and not the panels, this should be simplified
 export const componentPalette = Object.values(componentsData).filter(
   (d) => d !== undefined
 );
 
-// Helper function to render a widget. It is necessary as we need to cast the component prop to the
-// correct type for the widget.
 export function renderComponentWidget(component: Component): JSX.Element | null {
   const render = componentsData[component.type]?.renderWidget as
     | ((c: Component) => JSX.Element)
@@ -247,18 +233,15 @@ export function renderComponentWidget(component: Component): JSX.Element | null 
   return render ? render(component) : null;
 }
 
-// Helper function to render a modal. It is necessary as we need to cast the component prop to the
-// correct type for the modal, and the modal is typed to accept a null component (for "create" mode as opposed to "edit" mode).
 export function renderComponentModal(
   type: ComponentType | '',
-  component: Component | null,
-  set: SetComponentData
+  props: ComponentModalChildProps
 ): JSX.Element | null {
   if (!type) {
     return null;
   }
   const render = componentsData[type]?.renderModal as
-    | ((c: Component | null, set: SetComponentData) => JSX.Element)
+    | ((props: ComponentModalChildProps) => JSX.Element)
     | undefined;
-  return render ? render(component, set) : null;
+  return render ? render(props) : null;
 }

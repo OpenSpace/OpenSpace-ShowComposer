@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputLabel, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
@@ -6,59 +6,49 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { BooleanComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 
-interface Props {
-  component: BooleanComponent | null;
-  handleComponentData: (data: Partial<BooleanComponent>) => void;
-}
+const DEFAULTS: Omit<BooleanComponent, 'id'> = {
+  type: 'boolean',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  property: '',
+  action: 'toggle',
+  backgroundImage: '',
+  color: ComponentBaseColors.boolean
+};
 
-function BoolModal({ component, handleComponentData }: Props) {
+function BoolModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'boolean'>) {
   const { t } = useTranslation('boolean');
+  const [data, setData] = useState<BooleanComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const properties = usePropertyStore(useShallow((state) => state.properties));
-  const [property, setProperty] = useState<string>(component?.property || '');
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [action, setAction] = useState<string>(component?.action || 'toggle');
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.boolean
-  );
 
-  useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData || lockName) return;
-    setGuiName(`${formatName(propertyData.uri)} > ${capitalize(action)}`);
-    setGuiDescription(propertyData.metaData.description);
-  }, [property, action]);
+  const { property, action } = data;
+  const boundProperty = properties[property];
 
-  useEffect(() => {
-    handleComponentData({
-      property,
-      action: action as Toggle,
-      gui_name,
-      gui_description,
-      lockName,
-      backgroundImage,
-      color
-    });
-  }, [
-    property,
-    action,
-    gui_name,
-    gui_description,
-    lockName,
-    handleComponentData,
-    backgroundImage,
-    color
-  ]);
+  const placeholders = boundProperty
+    ? {
+        name: `${formatName(boundProperty.uri)} > ${capitalize(action)}`,
+        description: boundProperty.metaData?.description ?? ''
+      }
+    : { name: '', description: '' };
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].metaData?.type === 'BoolProperty')
@@ -76,13 +66,22 @@ function BoolModal({ component, handleComponentData }: Props) {
       return acc;
     }, {});
 
+  function handleData(patch: Partial<BooleanComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
-          selectOption={(v: string) => setProperty(sortedKeys[v])}
+          selectOption={(v: string) => handleData({ property: sortedKeys[v] })}
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
@@ -96,21 +95,11 @@ function BoolModal({ component, handleComponentData }: Props) {
           data={['toggle', 'on', 'off']}
           placeholder={'Select an option'}
           value={action}
-          onChange={(value) => value && setAction(value)}
+          onChange={(value) => value && handleData({ action: value as Toggle })}
         />
       </Stack>
-      <WidgetSettings
-        guiName={gui_name}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={gui_description}
-        setGuiDescription={setGuiDescription}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

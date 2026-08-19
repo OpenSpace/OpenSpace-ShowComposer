@@ -1,60 +1,52 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 import { useShallow } from 'zustand/react/shallow';
 
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { TriggerComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 
-interface Props {
-  component: TriggerComponent | null;
-  handleComponentData: (data: Partial<TriggerComponent>) => void;
-}
+const DEFAULTS: Omit<TriggerComponent, 'id'> = {
+  type: 'trigger',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  property: '',
+  backgroundImage: '',
+  color: ComponentBaseColors.trigger
+};
 
-function TriggerModal({ component, handleComponentData }: Props) {
+function TriggerModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'trigger'>) {
   const { t } = useTranslation('trigger');
+  const [data, setData] = useState<TriggerComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const properties = usePropertyStore(useShallow((state) => state.properties));
-  const [property, setProperty] = useState<string>(component?.property || '');
-  const [gui_name, setGuiName] = useState<string>(component?.gui_name || '');
-  const [gui_description, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.trigger
-  );
 
-  useEffect(() => {
-    const propertyData = usePropertyStore.getState().properties[property];
-    if (!propertyData || lockName) return;
-    setGuiName(formatName(propertyData.uri));
-    setGuiDescription(propertyData.metaData.description);
-  }, [property]);
+  const { property } = data;
+  const boundProperty = properties[property];
 
-  useEffect(() => {
-    handleComponentData({
-      property,
-      gui_name,
-      gui_description,
-      lockName,
-      backgroundImage,
-      color
-    });
-  }, [
-    property,
-    gui_name,
-    gui_description,
-    lockName,
-    backgroundImage,
-    color,
-    handleComponentData
-  ]);
+  const placeholders = boundProperty
+    ? {
+        name: formatName(boundProperty.uri),
+        description: boundProperty.metaData?.description ?? ''
+      }
+    : { name: '', description: '' };
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter((a) => properties[a].metaData?.type === 'TriggerProperty')
@@ -72,13 +64,22 @@ function TriggerModal({ component, handleComponentData }: Props) {
       return acc;
     }, {});
 
+  function handleData(patch: Partial<TriggerComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{t('property')}</InputLabel>
         <VirtualizedCombobox
           options={Object.keys(sortedKeys)}
-          selectOption={(v: string) => setProperty(sortedKeys[v])}
+          selectOption={(v: string) => handleData({ property: sortedKeys[v] })}
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
@@ -86,17 +87,11 @@ function TriggerModal({ component, handleComponentData }: Props) {
         />
       </Stack>
       <WidgetSettings
-        guiName={gui_name}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={gui_description}
-        setGuiDescription={setGuiDescription}
+        data={data}
+        handleData={handleData}
+        placeholders={placeholders}
       />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

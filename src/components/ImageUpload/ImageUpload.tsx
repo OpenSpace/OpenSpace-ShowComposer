@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { fetchGalleryImages, uploadImage } from '@/api/showbuilder';
-import { useBoundStore } from '@/store/boundStore';
+import { fetchGalleryImages } from '@/api/showbuilder';
 
 import { ImageGallery } from './ImageGallery';
 
@@ -16,42 +15,22 @@ interface Props {
 
 function ImageUpload({ value, onChange }: Props) {
   const { t } = useTranslation('image-upload');
-  const setAsyncPreSubmitOperation = useBoundStore(
-    (state) => state.setAsyncPreSubmitOperation
-  );
   const [image, setImage] = useState<string>(value || '');
-  const [file, setFile] = useState<File | null>(null);
   const [galleryOpened, { open: openGallery, close: closeGallery }] =
     useDisclosure(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
-    const loadGalleryImages = async () => {
+    async function loadGalleryImages() {
       try {
         const images = await fetchGalleryImages();
         setGalleryImages(images);
       } catch (error) {
         console.error('Error fetching gallery images:', error);
       }
-    };
+    }
     loadGalleryImages();
   }, []);
-
-  // When a file is chosen, register the pre-submit operation that uploads it and
-  // reports the resulting path back to the parent.
-  useEffect(() => {
-    if (!file) {
-      return;
-    }
-    setAsyncPreSubmitOperation(async () => {
-      try {
-        const filePath = await uploadImage(file);
-        onChange(filePath);
-      } catch (error) {
-        console.error('Failed to save image:', error);
-      }
-    });
-  }, [file, onChange, setAsyncPreSubmitOperation]);
 
   function handleSelectImage(imagePath: string) {
     onChange(imagePath);
@@ -89,7 +68,6 @@ function ImageUpload({ value, onChange }: Props) {
         selectedImage={image || ''}
         onClose={closeGallery}
         onSelectImage={handleSelectImage}
-        setUploadFile={setFile}
       />
     </Stack>
   );

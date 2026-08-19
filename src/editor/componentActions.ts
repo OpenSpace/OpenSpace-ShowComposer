@@ -46,8 +46,11 @@ export const componentActions: ComponentActions = {
   setfocus: (c) => () => triggerFocus(c.property),
   settime: (c) => () =>
     jumpToTime(new Date(c.time), c.interpolate, c.intDuration, c.fadeScene),
-  setnavstate: (c) => () =>
-    jumpToNavState(c.navigationState, c.setTime, c.mode, c.intDuration),
+  setnavstate: (c) => () => {
+    if (c.navigationState) {
+      jumpToNavState(c.navigationState, c.setTime, c.mode, c.intDuration);
+    }
+  },
   action: (c) => () => triggerAction(c.action),
   script: (c) => () => sendLuaScript(c.script),
   sessionplayback: (c) => () => togglePlayback(c.file, c.loop),

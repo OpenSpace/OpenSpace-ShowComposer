@@ -1,58 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputLabel, Select, Stack } from '@mantine/core';
 
 import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors, PageComponent } from '@/types/components';
 
-interface Props {
-  component: PageComponent | null;
-  handleComponentData: (data: Partial<PageComponent>) => void;
-}
+const DEFAULTS: Omit<PageComponent, 'id'> = {
+  type: 'page',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  page: 1,
+  backgroundImage: '',
+  color: ComponentBaseColors.page
+};
 
-function PageModal({ component, handleComponentData }: Props) {
+function PageModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'page'>) {
   const { t } = useTranslation('page');
+  const [data, setData] = useState<PageComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
   const pages = useBoundStore((state) => state.pages);
-  const [page, setPage] = useState<number>(component?.page || 1);
-  const [guiName, setGuiName] = useState<string>(component?.gui_name || 'Go to Page 1');
-  const [lockName, setLockName] = useState<boolean>(component?.lockName || false);
-  const [guiDescription, setGuiDescription] = useState<string>(
-    component?.gui_description || ''
-  );
-  const [backgroundImage, setBackgroundImage] = useState<string>(
-    component?.backgroundImage || ''
-  );
-  const [color, setColor] = useState<string>(
-    component?.color || ComponentBaseColors.page
-  );
 
-  const handlePageChange = (page: number) => {
-    setPage(page);
-    if (!lockName) {
-      const pageData = pages[page - 1];
-      setGuiName(`Go to ${pageData.name ? pageData.name : 'Go to Page ' + page}`);
-    }
-  };
+  const { page } = data;
+  const pageData = pages[page - 1];
 
-  useEffect(() => {
-    handleComponentData({
-      page,
-      backgroundImage,
-      gui_name: guiName,
-      lockName,
-      gui_description: guiDescription,
-      color
-    });
-  }, [
-    page,
-    backgroundImage,
-    guiName,
-    lockName,
-    guiDescription,
-    color,
-    handleComponentData
-  ]);
+  const placeholders = pageData
+    ? {
+        name: `Go to ${pageData.name ? pageData.name : 'Page ' + page}`,
+        description: ''
+      }
+    : { name: '', description: '' };
+
+  function handleData(patch: Partial<PageComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholders);
+    onClose();
+  }
 
   return (
     <Stack gap={'md'}>
@@ -67,21 +67,15 @@ function PageModal({ component, handleComponentData }: Props) {
           placeholder={'Select an option'}
           value={page.toString()}
           disabled={pages.length === 0}
-          onChange={(value) => value && handlePageChange(parseInt(value))}
+          onChange={(value) => value && handleData({ page: parseInt(value) })}
         />
       </Stack>
       <WidgetSettings
-        guiName={guiName}
-        setGuiName={setGuiName}
-        lockName={lockName}
-        setLockName={setLockName}
-        color={color}
-        setColor={setColor}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        guiDescription={guiDescription}
-        setGuiDescription={setGuiDescription}
+        data={data}
+        handleData={handleData}
+        placeholders={placeholders}
       />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
 }

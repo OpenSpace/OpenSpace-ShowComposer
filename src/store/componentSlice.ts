@@ -48,10 +48,6 @@ export interface ComponentSlice {
   ) => string | null;
   //   //   copyLayout: (id: LayoutBase['id']) => void;
   removeAllComponents: () => void;
-  asyncPreSubmitOperation: (() => Promise<void>) | null;
-  resetAsyncPreSubmitOperation: () => void;
-  setAsyncPreSubmitOperation: (operation: (() => Promise<void>) | null) => void;
-  executeAndResetAsyncPreSubmitOperation: () => void;
   createPanels: () => void;
   updatePanel: (
     updates: Partial<TimeComponent | NavComponent | StatusComponent | RecordComponent>
@@ -306,19 +302,6 @@ export const createComponentSlice: ImmerStateCreator<
     get().addPage();
     get().deleteAllPosition();
     get().createPanels();
-  },
-  asyncPreSubmitOperation: null, // Async operation placeholder, this is mainly used for saving photos to disk on component save
-  resetAsyncPreSubmitOperation: () => set({ asyncPreSubmitOperation: null }),
-  setAsyncPreSubmitOperation: (operation: (() => Promise<void>) | null) =>
-    set({
-      asyncPreSubmitOperation: operation
-    }),
-  executeAndResetAsyncPreSubmitOperation: async () => {
-    const state = get(); // Get the current state
-    if (state.asyncPreSubmitOperation) {
-      await state.asyncPreSubmitOperation();
-      set({ asyncPreSubmitOperation: null }); // Reset to null after execution
-    }
   },
   createPanels: () => {
     const { timepanelId, navpanelId, statuspanelId, recordpanelId, logpanelId } = {
