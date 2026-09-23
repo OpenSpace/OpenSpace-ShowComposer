@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   FlightControllerInputStateCommand,
   LogLevel,
@@ -118,15 +118,17 @@ export function useFlightController(): (
   return sendFlightControlInput;
 }
 
-const ErrorLogSettings = (logLevel: LogLevel): Partial<TopicPayload<'errorLog'>> => ({
-  settings: {
-    timeStamping: true,
-    dateStamping: true,
-    categoryStamping: true,
-    logLevelStamping: true,
-    logLevel
-  }
-});
+function ErrorLogSettings(logLevel: LogLevel): Partial<TopicPayload<'errorLog'>> {
+  return {
+    settings: {
+      timeStamping: true,
+      dateStamping: true,
+      categoryStamping: true,
+      logLevelStamping: true,
+      logLevel
+    }
+  };
+}
 
 // Subscribe to the errorLog topic while mounted. Returns the log messages plus a setter for the
 // log level - it updates the live subscription with `talk` if there is one, otherwise it starts
@@ -142,12 +144,15 @@ export function useSubscribeToErrorLog(): {
   const topic = usePropertyStore(
     (state) => state.topicSubscriptions.errorLog?.subscription
   );
+  // Tracks the last log level the user picked, so a reconnect resubscribes at that
+  // level instead of resetting to LogLevel.All.
+  const logLevelRef = useRef<LogLevel>(LogLevel.All);
 
   useEffect(() => {
     if (connectionStatus !== ConnectionStatus.Connected) {
       return;
     }
-    subscribeToTopic('errorLog', undefined, ErrorLogSettings(LogLevel.All));
+    subscribeToTopic('errorLog', undefined, ErrorLogSettings(logLevelRef.current));
     return () => {
       unsubscribeFromTopic('errorLog');
     };
@@ -155,6 +160,7 @@ export function useSubscribeToErrorLog(): {
 
   const setLogLevel = useCallback(
     (logLevel: LogLevel) => {
+      logLevelRef.current = logLevel;
       if (topic) {
         topic.talk({ event: 'update_log_level', logLevel });
       } else {

@@ -170,6 +170,7 @@ export function DraggableComponent({
       </Draggable>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
+        setOpen={setIsDeleteModalOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         message={`Are you sure you want to delete the component${

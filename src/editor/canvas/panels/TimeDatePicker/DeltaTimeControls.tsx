@@ -20,7 +20,7 @@ export function DeltaTimeControls() {
   const { t } = useTranslation('time-date-picker');
   const [stepSize, setStepSize] = useState('Seconds');
   const [paused, setPaused] = useState(false);
-  const [localDelta, setLocalDelta] = useState(0);
+  const [localDelta, setLocalDelta] = useState<number | string>(0);
 
   const luaApi = useOpenSpaceApi();
 
@@ -73,13 +73,14 @@ export function DeltaTimeControls() {
     luaApi?.time.togglePause();
   }
 
-  function setDeltaTime(value: number) {
+  function setDeltaTime(value: number | string) {
     isEditingDelta.current = true;
     setLocalDelta(value);
-    const deltaTime = value * StepSizes[stepSize];
-    if (Number.isNaN(deltaTime)) {
+    const numericValue = typeof value === 'number' ? value : parseFloat(value);
+    if (Number.isNaN(numericValue)) {
       return;
     }
+    const deltaTime = numericValue * StepSizes[stepSize];
     if (luaApi) {
       updateDeltaTime(luaApi, deltaTime);
     }
@@ -91,6 +92,14 @@ export function DeltaTimeControls() {
 
   function endEditingDelta() {
     isEditingDelta.current = false;
+    const numericValue = typeof localDelta === 'number' ? localDelta : parseFloat(localDelta);
+    if (Number.isNaN(numericValue)) {
+      const adjustedDelta = round10(
+        targetDeltaTime ? targetDeltaTime / StepSizes[stepSize] : 0,
+        StepPrecisions[stepSize]
+      );
+      setLocalDelta(adjustedDelta);
+    }
   }
 
   return (
@@ -112,9 +121,7 @@ export function DeltaTimeControls() {
           disabled={!luaApi}
           onFocus={beginEditingDelta}
           onBlur={endEditingDelta}
-          onChange={(value) =>
-            setDeltaTime(typeof value === 'number' ? value : parseFloat(value))
-          }
+          onChange={setDeltaTime}
           placeholder={`${stepSize} / second`}
           value={localDelta}
         />

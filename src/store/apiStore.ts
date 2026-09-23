@@ -215,16 +215,10 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
     }
   },
   unsubscribeFromProperty: (subscription: Topic<'subscribe'>) => {
-    // A property subscription's cancel() first sends 'stop_subscription' over the socket,
-    // so on a dead socket it throws ("Cannot send: socket is not connected"). Unlike WebGui
-    // — which unsubscribes synchronously inside the socket onclose (client still set) — our
-    // per-component teardown runs in React effect cleanup, after the socket is already
-    // nulled. Swallow the throw so it can't escape into React's cleanup and crash the tree;
-    // when the socket is gone the server-side subscription is gone too.
     try {
       subscription.cancel();
-    } catch {
-      // socket already closed — nothing left to tear down server-side
+    } catch (e) {
+      console.error('Cannot unsubscribe from property, error occurred:', e);
     }
   },
   subscribeToTopic: <T extends TopicId>(topicName: T, payload?: TopicPayload<T>) => {
@@ -264,8 +258,6 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
   },
   unsubscribeFromTopic: (topic: Topic<TopicId>) => {
     const { connectionStatus } = get();
-    // talk()/cancel() can send over the socket; guard the send on a live connection and
-    // swallow any throw so disconnect teardown can't crash React's effect cleanup.
     try {
       if (connectionStatus == ConnectionStatus.Connected) {
         topic.talk({
@@ -273,15 +265,15 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         });
       }
       topic.cancel();
-    } catch {
-      // socket already closed
+    } catch (e) {
+      console.error('Cannot unsubscribe from topic, error occurred:', e);
     }
   },
   cancelTopic: (topic: Topic<TopicId>) => {
     try {
       topic.cancel();
-    } catch {
-      // socket already closed
+    } catch (e) {
+      console.error('Cannot cancel topic, error occurred:', e);
     }
   },
   disconnectFromTopic: (topic: Topic<TopicId>) => {
@@ -293,8 +285,8 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         });
       }
       topic.cancel();
-    } catch {
-      // socket already closed
+    } catch (e) {
+      console.error('Cannot disconnect from topic, error occurred:', e);
     }
   }
 }));

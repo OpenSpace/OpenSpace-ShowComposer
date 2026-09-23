@@ -91,9 +91,13 @@ export function GlobalMenuBar() {
     setIsNewProjectModalOpen(true);
   }
   async function handleSaveConfirm() {
-    const saved = await saveProject();
-    if (saved) {
-      setIsConfirmationModalOpen(true);
+    try {
+      const saved = await saveProject();
+      if (saved) {
+        setIsConfirmationModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error saving project:', error);
     }
   }
 

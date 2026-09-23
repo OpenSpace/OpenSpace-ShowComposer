@@ -40,8 +40,12 @@ function ImportShowModal({ isOpen, onClose, store }: Props) {
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
   const closeWithConfirmation = async (confirm: boolean) => {
-    await confirmStoreImport(confirm, store._tempImportId);
-    onClose();
+    try {
+      await confirmStoreImport(confirm, store._tempImportId);
+      onClose();
+    } catch (error) {
+      console.error('Error confirming show import:', error);
+    }
   };
 
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();

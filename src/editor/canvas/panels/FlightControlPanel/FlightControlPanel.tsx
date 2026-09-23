@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionIcon,
@@ -70,25 +71,25 @@ export function FlightControlPanel() {
   );
   const sendFlightControlInput = useFlightController();
 
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let mouseIsDown = false;
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const mouseIsDown = useRef(false);
 
   function touchDown(event: React.TouchEvent) {
-    touchStartX = event.touches[0].clientX;
-    touchStartY = event.touches[0].clientY;
+    touchStartX.current = event.touches[0].clientX;
+    touchStartY.current = event.touches[0].clientY;
   }
 
   function mouseDown() {
-    mouseIsDown = true;
+    mouseIsDown.current = true;
   }
 
   function touchMove(event: React.TouchEvent) {
     const touchX = event.touches[0].clientX;
     const touchY = event.touches[0].clientY;
-    if (touchStartX !== 0) {
-      let deltaX = touchX - touchStartX;
-      let deltaY = touchY - touchStartY;
+    if (touchStartX.current !== 0) {
+      let deltaX = touchX - touchStartX.current;
+      let deltaY = touchY - touchStartY.current;
       const scaleFactor = 300;
       deltaX /= scaleFactor;
       deltaY /= scaleFactor;
@@ -112,7 +113,7 @@ export function FlightControlPanel() {
 
   function mouseMove(event: React.MouseEvent) {
     event.preventDefault();
-    if (!mouseIsDown) {
+    if (!mouseIsDown.current) {
       return;
     }
     const deltaX = event.movementX / 20;
@@ -135,15 +136,15 @@ export function FlightControlPanel() {
   }
 
   function touchUp() {
-    touchStartX = 0;
+    touchStartX.current = 0;
     sendFlightControlInput(IDLE_INPUT_STATE_COMMAND);
   }
 
   function mouseUp() {
-    if (!mouseIsDown) {
+    if (!mouseIsDown.current) {
       return;
     }
-    mouseIsDown = false;
+    mouseIsDown.current = false;
     sendFlightControlInput(IDLE_INPUT_STATE_COMMAND);
   }
 
