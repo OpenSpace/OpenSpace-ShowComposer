@@ -1,0 +1,21 @@
+.paletteGrid {
+  --sg-spacing-x: var(--mantine-spacing-xs);
+  --sg-spacing-y: var(--mantine-spacing-xs);
+}
+
+@container palette (min-width: 167px) {
+  .paletteGrid {
+    --sg-spacing-x: var(--mantine-spacing-md);
+    --sg-spacing-y: var(--mantine-spacing-md);
+  }
+}
+
+.componentButtonLabel {
+  display: none;
+}
+
+@container (min-width: 40px) {
+  .componentButtonLabel {
+    display: inline;
+  }
+}

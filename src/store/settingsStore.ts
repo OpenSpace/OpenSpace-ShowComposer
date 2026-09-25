@@ -31,7 +31,7 @@ export interface SettingsStoreState {
   setShowPagination: (show: boolean) => void;
   setGridSize: (size: { rows: number; columns: number }) => void;
   setPresentLocked: (locked: boolean) => void;
-  setScale: (scaleFunc: (prevScale: any) => number) => void;
+  setScale: (scaleFunc: (prevScale: number) => number) => void;
   updatePageSize(width: number, height: number): void;
   setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
   setProjectSettings: (settings: Partial<ProjectSettings>) => void;
@@ -44,7 +44,7 @@ export const useSettingsStore = create<SettingsStoreState>()(
         // Throttled function to update pageScaleThrottled
         const throttledSetScale = throttle((newScale) => {
           set(
-            (_state) => {
+            () => {
               return {
                 pageScaleThrottled: newScale
               };
@@ -62,17 +62,9 @@ export const useSettingsStore = create<SettingsStoreState>()(
           projectDescription: '',
           showPagination: true,
           setShowPagination: (show: boolean) =>
-            set(
-              (_state) => ({ showPagination: show }),
-              false,
-              'settings/setShowPagination'
-            ),
+            set(() => ({ showPagination: show }), false, 'settings/setShowPagination'),
           setPresentLocked: (locked: boolean) =>
-            set(
-              (_state) => ({ presentLocked: locked }),
-              false,
-              'settings/setPresentLocked'
-            ),
+            set(() => ({ presentLocked: locked }), false, 'settings/setPresentLocked'),
           togglePresentMode: () =>
             set(
               (state) => ({ presentMode: !state.presentMode }),

@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Flex, Progress } from '@mantine/core';
 import { throttle } from 'lodash';
-interface StatusBarControlledProps {
+
+interface Props {
   progress: number; // Float value between 0 and 1
   debounceDuration: number; // Duration in milliseconds
 }
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
 
-const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
-  progress,
-  debounceDuration
-}) => {
-  // const [_width, _setWidth] = useState(0);
-  const [_progressState, setProgress] = useState(progress);
-
-  const [_isFadingOut, setIsFadingOut] = useState(false);
+function StatusBarControlled({ progress, debounceDuration }: Props) {
+  const [, setProgress] = useState(progress);
+  const [, setIsFadingOut] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setThrottleProgress = useCallback(
@@ -47,20 +42,33 @@ const StatusBarControlled: React.FC<StatusBarControlledProps> = ({
       }
     };
   }, [progress, debounceDuration, setThrottleProgress]);
-
   return (
-    <div
-      className={cn(
-        'duration-400 absolute left-0 top-0 flex h-full w-full flex-col items-center justify-end rounded-lg bg-white/0 p-4 transition-opacity ease-linear',
-        {
-          // 'opacity-0': isFadingOut,
-          // 'opacity-100': !isFadingOut,
-        }
-      )}
+    <Flex
+      pos={'absolute'}
+      top={0}
+      left={0}
+      h={'100%'}
+      w={'100%'}
+      direction={'column'}
+      justify={'flex-end'}
+      p={'md'}
+      style={{ borderRadius: 'var(--mantine-radius-lg)' }}
     >
-      <Progress value={(Math.round(progress * 1000) / 1000) * 100} />
-    </div>
+      <Progress
+        value={(Math.round(progress * 1000) / 1000) * 100}
+        size={'xl'}
+        radius={'xl'}
+        transitionDuration={150}
+        styles={{
+          root: { backgroundColor: 'rgba(0, 0, 0, 0.4)' },
+          section: {
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            transitionTimingFunction: 'linear'
+          }
+        }}
+      />
+    </Flex>
   );
-};
+}
 
-export default StatusBarControlled;
+export { StatusBarControlled };
