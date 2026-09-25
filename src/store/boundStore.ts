@@ -1,20 +1,24 @@
-// import { isEmpty, throttle } from 'lodash';
-// import diff from 'microdiff';
 import debounce from 'just-debounce-it';
-// import { debounce, isEmpty } from 'lodash';
 import { temporal, type TemporalState } from 'zundo';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { ComponentSlice, createComponentSlice } from './componentSlice'; // Assuming you have a componentSlice
+import { ComponentSlice, createComponentSlice } from './componentSlice';
 import { createLayoutSlice, LayoutSlice } from './layoutSlice';
 import { createPageSlice, PageSlice } from './pageSlice';
 import { createPositionSlice, PositionSlice } from './positionSlice';
-// import isDeepEqual from 'fast-deep-equal';
-// import { isEmpty } from 'lodash';
+
 // Define the combined state type
 export type BoundStoreState = PageSlice & LayoutSlice & PositionSlice & ComponentSlice;
+
+// Keys that should not be stored
+const KeysToRemove = new Set<string>([
+  'debouncePositions',
+  'endSaveCount',
+  'startSaveCount',
+  'selectedComponents'
+]);
 
 export const useBoundStore = create<BoundStoreState>()(
   devtools(
@@ -29,33 +33,14 @@ export const useBoundStore = create<BoundStoreState>()(
           }),
           {
             limit: 20,
-            partialize: (state) => {
-              // These keys are pulled out of `state` purely to EXCLUDE them from the
-              // persisted `rest` (transient UI/save state + action functions that must
-              // not be serialized). They are intentionally unused.
-              /* eslint-disable @typescript-eslint/no-unused-vars */
-              const {
-                debouncePositions,
-                endSaveCount,
-                startSaveCount,
-                selectedComponents,
-                addComponent,
-                addComponentToLayout,
-                addComponentToPageById,
-                addLayout,
-                handleLayoutDrop,
-                handleComponentDrop,
-                addPages,
-                addComponents,
-                addPositions,
-                addLayouts,
-                ...rest
-              } = state;
-              /* eslint-enable @typescript-eslint/no-unused-vars */
-
-              return rest;
-            },
-
+            partialize: (state) =>
+              Object.fromEntries(
+                Object.entries(state).filter(([key, value]) => {
+                  const isFunction = typeof value === 'function';
+                  const shouldRemove = KeysToRemove.has(key);
+                  return !isFunction && !shouldRemove;
+                })
+              ) as Partial<BoundStoreState>,
             handleSet: (handleSet) => {
               //   let accumulatedState: Partial<BoundStoreState> = {};
               let firstState: Partial<BoundStoreState> | null = null; // To store the first state
@@ -64,7 +49,6 @@ export const useBoundStore = create<BoundStoreState>()(
                   if (firstState) {
                     handleSet(firstState);
                   }
-
                   firstState = null; // Reset fir
                 },
                 500 // Debounce time

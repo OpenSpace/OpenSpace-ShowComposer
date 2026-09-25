@@ -13,6 +13,7 @@ const DEFAULT_BACKEND_ORIGIN = 'http://localhost:4680';
  */
 export default defineConfig(({ mode }) => {
   // The empty string means that all env vars are loaded, not just those starting with VITE_ (the default)
+  // like for example SHOWCOMPOSER_BACKEND, which is used to override the backend origin for the REST API
   const env = loadEnv(mode, process.cwd(), '');
   const backend = env.SHOWCOMPOSER_BACKEND || DEFAULT_BACKEND_ORIGIN;
 
@@ -27,7 +28,7 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve('./src')
       }
     },
-    // The dev server forwards the REST api calls to the running OpenSpace backend. Ignored in
+    // The Vite dev server forwards the REST api calls to the running OpenSpace backend. Ignored in
     // production
     server: {
       host: true, // reachable via both localhost and 127.0.0.1

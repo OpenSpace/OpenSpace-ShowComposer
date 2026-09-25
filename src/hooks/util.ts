@@ -1,7 +1,7 @@
 import { useOpenSpaceApiStore } from '@/store/apiStore';
 import { ConnectionStatus } from '@/types/enums';
 
-// WebGui-shaped connection-status hooks, thin selectors over the Zustand apiStore.
+// Hooks that have the same interface as in WebGui but uses Zustand underneath
 
 export function useConnectionStatus(): ConnectionStatus {
   return useOpenSpaceApiStore((state) => state.connectionStatus);

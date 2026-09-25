@@ -17,7 +17,8 @@ import {
 // These are the actions that can be triggered by a component. Each action is a function
 // that takes a component and returns a function. This is so that the function can be called with
 // the component's data when the action is triggered. The returned function is what actually triggers the action.
-// The component types that trigger an action when fired.
+
+// The component types that have actions
 type ActionKey =
   | 'fade'
   | 'flyto'
@@ -32,8 +33,7 @@ type ActionKey =
   | 'trigger'
   | 'number';
 
-// Each action's component type is derived from the shared `ComponentFor` map. Click-triggers
-// return () => void; `number` returns a value-setter (the slider value).
+// The functions that trigger the actions for each component
 export type ComponentActions = {
   [K in ActionKey]: (
     c: ComponentFor[K]
@@ -60,10 +60,10 @@ export const componentActions: ComponentActions = {
   number: (c) => (value) => triggerNumber(c.property, value)
 };
 
-// We need this helper function to be able to call the action of a component without knowing its
-// type at compile time. This is because the component's type is only known at runtime, and TypeScript
-// needs to know the type of the component in order to call the correct action function.
-// This function is only used by the multi component.
+// This function is only used by the multi component. We need this helper function to be
+// able to call the action of a component without knowing its type at compile time. This
+// is because the component's type is only known at runtime, and TypeScript needs to know
+// the type of the component in order to call the correct action function.
 export function runComponentAction(component: Component): void {
   const createHandler = componentActions[component.type as keyof ComponentActions] as
     | ((c: Component) => () => void)

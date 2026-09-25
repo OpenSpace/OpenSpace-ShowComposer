@@ -7,21 +7,22 @@ import { basePath } from '@/utils/basePath';
 // which gives the same result.
 
 /**
- * Builds a full URL for a backend route, relative to the app's mount base.
+ * Builds a full URL for a backend route, relative to the app's base path.
  *
  * @param path - The route path, without a leading slash (e.g. `'api/projects'`).
- * @returns The mount-relative URL (e.g. `'/showcomposer/api/projects'`).
+ * @returns The base-path-relative URL (e.g. `'/showcomposer/api/projects'`).
  */
 function backendUrl(path: string): string {
   return `${basePath}${path}`;
 }
 
 /**
- * Turns a mount-relative path returned by the backend into a usable URL. The backend hands
- * back leading-slash paths like `'/uploads/foo.png'`, so prefix the base to resolve them.
+ * Turns a base-path-relative path returned by the backend into a usable URL. The backend hands
+ * back paths starting with a slash like `'/uploads/foo.png'`, we need to add the base path
+ * to resolve them.
  *
- * @param serverPath - A leading-slash path from the backend (e.g. `'/uploads/foo.png'`).
- * @returns The path prefixed with the mount base (e.g. `'/showcomposer/uploads/foo.png'`).
+ * @param serverPath - A path from the backend (e.g. `'/uploads/foo.png'`).
+ * @returns The path prefixed with the base path (e.g. `'/showcomposer/uploads/foo.png'`).
  */
 function resourceUrl(serverPath: string): string {
   return `${basePath.replace(/\/$/, '')}${serverPath}`;
@@ -36,12 +37,13 @@ export interface Project {
 
 // The data properties of a store's state: the keys whose values aren't functions. These are
 // what survive JSON serialization - the store's action functions can't be serialized, so
-// they're dropped when a project is saved.
+// they're excluded when a project is saved.
 type SerializableState<T> = {
   [K in keyof T as T[K] extends (...args: never[]) => unknown ? never : K]: T[K];
 };
 
-// Saved project consists of the bound store (pages, layouts, positions, components) and the settings store (present mode, page size, etc).
+// Saved project consists of the bound store (pages, layouts, positions, components) and the settings
+// store (present mode, page size, etc).
 export interface SavedProject {
   boundStore: Partial<SerializableState<BoundStoreState>>;
   settingsStore: Partial<SerializableState<SettingsStoreState>>;
@@ -60,7 +62,7 @@ export interface ImportConfirmationResult {
  * @returns Resolves to `true` when the save succeeds.
  * @throws If the backend responds with a non-OK status.
  */
-export async function saveProjectStore(store: unknown): Promise<boolean> {
+export async function saveProjectStore(store: SavedProject): Promise<boolean> {
   const response = await fetch(backendUrl('api/projects/save'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -77,9 +79,9 @@ export async function saveProjectStore(store: unknown): Promise<boolean> {
  * Uploads a project archive - either a `.zip`, or a `.json` plus its image files - and
  * returns the store the backend extracts from it.
  *
- * @param formData - Multipart form data containing the archive (and any images).
+ * @param formData - Form data containing the archive (and any images).
  * @returns Resolves to the parsed project store.
- * @throws If the upload fails (non-OK response).
+ * @throws If the backend responds with a non-OK status.
  */
 export async function loadProjectArchive(formData: FormData): Promise<unknown> {
   const response = await fetch(backendUrl('api/projects/load'), {
@@ -95,9 +97,9 @@ export async function loadProjectArchive(formData: FormData): Promise<unknown> {
 /**
  * Confirms or cancels a staged project import.
  *
- * @param confirm - `true` to commit the import, `false` to cancel it.
+ * @param confirm - `true` to confirm the import, `false` to cancel it.
  * @param tempId - The temporary id of the staged import.
- * @returns Resolves to the backend's confirmation result.
+ * @returns The backend's confirmation result.
  * @throws If the backend responds with a non-OK status.
  */
 export async function confirmStoreImport(
@@ -116,13 +118,13 @@ export async function confirmStoreImport(
 }
 
 /**
- * Packages a project's current store state into an export archive.
+ * Packages a project's current store state into an export blob.
  *
- * @param store - The serializable current state of the store to export.
- * @returns Resolves to the export as a zip `Blob`; the caller handles the actual download.
- * @throws If the export fails (non-OK response).
+ * @param store - The store to export.
+ * @returns The store as a zipped `Blob`.
+ * @throws If the backend responds with a non-OK status.
  */
-export async function packageProject(store: unknown): Promise<Blob> {
+export async function packageProject(store: SavedProject): Promise<Blob> {
   const response = await fetch(backendUrl('api/package'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -137,7 +139,7 @@ export async function packageProject(store: unknown): Promise<Blob> {
 /**
  * Lists the projects saved on the backend.
  *
- * @returns Resolves to the array of saved projects.
+ * @returns An array of saved projects.
  * @throws If the backend responds with a non-OK status.
  */
 export async function loadProjects(): Promise<Project[]> {
@@ -152,7 +154,7 @@ export async function loadProjects(): Promise<Project[]> {
  * Loads a single saved project by its file path.
  *
  * @param filePath - The project's path, as provided by {@link loadProjects}.
- * @returns Resolves to the saved project's current state.
+ * @returns The loaded project's current state.
  * @throws If the backend responds with a non-OK status.
  */
 export async function loadProject(filePath: string): Promise<SavedProject> {
@@ -166,7 +168,7 @@ export async function loadProject(filePath: string): Promise<SavedProject> {
 /**
  * Fetches the gallery images available on the backend.
  *
- * @returns Resolves to the image URLs, ready to use under the app's mount.
+ * @returns Resolves to the image URLs ({@link resourceUrl}s).
  * @throws If the backend responds with a non-OK status.
  */
 export async function fetchGalleryImages(): Promise<string[]> {
@@ -182,8 +184,8 @@ export async function fetchGalleryImages(): Promise<string[]> {
  * Uploads a single image to the backend.
  *
  * @param file - The image file to upload.
- * @returns Resolves to the uploaded image's URL under the app's mount.
- * @throws If the upload fails (non-OK response).
+ * @returns Resolves to the {@link resourceUrl} of the uploaded image's path.
+ * @throws If the backend responds with a non-OK status.
  */
 export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();

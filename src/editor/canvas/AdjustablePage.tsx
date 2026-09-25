@@ -54,7 +54,7 @@ export function AdjustablePage() {
         height: pageHeight
       }}
       bounds={'parent'}
-      // The page snaps freely so it can hit exact sizes like 1920x1080
+      // The page doesn't snap to grid so it can hit exact sizes like 1920x1080
       resizeGrid={[1, 1]}
       disableDragging={locked || isPresentMode}
       enableResizing={!locked && !isPresentMode}

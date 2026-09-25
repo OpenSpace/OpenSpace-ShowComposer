@@ -3,7 +3,6 @@ import {
   FlightControllerInputStateCommand,
   LogLevel,
   LogMessage,
-  TopicId,
   TopicPayload
 } from 'openspace-api-js/types';
 
@@ -17,78 +16,105 @@ import {
   SessionRecordingState
 } from '@/types/types';
 
-// This file contains hooks that matches Webgui but uses Zustand under the hood.
+// This file contains hooks that matches Webgui hooks but uses Zustand under the hood.
 
-// Payload constants live up here to keep their reference stable -
-// otherwise the effect would re-subscribe every render.
 const SessionRecordingPayload: Partial<TopicPayload<'sessionRecording'>> = {
   properties: ['state', 'files']
 };
 
-// Internal helper for managing topic subscriptions.
-// Topics don't all cancel the same way, hence `teardown`: real subscriptions
-// (time/camera/sessionRecording/errorLog) close with 'unsubscribe' (stop_subscription + cancel),
-// but one-shot topics like profile just need a local 'cancel' - they don't understand
-// stop_subscription.
-function useSubscribeToTopic<T extends TopicId>(
-  topicName: T,
-  throttleMs?: number,
-  payload?: Partial<TopicPayload<T>>,
-  teardown: 'unsubscribe' | 'cancel' = 'unsubscribe'
-): void {
+/**
+ * Subscribe to the current simulation time.
+ *
+ * @param throttleMs How often the subscription is allowed to update (ms).
+ */
+export function useSubscribeToTime(throttleMs: number = 200): OpenSpaceTimeState {
   const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
   const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
+
+  useEffect(() => {
+    if (connectionStatus !== ConnectionStatus.Connected) {
+      return;
+    }
+    subscribeToTopic('time', throttleMs);
+    return () => {
+      unsubscribeFromTopic('time');
+    };
+  }, [throttleMs, connectionStatus, subscribeToTopic, unsubscribeFromTopic]);
+
+  return usePropertyStore((state) => state.time);
+}
+
+/**
+ * Subscribe to the current camera state.
+ *
+ * @param throttleMs How often the subscription is allowed to update (ms).
+ */
+export function useSubscribeToCamera(throttleMs: number = 500): CameraState {
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
+  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
+
+  useEffect(() => {
+    if (connectionStatus !== ConnectionStatus.Connected) {
+      return;
+    }
+    subscribeToTopic('camera', throttleMs);
+    return () => {
+      unsubscribeFromTopic('camera');
+    };
+  }, [throttleMs, connectionStatus, subscribeToTopic, unsubscribeFromTopic]);
+
+  return usePropertyStore((state) => state.camera);
+}
+
+/**
+ * Get the profile.
+ */
+export function useSubscribeToProfile(): ProfileState {
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
   const cancelTopic = usePropertyStore((state) => state.cancelTopic);
 
   useEffect(() => {
     if (connectionStatus !== ConnectionStatus.Connected) {
       return;
     }
-    subscribeToTopic(topicName, throttleMs, payload);
+    subscribeToTopic('profile');
     return () => {
-      if (teardown === 'cancel') {
-        cancelTopic(topicName);
-      } else {
-        unsubscribeFromTopic(topicName);
-      }
+      cancelTopic('profile');
     };
-  }, [
-    topicName,
-    throttleMs,
-    payload,
-    teardown,
-    connectionStatus,
-    subscribeToTopic,
-    unsubscribeFromTopic,
-    cancelTopic
-  ]);
-}
+  }, [connectionStatus, subscribeToTopic, cancelTopic]);
 
-export function useSubscribeToTime(throttleMs: number = 200): OpenSpaceTimeState {
-  useSubscribeToTopic('time', throttleMs);
-  return usePropertyStore((state) => state.time);
-}
-
-export function useSubscribeToCamera(throttleMs: number = 500): CameraState {
-  useSubscribeToTopic('camera', throttleMs);
-  return usePropertyStore((state) => state.camera);
-}
-
-export function useSubscribeToProfile(): ProfileState {
-  // profile is a one-shot topic: no throttle needed, and cancel it locally rather than
-  // sending stop_subscription.
-  useSubscribeToTopic('profile', undefined, undefined, 'cancel');
   return usePropertyStore((state) => state.profile);
 }
 
+/**
+ * Subscribe to session-recording state and its file list.
+ */
 export function useSubscribeToSessionRecording(): SessionRecordingState {
-  useSubscribeToTopic('sessionRecording', 0, SessionRecordingPayload);
+  const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
+  const subscribeToTopic = usePropertyStore((state) => state.subscribeToTopic);
+  const unsubscribeFromTopic = usePropertyStore((state) => state.unsubscribeFromTopic);
+
+  useEffect(() => {
+    if (connectionStatus !== ConnectionStatus.Connected) {
+      return;
+    }
+    subscribeToTopic('sessionRecording', 0, SessionRecordingPayload);
+    return () => {
+      unsubscribeFromTopic('sessionRecording');
+    };
+  }, [connectionStatus, subscribeToTopic, unsubscribeFromTopic]);
+
   return usePropertyStore((state) => state.sessionRecording);
 }
 
-// Connect to the flightcontroller topic while mounted and hand back a sender for camera-input
-// commands. Returns a function that takes a FlightControllerInputStateCommand and sends it to the topic.
+/**
+ * Connect to the flightcontroller topic and hand back a function to send commands.
+ *
+ * @returns A function that sends a {@link FlightControllerInputStateCommand} to the topic.
+ */
 export function useFlightController(): (
   command: FlightControllerInputStateCommand
 ) => void {
@@ -130,9 +156,12 @@ function ErrorLogSettings(logLevel: LogLevel): Partial<TopicPayload<'errorLog'>>
   };
 }
 
-// Subscribe to the errorLog topic while mounted. Returns the log messages plus a setter for the
-// log level - it updates the live subscription with `talk` if there is one, otherwise it starts
-// a fresh subscription at that level.
+/**
+ * Subscribe to the errorLog topic.
+ *
+ * @returns The log messages plus a setter for the log level - it updates the live subscription
+ * with `talk` if there is one, otherwise it starts a fresh subscription at that level.
+ */
 export function useSubscribeToErrorLog(): {
   errorLog: LogMessage[];
   setLogLevel: (logLevel: LogLevel) => void;

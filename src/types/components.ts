@@ -254,8 +254,8 @@ export type Component =
   | MultiComponent
   | ScriptComponent;
 
-// Maps each component `type` string to its concrete component interface. Panels / `default` have
-// no dedicated widget/modal, so the base type suffices.
+// Maps each component `type` string to its concrete component interface.
+// Panels and `default` have no dedicated widget/modal, so they just have the base type.
 export type ComponentFor = {
   fade: FadeComponent;
   flyto: FlyToComponent;

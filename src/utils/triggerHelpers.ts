@@ -10,7 +10,7 @@ import { RecordingState } from '@/types/enums';
 import { NavigationState, RecordingsFolderKey } from '@/types/types';
 
 /**
- * When moving to RTK this file will become actions. Therefore, the lua api access is kept here,
+ * TODO @ylvse (2026-09-23) - When moving to RTK this file will become actions. Therefore, the lua api access is kept here,
  * as it will be ok later on (although now it looks funky to have hook accesses in functions)
  */
 
@@ -19,7 +19,7 @@ import { NavigationState, RecordingsFolderKey } from '@/types/types';
  *
  * @param property - The `.Opacity` property URI of the renderable. The `.Opacity` suffix is
  * stripped before the fade functions are called.
- * @param intDuration - The fade duration in seconds. Halved for the `toggle` action.
+ * @param intDuration - The fade duration in seconds.
  * @param action - Whether to fade `on`, `off`, or `toggle` the current fade state.
  */
 async function triggerFade(
@@ -44,7 +44,7 @@ async function triggerFade(
       luaApi.fadeOut(property.replace('.Opacity', ''), intDuration);
       break;
     case 'toggle':
-      luaApi.toggleFade(property.replace('.Opacity', ''), intDuration / 2.0);
+      luaApi.toggleFade(property.replace('.Opacity', ''), intDuration);
       break;
     default:
       break;
@@ -83,7 +83,7 @@ async function triggerBool(property: string, action: 'on' | 'off' | 'toggle') {
 }
 
 /**
- * Fire a trigger property - a valueless property that runs its action when set.
+ * Fire a trigger property.
  *
  * @param property - The trigger property URI.
  */
@@ -114,14 +114,14 @@ async function triggerNumber(property: string, newValue: number) {
 }
 
 /**
- * Apply a navigation (camera) state, either instantly or with a transition.
+ * Apply a navigation (camera) state, either instantly or with a transition (fade or fly).
  *
  * @param navigationState - The target navigation state.
  * @param setTime - Whether to also set the simulation time to the state's timestamp. When false,
  * the timestamp is stripped for the `fade` and `fly` modes.
  * @param mode - `jump` applies the state instantly, `fade` fades out/in over `fadeTime`, `fly`
  * flies the camera there.
- * @param fadeTime - The transition duration in seconds (halved for the `fade` mode).
+ * @param fadeTime - The transition duration in seconds.
  */
 async function jumpToNavState(
   navigationState: NavigationState,
@@ -146,7 +146,7 @@ async function jumpToNavState(
       if (!setTime) {
         delete navState.Timestamp;
       }
-      luaApi.navigation.jumpToNavigationState(navState, false, fadeTime / 2.0);
+      luaApi.navigation.jumpToNavigationState(navState, false, fadeTime);
       break;
     case 'fly':
       if (!setTime) {
@@ -160,9 +160,7 @@ async function jumpToNavState(
 }
 
 /**
- * Fly the camera to a target. Uses geographic coordinates when the component's `geo` flag is set,
- * otherwise a plain fly-to. No-ops when the target (or, for a geo flight, any coordinate) is
- * missing.
+ * Fly the camera to a target. Can either fly to a scene node, or to a geographic coordinate.
  *
  * @param component - The fly-to component holding the target, coordinates and duration.
  */
@@ -187,9 +185,9 @@ function triggerFlyTo(component: FlyToComponent) {
 }
 
 /**
- * Retarget the camera anchor onto a scene node, clearing any retarget-in-progress and aim.
+ * Focus the camera on a scene graph node.
  *
- * @param property - The scene node identifier to focus.
+ * @param property - The scene graph node identifier to focus on.
  */
 function triggerFocus(property: string) {
   const { luaApi } = useOpenSpaceApiStore.getState();
@@ -206,8 +204,8 @@ function triggerFocus(property: string) {
 }
 
 /**
- * Toggle session-recording playback: start playing the given file when idle, otherwise stop the
- * running playback.
+ * Toggle session-recording playback: if the recording state is idle, start playing the
+ * given file when idle. If the recording state is not idle, stop the running playback.
  *
  * @param file - The recording filename, resolved relative to the recordings folder.
  * @param loop - Whether the playback should loop.
@@ -229,16 +227,16 @@ async function togglePlayback(file: string, loop: boolean) {
 }
 
 /**
- * Trigger a named OpenSpace action.
+ * Trigger an action.
  *
- * @param actionName - The identifier of the action to trigger.
+ * @param identifier - The identifier of the action to trigger.
  */
-function triggerAction(actionName: string) {
-  useOpenSpaceApiStore.getState().luaApi?.action.triggerAction(actionName);
+function triggerAction(identifier: string) {
+  useOpenSpaceApiStore.getState().luaApi?.action.triggerAction(identifier);
 }
 
 /**
- * Execute a raw Lua script in OpenSpace.
+ * Execute a Lua script.
  *
  * @param script - The Lua source to execute.
  */

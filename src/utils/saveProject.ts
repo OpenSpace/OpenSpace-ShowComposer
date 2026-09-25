@@ -3,31 +3,26 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
 // Project save/load/export operations that involve app state (the Zustand stores) or the
-// browser (file-picker dialogs, downloads). The actual backend HTTP lives in the
-// showbuilder client (@/api/showbuilder); this module is only the glue around it.
+// browser (file-picker dialogs, downloads). The functions that communicate with the backend live in the
+// showbuilder file (@/api/showbuilder).
 
 /**
  * Saves the current state of the stores as a project on the backend.
  *
- * @returns Resolves to `true` when the save succeeds.
- * @throws Re-throws (after logging) if the backend save fails.
+ * @returns `true` when the save succeeds.
+ * @throws If the backend save fails.
  */
 export async function saveProject() {
-  try {
-    const settingsStore = useSettingsStore.getState();
-    const boundStore = useBoundStore.getState();
-    return await saveProjectStore({ boundStore, settingsStore });
-  } catch (error) {
-    console.error('Error saving project:', error);
-    throw error; // Re-throw to let the caller handle it
-  }
+  const settingsStore = useSettingsStore.getState();
+  const boundStore = useBoundStore.getState();
+  return await saveProjectStore({ boundStore, settingsStore });
 }
 
 /**
  * Opens a file dialog for a local `.json` project file and parses it. No backend involved.
  *
  * @returns A promise that resolves with the parsed project store, or rejects if no file is
- * chosen or the file isn't valid JSON.
+ * chosen, or the file isn't valid JSON.
  */
 export async function loadStore() {
   return new Promise((resolve, reject) => {
@@ -64,10 +59,10 @@ export async function loadStore() {
 
 /**
  * Opens file dialogs to pick a `.json` project file plus its image files, then uploads them
- * to the backend together.
+ * to the backend.
  *
  * @returns A promise that resolves with the parsed project store, or rejects if no file is
- * chosen or the upload fails.
+ * chosen, or the upload fails.
  */
 export async function loadStoreImageSeperately() {
   return new Promise((resolve, reject) => {
@@ -121,7 +116,7 @@ export async function loadStoreImageSeperately() {
 }
 
 /**
- * Opens a file dialog to pick a `.zip` project archive and uploads it to the backend.
+ * Opens a file dialog to pick a `.zip` project and uploads it to the backend.
  *
  * @returns A promise that resolves with the parsed project store, or rejects if no file is
  * chosen or the upload fails.
@@ -164,9 +159,10 @@ export function exportProject() {
   const boundStore = useBoundStore.getState();
   packageProject({ boundStore, settingsStore })
     .then((blob) => {
-      // Create download link. The anchor must be attached to the DOM, and the object
-      // URL must NOT be revoked synchronously right after click - otherwise the
-      // browser aborts the download before it has read the blob, producing a 0-byte file
+      // Create download link. Technically the URL should be revoked after the download is complete.
+      // This however can create bugs where the download doesnt work depending on how long the download takes
+      // and how fast the URL is revoked. So rather than guess a delay, the URL is intentionally never revoked
+      // - it's a one-off, user-triggered download, so the Blob just stays alive until the tab reloads/closes.
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -174,7 +170,6 @@ export function exportProject() {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
     })
     .catch((error) => {
       console.error('Error exporting project:', error);

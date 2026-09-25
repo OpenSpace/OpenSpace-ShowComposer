@@ -18,7 +18,7 @@ export const Steps = {
   years: 'Years'
 };
 
-// Seconds represented by one unit of each step
+// Units are in seconds
 export const StepSizes = {
   [Steps.seconds]: 1,
   [Steps.minutes]: 60,

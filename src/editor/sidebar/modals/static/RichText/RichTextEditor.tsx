@@ -23,8 +23,10 @@ interface Props {
 // See docs here: https://mantine.dev/x/tiptap/ and here https://tiptap.dev/docs/examples/basics/default-text-editor
 export function RichTextEditor({ content, setContent }: Props) {
   const editor = useEditor({
-    // Toolbar-only editor: no markdown input/paste conversion, and the block/mark types
-    // that have no toolbar button are disabled so they can't be created at all.
+    // This is a simple editor; people editing this can only use the toolbar buttons below,
+    // not type markdown commands or paste formatted text. So input/paste rules are off, and
+    // anything that doesn't have its own toolbar button (lists, links, code blocks, etc.)
+    // is disabled entirely rather than just hidden.
     extensions: [
       StarterKit.configure({
         bulletList: false,

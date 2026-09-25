@@ -8,6 +8,15 @@ import { ConnectionStatus } from '@/types/enums';
 import { PropertyOrPropertyGroup, PropertyTypeKey } from '@/types/Property/property';
 import { PropertyGroupsRuntime } from '@/types/Property/propertyGroups';
 
+/**
+ * Checks whether a stored property's actual type matches an expected type (or, if the
+ * expected type is a property group, whether it's one of that group's member types).
+ *
+ * @param type The expected property (or property group) type.
+ * @param prop The stored property to validate. Passing undefined is always valid (there's
+ * nothing to check yet).
+ * @returns `true` if `prop` is undefined, or the prop type matches `type`.
+ */
 function validatePropertyType<T extends PropertyTypeKey>(
   type: T,
   prop: PropertyOrPropertyGroup<T> | undefined
@@ -25,6 +34,14 @@ function validatePropertyType<T extends PropertyTypeKey>(
   return allowedTypes.includes(prop.metaData.type);
 }
 
+/**
+ * Read a property from the store, validated against the expected type.
+ *
+ * @param type The expected property (or property group) type.
+ * @param uri The property's URI.
+ * @returns The property, or undefined if it's not yet in the store.
+ * @throws If the stored property exists but its type doesn't match `type`.
+ */
 function useStoredProperty<T extends PropertyTypeKey>(
   type: T,
   uri: string
@@ -42,14 +59,13 @@ function useStoredProperty<T extends PropertyTypeKey>(
   return prop;
 }
 
-// How often a property subscription is allowed to re-render. Only fast-changing numbers
-// really hit this, e.g. Fade values or other number types (normally)
+// How often a property subscription is allowed to update.
 const SubscriptionThrottleMs = 50;
 
 /**
- * Subscribe to live updates for a property while the component is mounted. Does nothing
- * until we're connected to OpenSpace. The store keeps a count of subscribers, so it's fine
- * for several components to subscribe to the same property at once.
+ * Subscribe to a property.
+ *
+ * @param uri The property's URI.
  */
 export function useSubscribeToProperty(uri: string): void {
   const connectionStatus = useOpenSpaceApiStore((state) => state.connectionStatus);
@@ -70,8 +86,12 @@ export function useSubscribeToProperty(uri: string): void {
 }
 
 /**
- * Read the current value of a property from the store, with type validation.
- * Returns undefined when the property is unknown (e.g. before its first update).
+ * Read the current value of a property from the store.
+ *
+ * @param type The expected property (or property group) type.
+ * @param uri The property's URI.
+ * @returns The property's value, or undefined when the property is unknown (e.g. before its
+ * first update).
  */
 export function usePropertyValue<T extends PropertyTypeKey>(
   type: T,
@@ -81,7 +101,11 @@ export function usePropertyValue<T extends PropertyTypeKey>(
 }
 
 /**
- * Read the metadata of a property from the store, with type validation.
+ * Read the metadata of a property from the store.
+ *
+ * @param type The expected property (or property group) type.
+ * @param uri The property's URI.
+ * @returns The property's metadata, or undefined when the property is unknown.
  */
 export function usePropertyMetaData<T extends PropertyTypeKey>(
   type: T,
@@ -91,8 +115,12 @@ export function usePropertyMetaData<T extends PropertyTypeKey>(
 }
 
 /**
- * Convenience hook that subscribes to a property and returns its value, a throttled setter
- * that pushes to OpenSpace, and its metadata. Mirrors OpenSpace-WebGui's useProperty.
+ * Subscribe to a property and returns its value, a throttled setter that pushes to
+ * OpenSpace, and its metadata. Mirrors OpenSpace-WebGui's useProperty.
+ *
+ * @param type The expected property (or property group) type.
+ * @param uri The property's URI.
+ * @returns A `[value, setValue, metaData]` tuple.
  */
 export function useProperty<T extends PropertyTypeKey>(
   type: T,

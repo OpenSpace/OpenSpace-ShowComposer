@@ -6,9 +6,8 @@ import { TitleComponent } from '@/store';
 
 const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 1000;
-// Total horizontal space kept clear around the text so it doesn't touch the box
-// edges (split across both sides, since the rendered title is centered)
-const HORIZONTAL_PADDING = 160;
+// Horizontal space kept clear on each side of the text so it doesn't touch the box edges
+const HORIZONTAL_PADDING = 80;
 
 /**
  * The largest font size (in pixels) at which `text`, wrapped to the box width, still
@@ -18,7 +17,7 @@ const HORIZONTAL_PADDING = 160;
  * @param text - The title text to measure.
  * @param boxWidth - Width of the container the text must fit within, in pixels.
  * @param boxHeight - Height of the container the text must fit within, in pixels.
- * @returns The fitted font size, in pixels.
+ * @returns The font size, in pixels.
  */
 function calculateMaxFontSize(text: string, boxWidth: number, boxHeight: number) {
   const span = document.createElement('span');
@@ -28,7 +27,7 @@ function calculateMaxFontSize(text: string, boxWidth: number, boxHeight: number)
     visibility: 'hidden',
     display: 'inline-block',
     whiteSpace: 'normal',
-    width: `${boxWidth - HORIZONTAL_PADDING}px`
+    width: `${boxWidth - HORIZONTAL_PADDING * 2}px`
   });
 
   span.textContent = text;

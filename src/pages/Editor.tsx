@@ -12,7 +12,7 @@ import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
-// The sidebar behaves as a push-drawer: it is either fully open at this width or
+// The sidebar behaves as a drawer: it is either fully open at this width or
 // fully collapsed to zero, never a partial width.
 const SIDEBAR_WIDTH = 320;
 
@@ -39,7 +39,7 @@ function Editor() {
     }
   }, []);
 
-  // Present mode hides the sidebar entirely; leaving it restores the drawer.
+  // Present mode hides the sidebar entirely; edit mode restores the drawer.
   useEffect(() => {
     setSidebarOpen(!isPresentMode);
   }, [isPresentMode]);

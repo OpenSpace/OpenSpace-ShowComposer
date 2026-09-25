@@ -10,7 +10,6 @@ export interface ComponentModalChildProps<K extends ComponentType = ComponentTyp
   onCancel: () => void;
 }
 
-// TODO: pass this from ComponentModal as a prop ? Could be useful for the multi setup too
 export function useSaveComponent() {
   const addComponent = useBoundStore((state) => state.addComponent);
   const updateComponent = useBoundStore((state) => state.updateComponent);
@@ -30,7 +29,7 @@ export function useSaveComponent() {
           gui_description: data.gui_description || placeholders.description
         }
       : data;
-    // Update the component if it already exists.
+    // Update the component if it already exists, else add a new one
     if (getComponentById(data.id)) {
       updateComponent(data.id, final);
     } else {
