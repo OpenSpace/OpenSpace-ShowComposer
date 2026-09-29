@@ -16,7 +16,7 @@ A visual drag-and-drop interface for creating and managing shows in OpenSpace. T
 ## Prerequisites
 
 - Node.js (Latest LTS version recommended)
-- Package manager (npm, yarn, or pnpm)
+- npm
 - OpenSpace instance running 
 
 ## Installation
@@ -28,34 +28,41 @@ cd OpenSpace-ShowComposer
 
 # Install dependencies
 npm install
-# or
-yarn install
 ```
 
 ## Development Setup
 
-1. Start the development server:
+The project saving/loading and image upload features are served by the OpenSpace WebGui
+backend, which OpenSpace runs while it is up. There is no separate dev backend to start:
+
+1. Have OpenSpace running (it serves the backend on `http://localhost:4680` by default).
+2. Start the development server:
 ```sh
 npm run dev
-# or
-yarn dev
 ```
+
+The dev server serves the app (with hot reload) at `http://localhost:<port>/showcomposer/`
+and proxies the backend paths (`/showcomposer/api`, `/showcomposer/uploads`,
+`/showcomposer/projects`) to the running OpenSpace backend, so saving/loading and image
+upload work exactly as they do in production.
 
 ### Development Environment Notes
 
-In development mode, certain features will have limited functionality:
-- Project saving/loading
-- Image upload/loading
-
-This is because these features expect specific API endpoints that are only available in the production environment. The application will still run, but these features will not work as expected.
+- If OpenSpace serves the backend on a different host or port, set the `SHOWCOMPOSER_BACKEND`
+  environment variable to that origin when starting the dev server:
+  ```sh
+  SHOWCOMPOSER_BACKEND=http://localhost:4681 npm run dev
+  ```
+  (Or, for a persistent override, put `SHOWCOMPOSER_BACKEND=http://localhost:4681` in a
+  gitignored `.env.local` file - you'd need to create it.)
+- If OpenSpace is not running, the app still loads but the backend-dependent features
+  (project save/load, image upload) will fail until it is.
 
 ## Production Setup
 
 1. Build the application:
 ```sh
 npm run build
-# or
-yarn build
 ```
 
 2. The built application should be placed in the `user/showcomposer` folder in the production environment.
@@ -84,6 +91,17 @@ In production, the application expects:
 
    - Project Export:
      - `POST /api/package` - Export project as ZIP file
+
+## Backend integration
+
+Saving, loading, exporting, and image uploads all go through the OpenSpace WebGui backend
+(`showbuilder.js`, in the separate `OpenSpace-WebGuiBackend` repo) - the app doesn't do any
+of that itself. Those calls all live in one file, `src/api/showbuilder.ts`, so if a backend
+route changes, that's the only place to update.
+
+Requests are relative, never tied to a host: in production the backend serves both the app
+and the API under `/showcomposer/`, and in dev Vite proxies those paths to the running
+backend (see `vite.config.ts`). So it just works wherever OpenSpace happens to be running.
 
 ## Component Categories
 

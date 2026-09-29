@@ -1,39 +1,32 @@
+import { loadProjectArchive, packageProject, saveProjectStore } from '@/api/showbuilder';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
-import basePath from './basePath';
+// Project save/load/export operations that involve app state (the Zustand stores) or the
+// browser (file-picker dialogs, downloads). The functions that communicate with the backend live in the
+// showbuilder file (@/api/showbuilder).
 
-//save out the store to a json file that is saved to drive
-export const saveProject = async () => {
-  try {
-    const settingsStore = useSettingsStore.getState();
-    const boundStore = useBoundStore.getState();
-    const store = { boundStore, settingsStore };
-    const storeString = JSON.stringify(store);
-    const response = await fetch(`${basePath}api/projects/save`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: storeString
-    });
+/**
+ * Saves the current state of the stores as a project on the backend.
+ *
+ * @returns `true` when the save succeeds.
+ * @throws If the backend save fails.
+ */
+export async function saveProject() {
+  const settingsStore = useSettingsStore.getState();
+  const boundStore = useBoundStore.getState();
+  return await saveProjectStore({ boundStore, settingsStore });
+}
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Failed to save project');
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error saving project:', error);
-    throw error; // Re-throw to let the caller handle it
-  }
-};
-
-export const loadStore = async () => {
+/**
+ * Opens a file dialog for a local `.json` project file and parses it. No backend involved.
+ *
+ * @returns A promise that resolves with the parsed project store, or rejects if no file is
+ * chosen, or the file isn't valid JSON.
+ */
+export async function loadStore() {
   return new Promise((resolve, reject) => {
     const fileInput = document.createElement('input');
-    // fileInput.type = 'folder';
     fileInput.type = 'file';
     fileInput.accept = '.json';
     fileInput.onchange = async (e) => {
@@ -44,7 +37,6 @@ export const loadStore = async () => {
           if (e.target?.result) {
             try {
               const store = JSON.parse(e.target.result as string);
-              // Return the parsed storeE
               resolve(store);
             } catch (error: unknown) {
               reject(
@@ -63,9 +55,16 @@ export const loadStore = async () => {
     };
     fileInput.click();
   });
-};
+}
 
-export const loadStoreImageSeperately = async () => {
+/**
+ * Opens file dialogs to pick a `.json` project file plus its image files, then uploads them
+ * to the backend.
+ *
+ * @returns A promise that resolves with the parsed project store, or rejects if no file is
+ * chosen, or the upload fails.
+ */
+export async function loadStoreImageSeperately() {
   return new Promise((resolve, reject) => {
     const jsonInput = document.createElement('input');
     jsonInput.type = 'file';
@@ -91,16 +90,7 @@ export const loadStoreImageSeperately = async () => {
         }
 
         try {
-          const response = await fetch(`${basePath}api/projects/load`, {
-            method: 'POST',
-            body: formData // Send the JSON file and images to the server
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to upload files');
-          }
-
-          const store = await response.json(); // Get the parsed store from the server
+          const store = await loadProjectArchive(formData);
           resolve(store);
         } catch (error: unknown) {
           reject(
@@ -123,9 +113,15 @@ export const loadStoreImageSeperately = async () => {
       imageInput.click();
     };
   });
-};
+}
 
-export const loadStoreToServer = async () => {
+/**
+ * Opens a file dialog to pick a `.zip` project and uploads it to the backend.
+ *
+ * @returns A promise that resolves with the parsed project store, or rejects if no file is
+ * chosen or the upload fails.
+ */
+export async function loadStoreToServer() {
   return new Promise((resolve, reject) => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -137,16 +133,7 @@ export const loadStoreToServer = async () => {
         formData.append('file', file); // Append the ZIP file
 
         try {
-          const response = await fetch(`${basePath}api/projects/load`, {
-            method: 'POST',
-            body: formData // Send the ZIP file to the server
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to upload ZIP file');
-          }
-
-          const store = await response.json(); // Get the parsed store from the server
+          const store = await loadProjectArchive(formData);
           resolve(store);
         } catch (error: unknown) {
           reject(
@@ -162,97 +149,29 @@ export const loadStoreToServer = async () => {
     };
     fileInput.click();
   });
-};
+}
 
-export const confirmStoreImport = async (confirm: boolean, tempId: string) => {
-  const response = await fetch(`${basePath}api/projects/confirm-import`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ tempId, confirm }) // New fields
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to confirm store import');
-  }
-  return await response.json(); // Return the response if needed
-};
-
-export const exportProject = () => {
+/**
+ * Packages the current project and triggers a browser download of the resulting `.zip`.
+ */
+export function exportProject() {
   const settingsStore = useSettingsStore.getState();
   const boundStore = useBoundStore.getState();
-  const store = { boundStore, settingsStore };
-  const storeString = JSON.stringify(store);
-  console.log('storeString', storeString);
-  fetch(`${basePath}api/package`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: storeString
-  })
-    .then((response) => response.blob())
+  packageProject({ boundStore, settingsStore })
     .then((blob) => {
-      // Create download link
+      // Create download link. Technically the URL should be revoked after the download is complete.
+      // This however can create bugs where the download doesnt work depending on how long the download takes
+      // and how fast the URL is revoked. So rather than guess a delay, the URL is intentionally never revoked
+      // - it's a one-off, user-triggered download, so the Blob just stays alive until the tab reloads/closes.
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${settingsStore.projectName.replace(/ /g, '_')}-${Date.now()}.zip`;
+      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      a.remove();
+    })
+    .catch((error) => {
+      console.error('Error exporting project:', error);
     });
-};
-
-export interface Project {
-  projectName: string;
-  filePath: string;
-  lastModified: string;
-  created: string;
 }
-export const loadProjects = async () => {
-  const response = await fetch(`${basePath}api/projects`);
-  const projects = await response.json();
-  console.log('projects', projects);
-  return projects;
-};
-
-export const loadProject = async (filePath: string) => {
-  try {
-    // console.log('filePath', `/${filePath}`);
-    const response = await fetch(`${basePath}${filePath}`);
-    const project = await response.json();
-    return project;
-  } catch (error) {
-    console.error('Error loading project:', error);
-    return null;
-  }
-};
-
-export const fetchGalleryImages = async () => {
-  const response = await fetch(`${basePath}api/images`);
-  if (!response.ok) {
-    throw new Error('Error fetching gallery images');
-  }
-  const data = await response.json();
-  // remomve trailing slash from basePath
-  const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
-  return data.images.map((image: string) => `${basePathWithoutTrailingSlash}${image}`);
-};
-
-export const uploadImage = async (file: File) => {
-  const formData = new FormData();
-  formData.append('image', file); // Append the file
-
-  const response = await fetch(`${basePath}api/upload`, {
-    method: 'POST',
-    body: formData // Send formData
-  });
-  if (!response.ok) {
-    throw new Error('Failed to save image');
-  }
-  const data = await response.json();
-  // console.log('data', data);
-  const basePathWithoutTrailingSlash = basePath.replace(/\/$/, '');
-  return `${basePathWithoutTrailingSlash}${data.filePath}`;
-};

@@ -1,0 +1,10 @@
+.thumbnail {
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.thumbnail:hover {
+  box-shadow: var(--mantine-shadow-md);
+  transform: translateY(-3px);
+}

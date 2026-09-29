@@ -1,0 +1,336 @@
+{
+  "widget-settings": {
+    "component-name": "Component Name",
+    "gui-description": "Gui Description",
+    "background-color": "Background Color",
+    "background-image": "Background Image"
+  },
+  "main": {
+    "project-name": "Current Show:  ",
+    "interface-name": "OpenSpace Showcomposer",
+    "static-components": "Static Components",
+    "preset-components": "Preset Components",
+    "property-components": "Property Components",
+    "multi": "Multi",
+    "fade": "Fade",
+    "fly-to": "Fly To",
+    "set-focus": "Focus",
+    "page": "Page",
+    "playback": "Playback",
+    "set-nav": "Set Nav",
+    "set-time": "Set Time",
+    "boolean": "Boolean",
+    "number": "Number",
+    "trigger": "Trigger",
+    "action": "Play Action",
+    "script": "Script",
+    "image": "Image",
+    "video": "Video",
+    "title": "Title",
+    "rich-text": "Rich Text",
+    "time-panel": "Time Panel",
+    "nav-panel": "Nav Panel",
+    "status-panel": "Status Panel",
+    "record-panel": "Record Panel",
+    "log-panel": "Log Panel",
+    "layout": "Layout Components",
+    "current-show": "Current Show"
+  },
+  "adjustable-page": {
+    "page": "Page"
+  },
+  "component-modal": {
+    "unknown-component-type": "Unknown component type",
+    "configure-copy": "Configure your component and add it to the workspace.",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create"
+  },
+  "connection-settings": {
+    "openspace-connection-settings": "OpenSpace Connection Settings",
+    "openspace-connection": "Openspace Connection",
+    "address-copy": "Set the IP address and port of the OpenSpace instance you want to\n              connect to.",
+    "ip-address": "IP Address",
+    "port": "Port",
+    "cancel": "Cancel",
+    "apply-settings": "Apply Settings",
+    "connected": "connected",
+    "connecting": "connecting",
+    "disconnected": "disconnected",
+    "openspace-status": "OpenSpace Status:"
+  },
+  "dark-mode-toggle": {
+    "toggle-theme": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "delete-confirmation-modal": {
+    "delete-all-components": "Delete all components",
+    "confirmation-text": "Are you absolutely sure?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "draggable-component": {
+    "unknown-component-type": "Unknown component type",
+    "edit": "Edit",
+    "delete": "Delete",
+    "copy": "Copy"
+  },
+  "dropdown-menu": {
+    "more": "More"
+  },
+  "droppable-workspace": {
+    "edit-mode": "Edit Mode"
+  },
+  "feedback-panel": {
+    "current-time": "Current Time",
+    "current-focus": "Current Focus",
+    "lat": "Lat",
+    "degrees": "°",
+    "long": "Long",
+    "alt": "Alt"
+  },
+  "page-button-menu": {
+    "page-settings": "Page Settings",
+    "add-page": "Add Page",
+    "delete-page": "Delete Page",
+    "screen-presets": "Screen Presets",
+    "width": "Width",
+    "height": "Height"
+  },
+  "present-mode-toggle": {
+    "outline": "outline"
+  },
+  "scale-gui": {
+    "percent": "%"
+  },
+  "subscription-panel": {
+    "active-subscriptions": "Active Subscriptions",
+    "active-property-subscriptions": "Active Property Subscriptions",
+    "subscribers": "Subscribers:",
+    "no-active-subscriptions": "No active subscriptions."
+  },
+  "bottom-drawer": {
+    "close": "Close"
+  },
+  "image-gallery": {
+    "image-gallery": "Image Gallery",
+    "choose-an-image": "Choose an image from your gallery or upload or link to a new\n              image.",
+    "seleted-image": "Seleted Image:",
+    "upload-new-image": "Upload New Image:",
+    "upload": "Upload",
+    "cancel": "Cancel",
+    "add-image": "Add Image"
+  },
+  "image-upload": {
+    "set-image-url": "Set Image Url",
+    "or": "or",
+    "select-image": "Select Image"
+  },
+  "virtualized-combobox": {
+    "no-item-found": "No item found."
+  },
+  "fade": {
+    "property": "Property",
+    "action-type": "Action Type",
+    "fade-duration": "Fade Duration",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "script": {
+    "script": "Lua Script"
+  },
+  "fly-to": {
+    "target": "Target",
+    "flight-duration": "Flight Duration",
+    "set-target-from-openspace": "Set Target from OpenSpace",
+    "set-coordinates-altitude": "Set Coordinates/Altitude",
+    "alt": "Alt",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "focus": {
+    "property": "Property",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "multi": {
+    "multi-settings": "Multi Settings",
+    "visual-settings": "Visual Settings",
+    "delay-label": "Delay:",
+    "delay-copy": "This delay is applied differently based on the item's\n            chaining status: For chained items, the delay is added after the\n            completion of the previous item's duration. For unchained items, the\n            delay is from the start the beginning of the workflow or the start\n            time of the previous item.",
+    "chained-items": "Chained Items:",
+    "chained-help": "These items start their\n                              operation after the previous item has completed\n                              its duration.",
+    "unchained-items": "Unchained Items:",
+    "unchained-help": "These run concurrently\n                              with the previous item, not waiting for the\n                              previous operations to complete.",
+    "delay": "Delay",
+    "edit-component": "Edit Component",
+    "remove-from-component": "Remove from Component",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description",
+    "current-items": "Current Items:"
+  },
+  "page": {
+    "page-number": "Page Number",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "session-playback": {
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "resume": "Resume",
+    "play-session": "Play Session",
+    "force-time-change-to-recorded-time": "Force time change to recorded time",
+    "loop-playback": "Loop Playback",
+    "playback-file": "Playback File",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "set-navigation": {
+    "save-current-navigation-state": "Set from Current Navigation State",
+    "navigation-state-time": "Navigation State Time",
+    "fade-duration": "Transition Duration",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description",
+    "transition-mode": "Transition Mode"
+  },
+  "set-time": {
+    "set-time-to-now": "Set Time To Now",
+    "component-name": "Component Name",
+    "fade-duration": "Fade Duration",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "boolean": {
+    "property": "Property",
+    "action-type": "Action Type",
+    "component-name": "Component Name",
+    "gui-description": "Gui Description"
+  },
+  "number": {
+    "property": "Property",
+    "range-min": "Range Min",
+    "range-max": "Range Max",
+    "step": "Step",
+    "exponent": "Exponent",
+    "component-name": "Component Name",
+    "background-image": "Background Image",
+    "gui-description": "Gui Description"
+  },
+  "trigger": {
+    "property": "Property",
+    "component-name": "Component Name",
+    "gui-description": "Gui Description"
+  },
+  "flight-control-panel": {
+    "interact-hint": "Interact with the area to control the camera.",
+    "mouse-controls": "Mouse controls:",
+    "click-drag-hint": "Click and drag to rotate. Hold",
+    "shift-to-pan": "SHIFT to pan",
+    "control-info": "ALT(option on Mac) to zoom (y-axis) or roll (x-axis)",
+    "touch-controls": "Touch controls:",
+    "1-finger-to-rotate": "1 finger to rotate",
+    "2-fingers-to-pan": "2 fingers to pan",
+    "three-finger-zoom-hint": "3 fingers to zoom (y-axis) or roll (x-axis)",
+    "camera-friction": "Camera Friction",
+    "rotation-friction": "Rotation Friction",
+    "icon": "icon",
+    "zoom-friction": "Zoom Friction",
+    "roll-friction": "Roll Friction",
+    "control-area": "Control Area"
+  },
+  "image": {
+    "image": "Image"
+  },
+  "session-panel": {
+    "name-of-recording": "Name of recording",
+    "fps": "FPS",
+    "text-file-format": "Text file format",
+    "play": "Play",
+    "stop-recording": "Stop Recording",
+    "pause": "Pause",
+    "stop": "Stop",
+    "resume": "Resume",
+    "record-session": "Record Session",
+    "record": "Record",
+    "name-is-already-taken": "Name is already taken.",
+    "play-session": "Play Session",
+    "force-time-change-to-recorded-time": "Force time change to recorded time",
+    "loop-playback": "Loop Playback",
+    "output-frames": "Output Frames",
+    "playback-file": "Playback File"
+  },
+  "time-date-picker": {
+    "select-date": "Select Date",
+    "simulation-speed": "Simulation Speed",
+    "realtime": "Realtime",
+    "now": "Now"
+  },
+  "title": {
+    "title": "Title",
+    "pagetitle": "Set from Page Title"
+  },
+  "video": {
+    "video": "Video",
+    "video-helper-text": "Video URL can be Vimeo, Youtube, or direct video link."
+  },
+  "dialog": {
+    "close": "Close"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "more-pages": "More pages"
+  },
+  "sheet": {
+    "close": "Close"
+  },
+  "new-project-modal": {
+    "new-project": "Create a New Show",
+    "update-project-header": "Update Show",
+    "project-details": "Some Preliminary Settings for your new show.",
+    "project-name": "Show Name",
+    "project-name-copy": "Enter the name of the show you want to create.",
+    "project-description": "Show Description",
+    "ip-address": "IP Address",
+    "port": "Port",
+    "cancel": "Cancel",
+    "default-page-size": "Default Page Size",
+    "default-page-size-copy": "The default page size for the presented show.",
+    "page-width": "Page Width",
+    "page-height": "Page Height",
+    "create-project": "Create Show",
+    "update-project": "Update Show",
+    "default-screen-space-position": "Default Screen Space Position",
+    "load-project": "Load Show"
+  },
+  "layout-edit-modal": {
+    "edit-layout": "Edit Layout",
+    "grid-size": "Grid Size",
+    "grid-size-description": "This will also change default grid size.",
+    "persist-across-pages": "Persist Across Pages"
+  },
+  "load-project-modal": {
+    "load-project": "Open Show",
+    "load-project-description": "Choose a show to open.",
+    "cancel": "Cancel",
+    "add-project": "Open Show",
+    "edit-project": "Edit Show"
+  },
+  "confirmation-modal": {
+    "ok": "OK"
+  },
+  "action-trigger": {
+    "action": "Action"
+  }
+}
