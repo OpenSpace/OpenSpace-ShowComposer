@@ -35,6 +35,8 @@ function ColoredPath({ value, delimiter }: { value: string; delimiter: string })
   );
 }
 
+const ITEM_HEIGHT = 40;
+
 interface Props {
   options: string[];
   selectedOption: string;
@@ -45,7 +47,6 @@ interface Props {
   presets?: string[] | null;
   delimiter?: string;
 }
-const ITEM_HEIGHT = 40;
 
 export function VirtualizedCombobox({
   options,

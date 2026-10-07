@@ -19,6 +19,12 @@ type MultiOption = {
   chained: boolean;
 };
 
+type SelectedPage = {
+  name: string;
+  id: string;
+  components: string[];
+};
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -28,11 +34,6 @@ interface Props {
     _tempImportId: string;
   }; // Replace with the appropriate type for your store
 }
-type SelectedPage = {
-  name: string;
-  id: string;
-  components: string[];
-};
 
 function ImportShowModal({ isOpen, onClose, store }: Props) {
   const { t } = useTranslation('main');

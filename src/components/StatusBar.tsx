@@ -1,13 +1,13 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Flex, Progress } from '@mantine/core';
 
+export interface StatusBarRef {
+  triggerAnimation: () => void;
+}
+
 interface Props {
   duration: number;
   fadeOutDuration: number;
-}
-
-export interface StatusBarRef {
-  triggerAnimation: () => void;
 }
 
 const StatusBar = forwardRef<StatusBarRef, Props>(

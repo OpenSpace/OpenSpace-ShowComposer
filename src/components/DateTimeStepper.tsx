@@ -9,11 +9,6 @@ type DateData = {
   relative: boolean;
 };
 
-interface Props {
-  date: Date | string;
-  onChange: (data: DateData) => void;
-}
-
 const dateParts = ['year', 'month', 'day', 'hours', 'minutes', 'seconds'] as const;
 
 const monthAbbreviations = [
@@ -50,6 +45,11 @@ function formatDatePart(part: (typeof dateParts)[number], date: Date): string | 
     default:
       return zeroPad(date.getUTCSeconds());
   }
+}
+
+interface Props {
+  date: Date | string;
+  onChange: (data: DateData) => void;
 }
 
 export function DateTimeStepper({ date, onChange }: Props) {

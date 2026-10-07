@@ -3,13 +3,6 @@ import { Box } from '@mantine/core';
 
 type DisplayLabelSize = 'sm' | 'md';
 
-interface Props {
-  children: ReactNode;
-  showBorder?: boolean;
-  size?: DisplayLabelSize;
-  style?: CSSProperties;
-}
-
 const sizeStyles: Record<DisplayLabelSize, CSSProperties> = {
   sm: {
     fontSize: 'var(--mantine-font-size-xs)',
@@ -20,6 +13,13 @@ const sizeStyles: Record<DisplayLabelSize, CSSProperties> = {
     padding: '8px var(--mantine-spacing-md)'
   }
 };
+
+interface Props {
+  children: ReactNode;
+  showBorder?: boolean;
+  size?: DisplayLabelSize;
+  style?: CSSProperties;
+}
 
 function DisplayLabel({ children, showBorder = false, size = 'md', style }: Props) {
   return (

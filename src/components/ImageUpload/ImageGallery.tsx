@@ -19,6 +19,8 @@ import { UploadIcon } from '@/icons/icons';
 
 import styles from './ImageGallery.module.css';
 
+const ITEMS_PER_PAGE = 6;
+
 interface Props {
   opened: boolean;
   images: Array<string>;
@@ -26,8 +28,6 @@ interface Props {
   onSelectImage: (imageUrl: string) => void;
   onClose: () => void;
 }
-
-const ITEMS_PER_PAGE = 6;
 
 function ImageGallery({
   opened,

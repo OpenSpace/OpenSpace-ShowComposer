@@ -24,17 +24,17 @@ import { roundToNearest } from '@/utils/math';
 
 import classes from './LayoutContainer.module.css';
 
-interface Props {
-  layout: LayoutBase;
-  children?: ReactNode;
-  handleOpenEditModal: () => void;
-}
-
 const typeIcons = {
   row: <RowIcon />,
   column: <ColumnIcon />,
   grid: <LayoutGridIcon size={24} />
 };
+
+interface Props {
+  layout: LayoutBase;
+  children?: ReactNode;
+  handleOpenEditModal: () => void;
+}
 
 export function LayoutContainer({ layout, children, handleOpenEditModal }: Props) {
   const { t } = useTranslation('draggable-component');
