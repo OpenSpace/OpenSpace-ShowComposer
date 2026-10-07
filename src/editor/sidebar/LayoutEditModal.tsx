@@ -67,7 +67,7 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
       opened={isOpen && !!layoutId}
       onClose={onClose}
       centered
-      size={510}
+      size={'lg'}
       title={t('edit-layout')}
     >
       <Stack gap={'xs'}>

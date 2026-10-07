@@ -88,7 +88,7 @@ function ImageGallery({
       onClose={handleCancel}
       title={t('image-gallery')}
       centered
-      size={520}
+      size={'lg'}
     >
       <Stack gap={'md'}>
         <Text size={'sm'} c={'dimmed'}>

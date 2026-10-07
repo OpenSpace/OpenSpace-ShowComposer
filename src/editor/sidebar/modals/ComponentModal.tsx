@@ -56,7 +56,7 @@ export function ComponentModal({
       opened={isOpen}
       onClose={handleCancel}
       centered
-      size={510}
+      size={'lg'}
       title={
         <Group gap={'xs'}>
           {icon}
