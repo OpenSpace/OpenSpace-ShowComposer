@@ -12,7 +12,10 @@ import {
 } from '@/editor/sidebar/modals/saveComponent';
 import { type NumberComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
-import type { AdditionalDataNumber } from '@/types/Property/propertyTypes';
+import {
+  type AdditionalDataNumber,
+  GenericNumericTypesArray
+} from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<NumberComponent, 'id'> = {
@@ -58,7 +61,9 @@ export function NumberModal({
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter(
-      (a) => properties[a].metaData?.type === 'FloatProperty' && !a.includes('.Fade')
+      (a) =>
+        GenericNumericTypesArray.some((type) => properties[a].metaData?.type === type) &&
+        !a.includes('.Fade')
     )
     .sort((a, b) => {
       const periodCountA = (a.match(/\./g) || []).length;

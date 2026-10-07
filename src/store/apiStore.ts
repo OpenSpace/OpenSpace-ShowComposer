@@ -141,13 +141,15 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         usePropertyStore.getState().setProperties(initData);
 
         // Filter the properties based on the visibility
-        const filteredProperties = properties.filter((p: AnyProperty) =>
-          isPropertyVisible(p, Visibility?.value as number)
+        const filteredProperties = properties.filter(
+          (p: AnyProperty) =>
+            p.uri.startsWith('ScreenSpace.') ||
+            isPropertyVisible(p, Visibility?.value as number)
         );
         // Get the renderables
         const fadeables: Record<string, AnyProperty> = getRenderables(
           filteredProperties,
-          'Opacity'
+          'Fadable'
         );
         usePropertyStore.getState().setProperties(fadeables);
 
