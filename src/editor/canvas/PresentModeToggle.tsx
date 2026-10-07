@@ -4,9 +4,9 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { EditIcon, PresentIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 
-const useQuery = () => {
+function useQuery() {
   return new URLSearchParams(window.location.search);
-};
+}
 
 export function PresentModeToggle() {
   const togglePresentMode = useSettingsStore((state) => state.togglePresentMode);

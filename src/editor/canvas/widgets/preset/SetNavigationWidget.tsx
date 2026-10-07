@@ -5,7 +5,7 @@ import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { StatusBar, StatusBarRef } from '@/components/StatusBar';
 import { componentActions } from '@/editor/componentActions';
-import { SetNavComponent } from '@/types/components';
+import { type SetNavComponent } from '@/types/components';
 
 interface Props {
   component: SetNavComponent;
@@ -16,7 +16,7 @@ function SetNavigationWidget({ component }: Props) {
 
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  const triggerAnimation = () => {
+  function triggerAnimation() {
     statusBarRef.current?.triggerAnimation();
   };
 

@@ -14,18 +14,15 @@ export function TimeDatePicker() {
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time, targetDeltaTime } = useSubscribeToTime(1000);
   const timeLabel = useMemo(() => {
-    if (time) {
-      try {
-        if (typeof time === 'string') {
-          return time;
-        } else {
-          return formatDate(time);
-        }
-      } catch {
-        return time;
-      }
+    if (!time || typeof time === 'string')  {
+      return time;
     }
-    return time;
+
+    try {
+      return formatDate(time);
+    } catch {
+      return time;
+    }
   }, [time]);
 
   // Spice does not support ISO 8601 time zones (the
@@ -86,7 +83,10 @@ export function TimeDatePicker() {
     setDate(new Date());
   }
 
-  if (!time) return null;
+  if (!time) {
+    return null;
+  }
+  
   return (
     <Stack gap={'xs'}>
       <Stack gap={'xs'}>
@@ -108,10 +108,8 @@ export function TimeDatePicker() {
         fz={'sm'}
         px={'md'}
         py={'xs'}
-        style={{
-          border: '1px solid var(--mantine-color-default-border)',
-          borderRadius: 'var(--mantine-radius-md)'
-        }}
+        bd={'1px solid var(--mantine-color-default-border)'}
+        bdrs={'md'}
       >
         {timeLabel}
       </Box>

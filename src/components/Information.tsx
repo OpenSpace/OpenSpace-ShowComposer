@@ -27,7 +27,7 @@ export function Information({ content }: Props) {
           radius={'xl'}
           size={'xs'}
           aria-label={'More information'}
-          onClick={() => setOpened((o) => !o)}
+          onClick={() => setOpened((open) => !open)}
         >
           <InfoIcon size={14} />
         </ActionIcon>

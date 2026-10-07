@@ -59,7 +59,7 @@ function ColorPicker({ color, setColor }: Props) {
   const [opened, setOpened] = useState(false);
   // Local state for the text fields so partial/invalid typing isn't overwritten by the
   // controlled value (prop `color`); re-sync whenever the color changes from elsewhere
-  // (picker/other field).
+  // (picker/other field)
   const [hexValue, setHexValue] = useState(() => toHexDisplay(color));
   const [rgbaValue, setRgbaValue] = useState(() => toRgbDisplay(color));
 
@@ -68,7 +68,7 @@ function ColorPicker({ color, setColor }: Props) {
     setRgbaValue(toRgbDisplay(color));
   }, [color]);
 
-  // Apply a typed field value as the new color, ignoring incomplete/invalid input.
+  // Apply a typed field value as the new color, ignoring incomplete/invalid input
   function applyColor(value: string) {
     if (isColorValid(value)) {
       setColor(toFormat(value, 'rgba'));
@@ -83,7 +83,7 @@ function ColorPicker({ color, setColor }: Props) {
           size={64}
           radius={'xl'}
           style={{ cursor: 'pointer' }}
-          onClick={() => setOpened((o) => !o)}
+          onClick={() => setOpened((open) => !open)}
         />
       </Popover.Target>
       <Popover.Dropdown>

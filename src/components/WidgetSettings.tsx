@@ -34,7 +34,7 @@ function WidgetSettings({ data, handleData, placeholders }: Props) {
         label={t('component-name')}
         placeholder={placeholders.name || 'Name of Component'}
         value={data.gui_name ?? ''}
-        onChange={(e) => handleData({ gui_name: e.currentTarget.value })}
+        onChange={(event) => handleData({ gui_name: event.currentTarget.value })}
       />
       <Stack gap={'md'}>
         <SimpleGrid cols={2} spacing={'md'}>
@@ -44,7 +44,7 @@ function WidgetSettings({ data, handleData, placeholders }: Props) {
             </Text>
             <ColorPicker
               color={data.color ?? ''}
-              setColor={(v) => handleData({ color: v })}
+              setColor={(value) => handleData({ color: value })}
             />
           </Stack>
           <Stack gap={'md'}>
@@ -62,7 +62,7 @@ function WidgetSettings({ data, handleData, placeholders }: Props) {
         </SimpleGrid>
         <ImageUpload
           value={backgroundImage}
-          onChange={(v) => handleData({ backgroundImage: v })}
+          onChange={(value) => handleData({ backgroundImage: value })}
         />
       </Stack>
       <Textarea

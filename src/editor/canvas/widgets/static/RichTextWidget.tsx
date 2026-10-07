@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mantine/core';
 
-import { RichTextComponent } from '@/store';
+import type { RichTextComponent } from '@/store';
 
 interface Props {
   component: RichTextComponent;
@@ -15,12 +15,12 @@ function RichTextWidget({ component }: Props) {
       w={'100%'}
       h={'100%'}
       p={'sm'}
+      bg={component.color}
+      display={'flex'}
+      bdrs={'md'}
       style={{
         overflow: 'hidden',
-        backgroundColor: component.color,
-        display: 'flex',
-        alignItems: 'center',
-        borderRadius: 'var(--mantine-radius-md)'
+        alignItems: 'center'
       }}
     >
       {/* We need to add styling to the raw html that is rendered by component.text, hence
