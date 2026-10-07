@@ -23,11 +23,14 @@ function PlaybackControls({
   
   switch (recordingState) {
     case RecordingState.Idle:
-      return file ? (
+      if (!file) {
+        return null;
+      }
+      return (
         <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlayback}>
           {t('play')}
         </Button>
-      ) : null;
+      );
     case RecordingState.Playing:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
