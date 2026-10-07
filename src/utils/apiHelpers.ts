@@ -1,6 +1,3 @@
-//ignore ts errors for this file as well es lint typescript errors
-// @ts-ignore
-
 import { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
 
 import { PropertyVisibilityNumber } from '@/types/enums';

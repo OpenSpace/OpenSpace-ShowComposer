@@ -2,6 +2,7 @@ import { AnyProperty } from './Property/property';
 import { RecordingState } from './enums';
 export type Uri = string;
 export type Identifier = string;
+// eslint-disable-next-line no-template-curly-in-string
 export const RecordingsFolderKey = '${RECORDINGS}/';
 export interface NavigationState {
   Anchor: string; // The identifier of the anchor node

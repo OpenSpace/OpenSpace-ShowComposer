@@ -1,0 +1,441 @@
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import {
+  ActionIcon,
+  Group,
+  InputLabel,
+  NumberInput,
+  Select,
+  SimpleGrid,
+  Stack,
+  Tabs,
+  Text,
+  Tooltip
+} from '@mantine/core';
+import { v4 as uuidv4 } from 'uuid';
+
+import { WidgetSettings } from '@/components/WidgetSettings';
+import { componentPalette, componentsData } from '@/editor/componentsData';
+import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
+import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
+import { useBoundStore } from '@/store/boundStore';
+import {
+  Component,
+  ComponentBaseColors,
+  ComponentType,
+  MultiComponent,
+  MultiOption
+} from '@/types/components';
+
+interface MultiType {
+  component: MultiOption['id'];
+  buffer: number;
+  chained: boolean;
+  endTime: number;
+  startTime: number;
+  id: string;
+}
+
+const DEFAULTS: Omit<MultiComponent, 'components' | 'id'> = {
+  type: 'multi',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  backgroundImage: '',
+  color: ComponentBaseColors.multi
+};
+
+function MultiModal({
+  component,
+  componentId,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'multi'>) {
+  const { t } = useTranslation(['multi', 'main']);
+  const [data, setData] = useState<MultiComponent>(
+    () => component ?? { ...DEFAULTS, components: [], id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
+  const placeholders = { name: '', description: '' };
+  const [items, setItems] = useState<MultiType[]>(() =>
+    data.components
+      ? data.components.map((v) => ({
+          ...v,
+          id: v.component
+        }))
+      : []
+  );
+  const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
+  const components = useBoundStore((state) => state.components);
+  const updateComponent = useBoundStore((state) => state.updateComponent);
+  const getComponentById = useBoundStore((state) => state.getComponentById);
+  const copyComponent = useBoundStore((state) => state.copyComponent);
+  const removeComponent = useBoundStore((state) => state.removeComponent);
+  // only return components that can be type MultiOption
+  const multiOptions: Component['id'][] = useBoundStore((state) =>
+    Object.keys(state.components).filter((comp: Component['id']) => {
+      const component = getComponentById(comp);
+      if (!component) return false;
+      return componentsData[component.type]?.isMultiOption ?? false;
+    })
+  );
+  // The component types that can be added to a Multi, to be used as Select options
+  const multiOptionData = componentPalette
+    .filter((data) => data.isMultiOption)
+    .map((data) => ({ value: data.type, label: t(`main:${data.nameKey}`) }));
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentComponentId, setCurrentComponentId] = useState('');
+  const [currentComponentType, setCurrentComponentType] = useState<ComponentType | ''>(
+    ''
+  );
+  const [cancelCallback, setCancelCallback] = useState<() => void>(() => () => {});
+  const [initialData, setInitialData] = useState<Partial<MultiOption>>({
+    isMulti: 'pendingSave'
+  });
+
+  const handleAddComponent = (type: ComponentType) => {
+    const newId = uuidv4();
+    setInitialData({
+      isMulti: 'pendingSave'
+    });
+    setCurrentComponentType(type);
+    setCurrentComponentId(newId);
+    addItem(newId);
+    setIsModalOpen(true);
+    setCancelCallback(() => () => {
+      setItems(items.filter((item) => item.id !== newId));
+    });
+  };
+
+  function sortAdjacentUnchainedItems(tempItems: MultiType[]) {
+    // Identify and sort unchained items that are adjacent to other unchained items
+    const unchainedGroups: MultiType[][] = [];
+    let currentGroup: MultiType[] = [];
+    for (let i = 0; i < tempItems.length; i++) {
+      if (!tempItems[i].chained) {
+        currentGroup.push(tempItems[i]);
+      } else {
+        if (currentGroup.length > 1) {
+          unchainedGroups.push([...currentGroup]);
+        }
+        currentGroup = [];
+      }
+    }
+    if (currentGroup.length > 1) {
+      unchainedGroups.push([...currentGroup]);
+    }
+
+    // Sort each group by intDuration + buffer
+    unchainedGroups.forEach((group) => {
+      group.sort((a, b) => {
+        const componentA = getComponentById(a.component) ?? {
+          intDuration: 0
+        };
+        const componentB = getComponentById(b.component) ?? {
+          intDuration: 0
+        };
+        //@ts-ignore
+        const durationA = (componentA.intDuration || 0) + a.buffer;
+        //@ts-ignore
+        const durationB = (componentB.intDuration || 0) + b.buffer;
+        return durationA - durationB;
+      });
+    });
+
+    // Reinsert sorted groups back into tempItems
+    let sortedIndex = 0;
+    for (let i = 0; i < tempItems.length; i++) {
+      if (!tempItems[i].chained && sortedIndex < unchainedGroups.length) {
+        const group = unchainedGroups[sortedIndex];
+        for (let j = 0; j < group.length; j++) {
+          tempItems[i + j] = group[j];
+        }
+        i += group.length - 1;
+        sortedIndex++;
+      }
+    }
+  }
+
+  function recalculateOffsets(tempItems: MultiType[]) {
+    const originalOrder = tempItems.map((v) => v.id);
+    sortAdjacentUnchainedItems(tempItems);
+    let lastStartTime = 0;
+    let lastEndTime = 0;
+    for (let i = 0; i < tempItems.length; i++) {
+      if (i == 0) {
+        tempItems[i].chained = false;
+      }
+      if (!tempItems[i].chained) {
+        tempItems[i].startTime = lastStartTime + tempItems[i].buffer;
+      } else {
+        tempItems[i].startTime = lastEndTime + tempItems[i].buffer;
+        lastStartTime = tempItems[i].startTime;
+      }
+      tempItems[i].endTime =
+        tempItems[i].startTime +
+        //@ts-ignore
+        (getComponentById(tempItems[i].component)?.intDuration || 1.0);
+      lastEndTime = tempItems[i].endTime;
+    }
+    //put back in original order
+    tempItems.sort((a, b) => {
+      return originalOrder.indexOf(a.id) - originalOrder.indexOf(b.id);
+    });
+  }
+
+  useEffect(() => {
+    const newItems = Array.from(items);
+    recalculateOffsets(newItems);
+    setItems(newItems);
+  }, [items]);
+
+  useEffect(() => {
+    setAvailableOptions(
+      multiOptions.filter((component) => !items.some((item) => item.id === component))
+    );
+    handleData({
+      components: items.map((v) => ({
+        component: v.component,
+        startTime: v.startTime,
+        endTime: v.endTime,
+        buffer: v.buffer,
+        chained: v.chained
+      }))
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const newList = Array.from(items);
+    const [reorderedItem] = newList.splice(result.source.index, 1);
+    newList.splice(result.destination.index, 0, reorderedItem);
+    setItems(newList);
+  };
+
+  const addItem = (component: MultiOption['id']) => {
+    const newComponent = copyComponent(component, true);
+
+    if (!newComponent) return;
+    const newItem: MultiType = {
+      id: newComponent,
+      component: newComponent,
+      buffer: 0,
+      startTime: 0,
+      endTime: 0,
+      chained: items.length > 0 ? true : false
+    };
+    setItems([...items, newItem]);
+    updateComponent(newComponent, {
+      isMulti: 'pendingSave'
+    });
+  };
+
+  const removeItem = (id: string) => {
+    const newList = items.filter((item) => item.id !== id);
+    setItems(newList);
+    removeComponent(id);
+  };
+
+  function handleData(patch: Partial<MultiComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    Object.entries(components)
+      .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
+      .forEach(([id, c]) => {
+        if (c.isMulti === 'pendingSave') {
+          updateComponent(id, { isMulti: 'true' });
+        } else if (c.isMulti === 'pendingDelete') {
+          removeComponent(id);
+        }
+      });
+    saveComponent(data, placeholders);
+    onClose();
+  }
+
+  return (
+    <>
+      <Tabs defaultValue={'multi'}>
+      <Tabs.List>
+        <Tabs.Tab value={'multi'}>{t('multi-settings')}</Tabs.Tab>
+        <Tabs.Tab value={'visual'}>{t('visual-settings')}</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value={'multi'}>
+        <Stack gap={'md'}>
+          <SimpleGrid cols={2}>
+            <Select
+              allowDeselect={false}
+              placeholder={'Add Existing Component'}
+              data={availableOptions.map((component) => ({
+                value: component,
+                label: getComponentById(component)?.gui_name
+              }))}
+              value={null}
+              disabled={availableOptions.length === 0}
+              onChange={(value) => value && addItem(value)}
+            />
+            <Select
+              allowDeselect={false}
+              placeholder={'Add New Component'}
+              data={multiOptionData}
+              value={null}
+              disabled={multiOptionData.length === 0}
+              onChange={(value) => value && handleAddComponent(value as ComponentType)}
+            />
+          </SimpleGrid>
+          <Text size={'sm'} c={'dimmed'}>
+            <b>{t('delay-label')}</b>
+            {t('delay-copy')}
+          </Text>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId={'droppable'}>
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {items.map((item, index) => (
+                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Group
+                            justify={'space-between'}
+                            wrap={'nowrap'}
+                            gap={'xs'}
+                            mb={'xs'}
+                            px={'md'}
+                            py={'xs'}
+                            style={{
+                              overflow: 'hidden',
+                              border: '1px solid var(--mantine-color-default-border)',
+                              borderRadius: 'var(--mantine-radius-sm)'
+                            }}
+                          >
+                            <Text w={'40%'} truncate>
+                              {getComponentById(item.id)?.gui_name}
+                            </Text>
+                            <Tooltip
+                              maw={200}
+                              label={
+                                <>
+                                  <b>{t('chained-items')}</b>
+                                  {t('chained-help')}
+                                  <br />
+                                  <b>{t('unchained-items')}</b>
+                                  {t('unchained-help')}
+                                </>
+                              }
+                            >
+                              <ActionIcon
+                                disabled={index === 0}
+                                variant={item.chained ? 'filled' : 'subtle'}
+                                onClick={() => {
+                                  const newItems = Array.from(items);
+                                  newItems[index].chained = !item.chained;
+                                  recalculateOffsets(newItems);
+                                  setItems(newItems);
+                                }}
+                              >
+                                {item.chained ? (
+                                  <LinkIcon size={20} />
+                                ) : (
+                                  <UnlinkIcon size={20} />
+                                )}
+                              </ActionIcon>
+                            </Tooltip>
+                            <Group gap={'xs'} wrap={'nowrap'}>
+                              <InputLabel>{t('delay')}</InputLabel>
+                              <NumberInput
+                                w={80}
+                                name={'delay'}
+                                min={0}
+                                max={20}
+                                step={0.2}
+                                value={item.buffer}
+                                onChange={(value) => {
+                                  const newItems = Array.from(items);
+                                  newItems[index].buffer =
+                                    typeof value === 'number' ? value : parseFloat(value);
+                                  setItems(newItems);
+                                }}
+                              />
+                            </Group>
+                            <Group gap={'xs'} wrap={'nowrap'}>
+                              <Tooltip label={t('edit-component')}>
+                                <ActionIcon
+                                  variant={'subtle'}
+                                  onClick={() => {
+                                    setInitialData({});
+                                    setCurrentComponentId(item.id);
+                                    setCurrentComponentType(
+                                      getComponentById(item.id)?.type
+                                    );
+                                    setCancelCallback(() => () => {
+                                      setItems(items);
+                                    });
+                                    setIsModalOpen(true);
+                                  }}
+                                >
+                                  <EditIcon size={20} />
+                                </ActionIcon>
+                              </Tooltip>
+                              <Tooltip label={t('remove-from-component')}>
+                                <ActionIcon
+                                  variant={'subtle'}
+                                  onClick={() => removeItem(item.id)}
+                                >
+                                  <XIcon size={20} />
+                                </ActionIcon>
+                              </Tooltip>
+                            </Group>
+                          </Group>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Stack>
+      </Tabs.Panel>
+      <Tabs.Panel value={'visual'}>
+        <Stack gap={'md'}>
+          <WidgetSettings
+            data={data}
+            handleData={handleData}
+            placeholders={placeholders}
+          />
+        </Stack>
+      </Tabs.Panel>
+      </Tabs>
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
+      <ComponentModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          const newItems = Array.from(items);
+          recalculateOffsets(newItems);
+          setItems(newItems);
+          setIsModalOpen(false);
+        }}
+        onCancel={cancelCallback}
+        componentId={currentComponentId}
+        initialData={initialData}
+        type={currentComponentType}
+      />
+    </>
+  );
+}
+
+export { MultiModal };
