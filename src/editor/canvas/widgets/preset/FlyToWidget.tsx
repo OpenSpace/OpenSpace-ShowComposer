@@ -35,7 +35,7 @@ function FlyToWidget({ component }: Props) {
         />
       )}
       {component.gui_name || component.gui_description ? (
-        <DisplayLabel>
+        <DisplayLabel style={{ position: 'relative', zIndex: 1 }}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </DisplayLabel>

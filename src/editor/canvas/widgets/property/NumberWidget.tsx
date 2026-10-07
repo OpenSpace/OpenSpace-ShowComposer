@@ -26,7 +26,7 @@ interface Props {
 }
 
 function NumberWidget({ component }: Props) {
-  const [value] = useProperty('FloatProperty', component.property);
+  const [value] = useProperty('GenericNumericProperty', component.property);
   const [tempValue, setTempValue] = useState<number>(value ?? 0);
 
   const range = component.max - component.min;
