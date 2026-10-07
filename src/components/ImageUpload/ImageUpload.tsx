@@ -20,7 +20,11 @@ function ImageUpload({ value, onChange }: Props) {
     useDisclosure(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
+  // Fetch every time the gallery opens so it stays up to date with the server
   useEffect(() => {
+    if (!galleryOpened) {
+      return;
+    }
     async function loadGalleryImages() {
       try {
         const images = await fetchGalleryImages();
@@ -30,7 +34,7 @@ function ImageUpload({ value, onChange }: Props) {
       }
     }
     loadGalleryImages();
-  }, []);
+  }, [galleryOpened]);
 
   function handleSelectImage(imagePath: string) {
     onChange(imagePath);
