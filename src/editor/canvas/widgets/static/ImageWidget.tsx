@@ -1,5 +1,5 @@
 import { Image } from '@/components/Image';
-import { ImageComponent } from '@/store';
+import type { ImageComponent } from '@/store';
 
 interface Props {
   component: ImageComponent;

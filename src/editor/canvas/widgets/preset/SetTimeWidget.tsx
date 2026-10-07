@@ -19,9 +19,10 @@ function SetTimeWidget({ component }: Props) {
   // Fadetime is in seconds
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  const triggerAnimation = () => {
+  function triggerAnimation() {
     statusBarRef.current?.triggerAnimation();
   };
+  
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}

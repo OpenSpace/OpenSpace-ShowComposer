@@ -72,17 +72,17 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       createStaticPanels();
   }, [components]);
 
-  const minimize = (position: Position | null) => {
+  function minimize(position: Position | null) {
     updatePosition(position?.id || '', {
       minimized: !position?.minimized
     });
-  };
+  }
 
   const handleCopyComponent = (id: string) => {
     copyComponent(id);
   };
 
-  const handleDeleteComponent = (id: string) => {
+  function handleDeleteComponent(id: string) {
     const componentToDelete = getComponentById(id);
     if (componentToDelete?.type == 'multi') {
       (componentToDelete as MultiComponent).components.forEach((c) => {
@@ -90,7 +90,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       });
     }
     removeComponent(id);
-  };
+  }
 
   return (
     <Box pos={'relative'} h={'100%'}>

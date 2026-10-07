@@ -5,7 +5,7 @@ import { ComponentContainer } from '@/components/ComponentContainer';
 import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
-import { NumberComponent } from '@/store';
+import type { NumberComponent } from '@/store';
 
 // Slider position -> the value sent to OpenSpace
 function getScale(position: number, min: number, max: number, exponent: number) {

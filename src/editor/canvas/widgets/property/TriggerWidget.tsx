@@ -2,7 +2,7 @@ import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
-import { TriggerComponent } from '@/store';
+import type { TriggerComponent } from '@/store';
 
 interface Props {
   component: TriggerComponent;

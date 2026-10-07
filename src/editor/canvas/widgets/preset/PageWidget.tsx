@@ -2,7 +2,7 @@ import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
-import { PageComponent } from '@/types/components';
+import { type PageComponent } from '@/types/components';
 
 interface Props {
   component: PageComponent;

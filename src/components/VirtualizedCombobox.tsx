@@ -197,10 +197,8 @@ export function VirtualizedCombobox({
                       <Group gap={'xs'} wrap={'nowrap'} h={'100%'}>
                         <CheckIcon
                           size={16}
-                          style={{
-                            flexShrink: 0,
-                            opacity: selectedOption === item ? 1 : 0
-                          }}
+                          opacity={selectedOption === item ? 1 : 0}
+                          style={{ flexShrink: 0 }}
                         />
                         <ColoredPath value={item} delimiter={delimiter} />
                       </Group>

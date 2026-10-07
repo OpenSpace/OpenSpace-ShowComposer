@@ -20,6 +20,7 @@ function PlaybackControls({
   onTogglePlaybackPaused
 }: Props) {
   const { t } = useTranslation('session-playback');
+  
   switch (recordingState) {
     case RecordingState.Idle:
       return file ? (

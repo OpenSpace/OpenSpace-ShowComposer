@@ -5,7 +5,7 @@ import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { StatusBar, StatusBarRef } from '@/components/StatusBar';
 import { componentActions } from '@/editor/componentActions';
-import { FlyToComponent } from '@/types/components';
+import { type FlyToComponent } from '@/types/components';
 
 interface Props {
   component: FlyToComponent;
@@ -14,7 +14,7 @@ interface Props {
 function FlyToWidget({ component }: Props) {
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  const triggerAnimation = () => {
+  function triggerAnimation() {
     statusBarRef.current?.triggerAnimation();
   };
 

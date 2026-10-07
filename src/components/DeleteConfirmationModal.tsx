@@ -10,6 +10,7 @@ interface Props {
   setOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
 }
+
 function DeleteConfirmationModal({
   onConfirm,
   message,

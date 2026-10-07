@@ -3,7 +3,7 @@ import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
-import { BooleanComponent } from '@/store';
+import type { BooleanComponent } from '@/store';
 
 interface Props {
   component: BooleanComponent;

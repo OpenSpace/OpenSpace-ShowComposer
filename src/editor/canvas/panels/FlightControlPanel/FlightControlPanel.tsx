@@ -208,9 +208,9 @@ export function FlightControlPanel() {
           id={'controlArea'}
           bg={'dark.9'}
           bd={'2px solid dark.1'}
+          h={'180px'}
+          w={'180px'}
           style={{
-            height: '180px',
-            width: '180px',
             userSelect: 'none',
             cursor: 'crosshair',
             zIndex: 9999

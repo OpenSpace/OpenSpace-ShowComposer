@@ -15,7 +15,8 @@ function VideoWidget({ component }: Props) {
       right={0}
       h={'100%'}
       w={'100%'}
-      style={{ borderRadius: 'var(--mantine-radius-md)', overflow: 'hidden' }}
+      bdrs={'md'}
+      style={{ overflow: 'hidden' }}
     >
       <VideoContent url={component.url} />
     </Center>

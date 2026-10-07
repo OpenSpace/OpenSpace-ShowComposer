@@ -38,6 +38,7 @@ export function ConnectionStatusIndicator() {
         return <CircleHelpIcon size={size} color={'black'} />;
     }
   }
+  
   return (
     <Group gap={'sm'} wrap={'nowrap'}>
       <Text size={'xs'} fw={700}>

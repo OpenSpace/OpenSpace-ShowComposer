@@ -8,7 +8,7 @@ import { Information } from '@/components/Information';
 import { StatusBar, StatusBarRef } from '@/components/StatusBar';
 import { runComponentAction } from '@/editor/componentActions';
 import { useBoundStore } from '@/store/boundStore';
-import { MultiComponent, MultiOption } from '@/types/components';
+import { type MultiComponent, MultiOption } from '@/types/components';
 
 interface Props {
   component: MultiComponent;
@@ -19,13 +19,14 @@ function MultiWidget({ component }: Props) {
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  const triggerAnimation = () => {
+  function triggerAnimation() {
     statusBarRef.current?.triggerAnimation();
   };
 
   const totalDelay = useMemo(() => {
     return component.components[component.components.length - 1]?.endTime || 0;
   }, [component.components]);
+  
   const [currentItems, setCurrentItems] = useState<string[]>([]);
   const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 

@@ -7,7 +7,7 @@ import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
 import { PlaybackControls } from '@/components/PlaybackControls';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { SessionPlaybackComponent } from '@/types/components';
+import { type SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 

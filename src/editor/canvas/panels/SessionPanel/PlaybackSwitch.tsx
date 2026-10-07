@@ -56,6 +56,7 @@ export function PlaybackSwitch({
   function togglePlaybackPaused() {
     luaApi?.sessionRecording.togglePlaybackPause();
   }
+  
   switch (state) {
     case RecordingState.Idle:
       return filenamePlayback ? (
