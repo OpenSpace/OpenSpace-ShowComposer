@@ -1,6 +1,7 @@
 import { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
 
 import { PropertyVisibilityNumber } from '@/types/enums';
+import { GenericNumericTypesArray } from '@/types/Property/propertyTypes';
 import { PropertyOwnerRedux } from '@/types/types';
 // import { PropertyOwner, PropertyOwners } from '@/types/types';
 export const InterestingTag = '';
@@ -66,7 +67,7 @@ const RegexLibrary = {
     regex: /^Scene\.(.*?)/
   },
   Fadable: {
-    regex: /Scene\.(.*?)\.Fade/
+    regex: /^(Scene\..*\.Opacity|ScreenSpace\..*\.Fade)$/
   },
   Opacity: {
     regex: /Scene\.(.*?)\.Opacity/
@@ -77,7 +78,7 @@ const RegexLibrary = {
   SettingsProperty: {
     // has any of these strings as the rootModules
     regex:
-      /^(Scene\.(.*?)|Modules|NavigationHandler|Dashboard|InteractionMonitor|LuaConsole|OpenSpaceEngine|ParallelPeer|RenderEngine|ScriptScheduler|SessionRecording|TimeManager)/
+      /^(Scene\.(.*?)|ScreenSpace|Modules|NavigationHandler|Dashboard|InteractionMonitor|LuaConsole|OpenSpaceEngine|ParallelPeer|RenderEngine|ScriptScheduler|SessionRecording|TimeManager)/
   }
 };
 
@@ -112,9 +113,9 @@ export const getRenderables: (
 type ActionType = 'Bool' | 'Number' | 'Trigger';
 
 const actionTypes = {
-  Bool: 'BoolProperty',
-  Number: 'FloatProperty',
-  Trigger: 'TriggerProperty'
+  Bool: ['BoolProperty'],
+  Number: GenericNumericTypesArray,
+  Trigger: ['TriggerProperty']
 } as const;
 
 export const getActionSceneNodes = (
@@ -129,7 +130,7 @@ export const getActionSceneNodes = (
       .filter(
         (p) =>
           regex.exec(p.uri) &&
-          p.metaData.type === actionTypes[type] &&
+          actionTypes[type].some((propertyType) => propertyType === p.metaData.type) &&
           !p.metaData.isReadOnly
       )
       .sort((a, b) => a.uri?.localeCompare(b.uri))
@@ -170,7 +171,10 @@ export function getStringBetween(
 export function formatName(name: string) {
   if (!name) return '';
   return name
-    .replace(/Scene.|.Renderable|.Opacity/g, '')
+    .replace(/^Scene\./, '')
+    .replace(/^ScreenSpace\./, '')
+    .replace(/^ScreenSpaceRenderables\./, '')
+    .replace(/\.Renderable|\.Opacity/g, '')
     .replace(/.Fade/g, '')
     .replace(/\./g, ' > ')
     .replace(/(?<=[a-z])([A-Z])/g, ' $1')

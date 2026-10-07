@@ -15,6 +15,7 @@ import {
 import { FadeComponent, Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
+import { getFadeTargetIdentifier } from '@/utils/fadeHelpers';
 
 const DEFAULTS: Omit<FadeComponent, 'id'> = {
   type: 'fade',
@@ -43,7 +44,11 @@ function FadeModal({
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
-        .filter((a) => a.endsWith('.Opacity'))
+        .filter(
+          (uri) =>
+            uri.endsWith('.Opacity') ||
+            (uri.startsWith('ScreenSpace.') && uri.endsWith('.Fade'))
+        )
         .reduce((acc: Record<string, AnyProperty>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
@@ -55,9 +60,7 @@ function FadeModal({
 
   const placeholders = property
     ? {
-        name: `${formatName(
-          property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
-        )} ${capitalize(action)}`,
+        name: `${formatName(property)} ${capitalize(action)}`,
         description: `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`
       }
     : { name: '', description: '' };
@@ -74,8 +77,9 @@ function FadeModal({
           return a.localeCompare(b);
         })
         .reduce((acc: Record<string, string>, key) => {
-          const newValue = formatName(key);
-          acc[newValue] = key;
+          const target = getFadeTargetIdentifier(key);
+          const newValue = formatName(target);
+          acc[newValue] = target;
           return acc;
         }, {}),
     [properties]
@@ -129,11 +133,7 @@ function FadeModal({
           }
         />
       </Group>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

@@ -5,6 +5,7 @@ import { StatusBarControlled } from '@/components/StatusBarControlled';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import { FadeComponent } from '@/store';
+import { getFadeStatePropertyUri } from '@/utils/fadeHelpers';
 
 interface Props {
   component: FadeComponent;
@@ -13,7 +14,7 @@ interface Props {
 function FadeWidget({ component }: Props) {
   const [fadeValue] = useProperty(
     'FloatProperty',
-    component?.property?.replace('.Opacity', '.Fade') ?? ''
+    getFadeStatePropertyUri(component?.property ?? '')
   );
 
   // Reflect the value of fade on the card outline: faded in (green),
@@ -44,7 +45,7 @@ function FadeWidget({ component }: Props) {
         <StatusBarControlled progress={fadeValue} debounceDuration={0} />
       ) : null}
       {component.gui_name || component.gui_description ? (
-        <DisplayLabel>
+        <DisplayLabel style={{ position: 'relative', zIndex: 1 }}>
           {component.gui_name}
           <Information content={component.gui_description} />
         </DisplayLabel>
