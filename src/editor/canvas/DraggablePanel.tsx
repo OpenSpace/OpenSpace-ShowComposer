@@ -3,9 +3,9 @@ import { ActionIcon, Box } from '@mantine/core';
 
 import { DimmableBody } from '@/editor/canvas/DimmableBody';
 import { Draggable } from '@/editor/canvas/Draggable';
-import { FeedbackPanel } from '@/editor/canvas/panels/FeedbackPanel/FeedbackPanel';
 import { FlightControlPanel } from '@/editor/canvas/panels/FlightControlPanel/FlightControlPanel';
 import { LogPanel } from '@/editor/canvas/panels/LogPanel/LogPanel';
+import { NavigationInfoPanel } from '@/editor/canvas/panels/NavigationInfoPanel/NavigationInfoPanel';
 import { SessionPanel } from '@/editor/canvas/panels/SessionPanel/SessionPanel';
 import { TimeDatePicker } from '@/editor/canvas/panels/TimeDatePicker/TimeDatePicker';
 import { zIndex } from '@/editor/canvas/zIndex';
@@ -56,7 +56,7 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       case 'navpanel':
         return <FlightControlPanel />;
       case 'statuspanel':
-        return <FeedbackPanel />;
+        return <NavigationInfoPanel />;
       case 'recordpanel':
         return <SessionPanel />;
       case 'logpanel':

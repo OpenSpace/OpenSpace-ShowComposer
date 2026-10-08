@@ -82,7 +82,7 @@
   "droppable-workspace": {
     "edit-mode": "Edit Mode"
   },
-  "feedback-panel": {
+  "navigation-info": {
     "current-time": "Current Time",
     "current-focus": "Current Focus",
     "lat": "Lat",

@@ -12,7 +12,7 @@ import {
 
 import favicon from '@/assets/images/favicon.png';
 import { ConnectionStatusIndicator } from '@/components/ConnectionStatusIndicator';
-import { Feedback } from '@/components/Feedback';
+import { NavigationInfo } from '@/components/NavigationInfo';
 import { componentPalette } from '@/editor/componentsData';
 import { GlobalMenuBar } from '@/editor/menubar/GlobalMenuBar';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
@@ -138,7 +138,7 @@ export function Sidebar({ onAddComponent }: Props) {
         </ScrollArea>
         <Divider />
         <Box p={'md'}>
-          <Feedback />
+          <NavigationInfo />
         </Box>
       </Stack>
     </Box>

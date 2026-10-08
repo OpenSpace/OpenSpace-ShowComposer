@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Group, InputLabel, SimpleGrid, Stack } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
@@ -13,7 +14,8 @@ interface Props {
   className?: string;
 }
 
-export function Feedback({ className }: Props) {
+export function NavigationInfo({ className }: Props) {
+  const { t } = useTranslation('navigation-info');
   const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
   const { timeCapped: time } = useSubscribeToTime(1000);
   const camera = useSubscribeToCamera(500);
@@ -35,7 +37,8 @@ export function Feedback({ className }: Props) {
         <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
-              <ClockIcon size={IconSize.xs} /> Current Time
+              <ClockIcon size={IconSize.xs} />
+              {t('current-time')}
             </Group>
           </InputLabel>
           <DisplayLabel showBorder>{timeLabel || '-'}</DisplayLabel>
@@ -44,7 +47,7 @@ export function Feedback({ className }: Props) {
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               <TelescopeIcon size={IconSize.xs} />
-              Current Focus
+              {t('current-focus')}
             </Group>
           </InputLabel>
           <DisplayLabel showBorder>{currentAnchor || '-'}</DisplayLabel>
@@ -54,31 +57,31 @@ export function Feedback({ className }: Props) {
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <GlobeIcon size={IconSize.xs} />
-                Lat
+                {t('lat')}
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
               {camera?.latitude != null ? Math.round(camera.latitude * 100) / 100 : '-'}
-              &deg;
+              {t('degrees')}
             </DisplayLabel>
           </Stack>
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <GlobeIcon size={IconSize.xs} />
-                Long
+                {t('long')}
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
               {camera?.longitude != null ? Math.round(camera.longitude * 100) / 100 : '-'}
-              &deg;
+              {t('degrees')}
             </DisplayLabel>
           </Stack>
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <ArrowUpFromDotIcon size={IconSize.xs} />
-                Alt
+                {t('alt')}
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
