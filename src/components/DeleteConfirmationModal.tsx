@@ -36,9 +36,7 @@ function DeleteConfirmationModal({
           variant={'default'}
           onClick={() => {
             setOpen(false);
-            if (onClose) {
-              onClose();
-            }
+            onClose?.();
           }}
         >
           {t('cancel')}
