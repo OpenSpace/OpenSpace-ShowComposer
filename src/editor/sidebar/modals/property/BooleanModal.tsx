@@ -26,7 +26,7 @@ const DEFAULTS: Omit<BooleanComponent, 'id'> = {
   color: ComponentBaseColors.boolean
 };
 
-function BoolModal({
+export function BoolModal({
   component,
   componentId,
   initialData,
@@ -103,5 +103,3 @@ function BoolModal({
     </Stack>
   );
 }
-
-export { BoolModal };

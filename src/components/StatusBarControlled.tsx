@@ -7,7 +7,7 @@ interface Props {
   debounceDuration: number; // Duration in milliseconds
 }
 
-function StatusBarControlled({ progress, debounceDuration }: Props) {
+export function StatusBarControlled({ progress, debounceDuration }: Props) {
   const [, setProgress] = useState(progress);
   const [, setIsFadingOut] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -70,5 +70,3 @@ function StatusBarControlled({ progress, debounceDuration }: Props) {
     </Flex>
   );
 }
-
-export { StatusBarControlled };

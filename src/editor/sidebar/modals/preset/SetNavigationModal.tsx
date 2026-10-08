@@ -31,7 +31,7 @@ const DEFAULTS: Omit<SetNavComponent, 'id'> = {
   color: ComponentBaseColors.setnavstate
 };
 
-function SetNavModal({
+export function SetNavModal({
   component,
   componentId,
   initialData,
@@ -165,5 +165,3 @@ function SetNavModal({
     </Stack>
   );
 }
-
-export { SetNavModal };

@@ -52,7 +52,7 @@ const DEFAULTS: Omit<MultiComponent, 'components' | 'id'> = {
   color: ComponentBaseColors.multi
 };
 
-function MultiModal({
+export function MultiModal({
   component,
   componentId,
   onClose,
@@ -438,5 +438,3 @@ function MultiModal({
     </>
   );
 }
-
-export { MultiModal };

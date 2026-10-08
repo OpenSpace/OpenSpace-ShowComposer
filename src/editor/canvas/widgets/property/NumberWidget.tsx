@@ -25,7 +25,7 @@ interface Props {
   component: NumberComponent;
 }
 
-function NumberWidget({ component }: Props) {
+export function NumberWidget({ component }: Props) {
   const [value] = useProperty('FloatProperty', component.property);
   const [tempValue, setTempValue] = useState<number>(value ?? 0);
 
@@ -97,5 +97,3 @@ function NumberWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { NumberWidget };

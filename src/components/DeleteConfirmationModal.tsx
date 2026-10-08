@@ -11,7 +11,7 @@ interface Props {
   onClose?: () => void;
 }
 
-function DeleteConfirmationModal({
+export function DeleteConfirmationModal({
   onConfirm,
   message,
   isOpen: externalIsOpen,
@@ -54,4 +54,3 @@ function DeleteConfirmationModal({
     </Modal>
   );
 }
-export { DeleteConfirmationModal };

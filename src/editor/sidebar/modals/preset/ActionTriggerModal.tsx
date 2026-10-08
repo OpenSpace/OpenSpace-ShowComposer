@@ -22,7 +22,7 @@ const DEFAULTS: Omit<ActionTriggerComponent, 'id'> = {
   color: ComponentBaseColors.action
 };
 
-function ActionTriggerModal({
+export function ActionTriggerModal({
   component,
   componentId,
   initialData,
@@ -77,5 +77,3 @@ function ActionTriggerModal({
     </Stack>
   );
 }
-
-export { ActionTriggerModal };

@@ -20,7 +20,7 @@ const DEFAULTS: Omit<TitleComponent, 'id'> = {
   color: ComponentBaseColors.title
 };
 
-function TitleModal({
+export function TitleModal({
   component,
   componentId,
   initialData,
@@ -67,5 +67,3 @@ function TitleModal({
     </Stack>
   );
 }
-
-export { TitleModal };

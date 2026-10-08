@@ -27,7 +27,7 @@ const DEFAULTS: Omit<SessionPlaybackComponent, 'id'> = {
   color: ComponentBaseColors.sessionplayback
 };
 
-function SessionPlaybackModal({
+export function SessionPlaybackModal({
   component,
   componentId,
   initialData,
@@ -119,5 +119,3 @@ function SessionPlaybackModal({
     </Stack>
   );
 }
-
-export { SessionPlaybackModal };

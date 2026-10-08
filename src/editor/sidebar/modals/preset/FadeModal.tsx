@@ -28,7 +28,7 @@ const DEFAULTS: Omit<FadeComponent, 'id'> = {
   color: ComponentBaseColors.fade
 };
 
-function FadeModal({
+export function FadeModal({
   component,
   componentId,
   initialData,
@@ -138,5 +138,3 @@ function FadeModal({
     </Stack>
   );
 }
-
-export { FadeModal };

@@ -6,7 +6,7 @@ interface Props {
   component: RichTextComponent;
 }
 
-function RichTextWidget({ component }: Props) {
+export function RichTextWidget({ component }: Props) {
   return (
     <Box
       pos={'absolute'}
@@ -34,5 +34,3 @@ function RichTextWidget({ component }: Props) {
     </Box>
   );
 }
-
-export { RichTextWidget };

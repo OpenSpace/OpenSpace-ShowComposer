@@ -20,7 +20,7 @@ const DEFAULTS: Omit<VideoComponent, 'id'> = {
   color: ComponentBaseColors.video
 };
 
-function VideoModal({
+export function VideoModal({
   component,
   componentId,
   initialData,
@@ -59,5 +59,3 @@ function VideoModal({
     </Stack>
   );
 }
-
-export { VideoModal };

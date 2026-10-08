@@ -7,7 +7,7 @@ interface Props {
   onCancel: () => void;
 }
 
-function ModalFooter({ isEdit, onSave, onCancel }: Props) {
+export function ModalFooter({ isEdit, onSave, onCancel }: Props) {
   const { t } = useTranslation('component-modal');
   return (
     <Group justify={'flex-end'} mt={'md'}>
@@ -20,5 +20,3 @@ function ModalFooter({ isEdit, onSave, onCancel }: Props) {
     </Group>
   );
 }
-
-export { ModalFooter };

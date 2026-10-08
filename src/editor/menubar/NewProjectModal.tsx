@@ -21,7 +21,7 @@ interface Props {
   handleLoadProjects: () => void | null;
 }
 
-function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
+export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
   const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
@@ -175,5 +175,3 @@ function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
     </Modal>
   );
 }
-
-export { NewProjectModal };

@@ -9,7 +9,7 @@ interface Props {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
+export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
   const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
@@ -102,5 +102,3 @@ function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
     </Modal>
   );
 }
-
-export { WorkspaceSettingsModal };

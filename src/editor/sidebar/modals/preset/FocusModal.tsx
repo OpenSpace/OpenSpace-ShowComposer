@@ -25,7 +25,7 @@ const DEFAULTS: Omit<SetFocusComponent, 'id'> = {
   color: ComponentBaseColors.setfocus
 };
 
-function FocusModal({
+export function FocusModal({
   component,
   componentId,
   initialData,
@@ -92,5 +92,3 @@ function FocusModal({
     </Stack>
   );
 }
-
-export { FocusModal };

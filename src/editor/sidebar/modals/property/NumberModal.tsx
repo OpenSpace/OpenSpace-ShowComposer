@@ -29,7 +29,7 @@ const DEFAULTS: Omit<NumberComponent, 'id'> = {
   color: ComponentBaseColors.number
 };
 
-function NumberModal({
+export function NumberModal({
   component,
   componentId,
   initialData,
@@ -160,5 +160,3 @@ function NumberModal({
     </Stack>
   );
 }
-
-export { NumberModal };

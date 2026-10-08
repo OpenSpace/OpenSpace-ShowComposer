@@ -8,7 +8,7 @@ interface Props {
   component: ActionTriggerComponent;
 }
 
-function ActionTriggerWidget({ component }: Props) {
+export function ActionTriggerWidget({ component }: Props) {
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
@@ -24,5 +24,3 @@ function ActionTriggerWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { ActionTriggerWidget };

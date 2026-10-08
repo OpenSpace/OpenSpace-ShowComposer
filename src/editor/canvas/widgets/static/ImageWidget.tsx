@@ -5,7 +5,7 @@ interface Props {
   component: ImageComponent;
 }
 
-function ImageWidget({ component }: Props) {
+export function ImageWidget({ component }: Props) {
   return (
     <Image
       src={component.backgroundImage}
@@ -19,5 +19,3 @@ function ImageWidget({ component }: Props) {
     />
   );
 }
-
-export { ImageWidget };

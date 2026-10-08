@@ -12,7 +12,7 @@ interface Props {
   component: SetTimeType;
 }
 
-function SetTimeWidget({ component }: Props) {
+export function SetTimeWidget({ component }: Props) {
   // Keep the time topic subscribed so jumpToTime has a current time to interpolate from.
   useSubscribeToTime();
 
@@ -46,5 +46,3 @@ function SetTimeWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { SetTimeWidget };

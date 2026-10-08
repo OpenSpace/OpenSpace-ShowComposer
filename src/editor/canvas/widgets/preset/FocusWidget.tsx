@@ -10,7 +10,7 @@ interface Props {
   component: SetFocusComponent;
 }
 
-function FocusWidget({ component }: Props) {
+export function FocusWidget({ component }: Props) {
   useSubscribeToProperty(NavigationAnchorKey);
 
   return (
@@ -28,5 +28,3 @@ function FocusWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { FocusWidget };

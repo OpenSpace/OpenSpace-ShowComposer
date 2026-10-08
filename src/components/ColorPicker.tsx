@@ -55,7 +55,7 @@ interface Props {
   setColor: (color: string) => void;
 }
 
-function ColorPicker({ color, setColor }: Props) {
+export function ColorPicker({ color, setColor }: Props) {
   const [opened, setOpened] = useState(false);
   // Local state for the text fields so partial/invalid typing isn't overwritten by the
   // controlled value (prop `color`); re-sync whenever the color changes from elsewhere
@@ -145,5 +145,3 @@ function ColorPicker({ color, setColor }: Props) {
     </Popover>
   );
 }
-
-export { ColorPicker };

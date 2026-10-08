@@ -28,7 +28,7 @@ const DEFAULTS: Omit<SetTimeType, 'id'> = {
   color: ComponentBaseColors.settime
 };
 
-function SetTimeModal({
+export function SetTimeModal({
   component,
   componentId,
   initialData,
@@ -131,5 +131,3 @@ function SetTimeModal({
     </Stack>
   );
 }
-
-export { SetTimeModal };

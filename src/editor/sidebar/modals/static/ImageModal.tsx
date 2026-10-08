@@ -20,7 +20,7 @@ const DEFAULTS: Omit<ImageComponent, 'id'> = {
   color: ComponentBaseColors.image
 };
 
-function ImageModal({
+export function ImageModal({
   component,
   componentId,
   initialData,
@@ -54,5 +54,3 @@ function ImageModal({
     </Stack>
   );
 }
-
-export { ImageModal };

@@ -7,7 +7,7 @@ type Props = {
   onClick: () => void;
 };
 
-function ToggleButton({ tooltipText, icon, selected, onClick }: Props) {
+export function ToggleButton({ tooltipText, icon, selected, onClick }: Props) {
   return (
     <Tooltip label={tooltipText}>
       <ActionIcon onClick={onClick} style={{ zIndex: 40, opacity: selected ? 1 : 0.6 }}>
@@ -16,5 +16,3 @@ function ToggleButton({ tooltipText, icon, selected, onClick }: Props) {
     </Tooltip>
   );
 }
-
-export { ToggleButton };

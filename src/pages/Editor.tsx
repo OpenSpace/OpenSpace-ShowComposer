@@ -17,7 +17,7 @@ import { IconSize } from '@/types/enums';
 // fully collapsed to zero, never a partial width.
 const SIDEBAR_WIDTH = 320;
 
-function Editor() {
+export function Editor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -129,5 +129,3 @@ function Editor() {
     </ThemeProvider>
   );
 }
-
-export { Editor };

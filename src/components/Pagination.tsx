@@ -8,7 +8,7 @@ interface Props {
 
 // The rest of the app is 0-indexed (currentIndex / setIndex), while Mantine's
 // Pagination is 1-based so we need to add/subtract 1 when passing values to it
-function Pagination({ currentIndex, length, setIndex }: Props) {
+export function Pagination({ currentIndex, length, setIndex }: Props) {
   return (
     <Center
       pos={'absolute'}
@@ -27,5 +27,3 @@ function Pagination({ currentIndex, length, setIndex }: Props) {
     </Center>
   );
 }
-
-export { Pagination };

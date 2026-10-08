@@ -14,7 +14,7 @@ interface Props {
   component: MultiComponent;
 }
 
-function MultiWidget({ component }: Props) {
+export function MultiWidget({ component }: Props) {
   const { t } = useTranslation('multi');
   const getComponentById = useBoundStore((state) => state.getComponentById);
   const fadeOutDuration = 400; // 1 second fade out
@@ -100,5 +100,3 @@ function MultiWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { MultiWidget };

@@ -10,7 +10,7 @@ interface Props {
   fadeOutDuration: number;
 }
 
-const StatusBar = forwardRef<StatusBarRef, Props>(
+export const StatusBar = forwardRef<StatusBarRef, Props>(
   ({ duration: incDuration, fadeOutDuration: incFadeDuration }, ref) => {
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
@@ -89,5 +89,3 @@ const StatusBar = forwardRef<StatusBarRef, Props>(
     );
   }
 );
-
-export { StatusBar };

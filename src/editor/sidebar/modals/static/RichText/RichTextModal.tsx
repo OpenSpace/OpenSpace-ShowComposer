@@ -21,7 +21,7 @@ const DEFAULTS: Omit<RichTextComponent, 'id'> = {
   color: ComponentBaseColors.richtext
 };
 
-function RichTextModal({
+export function RichTextModal({
   component,
   componentId,
   initialData,
@@ -55,5 +55,3 @@ function RichTextModal({
     </Stack>
   );
 }
-
-export { RichTextModal };

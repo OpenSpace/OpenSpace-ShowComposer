@@ -9,7 +9,7 @@ interface Props {
   component: BooleanComponent;
 }
 
-function BooleanWidget({ component }: Props) {
+export function BooleanWidget({ component }: Props) {
   const [value] = useProperty('BoolProperty', component.property);
 
   // Reflect the property state on the card outline: on (green), off (red),
@@ -43,5 +43,3 @@ function BooleanWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { BooleanWidget };

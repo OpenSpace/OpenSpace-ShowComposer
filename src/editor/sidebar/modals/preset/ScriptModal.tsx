@@ -21,7 +21,7 @@ const DEFAULTS: Omit<ScriptComponent, 'id'> = {
   color: ComponentBaseColors.script
 };
 
-function ScriptModal({
+export function ScriptModal({
   component,
   componentId,
   initialData,
@@ -71,5 +71,3 @@ function ScriptModal({
     </Stack>
   );
 }
-
-export { ScriptModal };

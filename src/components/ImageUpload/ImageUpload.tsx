@@ -13,7 +13,7 @@ interface Props {
   componentId?: string;
 }
 
-function ImageUpload({ value, onChange }: Props) {
+export function ImageUpload({ value, onChange }: Props) {
   const { t } = useTranslation('image-upload');
   const [image, setImage] = useState<string>(value || '');
   const [galleryOpened, { open: openGallery, close: closeGallery }] =
@@ -76,5 +76,3 @@ function ImageUpload({ value, onChange }: Props) {
     </Stack>
   );
 }
-
-export { ImageUpload };

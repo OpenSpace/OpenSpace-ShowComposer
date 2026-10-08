@@ -6,7 +6,7 @@ interface Props extends ActionIconProps {
   children: ReactNode;
 }
 
-function HoldButton({ onClick, children, ...props }: Props) {
+export function HoldButton({ onClick, children, ...props }: Props) {
   const clickInterval = useRef<NodeJS.Timeout | null>(null);
   const handleMouseDown = () => {
     onClick();
@@ -31,5 +31,3 @@ function HoldButton({ onClick, children, ...props }: Props) {
     </ActionIcon>
   );
 }
-
-export { HoldButton };

@@ -8,7 +8,7 @@ import { cssVariablesResolver, theme } from '@/theme/mantineTheme';
 import { LuaApiProvider } from './api/LuaApiProvider';
 import { basePath } from './utils/basePath';
 
-function App() {
+export function App() {
   return (
     <MantineProvider
       theme={theme}
@@ -26,5 +26,3 @@ function App() {
     </MantineProvider>
   );
 }
-
-export { App };

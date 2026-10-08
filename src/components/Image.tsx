@@ -17,7 +17,7 @@ interface Props extends MantineStyleProps {
   radius?: MantineRadius;
 }
 
-function Image({ src, alt, className, fit, radius, ...props }: Props) {
+export function Image({ src, alt, className, fit, radius, ...props }: Props) {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
@@ -51,5 +51,3 @@ function Image({ src, alt, className, fit, radius, ...props }: Props) {
     />
   );
 }
-
-export { Image };

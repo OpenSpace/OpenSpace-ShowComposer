@@ -21,7 +21,7 @@ const DEFAULTS: Omit<PageComponent, 'id'> = {
   color: ComponentBaseColors.page
 };
 
-function PageModal({
+export function PageModal({
   component,
   componentId,
   initialData,
@@ -79,5 +79,3 @@ function PageModal({
     </Stack>
   );
 }
-
-export { PageModal };

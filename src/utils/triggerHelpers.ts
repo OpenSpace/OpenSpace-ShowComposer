@@ -22,7 +22,7 @@ import { NavigationState, RecordingsFolderKey } from '@/types/types';
  * @param intDuration - The fade duration in seconds.
  * @param action - Whether to fade `on`, `off`, or `toggle` the current fade state.
  */
-async function triggerFade(
+export async function triggerFade(
   property: string,
   intDuration: number,
   action: 'on' | 'off' | 'toggle'
@@ -57,7 +57,7 @@ async function triggerFade(
  * @param property - The boolean property URI.
  * @param action - `on` sets true, `off` sets false, `toggle` inverts the current value.
  */
-async function triggerBool(property: string, action: 'on' | 'off' | 'toggle') {
+export async function triggerBool(property: string, action: 'on' | 'off' | 'toggle') {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
@@ -87,7 +87,7 @@ async function triggerBool(property: string, action: 'on' | 'off' | 'toggle') {
  *
  * @param property - The trigger property URI.
  */
-async function triggerTrigger(property: string) {
+export async function triggerTrigger(property: string) {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
@@ -105,7 +105,7 @@ async function triggerTrigger(property: string) {
  * @param property - The numeric property URI.
  * @param newValue - The value to set.
  */
-async function triggerNumber(property: string, newValue: number) {
+export async function triggerNumber(property: string, newValue: number) {
   if (!property) {
     return;
   }
@@ -123,7 +123,7 @@ async function triggerNumber(property: string, newValue: number) {
  * flies the camera there.
  * @param fadeTime - The transition duration in seconds.
  */
-async function jumpToNavState(
+export async function jumpToNavState(
   navigationState: NavigationState,
   setTime: boolean,
   mode: 'jump' | 'fade' | 'fly',
@@ -164,7 +164,7 @@ async function jumpToNavState(
  *
  * @param component - The fly-to component holding the target, coordinates and duration.
  */
-function triggerFlyTo(component: FlyToComponent) {
+export function triggerFlyTo(component: FlyToComponent) {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
@@ -189,7 +189,7 @@ function triggerFlyTo(component: FlyToComponent) {
  *
  * @param property - The scene graph node identifier to focus on.
  */
-function triggerFocus(property: string) {
+export function triggerFocus(property: string) {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
@@ -210,7 +210,7 @@ function triggerFocus(property: string) {
  * @param file - The recording filename, resolved relative to the recordings folder.
  * @param loop - Whether the playback should loop.
  */
-async function togglePlayback(file: string, loop: boolean) {
+export async function togglePlayback(file: string, loop: boolean) {
   const { luaApi } = useOpenSpaceApiStore.getState();
   if (!luaApi) {
     console.log('No Api Access');
@@ -231,7 +231,7 @@ async function togglePlayback(file: string, loop: boolean) {
  *
  * @param identifier - The identifier of the action to trigger.
  */
-function triggerAction(identifier: string) {
+export function triggerAction(identifier: string) {
   useOpenSpaceApiStore.getState().luaApi?.action.triggerAction(identifier);
 }
 
@@ -240,19 +240,6 @@ function triggerAction(identifier: string) {
  *
  * @param script - The Lua source to execute.
  */
-function sendLuaScript(script: string) {
+export function sendLuaScript(script: string) {
   useOpenSpaceApiStore.getState().apiInstance?.executeLuaScript(script, false, false);
 }
-
-export {
-  jumpToNavState,
-  sendLuaScript,
-  togglePlayback,
-  triggerAction,
-  triggerBool,
-  triggerFade,
-  triggerFlyTo,
-  triggerFocus,
-  triggerNumber,
-  triggerTrigger
-};

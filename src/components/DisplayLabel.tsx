@@ -21,7 +21,12 @@ interface Props {
   style?: CSSProperties;
 }
 
-function DisplayLabel({ children, showBorder = false, size = 'md', style }: Props) {
+export function DisplayLabel({
+  children,
+  showBorder = false,
+  size = 'md',
+  style
+}: Props) {
   return (
     <Box
       style={{
@@ -45,5 +50,3 @@ function DisplayLabel({ children, showBorder = false, size = 'md', style }: Prop
     </Box>
   );
 }
-
-export { DisplayLabel };

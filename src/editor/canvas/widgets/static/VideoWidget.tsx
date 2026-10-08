@@ -7,7 +7,7 @@ interface Props {
   component: VideoComponent;
 }
 
-function VideoWidget({ component }: Props) {
+export function VideoWidget({ component }: Props) {
   return (
     <Center
       pos={'absolute'}
@@ -22,5 +22,3 @@ function VideoWidget({ component }: Props) {
     </Center>
   );
 }
-
-export { VideoWidget };

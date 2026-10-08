@@ -9,7 +9,7 @@ interface Props {
 
 // Renders a YouTube/Vimeo embed for a matching URL, a raw <video> for any other
 // non-empty URL, or nothing when the URL is empty
-function VideoContent({ url }: Props) {
+export function VideoContent({ url }: Props) {
   const youtubeMatch = url.match(YOUTUBE_PATTERN);
   const vimeoMatch = url.match(VIMEO_PATTERN);
 
@@ -43,5 +43,3 @@ function VideoContent({ url }: Props) {
 
   return null;
 }
-
-export { VideoContent };

@@ -21,7 +21,12 @@ interface Props {
   projects: Project[];
 }
 
-function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Props) {
+export function LoadProjectModal({
+  isOpen,
+  setIsOpen,
+  handleLoadProject,
+  projects
+}: Props) {
   const { t } = useTranslation('load-project-modal');
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
@@ -105,5 +110,3 @@ function LoadProjectModal({ isOpen, setIsOpen, handleLoadProject, projects }: Pr
     </Modal>
   );
 }
-
-export { LoadProjectModal };

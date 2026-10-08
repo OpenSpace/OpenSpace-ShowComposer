@@ -1,3 +1,1 @@
-const basePath = import.meta.env.BASE_URL;
-
-export { basePath };
+export const basePath = import.meta.env.BASE_URL;

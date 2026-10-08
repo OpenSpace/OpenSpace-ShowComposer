@@ -9,7 +9,7 @@ interface Props {
   className?: string;
 }
 
-function Toggle({
+export function Toggle({
   value,
   setValue,
   disabled = false,
@@ -28,5 +28,3 @@ function Toggle({
     />
   );
 }
-
-export { Toggle };

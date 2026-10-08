@@ -15,7 +15,7 @@ interface Props {
   component: SessionPlaybackComponent;
 }
 
-function SessionPlaybackWidget({ component }: Props) {
+export function SessionPlaybackWidget({ component }: Props) {
   const { file, loop, gui_name, gui_description } = component;
   const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
   const luaApi = useOpenSpaceApi();
@@ -65,5 +65,3 @@ function SessionPlaybackWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { SessionPlaybackWidget };

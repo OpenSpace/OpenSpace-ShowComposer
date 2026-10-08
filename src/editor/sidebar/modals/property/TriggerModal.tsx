@@ -24,7 +24,7 @@ const DEFAULTS: Omit<TriggerComponent, 'id'> = {
   color: ComponentBaseColors.trigger
 };
 
-function TriggerModal({
+export function TriggerModal({
   component,
   componentId,
   initialData,
@@ -95,5 +95,3 @@ function TriggerModal({
     </Stack>
   );
 }
-
-export { TriggerModal };

@@ -23,7 +23,7 @@ interface Props {
   placeholders: Placeholders;
 }
 
-function WidgetSettings({ data, handleData, placeholders }: Props) {
+export function WidgetSettings({ data, handleData, placeholders }: Props) {
   const { t } = useTranslation('widget-settings');
   const backgroundImage = data.backgroundImage ?? '';
 
@@ -75,5 +75,3 @@ function WidgetSettings({ data, handleData, placeholders }: Props) {
     </>
   );
 }
-
-export { WidgetSettings };

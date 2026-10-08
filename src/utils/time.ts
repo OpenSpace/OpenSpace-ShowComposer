@@ -47,10 +47,10 @@ interface TimeState {
   hasNextDeltaTimeStep?: boolean;
   hasPrevDeltaTimeStep?: boolean;
 }
-function isDate(date: Date | string): date is Date {
+export function isDate(date: Date | string): date is Date {
   return date instanceof Date;
 }
-const updateTime = (newTimeState: TimeState) => {
+export const updateTime = (newTimeState: TimeState) => {
   //   const { newTime } = newTimeState;
   const { time: newTime } = newTimeState;
   // console.log(newTimeState);
@@ -89,7 +89,7 @@ const updateTime = (newTimeState: TimeState) => {
   return newState;
 };
 
-async function jumpToTime(
+export async function jumpToTime(
   newTime: Date,
   interpolate: boolean,
   fadeTime: number,
@@ -144,7 +144,7 @@ async function jumpToTime(
 }
 
 // how do
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
   const pad = (n: number) => (n < 10 ? '0' + n : n);
 
   const day = pad(date.getUTCDate());
@@ -157,5 +157,3 @@ function formatDate(date: Date) {
 
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
-
-export { formatDate, isDate, jumpToTime, updateTime };

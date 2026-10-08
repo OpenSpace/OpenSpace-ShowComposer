@@ -11,7 +11,7 @@ interface Props {
   component: SetNavComponent;
 }
 
-function SetNavigationWidget({ component }: Props) {
+export function SetNavigationWidget({ component }: Props) {
   const { gui_description, gui_name, backgroundImage, color } = component;
 
   const fadeOutDuration = 400; // 1 second fade out
@@ -45,5 +45,3 @@ function SetNavigationWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { SetNavigationWidget };

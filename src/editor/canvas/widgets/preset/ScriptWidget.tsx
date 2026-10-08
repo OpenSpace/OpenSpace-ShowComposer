@@ -8,7 +8,7 @@ interface Props {
   component: ScriptComponent;
 }
 
-function ScriptWidget({ component }: Props) {
+export function ScriptWidget({ component }: Props) {
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
@@ -24,5 +24,3 @@ function ScriptWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { ScriptWidget };

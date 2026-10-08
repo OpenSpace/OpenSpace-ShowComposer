@@ -13,7 +13,7 @@ interface Props {
 
 // Renders the play/pause/stop controls for the current session-recording state.
 // Shared by both the canvas widget and its edit modal
-function PlaybackControls({
+export function PlaybackControls({
   recordingState,
   file,
   onTogglePlayback,
@@ -70,5 +70,3 @@ function PlaybackControls({
       return null;
   }
 }
-
-export { PlaybackControls };

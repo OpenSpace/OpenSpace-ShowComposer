@@ -11,7 +11,7 @@ interface Props {
   newPage: boolean;
 }
 
-function NewPageModal({ isOpen, setIsOpen, newPage }: Props) {
+export function NewPageModal({ isOpen, setIsOpen, newPage }: Props) {
   const currentPage: Page = useBoundStore((state) =>
     state.getPageById(state.currentPage)
   );
@@ -79,5 +79,3 @@ function NewPageModal({ isOpen, setIsOpen, newPage }: Props) {
     </Modal>
   );
 }
-
-export { NewPageModal };

@@ -11,7 +11,7 @@ interface Props {
   component: FlyToComponent;
 }
 
-function FlyToWidget({ component }: Props) {
+export function FlyToWidget({ component }: Props) {
   const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
   function triggerAnimation() {
@@ -43,5 +43,3 @@ function FlyToWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { FlyToWidget };

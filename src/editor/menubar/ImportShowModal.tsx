@@ -35,7 +35,7 @@ interface Props {
   }; // Replace with the appropriate type for your store
 }
 
-function ImportShowModal({ isOpen, onClose, store }: Props) {
+export function ImportShowModal({ isOpen, onClose, store }: Props) {
   const { t } = useTranslation('main');
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
@@ -340,5 +340,3 @@ function ImportShowModal({ isOpen, onClose, store }: Props) {
     </Modal>
   );
 }
-
-export { ImportShowModal };

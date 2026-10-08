@@ -8,7 +8,7 @@ interface Props {
   setOpen: (isOpen: boolean) => void;
 }
 
-function ConfirmationModal({ isOpen, onConfirm, message, setOpen }: Props) {
+export function ConfirmationModal({ isOpen, onConfirm, message, setOpen }: Props) {
   const { t } = useTranslation('confirmation-modal');
   return (
     <Modal opened={isOpen} onClose={() => setOpen(false)} centered title={''}>
@@ -27,5 +27,3 @@ function ConfirmationModal({ isOpen, onConfirm, message, setOpen }: Props) {
     </Modal>
   );
 }
-
-export { ConfirmationModal };

@@ -10,7 +10,7 @@ interface Props {
   component: FadeComponent;
 }
 
-function FadeWidget({ component }: Props) {
+export function FadeWidget({ component }: Props) {
   const [fadeValue] = useProperty(
     'FloatProperty',
     component?.property?.replace('.Opacity', '.Fade') ?? ''
@@ -52,5 +52,3 @@ function FadeWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { FadeWidget };

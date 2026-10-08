@@ -8,7 +8,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function ComponentContainer({
+export function ComponentContainer({
   children,
   onClick,
   backgroundImage,
@@ -39,5 +39,3 @@ function ComponentContainer({
     </Flex>
   );
 }
-
-export { ComponentContainer };

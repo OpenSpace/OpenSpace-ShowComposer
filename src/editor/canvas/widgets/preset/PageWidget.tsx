@@ -8,7 +8,7 @@ interface Props {
   component: PageComponent;
 }
 
-function PageWidget({ component }: Props) {
+export function PageWidget({ component }: Props) {
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
@@ -22,5 +22,3 @@ function PageWidget({ component }: Props) {
     </ComponentContainer>
   );
 }
-
-export { PageWidget };

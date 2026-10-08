@@ -34,7 +34,7 @@ type Option = {
   shouldGeo: boolean;
 };
 
-function FlyToModal({
+export function FlyToModal({
   component,
   componentId,
   initialData,
@@ -227,5 +227,3 @@ function FlyToModal({
     </Stack>
   );
 }
-
-export { FlyToModal };

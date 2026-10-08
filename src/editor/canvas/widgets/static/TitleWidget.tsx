@@ -60,7 +60,7 @@ interface Props {
   component: TitleComponent;
 }
 
-function TitleWidget({ component }: Props) {
+export function TitleWidget({ component }: Props) {
   const [fontSize, setFontSize] = useState(16);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -111,5 +111,3 @@ function TitleWidget({ component }: Props) {
     </Center>
   );
 }
-
-export { TitleWidget };

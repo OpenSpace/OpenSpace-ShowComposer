@@ -30,7 +30,7 @@ interface Props {
   onClose: () => void;
 }
 
-function ImageGallery({
+export function ImageGallery({
   opened,
   images,
   selectedImage: initialImage,
@@ -194,5 +194,3 @@ function ImageGallery({
     </Modal>
   );
 }
-
-export { ImageGallery };
