@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, SimpleGrid } from '@mantine/core';
 
 import { PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
-import { RecordingState } from '@/types/enums';
+import { IconSize, RecordingState } from '@/types/enums';
 
 interface Props {
   recordingState: RecordingState;
@@ -24,17 +24,23 @@ function PlaybackControls({
   switch (recordingState) {
     case RecordingState.Idle:
       return file ? (
-        <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlayback}>
+        <Button leftSection={<PlayIcon size={IconSize.sm} />} onClick={onTogglePlayback}>
           {t('play')}
         </Button>
       ) : null;
     case RecordingState.Playing:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PauseIcon size={16} />} onClick={onTogglePlaybackPaused}>
+          <Button
+            leftSection={<PauseIcon size={IconSize.sm} />}
+            onClick={onTogglePlaybackPaused}
+          >
             {t('pause')}
           </Button>
-          <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
+          <Button
+            leftSection={<SquareIcon size={IconSize.sm} />}
+            onClick={onTogglePlayback}
+          >
             {t('stop')}
           </Button>
         </SimpleGrid>
@@ -42,10 +48,16 @@ function PlaybackControls({
     case RecordingState.Paused:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PlayIcon size={16} />} onClick={onTogglePlaybackPaused}>
+          <Button
+            leftSection={<PlayIcon size={IconSize.sm} />}
+            onClick={onTogglePlaybackPaused}
+          >
             {t('resume')}
           </Button>
-          <Button leftSection={<SquareIcon size={16} />} onClick={onTogglePlayback}>
+          <Button
+            leftSection={<SquareIcon size={IconSize.sm} />}
+            onClick={onTogglePlayback}
+          >
             {t('stop')}
           </Button>
         </SimpleGrid>

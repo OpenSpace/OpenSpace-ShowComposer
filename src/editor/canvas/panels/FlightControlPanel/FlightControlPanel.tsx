@@ -16,6 +16,7 @@ import { Information } from '@/components/Information';
 import { useProperty } from '@/hooks/properties';
 import { useFlightController } from '@/hooks/topicSubscriptions';
 import { RefreshCcwDotIcon, Rotate3dIcon, ZoomInIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 // Sent on pointer/touch release to stop all camera motion.
 const IDLE_INPUT_STATE_COMMAND: FlightControllerInputStateCommand = {
@@ -170,7 +171,7 @@ export function FlightControlPanel() {
                 variant={rotationFriction ? 'filled' : 'default'}
                 style={{ opacity: rotationFriction ? 1 : 0.6 }}
               >
-                <Rotate3dIcon size={20} />
+                <Rotate3dIcon size={IconSize.md} />
               </ActionIcon>
             </Tooltip>
             <Tooltip label={t('zoom-friction')}>
@@ -180,7 +181,7 @@ export function FlightControlPanel() {
                 variant={zoomFriction ? 'filled' : 'default'}
                 style={{ opacity: zoomFriction ? 1 : 0.6 }}
               >
-                <ZoomInIcon size={20} />
+                <ZoomInIcon size={IconSize.md} />
               </ActionIcon>
             </Tooltip>
             <Tooltip label={t('roll-friction')}>
@@ -190,7 +191,7 @@ export function FlightControlPanel() {
                 variant={rollFriction ? 'filled' : 'default'}
                 style={{ opacity: rollFriction ? 1 : 0.6 }}
               >
-                <RefreshCcwDotIcon size={20} />
+                <RefreshCcwDotIcon size={IconSize.md} />
               </ActionIcon>
             </Tooltip>
           </Group>

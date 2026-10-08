@@ -2,6 +2,7 @@ import { ActionIcon, Button, Group, Text } from '@mantine/core';
 
 import { RedoIcon, UndoIcon } from '@/icons/icons';
 import { useBoundStoreTemporal } from '@/store/boundStore';
+import { IconSize } from '@/types/enums';
 
 export function Undo() {
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
@@ -18,7 +19,7 @@ export function Undo() {
         disabled={!pastStates.length}
         size={'lg'}
       >
-        <UndoIcon size={16} />
+        <UndoIcon size={IconSize.sm} />
       </ActionIcon>
       <ActionIcon
         variant={'filled'}
@@ -26,7 +27,7 @@ export function Undo() {
         disabled={!futureStates.length}
         size={'lg'}
       >
-        <RedoIcon size={16} />
+        <RedoIcon size={IconSize.sm} />
       </ActionIcon>
       <Button size={'sm'} variant={'subtle'} onClick={() => clear()}>
         Clear

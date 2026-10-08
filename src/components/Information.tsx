@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react';
 import { ActionIcon, Popover } from '@mantine/core';
 
 import { InfoIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 interface Props {
   content: ReactNode | string;
@@ -29,7 +30,7 @@ export function Information({ content }: Props) {
           aria-label={'More information'}
           onClick={() => setOpened((open) => !open)}
         >
-          <InfoIcon size={14} />
+          <InfoIcon size={IconSize.xs} />
         </ActionIcon>
       </Popover.Target>
 

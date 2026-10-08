@@ -9,6 +9,7 @@ import { LockIcon, LockOpenIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Page } from '@/types/components';
+import { IconSize } from '@/types/enums';
 
 export function AdjustablePage() {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
@@ -132,7 +133,11 @@ export function AdjustablePage() {
                   opacity: locked ? 0.6 : 1
                 }}
               >
-                {locked ? <LockIcon size={16} /> : <LockOpenIcon size={16} />}
+                {locked ? (
+                  <LockIcon size={IconSize.sm} />
+                ) : (
+                  <LockOpenIcon size={IconSize.sm} />
+                )}
               </ActionIcon>
             </Tooltip>
           </Box>

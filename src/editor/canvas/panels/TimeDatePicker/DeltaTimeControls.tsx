@@ -13,6 +13,7 @@ import {
 import { useOpenSpaceApi } from '@/api/hooks';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 import { round10, StepPrecisions, Steps, StepSizes, updateDeltaTime } from './utils';
 
@@ -92,7 +93,8 @@ export function DeltaTimeControls() {
 
   function endEditingDelta() {
     isEditingDelta.current = false;
-    const numericValue = typeof localDelta === 'number' ? localDelta : parseFloat(localDelta);
+    const numericValue =
+      typeof localDelta === 'number' ? localDelta : parseFloat(localDelta);
     if (Number.isNaN(numericValue)) {
       const adjustedDelta = round10(
         targetDeltaTime ? targetDeltaTime / StepSizes[stepSize] : 0,
@@ -129,18 +131,18 @@ export function DeltaTimeControls() {
       <SimpleGrid cols={3} spacing={'xs'}>
         <Stack gap={2}>
           <Button disabled={!hasPrevDeltaTimeStep} onClick={setPrevDeltaTimeStep}>
-            <RewindIcon size={20} />
+            <RewindIcon size={IconSize.md} />
           </Button>
           <Text size={'xs'} c={'dimmed'}>
             {hasPrevDeltaTimeStep ? `${adjustedPrevDelta} ${stepSize} / second` : 'None'}
           </Text>
         </Stack>
         <Button onClick={togglePause}>
-          {paused ? <PlayIcon size={20} /> : <PauseIcon size={20} />}
+          {paused ? <PlayIcon size={IconSize.md} /> : <PauseIcon size={IconSize.md} />}
         </Button>
         <Stack gap={2}>
           <Button disabled={!hasNextDeltaTimeStep} onClick={setNextDeltaTimeStep}>
-            <FastForwardIcon size={20} />
+            <FastForwardIcon size={IconSize.md} />
           </Button>
           <Text size={'xs'} c={'dimmed'}>
             {hasNextDeltaTimeStep ? `${adjustedNextDelta} ${stepSize} / second` : 'None'}

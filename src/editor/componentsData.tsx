@@ -52,6 +52,7 @@ import {
 } from '@/icons/icons';
 import { Resources } from '@/localization/resources';
 import { Component, ComponentFor, ComponentType } from '@/types/components';
+import { IconSize } from '@/types/enums';
 
 // Keys available in the `main` i18next namespace - the label source for the sidebar + modal title
 type MainKey = keyof Resources['en']['main'];
@@ -60,7 +61,7 @@ type ComponentDescriptor<K extends ComponentType> = {
   type: K;
   nameKey: MainKey; // i18next key in the `main` namespace
   group: 'preset' | 'property' | 'static';
-  renderIcon: (size?: number) => JSX.Element;
+  renderIcon: (size?: IconSize) => JSX.Element;
   isMultiOption: boolean;
   renderWidget: (c: ComponentFor[K]) => JSX.Element;
   renderModal?: (props: ComponentModalChildProps<K>) => JSX.Element;
@@ -71,7 +72,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'multi',
     nameKey: 'multi',
     group: 'preset',
-    renderIcon: (s = 20) => <GroupIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <GroupIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <MultiWidget component={c} />,
     renderModal: (props) => <MultiModal {...props} />
@@ -80,7 +81,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'setfocus',
     nameKey: 'set-focus',
     group: 'preset',
-    renderIcon: (s = 20) => <TelescopeIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <TelescopeIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FocusWidget component={c} />,
     renderModal: (props) => <FocusModal {...props} />
@@ -89,7 +90,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'fade',
     nameKey: 'fade',
     group: 'preset',
-    renderIcon: (s = 20) => <SunMoonIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <SunMoonIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FadeWidget component={c} />,
     renderModal: (props) => <FadeModal {...props} />
@@ -98,7 +99,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'flyto',
     nameKey: 'fly-to',
     group: 'preset',
-    renderIcon: (s = 20) => <PlaneIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <PlaneIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <FlyToWidget component={c} />,
     renderModal: (props) => <FlyToModal {...props} />
@@ -107,7 +108,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'settime',
     nameKey: 'set-time',
     group: 'preset',
-    renderIcon: (s = 20) => <HistoryIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <HistoryIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SetTimeWidget component={c} />,
     renderModal: (props) => <SetTimeModal {...props} />
@@ -116,7 +117,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'setnavstate',
     nameKey: 'set-nav',
     group: 'preset',
-    renderIcon: (s = 20) => <CompassIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <CompassIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SetNavigationWidget component={c} />,
     renderModal: (props) => <SetNavModal {...props} />
@@ -125,7 +126,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'sessionplayback',
     nameKey: 'playback',
     group: 'preset',
-    renderIcon: (s = 20) => <VideoIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <VideoIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <SessionPlaybackWidget component={c} />,
     renderModal: (props) => <SessionPlaybackModal {...props} />
@@ -134,7 +135,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'action',
     nameKey: 'action',
     group: 'preset',
-    renderIcon: (s = 20) => <CirclePlayIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <CirclePlayIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <ActionTriggerWidget component={c} />,
     renderModal: (props) => <ActionTriggerModal {...props} />
@@ -143,7 +144,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'page',
     nameKey: 'page',
     group: 'preset',
-    renderIcon: (s = 20) => <BookOpenCheckIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <BookOpenCheckIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <PageWidget component={c} />,
     renderModal: (props) => <PageModal {...props} />
@@ -152,7 +153,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'script',
     nameKey: 'script',
     group: 'preset',
-    renderIcon: (s = 20) => <CodeIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <CodeIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <ScriptWidget component={c} />,
     renderModal: (props) => <ScriptModal {...props} />
@@ -161,7 +162,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'number',
     nameKey: 'number',
     group: 'property',
-    renderIcon: (s = 20) => <HashIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <HashIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <NumberWidget component={c} />,
     renderModal: (props) => <NumberModal {...props} />
@@ -170,7 +171,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'boolean',
     nameKey: 'boolean',
     group: 'property',
-    renderIcon: (s = 20) => <ToggleRightIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <ToggleRightIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <BooleanWidget component={c} />,
     renderModal: (props) => <BoolModal {...props} />
@@ -179,7 +180,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'trigger',
     nameKey: 'trigger',
     group: 'property',
-    renderIcon: (s = 20) => <CirclePlayIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <CirclePlayIcon size={s} />,
     isMultiOption: true,
     renderWidget: (c) => <TriggerWidget component={c} />,
     renderModal: (props) => <TriggerModal {...props} />
@@ -188,7 +189,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'richtext',
     nameKey: 'rich-text',
     group: 'static',
-    renderIcon: (s = 20) => <AlignJustifyIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <AlignJustifyIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <RichTextWidget component={c} />,
     renderModal: (props) => <RichTextModal {...props} />
@@ -197,7 +198,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'title',
     nameKey: 'title',
     group: 'static',
-    renderIcon: (s = 20) => <LetterTextIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <LetterTextIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <TitleWidget component={c} />,
     renderModal: (props) => <TitleModal {...props} />
@@ -206,7 +207,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'video',
     nameKey: 'video',
     group: 'static',
-    renderIcon: (s = 20) => <VideoIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <VideoIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <VideoWidget component={c} />,
     renderModal: (props) => <VideoModal {...props} />
@@ -215,7 +216,7 @@ export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } =
     type: 'image',
     nameKey: 'image',
     group: 'static',
-    renderIcon: (s = 20) => <ImageIcon size={s} />,
+    renderIcon: (s = IconSize.md) => <ImageIcon size={s} />,
     isMultiOption: false,
     renderWidget: (c) => <ImageWidget component={c} />,
     renderModal: (props) => <ImageModal {...props} />

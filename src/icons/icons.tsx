@@ -1,3 +1,5 @@
+import { IconSize } from '@/types/enums';
+
 export {
   LuAlignJustify as AlignJustifyIcon,
   LuAnchor as AnchorIcon,
@@ -68,7 +70,7 @@ export {
 } from 'react-icons/lu';
 
 // Custom icons - nothing in react-icons library matched them
-export function RowIcon({ size = 16 }: { size?: number }) {
+export function RowIcon({ size = IconSize.sm }: { size?: IconSize }) {
   return (
     <svg
       width={size}
@@ -86,7 +88,7 @@ export function RowIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-export function ColumnIcon({ size = 16 }: { size?: number }) {
+export function ColumnIcon({ size = IconSize.sm }: { size?: IconSize }) {
   return (
     <svg
       width={size}

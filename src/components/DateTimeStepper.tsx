@@ -1,6 +1,7 @@
 import { ActionIcon, Group, Stack, TextInput } from '@mantine/core';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 type DateData = {
   time: Date;
@@ -101,7 +102,7 @@ export function DateTimeStepper({ date, onChange }: Props) {
             size={'xs'}
             onClick={() => adjustDatePart(part, 1)}
           >
-            <ChevronUpIcon size={20} />
+            <ChevronUpIcon size={IconSize.md} />
           </ActionIcon>
           <TextInput
             w={40}
@@ -124,7 +125,7 @@ export function DateTimeStepper({ date, onChange }: Props) {
             size={'xs'}
             onClick={() => adjustDatePart(part, -1)}
           >
-            <ChevronDownIcon size={20} />
+            <ChevronDownIcon size={IconSize.md} />
           </ActionIcon>
         </Stack>
       ))}

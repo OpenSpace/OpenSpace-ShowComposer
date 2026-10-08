@@ -15,7 +15,7 @@ import {
 import { useOpenSpaceApi } from '@/api/hooks';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { CircleIcon } from '@/icons/icons';
-import { RecordingState } from '@/types/enums';
+import { IconSize, RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 
 import { PlaybackSwitch } from './PlaybackSwitch';
@@ -98,7 +98,7 @@ export function SessionPanel() {
               disabled={
                 (state === RecordingState.Idle && nameIsTaken) || !filenameRecording
               }
-              leftSection={<CircleIcon size={12} fill={'red'} color={'red'} />}
+              leftSection={<CircleIcon size={IconSize.xs} fill={'red'} color={'red'} />}
               flex={'0 0 auto'}
               onClick={toggleRecording}
             >

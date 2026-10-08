@@ -13,6 +13,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import Fuse from 'fuse.js';
 
 import { CheckIcon, ChevronsUpDownIcon, SearchIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 // Renders a delimited path with the leading segment prominent and the rest dimmed
 function ColoredPath({ value, delimiter }: { value: string; delimiter: string }) {
@@ -197,7 +198,7 @@ export function VirtualizedCombobox({
                     >
                       <Group gap={'xs'} wrap={'nowrap'} h={'100%'}>
                         <CheckIcon
-                          size={16}
+                          size={IconSize.sm}
                           opacity={selectedOption === item ? 1 : 0}
                           style={{ flexShrink: 0 }}
                         />

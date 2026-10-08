@@ -3,7 +3,7 @@ import { Group, InputLabel, Text } from '@mantine/core';
 
 import { useConnectionStatus } from '@/hooks/util';
 import { CircleCheckIcon, CircleHelpIcon, CircleXIcon, RadioIcon } from '@/icons/icons';
-import { ConnectionStatus } from '@/types/enums';
+import { ConnectionStatus, IconSize } from '@/types/enums';
 
 import classes from './ConnectionStatusIndicator.module.css';
 
@@ -11,7 +11,7 @@ export function ConnectionStatusIndicator() {
   const { t } = useTranslation('connection-settings');
   const connectionStatus = useConnectionStatus();
 
-  function renderConnectionState(size: number) {
+  function renderConnectionState(size: IconSize) {
     switch (connectionStatus) {
       case ConnectionStatus.Connected:
         return (
@@ -44,7 +44,7 @@ export function ConnectionStatusIndicator() {
       <Text size={'xs'} fw={700}>
         {t('openspace-status')}
       </Text>
-      {renderConnectionState(20)}
+      {renderConnectionState(IconSize.md)}
     </Group>
   );
 }

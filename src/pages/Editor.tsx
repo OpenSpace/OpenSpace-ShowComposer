@@ -11,6 +11,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@/icons/icons';
 import { ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { IconSize } from '@/types/enums';
 
 // The sidebar behaves as a drawer: it is either fully open at this width or
 // fully collapsed to zero, never a partial width.
@@ -100,9 +101,9 @@ function Editor() {
               }}
             >
               {sidebarOpen ? (
-                <ChevronLeftIcon size={14} />
+                <ChevronLeftIcon size={IconSize.xs} />
               ) : (
-                <ChevronRightIcon size={14} />
+                <ChevronRightIcon size={IconSize.xs} />
               )}
             </ActionIcon>
           )}

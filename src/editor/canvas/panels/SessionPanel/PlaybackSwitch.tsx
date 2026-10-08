@@ -4,7 +4,7 @@ import { Button, SimpleGrid } from '@mantine/core';
 import { useOpenSpaceApi } from '@/api/hooks';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import { PauseIcon, PlayIcon, SquareIcon } from '@/icons/icons';
-import { RecordingState } from '@/types/enums';
+import { IconSize, RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 
 const OUTPUT_FRAMERATE = 60;
@@ -60,23 +60,29 @@ export function PlaybackSwitch({
   switch (state) {
     case RecordingState.Idle:
       return filenamePlayback ? (
-        <Button leftSection={<PlayIcon size={20} />} onClick={togglePlayback}>
+        <Button leftSection={<PlayIcon size={IconSize.md} />} onClick={togglePlayback}>
           {t('play')}
         </Button>
       ) : null;
     case RecordingState.Recording:
       return (
-        <Button leftSection={<SquareIcon size={20} />} onClick={toggleRecording}>
+        <Button leftSection={<SquareIcon size={IconSize.md} />} onClick={toggleRecording}>
           {t('stop-recording')}
         </Button>
       );
     case RecordingState.Playing:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PauseIcon size={20} />} onClick={togglePlaybackPaused}>
+          <Button
+            leftSection={<PauseIcon size={IconSize.md} />}
+            onClick={togglePlaybackPaused}
+          >
             {t('pause')}
           </Button>
-          <Button leftSection={<SquareIcon size={20} />} onClick={togglePlayback}>
+          <Button
+            leftSection={<SquareIcon size={IconSize.md} />}
+            onClick={togglePlayback}
+          >
             {t('stop')}
           </Button>
         </SimpleGrid>
@@ -84,10 +90,16 @@ export function PlaybackSwitch({
     case RecordingState.Paused:
       return (
         <SimpleGrid cols={2} spacing={'xs'}>
-          <Button leftSection={<PlayIcon size={20} />} onClick={togglePlaybackPaused}>
+          <Button
+            leftSection={<PlayIcon size={IconSize.md} />}
+            onClick={togglePlaybackPaused}
+          >
             {t('resume')}
           </Button>
-          <Button leftSection={<SquareIcon size={20} />} onClick={togglePlayback}>
+          <Button
+            leftSection={<SquareIcon size={IconSize.md} />}
+            onClick={togglePlayback}
+          >
             {t('stop')}
           </Button>
         </SimpleGrid>

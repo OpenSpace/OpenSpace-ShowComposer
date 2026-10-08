@@ -32,6 +32,7 @@ import {
   MultiComponent,
   MultiOption
 } from '@/types/components';
+import { IconSize } from '@/types/enums';
 
 interface MultiType {
   component: MultiOption['id'];
@@ -347,9 +348,9 @@ function MultiModal({
                                 }}
                               >
                                 {item.chained ? (
-                                  <LinkIcon size={20} />
+                                  <LinkIcon size={IconSize.md} />
                                 ) : (
-                                  <UnlinkIcon size={20} />
+                                  <UnlinkIcon size={IconSize.md} />
                                 )}
                               </ActionIcon>
                             </Tooltip>
@@ -386,7 +387,7 @@ function MultiModal({
                                     setIsModalOpen(true);
                                   }}
                                 >
-                                  <EditIcon size={20} />
+                                  <EditIcon size={IconSize.md} />
                                 </ActionIcon>
                               </Tooltip>
                               <Tooltip label={t('remove-from-component')}>
@@ -394,7 +395,7 @@ function MultiModal({
                                   variant={'subtle'}
                                   onClick={() => removeItem(item.id)}
                                 >
-                                  <XIcon size={20} />
+                                  <XIcon size={IconSize.md} />
                                 </ActionIcon>
                               </Tooltip>
                             </Group>

@@ -16,6 +16,7 @@ import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { Position } from '@/store/positionSlice';
 import { MultiComponent } from '@/types/components';
+import { IconSize } from '@/types/enums';
 
 import { DraggableComponent } from './DraggableComponent';
 import { DraggablePanel } from './DraggablePanel';
@@ -170,31 +171,31 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       <Group pos={'absolute'} bottom={28} left={24} gap={'xs'}>
         <ToggleButton
           tooltipText={t('nav-panel')}
-          icon={<CompassIcon size={20} />}
+          icon={<CompassIcon size={IconSize.md} />}
           selected={NavPosition?.minimized}
           onClick={() => minimize(NavPosition)}
         />
         <ToggleButton
           tooltipText={t('time-panel')}
-          icon={<ClockIcon size={20} />}
+          icon={<ClockIcon size={IconSize.md} />}
           selected={TimePosition?.minimized}
           onClick={() => minimize(TimePosition)}
         />
         <ToggleButton
           tooltipText={t('status-panel')}
-          icon={<ViewIcon size={20} />}
+          icon={<ViewIcon size={IconSize.md} />}
           selected={StatusPosition?.minimized}
           onClick={() => minimize(StatusPosition)}
         />
         <ToggleButton
           tooltipText={t('record-panel')}
-          icon={<VideoIcon size={20} />}
+          icon={<VideoIcon size={IconSize.md} />}
           selected={RecordPosition?.minimized}
           onClick={() => minimize(RecordPosition)}
         />
         <ToggleButton
           tooltipText={t('log-panel')}
-          icon={<MessageSquareWarningIcon size={20} />}
+          icon={<MessageSquareWarningIcon size={IconSize.md} />}
           selected={LogPosition?.minimized}
           onClick={() => minimize(LogPosition)}
         />

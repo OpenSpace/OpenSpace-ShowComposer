@@ -5,6 +5,7 @@ import { GridSettings } from '@/editor/sidebar/GridSettings';
 import { ColumnIcon, LayoutGridIcon, RowIcon, SettingsIcon } from '@/icons/icons';
 import { LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
+import { IconSize } from '@/types/enums';
 
 export function LayoutToolbar() {
   const gridSize = useSettingsStore((state) => state.gridSize);
@@ -33,7 +34,7 @@ export function LayoutToolbar() {
           size={40}
           onClick={() => handleLayoutCreate('row')}
         >
-          <RowIcon size={20} />
+          <RowIcon size={IconSize.md} />
         </ActionIcon>
       </Tooltip>
       <Divider orientation={'vertical'} />
@@ -43,7 +44,7 @@ export function LayoutToolbar() {
           size={40}
           onClick={() => handleLayoutCreate('column')}
         >
-          <ColumnIcon size={20} />
+          <ColumnIcon size={IconSize.md} />
         </ActionIcon>
       </Tooltip>
       <Divider orientation={'vertical'} />
@@ -53,7 +54,7 @@ export function LayoutToolbar() {
           size={40}
           onClick={() => handleLayoutCreate('grid')}
         >
-          <LayoutGridIcon size={20} />
+          <LayoutGridIcon size={IconSize.md} />
         </ActionIcon>
       </Tooltip>
       <Divider orientation={'vertical'} />
@@ -65,7 +66,7 @@ export function LayoutToolbar() {
         <Popover.Target>
           <Tooltip label={'Grid Settings'}>
             <ActionIcon variant={'subtle'} size={40} onClick={toggle}>
-              <SettingsIcon size={20} />
+              <SettingsIcon size={IconSize.md} />
             </ActionIcon>
           </Tooltip>
         </Popover.Target>

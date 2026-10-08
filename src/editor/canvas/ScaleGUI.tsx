@@ -4,6 +4,7 @@ import { NumberInput, Stack } from '@mantine/core';
 import { HoldButton } from '@/components/HoldButton';
 import { ZoomInIcon, ZoomOutIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
+import { IconSize } from '@/types/enums';
 
 export function ScaleGUI() {
   const { t } = useTranslation('scale-gui');
@@ -18,7 +19,7 @@ export function ScaleGUI() {
   return (
     <Stack w={64} align={'center'} justify={'center'} gap={8}>
       <HoldButton onClick={zoomIn}>
-        <ZoomInIcon size={16} />
+        <ZoomInIcon size={IconSize.sm} />
       </HoldButton>
       <NumberInput
         value={Math.round(scale * 100)}
@@ -30,7 +31,7 @@ export function ScaleGUI() {
         styles={{ input: { textAlign: 'center' } }}
       />
       <HoldButton onClick={zoomOut}>
-        <ZoomOutIcon size={16} />
+        <ZoomOutIcon size={IconSize.sm} />
       </HoldButton>
     </Stack>
   );

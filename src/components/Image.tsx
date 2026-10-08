@@ -7,6 +7,7 @@ import {
 } from '@mantine/core';
 
 import { ImageIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 interface Props extends MantineStyleProps {
   src: string;
@@ -33,7 +34,7 @@ function Image({ src, alt, className, fit, radius, ...props }: Props) {
         }}
         {...props}
       >
-        <ImageIcon size={24} />
+        <ImageIcon size={IconSize.lg} />
       </Center>
     );
   }

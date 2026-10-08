@@ -6,6 +6,7 @@ import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { ArrowUpFromDotIcon, ClockIcon, GlobeIcon, TelescopeIcon } from '@/icons/icons';
 import { NavigationAnchorKey } from '@/store/apiStore';
+import { IconSize } from '@/types/enums';
 import { formatDate } from '@/utils/time';
 
 interface Props {
@@ -34,7 +35,7 @@ export function Feedback({ className }: Props) {
         <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
-              <ClockIcon size={14} /> Current Time
+              <ClockIcon size={IconSize.xs} /> Current Time
             </Group>
           </InputLabel>
           <DisplayLabel showBorder>{timeLabel || '-'}</DisplayLabel>
@@ -42,7 +43,7 @@ export function Feedback({ className }: Props) {
         <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
-              <TelescopeIcon size={14} />
+              <TelescopeIcon size={IconSize.xs} />
               Current Focus
             </Group>
           </InputLabel>
@@ -52,7 +53,7 @@ export function Feedback({ className }: Props) {
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
-                <GlobeIcon size={14} />
+                <GlobeIcon size={IconSize.xs} />
                 Lat
               </Group>
             </InputLabel>
@@ -64,7 +65,7 @@ export function Feedback({ className }: Props) {
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
-                <GlobeIcon size={14} />
+                <GlobeIcon size={IconSize.xs} />
                 Long
               </Group>
             </InputLabel>
@@ -76,7 +77,7 @@ export function Feedback({ className }: Props) {
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
-                <ArrowUpFromDotIcon size={14} />
+                <ArrowUpFromDotIcon size={IconSize.xs} />
                 Alt
               </Group>
             </InputLabel>

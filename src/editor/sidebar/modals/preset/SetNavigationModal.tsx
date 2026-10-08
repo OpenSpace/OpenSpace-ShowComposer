@@ -14,6 +14,7 @@ import {
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
 import { ComponentBaseColors, SetNavComponent } from '@/types/components';
+import { IconSize } from '@/types/enums';
 import { NavigationState } from '@/types/types';
 import { formatDate } from '@/utils/time';
 
@@ -98,7 +99,7 @@ function SetNavModal({
       <Stack gap={'xs'}>
         <InputLabel>
           <Group gap={4} wrap={'nowrap'}>
-            <AnchorIcon size={14} />
+            <AnchorIcon size={IconSize.xs} />
             Navigation State Anchor
           </Group>
         </InputLabel>
@@ -108,7 +109,7 @@ function SetNavModal({
         <Stack gap={'xs'} style={{ opacity: setTime ? 1 : 0.5 }}>
           <InputLabel>
             <Group gap={4} wrap={'nowrap'}>
-              <ClockIcon size={14} />
+              <ClockIcon size={IconSize.xs} />
               {t('navigation-state-time')}
             </Group>
           </InputLabel>

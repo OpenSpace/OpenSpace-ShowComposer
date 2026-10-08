@@ -20,6 +20,7 @@ import {
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { LayoutBase } from '@/types/components';
+import { IconSize } from '@/types/enums';
 import { roundToNearest } from '@/utils/math';
 
 import classes from './LayoutContainer.module.css';
@@ -27,7 +28,7 @@ import classes from './LayoutContainer.module.css';
 const typeIcons = {
   row: <RowIcon />,
   column: <ColumnIcon />,
-  grid: <LayoutGridIcon size={24} />
+  grid: <LayoutGridIcon size={IconSize.lg} />
 };
 
 interface Props {
@@ -142,13 +143,13 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
         <>
           {layout.persistent ? (
             <PinIcon
-              size={16}
+              size={IconSize.sm}
               onClick={handlePin}
               style={{ cursor: 'pointer', color: 'var(--mantine-color-white)' }}
             />
           ) : (
             <PinOffIcon
-              size={16}
+              size={IconSize.sm}
               onClick={handlePin}
               style={{ cursor: 'pointer', color: 'var(--mantine-color-dimmed)' }}
             />

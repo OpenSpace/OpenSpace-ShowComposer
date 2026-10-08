@@ -3,6 +3,7 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 
 import { EditIcon, PresentIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
+import { IconSize } from '@/types/enums';
 
 function useQuery() {
   return new URLSearchParams(window.location.search);
@@ -34,9 +35,9 @@ export function PresentModeToggle() {
         }}
       >
         {isPresentMode ? (
-          <EditIcon strokeWidth={1.5} size={18} />
+          <EditIcon strokeWidth={1.5} size={IconSize.md} />
         ) : (
-          <PresentIcon strokeWidth={1.5} size={18} />
+          <PresentIcon strokeWidth={1.5} size={IconSize.md} />
         )}
       </ActionIcon>
     </Tooltip>

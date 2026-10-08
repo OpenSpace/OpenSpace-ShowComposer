@@ -19,6 +19,7 @@ import {
   StatusComponent,
   TimeComponent
 } from '@/types/components';
+import { IconSize } from '@/types/enums';
 import { roundToNearest } from '@/utils/math';
 
 interface Props {
@@ -83,7 +84,7 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       enableResizing={false}
       rightSection={
         <ActionIcon variant={'subtle'} size={'sm'} onClick={minimize}>
-          <MinusIcon size={16} />
+          <MinusIcon size={IconSize.sm} />
         </ActionIcon>
       }
       style={{

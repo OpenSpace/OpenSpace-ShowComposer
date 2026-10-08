@@ -16,6 +16,7 @@ import { Dropzone } from '@mantine/dropzone';
 import { uploadImage } from '@/api/showbuilder';
 import { Image } from '@/components/Image';
 import { UploadIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
 
 import styles from './ImageGallery.module.css';
 
@@ -128,7 +129,7 @@ function ImageGallery({
                 }}
               >
                 <Stack align={'center'} gap={'xs'}>
-                  <UploadIcon size={32} />
+                  <UploadIcon size={IconSize.xl} />
                   <Text size={'sm'} ta={'center'}>
                     {t('upload')}
                   </Text>
