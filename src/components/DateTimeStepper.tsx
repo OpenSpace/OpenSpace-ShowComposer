@@ -28,7 +28,7 @@ const monthAbbreviations = [
 ];
 
 function zeroPad(value: number): string {
-  return value < 10 ? `0${value}` : `${value}`;
+  return String(value).padStart(2, '0');
 }
 
 function formatDatePart(part: (typeof dateParts)[number], date: Date): string | number {
@@ -42,7 +42,7 @@ function formatDatePart(part: (typeof dateParts)[number], date: Date): string | 
     case 'hours':
       return zeroPad(date.getUTCHours());
     case 'minutes':
-      return date.getUTCMinutes();
+      return zeroPad(date.getUTCMinutes());
     default:
       return zeroPad(date.getUTCSeconds());
   }
