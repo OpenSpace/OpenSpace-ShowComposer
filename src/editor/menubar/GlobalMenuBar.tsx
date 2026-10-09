@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
 
 import { loadProject, loadProjects, Project } from '@/api/showbuilder';
-import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
 import { ConfirmationModal } from '@/editor/menubar/ConfirmationModal';
 import { ImportShowModal } from '@/editor/menubar/ImportShowModal';
 import { LoadProjectModal } from '@/editor/menubar/LoadProjectModal';
@@ -27,6 +27,7 @@ interface LoadedStore {
 
 export function GlobalMenuBar() {
   const { t } = useTranslation('page-button-menu');
+  const { t: tDelete } = useTranslation('delete-confirmation-modal');
   const { undo, redo, clear, pastStates, futureStates } = useBoundStoreTemporal(
     (state) => state
   );
@@ -38,7 +39,6 @@ export function GlobalMenuBar() {
 
   const [loadedStore, setLoadedStore] = useState<LoadedStore | null>(null);
   const [isImportShowModalOpen, setIsImportShowModalOpen] = useState(false);
-  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [isNewPageModalOpen, setIsNewPageModalOpen] = useState(false);
   const [isNewPage, setIsNewPage] = useState(false);
@@ -85,10 +85,17 @@ export function GlobalMenuBar() {
       console.error('Error loading projects:', error);
     }
   }
-  function handleDeleteAllConfirm() {
-    removeAllComponents();
-    setIsDeleteAllModalOpen(false);
-    setIsNewProjectModalOpen(true);
+  function handleDeleteAll() {
+    modals.openConfirmModal({
+      title: tDelete('confirmation-text'),
+      centered: true,
+      children: <Text>{tDelete('delete-all-components-message')}</Text>,
+      labels: { confirm: tDelete('delete'), cancel: tDelete('cancel') },
+      onConfirm: () => {
+        removeAllComponents();
+        setIsNewProjectModalOpen(true);
+      }
+    });
   }
   async function handleSaveConfirm() {
     try {
@@ -116,7 +123,7 @@ export function GlobalMenuBar() {
             <Menu.Item onClick={handleLoadProjects}>Open</Menu.Item>
             <Menu.Item onClick={handleLoadStore}>Import</Menu.Item>
             <Menu.Item onClick={exportProject}>Export</Menu.Item>
-            <Menu.Item color={'red'} onClick={() => setIsDeleteAllModalOpen(true)}>
+            <Menu.Item color={'red'} onClick={handleDeleteAll}>
               Delete Show
             </Menu.Item>
           </Menu.Dropdown>
@@ -268,14 +275,6 @@ export function GlobalMenuBar() {
         isOpen={isImportShowModalOpen && loadedStore !== null}
         onClose={() => setIsImportShowModalOpen(false)}
         store={loadedStore!}
-      />
-      <DeleteConfirmationModal
-        onConfirm={handleDeleteAllConfirm}
-        message={
-          'This action cannot be undone. This will permanently delete the components from the project.'
-        }
-        isOpen={isDeleteAllModalOpen}
-        setOpen={setIsDeleteAllModalOpen}
       />
       <NewProjectModal
         isOpen={isNewProjectModalOpen}

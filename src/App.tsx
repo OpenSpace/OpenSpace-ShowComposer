@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 
 import { Editor } from '@/pages/Editor';
 import { Hub } from '@/pages/Hub';
@@ -15,14 +16,16 @@ export function App() {
       defaultColorScheme={'dark'}
       cssVariablesResolver={cssVariablesResolver}
     >
-      <LuaApiProvider>
-        <Router basename={basePath}>
-          <Routes>
-            <Route index element={<Editor />} />
-            <Route path={'/hub'} element={<Hub />} />
-          </Routes>
-        </Router>
-      </LuaApiProvider>
+      <ModalsProvider>
+        <LuaApiProvider>
+          <Router basename={basePath}>
+            <Routes>
+              <Route index element={<Editor />} />
+              <Route path={'/hub'} element={<Hub />} />
+            </Routes>
+          </Router>
+        </LuaApiProvider>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

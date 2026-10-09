@@ -16,6 +16,7 @@
     "@mantine/core": "8.3.18",
     "@mantine/dropzone": "8.3.18",
     "@mantine/hooks": "8.3.18",
+    "@mantine/modals": "8.3.18",
     "@mantine/tiptap": "8.3.18",
     "@tanstack/react-virtual": "3.8.3",
     "@tiptap/extension-text-style": "3.28.0",

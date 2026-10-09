@@ -1,9 +1,9 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
-import { ActionIcon, Menu } from '@mantine/core';
+import { ActionIcon, Menu, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
 
-import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
 import { DimmableBody } from '@/editor/canvas/DimmableBody';
 import { Draggable } from '@/editor/canvas/Draggable';
 import { zIndex } from '@/editor/canvas/zIndex';
@@ -31,6 +31,7 @@ export function DraggableComponent({
   onDelete
 }: Props) {
   const { t } = useTranslation('draggable-component');
+  const { t: tDelete } = useTranslation('delete-confirmation-modal');
 
   const position = useBoundStore((state) => state.positions[component?.id || '']);
   const isDragging = useBoundStore((state) => state.positions[component.id]?.isDragging);
@@ -42,7 +43,6 @@ export function DraggableComponent({
   const updatePosition = useBoundStore((state) => state.updatePosition);
   const handleComponentDrop = useBoundStore((state) => state.handleComponentDrop);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // isConnected drives the disabled state
   const isConnected = useIsConnected();
   if (!component || !component.id || !position) {
@@ -50,16 +50,19 @@ export function DraggableComponent({
   }
 
   const handleDeleteClick = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleDeleteCancel = () => {
-    setIsDeleteModalOpen(false);
-  };
-
-  const handleDeleteConfirm = () => {
-    onDelete();
-    setIsDeleteModalOpen(false);
+    modals.openConfirmModal({
+      title: tDelete('confirmation-text'),
+      centered: true,
+      children: (
+        <Text>
+          {component.gui_name
+            ? tDelete('delete-named-component-message', { name: component.gui_name })
+            : tDelete('delete-component-message')}
+        </Text>
+      ),
+      labels: { confirm: tDelete('delete'), cancel: tDelete('cancel') },
+      onConfirm: onDelete
+    });
   };
 
   const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
@@ -168,15 +171,6 @@ export function DraggableComponent({
       >
         <DimmableBody inactive={!isConnected}>{children}</DimmableBody>
       </Draggable>
-      <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
-        setOpen={setIsDeleteModalOpen}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        message={`Are you sure you want to delete the component${
-          component.gui_name ? ' ' + component.gui_name : ''
-        }?`}
-      />
     </>
   );
 }
