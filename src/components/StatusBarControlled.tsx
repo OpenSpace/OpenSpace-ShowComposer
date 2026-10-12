@@ -1,47 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { Flex, Progress } from '@mantine/core';
-import { throttle } from 'lodash';
 
 interface Props {
   progress: number; // Float value between 0 and 1
-  debounceDuration: number; // Duration in milliseconds
 }
 
-export function StatusBarControlled({ progress, debounceDuration }: Props) {
-  const [, setProgress] = useState(progress);
-  const [, setIsFadingOut] = useState(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const setThrottleProgress = useCallback(
-    throttle((value: number) => {
-      setProgress(value);
-    }, 100),
-    [] // Empty dependency array ensures this function is created only once
-  );
-  useEffect(() => {
-    // this isnt throttleing correct
-    // console.log('progress', progress);
-    // setThrottleProgress(progress);
-    setProgress(progress);
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-
-    // Reset fading state
-    setIsFadingOut(false);
-
-    // Set a new debounce timeout to trigger fade-out
-    debounceTimeoutRef.current = setTimeout(() => {
-      setIsFadingOut(true);
-    }, debounceDuration);
-
-    // Cleanup timeout on component unmount
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, [progress, debounceDuration, setThrottleProgress]);
+export function StatusBarControlled({ progress }: Props) {
   return (
     <Flex
       pos={'absolute'}

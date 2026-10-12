@@ -40,9 +40,7 @@ export function FadeWidget({ component }: Props) {
       }}
       onClick={componentActions.fade(component)}
     >
-      {fadeValue !== undefined ? (
-        <StatusBarControlled progress={fadeValue} debounceDuration={0} />
-      ) : null}
+      {fadeValue !== undefined ? <StatusBarControlled progress={fadeValue} /> : null}
       {component.gui_name || component.gui_description ? (
         <DisplayLabel>
           {component.gui_name}
