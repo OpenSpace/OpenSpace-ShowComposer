@@ -2,7 +2,7 @@ import {
   GenericMatrixTypesArray,
   GenericNumericTypesArray,
   GenericVectorTypesArray,
-  PropertyTypes
+  type PropertyTypes
 } from './propertyTypes';
 
 // Generic types for groups of properties

@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useRef } from 'react';
 import {
-  FlightControllerInputStateCommand,
+  type FlightControllerInputStateCommand,
   LogLevel,
-  LogMessage,
-  TopicPayload
+  type LogMessage,
+  type TopicPayload
 } from 'openspace-api-js/types';
 
 import { useOpenSpaceApiStore } from '@/store/apiStore';
 import { usePropertyStore } from '@/store/propertyStore';
 import { ConnectionStatus } from '@/types/enums';
-import {
+import type {
   CameraState,
   OpenSpaceTimeState,
   ProfileState,

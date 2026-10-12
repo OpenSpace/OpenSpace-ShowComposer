@@ -8,14 +8,14 @@ import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { AnchorIcon, ClockIcon } from '@/icons/icons';
-import { ComponentBaseColors, SetNavComponent } from '@/types/components';
+import { ComponentBaseColors, type SetNavComponent } from '@/types/components';
 import { IconSize } from '@/types/enums';
-import { NavigationState } from '@/types/types';
+import type { NavigationState } from '@/types/types';
 import { formatDate } from '@/utils/time';
 
 const DEFAULTS: Omit<SetNavComponent, 'id'> = {

@@ -1,5 +1,5 @@
-import { BoundStoreState } from '@/store/boundStore';
-import { SettingsStoreState } from '@/store/settingsStore';
+import type { BoundStoreState } from '@/store/boundStore';
+import type { SettingsStoreState } from '@/store/settingsStore';
 import { basePath } from '@/utils/basePath';
 
 // One file to catch all calls to the showbuilder backend api. The base path is the same for both dev and production,

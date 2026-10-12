@@ -6,10 +6,10 @@ import CodeEditor from '@uiw/react-textarea-code-editor';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { ComponentBaseColors, ScriptComponent } from '@/types/components';
+import { ComponentBaseColors, type ScriptComponent } from '@/types/components';
 
 const DEFAULTS: Omit<ScriptComponent, 'id'> = {
   type: 'script',

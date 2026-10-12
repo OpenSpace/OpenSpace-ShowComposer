@@ -11,7 +11,7 @@ import {
   UnstyledButton
 } from '@mantine/core';
 
-import { Project } from '@/api/showbuilder';
+import type { Project } from '@/api/showbuilder';
 import { Pagination } from '@/components/Pagination';
 
 interface Props {

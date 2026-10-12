@@ -1,7 +1,7 @@
 import { Center } from '@mantine/core';
 
 import { VideoContent } from '@/components/VideoContent';
-import { VideoComponent } from '@/store';
+import type { VideoComponent } from '@/store';
 
 interface Props {
   component: VideoComponent;

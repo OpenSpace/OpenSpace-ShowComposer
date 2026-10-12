@@ -1,7 +1,7 @@
-import { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
+import type { AnyProperty, PropertyOwner } from 'openspace-api-js/types';
 
 import { PropertyVisibilityNumber } from '@/types/enums';
-import { PropertyOwnerRedux } from '@/types/types';
+import type { PropertyOwnerRedux } from '@/types/types';
 // import { PropertyOwner, PropertyOwners } from '@/types/types';
 export const InterestingTag = '';
 

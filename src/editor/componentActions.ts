@@ -1,5 +1,5 @@
 import { useBoundStore } from '@/store/boundStore';
-import { Component, ComponentFor } from '@/types/components';
+import type { Component, ComponentFor } from '@/types/components';
 import { jumpToTime } from '@/utils/time';
 import {
   jumpToNavState,

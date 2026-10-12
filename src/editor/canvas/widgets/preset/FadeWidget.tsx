@@ -4,7 +4,7 @@ import { Information } from '@/components/Information';
 import { StatusBarControlled } from '@/components/StatusBarControlled';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
-import { FadeComponent } from '@/store';
+import type { FadeComponent } from '@/store';
 
 interface Props {
   component: FadeComponent;

@@ -1,12 +1,17 @@
 import { throttle } from 'lodash';
-import { Topic } from 'openspace-api-js/topics';
-import { AnyProperty, LogMessage, TopicId, TopicPayload } from 'openspace-api-js/types';
+import type { Topic } from 'openspace-api-js/topics';
+import type {
+  AnyProperty,
+  LogMessage,
+  TopicId,
+  TopicPayload
+} from 'openspace-api-js/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { RecordingState } from '@/types/enums';
-import {
+import type {
   Action,
   CameraState,
   OpenSpaceTimeState,

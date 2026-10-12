@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Select, Stack, Table, Text } from '@mantine/core';
-import { LogLevel, LogMessage } from 'openspace-api-js/types';
+import { LogLevel, type LogMessage } from 'openspace-api-js/types';
 
 import { useSubscribeToErrorLog } from '@/hooks/topicSubscriptions';
 

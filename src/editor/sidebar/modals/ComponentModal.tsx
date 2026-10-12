@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Group, Modal, Text } from '@mantine/core';
 
 import { componentsData, renderComponentModal } from '@/editor/componentsData';
-import { Component, ComponentType } from '@/store';
+import type { Component, ComponentType } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
 interface Props {

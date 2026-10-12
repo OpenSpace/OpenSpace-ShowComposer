@@ -1,6 +1,6 @@
-import { StateCreator } from 'zustand';
+import type { StateCreator } from 'zustand';
 
-import { NavigationState } from '@/types/types';
+import type { NavigationState } from '@/types/types';
 
 export type LayoutType = 'row' | 'column' | 'grid';
 

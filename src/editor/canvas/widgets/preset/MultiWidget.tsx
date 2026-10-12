@@ -5,10 +5,10 @@ import { InputLabel, Stack, Text } from '@mantine/core';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import { StatusBar, StatusBarRef } from '@/components/StatusBar';
+import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
 import { runComponentAction } from '@/editor/componentActions';
 import { useBoundStore } from '@/store/boundStore';
-import { type MultiComponent, MultiOption } from '@/types/components';
+import type { MultiComponent, MultiOption } from '@/types/components';
 
 interface Props {
   component: MultiComponent;

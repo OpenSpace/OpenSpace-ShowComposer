@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { ActionIcon, Popover } from '@mantine/core';
 
 import { InfoIcon } from '@/icons/icons';

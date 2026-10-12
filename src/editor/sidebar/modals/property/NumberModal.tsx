@@ -7,12 +7,12 @@ import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { NumberComponent, usePropertyStore } from '@/store';
+import { type NumberComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
-import { AdditionalDataNumber } from '@/types/Property/propertyTypes';
+import type { AdditionalDataNumber } from '@/types/Property/propertyTypes';
 import { formatName } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<NumberComponent, 'id'> = {

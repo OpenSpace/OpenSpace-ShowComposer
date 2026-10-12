@@ -5,10 +5,10 @@ import { InputLabel, Stack } from '@mantine/core';
 import { ImageUpload } from '@/components/ImageUpload/ImageUpload';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { ImageComponent } from '@/store';
+import type { ImageComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 
 const DEFAULTS: Omit<ImageComponent, 'id'> = {

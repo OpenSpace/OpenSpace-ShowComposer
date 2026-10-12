@@ -8,11 +8,11 @@ import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
-import { ComponentBaseColors, SessionPlaybackComponent } from '@/types/components';
+import { ComponentBaseColors, type SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { RecordingsFolderKey } from '@/types/types';
 

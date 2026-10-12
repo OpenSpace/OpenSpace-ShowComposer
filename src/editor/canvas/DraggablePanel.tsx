@@ -1,4 +1,4 @@
-import { DraggableData, DraggableEvent } from 'react-draggable';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { ActionIcon, Box } from '@mantine/core';
 
 import { DimmableBody } from '@/editor/canvas/DimmableBody';
@@ -12,7 +12,7 @@ import { zIndex } from '@/editor/canvas/zIndex';
 import { useIsConnected } from '@/hooks/util';
 import { MinusIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
-import {
+import type {
   LogComponent,
   NavComponent,
   RecordComponent,

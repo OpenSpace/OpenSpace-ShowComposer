@@ -4,10 +4,10 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { ComponentSlice, createComponentSlice } from './componentSlice';
-import { createLayoutSlice, LayoutSlice } from './layoutSlice';
-import { createPageSlice, PageSlice } from './pageSlice';
-import { createPositionSlice, PositionSlice } from './positionSlice';
+import { type ComponentSlice, createComponentSlice } from './componentSlice';
+import { createLayoutSlice, type LayoutSlice } from './layoutSlice';
+import { createPageSlice, type PageSlice } from './pageSlice';
+import { createPositionSlice, type PositionSlice } from './positionSlice';
 
 // Define the combined state type
 export type BoundStoreState = PageSlice & LayoutSlice & PositionSlice & ComponentSlice;

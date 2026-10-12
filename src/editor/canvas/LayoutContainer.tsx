@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { DraggableData, DraggableEvent } from 'react-draggable';
+import type { ReactNode } from 'react';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import { ActionIcon, Menu } from '@mantine/core';
 
@@ -19,7 +19,7 @@ import {
 } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { LayoutBase } from '@/types/components';
+import type { LayoutBase } from '@/types/components';
 import { IconSize } from '@/types/enums';
 import { roundToNearest } from '@/utils/math';
 

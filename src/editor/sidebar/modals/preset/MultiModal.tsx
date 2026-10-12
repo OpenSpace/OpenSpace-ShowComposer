@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-pangea/dnd';
 import {
   ActionIcon,
   Group,
@@ -20,17 +20,17 @@ import { componentPalette, componentsData } from '@/editor/componentsData';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { EditIcon, LinkIcon, UnlinkIcon, XIcon } from '@/icons/icons';
 import { useBoundStore } from '@/store/boundStore';
 import {
-  Component,
+  type Component,
   ComponentBaseColors,
-  ComponentType,
-  MultiComponent,
-  MultiOption
+  type ComponentType,
+  type MultiComponent,
+  type MultiOption
 } from '@/types/components';
 import { IconSize } from '@/types/enums';
 

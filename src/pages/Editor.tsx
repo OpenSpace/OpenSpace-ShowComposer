@@ -8,7 +8,7 @@ import { LayoutEditModal } from '@/editor/sidebar/LayoutEditModal';
 import { ComponentModal } from '@/editor/sidebar/modals/ComponentModal';
 import { Sidebar } from '@/editor/sidebar/Sidebar';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/icons/icons';
-import { ComponentType, useSettingsStore } from '@/store';
+import { type ComponentType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { IconSize } from '@/types/enums';

@@ -1,5 +1,5 @@
 import { throttle } from 'lodash';
-import { OpenSpaceLibrary } from 'openspace-api-js/types';
+import type { OpenSpaceLibrary } from 'openspace-api-js/types';
 
 const updateDelayMs = 1000;
 

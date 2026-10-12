@@ -4,10 +4,10 @@ import { InputLabel, Stack } from '@mantine/core';
 import { ColorPicker } from '@/components/ColorPicker';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { RichTextComponent } from '@/store';
+import type { RichTextComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 
 import { RichTextEditor } from './RichTextEditor';

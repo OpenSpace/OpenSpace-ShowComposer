@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { confirmStoreImport } from '@/api/showbuilder';
 import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { componentsData } from '@/editor/componentsData';
-import { Position, useSettingsStore } from '@/store';
-import { BoundStoreState, useBoundStore } from '@/store/boundStore';
-import { SettingsStoreState } from '@/store/settingsStore';
-import { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
+import { type Position, useSettingsStore } from '@/store';
+import { type BoundStoreState, useBoundStore } from '@/store/boundStore';
+import type { SettingsStoreState } from '@/store/settingsStore';
+import type { ComponentBase, LayoutBase, MultiComponent, Page } from '@/types/components';
 
 type MultiOption = {
   component: MultiComponent['id'];

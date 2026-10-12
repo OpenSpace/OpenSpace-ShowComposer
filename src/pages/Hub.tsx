@@ -13,7 +13,7 @@ import {
   UnstyledButton
 } from '@mantine/core';
 
-import { loadProject, loadProjects, Project } from '@/api/showbuilder';
+import { loadProject, loadProjects, type Project } from '@/api/showbuilder';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';

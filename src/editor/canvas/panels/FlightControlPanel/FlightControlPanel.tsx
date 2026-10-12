@@ -10,7 +10,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { FlightControllerInputStateCommand } from 'openspace-api-js/types';
+import type { FlightControllerInputStateCommand } from 'openspace-api-js/types';
 
 import { Information } from '@/components/Information';
 import { useProperty } from '@/hooks/properties';

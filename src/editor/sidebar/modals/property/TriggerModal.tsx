@@ -7,10 +7,10 @@ import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { TriggerComponent, usePropertyStore } from '@/store';
+import { type TriggerComponent, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 

@@ -5,9 +5,9 @@ import {
   RetargetAnchorKey
 } from '@/store/apiStore';
 import { usePropertyStore } from '@/store/propertyStore';
-import { FlyToComponent } from '@/types/components';
+import type { FlyToComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
-import { NavigationState, RecordingsFolderKey } from '@/types/types';
+import { type NavigationState, RecordingsFolderKey } from '@/types/types';
 
 /**
  * TODO @ylvse (2026-09-23) - When moving to RTK this file will become actions. Therefore, the lua api access is kept here,

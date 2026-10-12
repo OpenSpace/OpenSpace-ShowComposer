@@ -1,8 +1,8 @@
-import { PropertyVisibilityNumber } from '../enums';
-import { Identifier } from '../types';
+import type { PropertyVisibilityNumber } from '../enums';
+import type { Identifier } from '../types';
 
-import { NormalizeToConcreteTypes, PropertyGroups } from './propertyGroups';
-import { PropertyTypes } from './propertyTypes';
+import type { NormalizeToConcreteTypes, PropertyGroups } from './propertyGroups';
+import type { PropertyTypes } from './propertyTypes';
 
 export type PropertyVisibility = keyof typeof PropertyVisibilityNumber;
 

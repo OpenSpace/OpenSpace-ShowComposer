@@ -7,11 +7,11 @@ import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { SetTimeComponent as SetTimeType } from '@/store';
+import type { SetTimeComponent as SetTimeType } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatDate } from '@/utils/time';
 

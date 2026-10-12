@@ -5,11 +5,11 @@ import { InputLabel, Select, Stack } from '@mantine/core';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors, PageComponent } from '@/types/components';
+import { ComponentBaseColors, type PageComponent } from '@/types/components';
 
 const DEFAULTS: Omit<PageComponent, 'id'> = {
   type: 'page',

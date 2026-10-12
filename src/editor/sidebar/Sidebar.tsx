@@ -17,7 +17,7 @@ import { componentPalette } from '@/editor/componentsData';
 import { GlobalMenuBar } from '@/editor/menubar/GlobalMenuBar';
 import { LayoutToolbar } from '@/editor/sidebar/LayoutToolbar';
 import { Undo } from '@/editor/sidebar/Undo';
-import { ComponentType, useSettingsStore } from '@/store';
+import { type ComponentType, useSettingsStore } from '@/store';
 
 import classes from './Sidebar.module.css';
 

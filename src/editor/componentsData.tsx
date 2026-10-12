@@ -28,7 +28,7 @@ import { SetTimeModal } from '@/editor/sidebar/modals/preset/SetTimeModal';
 import { BoolModal } from '@/editor/sidebar/modals/property/BooleanModal';
 import { NumberModal } from '@/editor/sidebar/modals/property/NumberModal';
 import { TriggerModal } from '@/editor/sidebar/modals/property/TriggerModal';
-import { ComponentModalChildProps } from '@/editor/sidebar/modals/saveComponent';
+import type { ComponentModalChildProps } from '@/editor/sidebar/modals/saveComponent';
 import { ImageModal } from '@/editor/sidebar/modals/static/ImageModal';
 import { RichTextModal } from '@/editor/sidebar/modals/static/RichText/RichTextModal';
 import { TitleModal } from '@/editor/sidebar/modals/static/TitleModal';
@@ -50,8 +50,8 @@ import {
   ToggleRightIcon,
   VideoIcon
 } from '@/icons/icons';
-import { Resources } from '@/localization/resources';
-import { Component, ComponentFor, ComponentType } from '@/types/components';
+import type { Resources } from '@/localization/resources';
+import type { Component, ComponentFor, ComponentType } from '@/types/components';
 import { IconSize } from '@/types/enums';
 
 // Keys available in the `main` i18next namespace - the label source for the sidebar + modal title

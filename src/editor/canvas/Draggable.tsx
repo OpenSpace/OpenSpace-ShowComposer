@@ -1,5 +1,5 @@
-import { CSSProperties, ReactNode, useState } from 'react';
-import { Props as RndProps, Rnd } from 'react-rnd';
+import { type CSSProperties, type ReactNode, useState } from 'react';
+import { type Props as RndProps, Rnd } from 'react-rnd';
 import { Box } from '@mantine/core';
 
 import { GripHorizontalIcon } from '@/icons/icons';

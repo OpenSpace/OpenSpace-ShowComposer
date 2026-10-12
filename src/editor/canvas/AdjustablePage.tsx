@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DraggableData, DraggableEvent } from 'react-draggable';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { ActionIcon, Box, Tooltip } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
@@ -8,7 +8,7 @@ import { zIndex } from '@/editor/canvas/zIndex';
 import { LockIcon, LockOpenIcon } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { Page } from '@/types/components';
+import type { Page } from '@/types/components';
 import { IconSize } from '@/types/enums';
 
 export function AdjustablePage() {

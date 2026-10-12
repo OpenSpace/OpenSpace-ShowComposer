@@ -1,5 +1,5 @@
-import { ReactNode, useRef } from 'react';
-import { ActionIcon, ActionIconProps } from '@mantine/core';
+import { type ReactNode, useRef } from 'react';
+import { ActionIcon, type ActionIconProps } from '@mantine/core';
 
 interface Props extends ActionIconProps {
   onClick: () => void;

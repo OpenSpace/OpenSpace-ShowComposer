@@ -2,17 +2,17 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
 import { capitalize } from 'lodash';
-import { AnyProperty } from 'openspace-api-js/types';
+import type { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { FadeComponent, Toggle, usePropertyStore } from '@/store';
+import { type FadeComponent, type Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 

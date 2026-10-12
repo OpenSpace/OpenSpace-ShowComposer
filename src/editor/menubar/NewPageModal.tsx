@@ -3,7 +3,7 @@ import { Button, Group, InputLabel, Modal, Stack, Text, TextInput } from '@manti
 
 import { ColorPicker } from '@/components/ColorPicker';
 import { useBoundStore } from '@/store/boundStore';
-import { ComponentBaseColors, Page } from '@/types/components';
+import { ComponentBaseColors, type Page } from '@/types/components';
 
 interface Props {
   isOpen: boolean;

@@ -5,10 +5,10 @@ import { Stack, Text, TextInput } from '@mantine/core';
 import { VideoContent } from '@/components/VideoContent';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { VideoComponent } from '@/store';
+import type { VideoComponent } from '@/store';
 import { ComponentBaseColors } from '@/types/components';
 
 const DEFAULTS: Omit<VideoComponent, 'id'> = {

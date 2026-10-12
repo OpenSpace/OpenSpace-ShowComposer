@@ -4,7 +4,7 @@ import { Information } from '@/components/Information';
 import { componentActions } from '@/editor/componentActions';
 import { useSubscribeToProperty } from '@/hooks/properties';
 import { NavigationAnchorKey } from '@/store/apiStore';
-import { SetFocusComponent } from '@/types/components';
+import type { SetFocusComponent } from '@/types/components';
 
 interface Props {
   component: SetFocusComponent;

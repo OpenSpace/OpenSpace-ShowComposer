@@ -5,7 +5,7 @@ import { useOpenSpaceApi } from '@/api/hooks';
 import { useOpenSpaceApiStore } from '@/store/apiStore';
 import { usePropertyStore } from '@/store/propertyStore';
 import { ConnectionStatus } from '@/types/enums';
-import { PropertyOrPropertyGroup, PropertyTypeKey } from '@/types/Property/property';
+import type { PropertyOrPropertyGroup, PropertyTypeKey } from '@/types/Property/property';
 import { PropertyGroupsRuntime } from '@/types/Property/propertyGroups';
 
 /**

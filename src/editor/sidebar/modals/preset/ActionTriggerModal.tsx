@@ -6,11 +6,11 @@ import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { usePropertyStore } from '@/store';
-import { ActionTriggerComponent, ComponentBaseColors } from '@/types/components';
+import { type ActionTriggerComponent, ComponentBaseColors } from '@/types/components';
 
 const DEFAULTS: Omit<ActionTriggerComponent, 'id'> = {
   type: 'action',

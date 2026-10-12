@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { Box } from '@mantine/core';
 
 import { zIndex } from './zIndex';

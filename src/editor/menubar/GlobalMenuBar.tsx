@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
-import { loadProject, loadProjects, Project } from '@/api/showbuilder';
+import { loadProject, loadProjects, type Project } from '@/api/showbuilder';
 import { ConfirmationModal } from '@/editor/menubar/ConfirmationModal';
 import { ImportShowModal } from '@/editor/menubar/ImportShowModal';
 import { LoadProjectModal } from '@/editor/menubar/LoadProjectModal';
@@ -12,11 +12,11 @@ import { NewProjectModal } from '@/editor/menubar/NewProjectModal';
 import { ProjectSettingsModal } from '@/editor/menubar/ProjectSettingsModal';
 import { WorkspaceSettingsModal } from '@/editor/menubar/WorkspaceSettingsModal';
 import {
-  BoundStoreState,
+  type BoundStoreState,
   useBoundStore,
   useBoundStoreTemporal
 } from '@/store/boundStore';
-import { SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
+import { type SettingsStoreState, useSettingsStore } from '@/store/settingsStore';
 import { exportProject, loadStoreToServer, saveProject } from '@/utils/saveProject';
 
 interface LoadedStore {

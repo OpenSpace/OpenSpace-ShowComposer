@@ -1,7 +1,7 @@
 import { Box } from '@mantine/core';
 
 import { PlusIcon } from '@/icons/icons';
-import { LayoutType } from '@/types/components';
+import type { LayoutType } from '@/types/components';
 
 export function Placeholder({
   childWidth,

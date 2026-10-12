@@ -7,12 +7,12 @@ import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
-import { ComponentBaseColors, SetFocusComponent } from '@/types/components';
+import { ComponentBaseColors, type SetFocusComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<SetFocusComponent, 'id'> = {

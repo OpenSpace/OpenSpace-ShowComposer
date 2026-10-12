@@ -4,7 +4,7 @@ import {
   Badge,
   Button,
   createTheme,
-  CSSVariablesResolver,
+  type CSSVariablesResolver,
   defaultVariantColorsResolver,
   Divider,
   Modal,
@@ -14,7 +14,7 @@ import {
   Tabs,
   ThemeIcon,
   Tooltip,
-  VariantColorsResolver
+  type VariantColorsResolver
 } from '@mantine/core';
 
 import styles from './mantineTheme.module.css';

@@ -1,7 +1,7 @@
 import OpenSpaceApi from 'openspace-api-js';
-import { OpenSpaceApi as OpenSpaceApiClass } from 'openspace-api-js/api';
-import { Topic } from 'openspace-api-js/topics';
-import {
+import type { OpenSpaceApi as OpenSpaceApiClass } from 'openspace-api-js/api';
+import type { Topic } from 'openspace-api-js/topics';
+import type {
   AnyProperty,
   OpenSpaceLibrary,
   TopicId,

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Center } from '@mantine/core';
 import { throttle } from 'lodash';
 
-import { TitleComponent } from '@/store';
+import type { TitleComponent } from '@/store';
 
 const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 1000;

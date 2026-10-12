@@ -3,10 +3,10 @@ import { useRef } from 'react';
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
-import { StatusBar, StatusBarRef } from '@/components/StatusBar';
+import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
 import { componentActions } from '@/editor/componentActions';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import { SetTimeComponent as SetTimeType } from '@/store';
+import type { SetTimeComponent as SetTimeType } from '@/store';
 
 interface Props {
   component: SetTimeType;

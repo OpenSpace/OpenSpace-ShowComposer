@@ -1,6 +1,6 @@
-import { Placeholders } from '@/components/WidgetSettings';
+import type { Placeholders } from '@/components/WidgetSettings';
 import { useBoundStore } from '@/store/boundStore';
-import { Component, ComponentFor, ComponentType } from '@/types/components';
+import type { Component, ComponentFor, ComponentType } from '@/types/components';
 
 export interface ComponentModalChildProps<K extends ComponentType = ComponentType> {
   component: ComponentFor[K] | null;

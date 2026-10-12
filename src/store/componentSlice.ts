@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { roundToNearest } from '@/utils/math';
 
-import {
+import type {
   Component,
   ImmerStateCreator,
   LayoutBase,
@@ -16,9 +16,9 @@ import {
   TimeComponent
 } from '../types/components';
 
-import { LayoutSlice } from './layoutSlice';
-import { PageSlice } from './pageSlice';
-import { Position, PositionSlice } from './positionSlice';
+import type { LayoutSlice } from './layoutSlice';
+import type { PageSlice } from './pageSlice';
+import type { Position, PositionSlice } from './positionSlice';
 import { useSettingsStore } from './settingsStore';
 
 export interface ComponentSlice {

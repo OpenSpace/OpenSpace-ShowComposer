@@ -14,8 +14,8 @@ import {
 } from '@/icons/icons';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
-import { Position } from '@/store/positionSlice';
-import { MultiComponent } from '@/types/components';
+import type { Position } from '@/store/positionSlice';
+import type { MultiComponent } from '@/types/components';
 import { IconSize } from '@/types/enums';
 
 import { DraggableComponent } from './DraggableComponent';

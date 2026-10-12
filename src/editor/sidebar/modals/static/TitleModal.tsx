@@ -4,10 +4,10 @@ import { Button, Group, Stack, TextInput } from '@mantine/core';
 
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
-import { TitleComponent } from '@/store';
+import type { TitleComponent } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ComponentBaseColors } from '@/types/components';
 

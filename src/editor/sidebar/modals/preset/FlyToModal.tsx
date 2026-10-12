@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Group, InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
-import { AnyProperty } from 'openspace-api-js/types';
+import type { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Toggle as ToggleComponent } from '@/components/Toggle';
@@ -9,14 +9,14 @@ import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
-  ComponentModalChildProps,
+  type ComponentModalChildProps,
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { useProperty } from '@/hooks/properties';
 import { useSubscribeToCamera, useSubscribeToProfile } from '@/hooks/topicSubscriptions';
 import { usePropertyStore } from '@/store';
 import { NavigationAnchorKey } from '@/store/apiStore';
-import { ComponentBaseColors, FlyToComponent } from '@/types/components';
+import { ComponentBaseColors, type FlyToComponent } from '@/types/components';
 import { formatName, getStringBetween } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<FlyToComponent, 'id'> = {

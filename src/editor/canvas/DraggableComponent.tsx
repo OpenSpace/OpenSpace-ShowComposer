@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { DraggableData, DraggableEvent } from 'react-draggable';
+import type { ReactNode } from 'react';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import { ActionIcon, Menu, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
@@ -9,7 +9,7 @@ import { Draggable } from '@/editor/canvas/Draggable';
 import { zIndex } from '@/editor/canvas/zIndex';
 import { useIsConnected } from '@/hooks/util';
 import { CopyIcon, EditIcon, EllipsisVerticalIcon, TrashIcon } from '@/icons/icons';
-import { Component, useSettingsStore } from '@/store';
+import { type Component, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { roundToNearest } from '@/utils/math';
 

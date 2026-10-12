@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { GridSettings } from '@/editor/sidebar/GridSettings';
 import { ColumnIcon, LayoutGridIcon, RowIcon, SettingsIcon } from '@/icons/icons';
-import { LayoutType, useSettingsStore } from '@/store';
+import { type LayoutType, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { IconSize } from '@/types/enums';
 
