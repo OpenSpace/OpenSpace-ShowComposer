@@ -47,7 +47,7 @@ export function VideoModal({
     <Stack gap={'md'}>
       <TextInput
         label={t('video')}
-        placeholder={'URL'}
+        placeholder={t('url-placeholder')}
         value={url}
         onChange={(e) => handleData({ url: e.currentTarget.value })}
       />

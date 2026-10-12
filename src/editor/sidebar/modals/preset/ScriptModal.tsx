@@ -54,7 +54,7 @@ export function ScriptModal({
           <CodeEditor
             value={script}
             language={'lua'}
-            placeholder={'Please enter Lua code.'}
+            placeholder={t('enter-lua-code')}
             onChange={(evn: React.ChangeEvent<HTMLTextAreaElement>) =>
               handleData({ script: evn.target.value })
             }

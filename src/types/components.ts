@@ -29,7 +29,8 @@ export type ComponentType =
   | 'multi'
   | 'action';
 
-export type Toggle = 'on' | 'off' | 'toggle';
+export const ToggleActions = ['toggle', 'on', 'off'] as const;
+export type Toggle = (typeof ToggleActions)[number];
 export type MultiState = 'false' | 'pendingDelete' | 'pendingSave' | 'true';
 
 export type Page = {

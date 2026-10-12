@@ -52,9 +52,7 @@ export function SetNavModal({
 
   const placeholders = navigationState?.Anchor
     ? {
-        name: `${mode.charAt(0).toUpperCase() + mode.slice(1)} to Navigation State : ${
-          navigationState.Anchor
-        }`,
+        name: t(`placeholder-name-${mode}`, { anchor: navigationState.Anchor }),
         description: ''
       }
     : { name: '', description: '' };
@@ -100,7 +98,7 @@ export function SetNavModal({
         <InputLabel>
           <Group gap={4} wrap={'nowrap'}>
             <AnchorIcon size={IconSize.xs} />
-            Navigation State Anchor
+            {t('navigation-state-anchor')}
           </Group>
         </InputLabel>
         <DisplayLabel showBorder>{navigationState?.Anchor}</DisplayLabel>
@@ -116,7 +114,7 @@ export function SetNavModal({
           <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
         </Stack>
         <ToggleComponent
-          label={'Include Time'}
+          label={t('include-time')}
           value={setTime}
           setValue={(v) => handleData({ setTime: v })}
         />
@@ -128,7 +126,7 @@ export function SetNavModal({
           label={t('fade-duration')}
           disabled={mode === 'jump'}
           style={{ opacity: mode !== 'jump' ? 1 : 0.5 }}
-          placeholder={'Duration to Fade'}
+          placeholder={t('duration-placeholder')}
           value={intDuration}
           onChange={(value) =>
             handleData({
@@ -141,11 +139,11 @@ export function SetNavModal({
           <Select
             allowDeselect={false}
             data={[
-              { label: 'Jump', value: 'jump' },
-              { label: 'Fade In/Out', value: 'fade' },
-              { label: 'Fly', value: 'fly' }
+              { label: t('mode-jump'), value: 'jump' },
+              { label: t('mode-fade'), value: 'fade' },
+              { label: t('mode-fly'), value: 'fly' }
             ]}
-            placeholder={'Select an option'}
+            placeholder={t('select-option')}
             value={mode}
             onChange={(value) => {
               if (value === null) {

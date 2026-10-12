@@ -108,14 +108,14 @@ export function NumberModal({
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
         />
       </Stack>
       <SimpleGrid cols={4}>
         <NumberInput
           id={'min'}
           label={t('range-min')}
-          placeholder={'Slider Min'}
+          placeholder={t('slider-min')}
           value={min || 0}
           onChange={(value) =>
             handleData({ min: typeof value === 'number' ? value : parseFloat(value) })
@@ -124,7 +124,7 @@ export function NumberModal({
         <NumberInput
           id={'max'}
           label={t('range-max')}
-          placeholder={'Slider Max'}
+          placeholder={t('slider-max')}
           value={max || 0}
           onChange={(value) =>
             handleData({ max: typeof value === 'number' ? value : parseFloat(value) })
@@ -133,7 +133,7 @@ export function NumberModal({
         <NumberInput
           id={'step'}
           label={t('step')}
-          placeholder={'Slider Step'}
+          placeholder={t('slider-step')}
           value={step || 0}
           onChange={(value) =>
             handleData({ step: typeof value === 'number' ? value : parseFloat(value) })
@@ -142,7 +142,7 @@ export function NumberModal({
         <NumberInput
           id={'exp'}
           label={t('exponent')}
-          placeholder={'Slider Exponent'}
+          placeholder={t('slider-exponent')}
           value={exponent || 0}
           onChange={(value) =>
             handleData({

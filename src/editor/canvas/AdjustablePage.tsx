@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Box, Tooltip } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
@@ -12,6 +13,7 @@ import type { Page } from '@/types/components';
 import { IconSize } from '@/types/enums';
 
 export function AdjustablePage() {
+  const { t } = useTranslation('adjustable-page');
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
 
@@ -113,7 +115,9 @@ export function AdjustablePage() {
                 color: 'var(--mantine-color-gray-2)'
               }}
             >
-              {page.name ? page.name : `Page ${currentPageIndex + 1}`}
+              {page.name
+                ? page.name
+                : t('default-page-name', { number: currentPageIndex + 1 })}
             </DisplayLabel>
           </Box>
           <Box
@@ -125,7 +129,7 @@ export function AdjustablePage() {
               zIndex: zIndex.pageControl
             }}
           >
-            <Tooltip label={locked ? 'Unlock Page' : 'Lock Page'}>
+            <Tooltip label={locked ? t('unlock-page') : t('lock-page')}>
               <ActionIcon
                 onClick={() => setLocked(!locked)}
                 style={{

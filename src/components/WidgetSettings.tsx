@@ -32,7 +32,7 @@ export function WidgetSettings({ data, handleData, placeholders }: Props) {
       <TextInput
         id={'guiname'}
         label={t('component-name')}
-        placeholder={placeholders.name || 'Name of Component'}
+        placeholder={placeholders.name || t('name-placeholder')}
         value={data.gui_name ?? ''}
         onChange={(event) => handleData({ gui_name: event.currentTarget.value })}
       />
@@ -56,7 +56,7 @@ export function WidgetSettings({ data, handleData, placeholders }: Props) {
               h={backgroundImage.length > 0 ? 128 : 64}
               fit={'cover'}
               src={backgroundImage}
-              alt={'Loaded'}
+              alt={t('background-image-alt')}
             />
           </Stack>
         </SimpleGrid>
@@ -70,7 +70,7 @@ export function WidgetSettings({ data, handleData, placeholders }: Props) {
         label={t('gui-description')}
         value={data.gui_description ?? ''}
         onChange={(e) => handleData({ gui_description: e.currentTarget.value })}
-        placeholder={placeholders.description || 'Type your message here.'}
+        placeholder={placeholders.description || t('description-placeholder')}
       />
     </>
   );

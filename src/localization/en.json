@@ -3,7 +3,13 @@
     "component-name": "Component Name",
     "gui-description": "Gui Description",
     "background-color": "Background Color",
-    "background-image": "Background Image"
+    "background-image": "Background Image",
+    "name-placeholder": "Name of Component",
+    "description-placeholder": "Type your message here.",
+    "background-image-alt": "Background image preview"
+  },
+  "information": {
+    "more-information": "More information"
   },
   "main": {
     "project-name": "Current Show:  ",
@@ -37,14 +43,20 @@
     "current-show": "Current Show"
   },
   "adjustable-page": {
-    "page": "Page"
+    "page": "Page",
+    "default-page-name": "Page {{number}}",
+    "lock-page": "Lock Page",
+    "unlock-page": "Unlock Page"
   },
   "component-modal": {
     "unknown-component-type": "Unknown component type",
     "configure-copy": "Configure your component and add it to the workspace.",
     "cancel": "Cancel",
     "save": "Save",
-    "create": "Create"
+    "create": "Create",
+    "unknown": "Unknown",
+    "edit-component-title": "Edit {{name}} Component",
+    "create-component-title": "Create {{name}} Component"
   },
   "connection-settings": {
     "openspace-connection-settings": "OpenSpace Connection Settings",
@@ -79,6 +91,9 @@
     "delete": "Delete",
     "copy": "Copy"
   },
+  "draggable-panel": {
+    "unknown-type": "Unknown type"
+  },
   "dropdown-menu": {
     "more": "More"
   },
@@ -99,10 +114,48 @@
     "delete-page": "Delete Page",
     "screen-presets": "Screen Presets",
     "width": "Width",
-    "height": "Height"
+    "height": "Height",
+    "file": "File",
+    "new-show": "New Show",
+    "save": "Save",
+    "open": "Open",
+    "import": "Import",
+    "export": "Export",
+    "delete-show": "Delete Show",
+    "settings": "Settings",
+    "presentation-settings": "Presentation Settings",
+    "workspace-settings": "Workspace Settings",
+    "page": "Page",
+    "edit-page": "Edit Page",
+    "page-presets": "Page Presets",
+    "ipad-landscape": "iPad Landscape",
+    "ipad-portrait": "iPad Portrait",
+    "history": "History",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear-history": "Clear History",
+    "project-saved": "Project has been saved!"
   },
   "present-mode-toggle": {
-    "outline": "outline"
+    "outline": "outline",
+    "edit-show": "Edit Show",
+    "present-show": "Present Show"
+  },
+  "log-panel": {
+    "title": "Error Logs",
+    "select-log-level": "Select log level",
+    "time": "Time",
+    "level": "Level",
+    "source": "Source",
+    "message": "Message",
+    "all-logging": "All Logging",
+    "trace": "Trace",
+    "debug": "Debug",
+    "info": "Info",
+    "warning": "Warning",
+    "error": "Error",
+    "fatal": "Fatal",
+    "no-logging": "No Logging"
   },
   "scale-gui": {
     "percent": "%"
@@ -123,7 +176,9 @@
     "upload-new-image": "Upload New Image:",
     "upload": "Upload",
     "cancel": "Cancel",
-    "add-image": "Add Image"
+    "add-image": "Add Image",
+    "selected-image-alt": "Selected image",
+    "uploaded-image-alt": "Uploaded image"
   },
   "image-upload": {
     "set-image-url": "Set Image Url",
@@ -131,7 +186,8 @@
     "select-image": "Select Image"
   },
   "virtualized-combobox": {
-    "no-item-found": "No item found."
+    "no-item-found": "No item found.",
+    "search-items": "Search items..."
   },
   "fade": {
     "property": "Property",
@@ -139,10 +195,23 @@
     "fade-duration": "Fade Duration",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene...",
+    "select-option": "Select an option",
+    "action-toggle": "toggle",
+    "action-on": "on",
+    "action-off": "off",
+    "duration-placeholder": "Duration to Fade",
+    "placeholder-name-toggle": "{{name}} Toggle",
+    "placeholder-name-on": "{{name}} On",
+    "placeholder-name-off": "{{name}} Off",
+    "placeholder-description-toggle": "{{property}} in and out",
+    "placeholder-description-on": "{{property}} on",
+    "placeholder-description-off": "{{property}} off"
   },
   "script": {
-    "script": "Lua Script"
+    "script": "Lua Script",
+    "enter-lua-code": "Please enter Lua code."
   },
   "fly-to": {
     "target": "Target",
@@ -154,13 +223,21 @@
     "longitude": "Longitude",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene...",
+    "duration-placeholder": "Duration to Flight",
+    "altitude-placeholder": "Altitude",
+    "placeholder-name": "Fly To {{target}}",
+    "placeholder-description": "Fly to {{target}}"
   },
   "focus": {
     "property": "Property",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene...",
+    "placeholder-name": "Focus on {{property}}",
+    "placeholder-description": "Focus on {{property}}. {{description}}"
   },
   "multi": {
     "multi-settings": "Multi Settings",
@@ -177,13 +254,18 @@
     "component-name": "Component Name",
     "background-image": "Background Image",
     "gui-description": "Gui Description",
-    "current-items": "Current Items:"
+    "current-items": "Current Items:",
+    "add-existing-component": "Add Existing Component",
+    "add-new-component": "Add New Component"
   },
   "page": {
     "page-number": "Page Number",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "select-option": "Select an option",
+    "default-page-name": "Page {{number}}",
+    "placeholder-name": "Go to {{page}}"
   },
   "session-playback": {
     "play": "Play",
@@ -196,7 +278,9 @@
     "playback-file": "Playback File",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "select-playback-file": "Select playback file...",
+    "placeholder-name": "Playback {{file}}"
   },
   "set-navigation": {
     "save-current-navigation-state": "Set from Current Navigation State",
@@ -205,20 +289,42 @@
     "component-name": "Component Name",
     "background-image": "Background Image",
     "gui-description": "Gui Description",
-    "transition-mode": "Transition Mode"
+    "transition-mode": "Transition Mode",
+    "navigation-state-anchor": "Navigation State Anchor",
+    "include-time": "Include Time",
+    "duration-placeholder": "Duration to Fade",
+    "select-option": "Select an option",
+    "mode-jump": "Jump",
+    "mode-fade": "Fade In/Out",
+    "mode-fly": "Fly",
+    "placeholder-name-jump": "Jump to Navigation State : {{anchor}}",
+    "placeholder-name-fade": "Fade to Navigation State : {{anchor}}",
+    "placeholder-name-fly": "Fly to Navigation State : {{anchor}}"
   },
   "set-time": {
     "set-time-to-now": "Set Time To Now",
     "component-name": "Component Name",
     "fade-duration": "Fade Duration",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "duration-placeholder": "Duration to Fade",
+    "interpolate": "Interpolate",
+    "fade-scene": "Fade Scene",
+    "placeholder-name": "Go to {{time}}",
+    "placeholder-description-interpolate": "Interpolates Time to {{time}} over {{duration}} seconds.",
+    "placeholder-description-set": "Sets Time to {{time}}"
   },
   "boolean": {
     "property": "Property",
     "action-type": "Action Type",
     "component-name": "Component Name",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene...",
+    "select-option": "Select an option",
+    "action-toggle": "toggle",
+    "action-on": "on",
+    "action-off": "off",
+    "placeholder-name": "{{name}} > {{action}}"
   },
   "number": {
     "property": "Property",
@@ -228,12 +334,18 @@
     "exponent": "Exponent",
     "component-name": "Component Name",
     "background-image": "Background Image",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene...",
+    "slider-min": "Slider Min",
+    "slider-max": "Slider Max",
+    "slider-step": "Slider Step",
+    "slider-exponent": "Slider Exponent"
   },
   "trigger": {
     "property": "Property",
     "component-name": "Component Name",
-    "gui-description": "Gui Description"
+    "gui-description": "Gui Description",
+    "search-scene": "Search the Scene..."
   },
   "flight-control-panel": {
     "interact-hint": "Interact with the area to control the camera.",
@@ -250,7 +362,8 @@
     "icon": "icon",
     "zoom-friction": "Zoom Friction",
     "roll-friction": "Roll Friction",
-    "control-area": "Control Area"
+    "control-area": "Control Area",
+    "friction-hint": "Controls to disable friction for different camera movements"
   },
   "image": {
     "image": "Image"
@@ -271,13 +384,25 @@
     "force-time-change-to-recorded-time": "Force time change to recorded time",
     "loop-playback": "Loop Playback",
     "output-frames": "Output Frames",
-    "playback-file": "Playback File"
+    "playback-file": "Playback File",
+    "recording-filename-placeholder": "Enter recording filename...",
+    "playback-file-placeholder": "Select playback file..."
   },
   "time-date-picker": {
     "select-date": "Select Date",
     "simulation-speed": "Simulation Speed",
     "realtime": "Realtime",
-    "now": "Now"
+    "now": "Now",
+    "select-unit": "Select a Unit",
+    "none": "None",
+    "unit-per-second": "{{unit}} / second",
+    "value-unit-per-second": "{{value}} {{unit}} / second",
+    "unit-seconds": "Seconds",
+    "unit-minutes": "Minutes",
+    "unit-hours": "Hours",
+    "unit-days": "Days",
+    "unit-months": "Months",
+    "unit-years": "Years"
   },
   "title": {
     "title": "Title",
@@ -285,7 +410,10 @@
   },
   "video": {
     "video": "Video",
-    "video-helper-text": "Video URL can be Vimeo, Youtube, or direct video link."
+    "video-helper-text": "Video URL can be Vimeo, Youtube, or direct video link.",
+    "url-placeholder": "URL",
+    "youtube-player-title": "YouTube video player",
+    "vimeo-player-title": "Vimeo video player"
   },
   "dialog": {
     "close": "Close"
@@ -315,17 +443,60 @@
     "create-project": "Create Show",
     "update-project": "Update Show",
     "default-screen-space-position": "Default Screen Space Position",
-    "load-project": "Load Show"
+    "load-project": "Load Show",
+    "show-settings": "Show Settings",
+    "workspace-settings": "Workspace Settings",
+    "update-workspace-settings": "Update your workspace settings here",
+    "save-settings": "Save Settings",
+    "show-pagination": "Show Pagination",
+    "project-name-placeholder": "Enter Project Name",
+    "project-description-placeholder": "Type your description here.",
+    "ip-address-placeholder": "Enter IP",
+    "port-placeholder": "Enter Port",
+    "page-width-placeholder": "Enter Default Page Width",
+    "page-height-placeholder": "Enter Default Page Height"
+  },
+  "new-page-modal": {
+    "create-page-title": "Create New Page",
+    "update-page-title": "Update Page Settings",
+    "create-page-description": "Set the name and background color for the new page.",
+    "update-page-description": "Update the page name and background color.",
+    "page-name": "Page Name",
+    "page-name-placeholder": "Enter Page Name",
+    "background-color": "Background Color",
+    "cancel": "Cancel",
+    "create-page": "Create Page",
+    "update-page": "Update Page"
+  },
+  "import-show-modal": {
+    "title": "Import Show",
+    "description": "Select Pages you want to add to current Show.",
+    "page": "Page",
+    "components": "Components",
+    "cancel": "Cancel",
+    "import-to-new-show": "Import Pages To New Show",
+    "import-to-current-show": "Import Pages To Current Show",
+    "import-full-show": "Import Full Show"
   },
   "layout-edit-modal": {
     "edit-layout": "Edit Layout",
     "grid-size": "Grid Size",
     "grid-size-description": "This will also change default grid size.",
-    "persist-across-pages": "Persist Across Pages"
+    "persist-across-pages": "Persist Across Pages",
+    "rows": "# of Rows",
+    "columns": "# of Columns",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "load-project-modal": {
     "load-project": "Open Show",
     "load-project-description": "Choose a show to open.",
+    "last-modified": "Last Modified: {{date}}",
+    "created": "Created: {{date}}",
+    "cannot-connect": "Can't connect to OpenSpace",
+    "cannot-connect-description": "Projects are loaded from the OpenSpace backend. Make sure OpenSpace is running, then try again.",
+    "retry": "Retry",
+    "no-projects-found": "No saved projects found.",
     "cancel": "Cancel",
     "add-project": "Open Show",
     "edit-project": "Edit Show"
@@ -334,6 +505,37 @@
     "ok": "OK"
   },
   "action-trigger": {
-    "action": "Action"
+    "action": "Action",
+    "search-actions": "Search the Actions..."
+  },
+  "grid-settings": {
+    "rows": "# of Rows",
+    "columns": "# of Columns",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "layout-toolbar": {
+    "row": "Row",
+    "column": "Column",
+    "grid": "Grid",
+    "grid-settings": "Grid Settings"
+  },
+  "undo": {
+    "history": "History:",
+    "clear": "Clear"
+  },
+  "rich-text-editor": {
+    "normal": "Normal",
+    "heading-1": "Heading 1",
+    "heading-2": "Heading 2",
+    "heading-3": "Heading 3",
+    "text-format": "Text format",
+    "size": "Size",
+    "font-size": "Font size",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "clear-formatting": "Clear formatting",
+    "background-color": "Background Color"
   }
 }

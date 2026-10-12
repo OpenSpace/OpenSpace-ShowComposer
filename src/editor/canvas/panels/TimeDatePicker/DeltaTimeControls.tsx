@@ -15,11 +15,18 @@ import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon } from '@/icons/icons';
 import { IconSize } from '@/types/enums';
 
-import { round10, StepPrecisions, Steps, StepSizes, updateDeltaTime } from './utils';
+import {
+  round10,
+  StepPrecisions,
+  StepSizes,
+  type StepUnit,
+  StepUnits,
+  updateDeltaTime
+} from './utils';
 
 export function DeltaTimeControls() {
   const { t } = useTranslation('time-date-picker');
-  const [stepSize, setStepSize] = useState('Seconds');
+  const [stepSize, setStepSize] = useState<StepUnit>('seconds');
   const [paused, setPaused] = useState(false);
   const [localDelta, setLocalDelta] = useState<number | string>(0);
 
@@ -35,6 +42,8 @@ export function DeltaTimeControls() {
   } = useSubscribeToTime(1000);
 
   const isEditingDelta = useRef(false);
+
+  const unitPerSecond = t('unit-per-second', { unit: t(`unit-${stepSize}`) });
 
   const adjustedNextDelta = round10(
     nextDeltaTimeStep ? nextDeltaTimeStep / StepSizes[stepSize] : 0,
@@ -108,13 +117,16 @@ export function DeltaTimeControls() {
     <Stack gap={'xl'}>
       <SimpleGrid cols={2} spacing={'xs'}>
         <InputLabel>{t('simulation-speed')}</InputLabel>
-        <InputLabel>{`${stepSize} / second`}</InputLabel>
+        <InputLabel>{unitPerSecond}</InputLabel>
         <Select
           allowDeselect={false}
-          data={Object.values(Steps)}
-          placeholder={'Select a Unit'}
+          data={StepUnits.map((unit) => ({
+            value: unit,
+            label: t(`unit-${unit}`)
+          }))}
+          placeholder={t('select-unit')}
           value={stepSize}
-          onChange={(value) => value && setStepSize(value)}
+          onChange={(value) => value && setStepSize(value as StepUnit)}
         />
         <NumberInput
           min={-1000}
@@ -124,7 +136,7 @@ export function DeltaTimeControls() {
           onFocus={beginEditingDelta}
           onBlur={endEditingDelta}
           onChange={setDeltaTime}
-          placeholder={`${stepSize} / second`}
+          placeholder={unitPerSecond}
           value={localDelta}
         />
       </SimpleGrid>
@@ -134,7 +146,12 @@ export function DeltaTimeControls() {
             <RewindIcon size={IconSize.md} />
           </Button>
           <Text size={'xs'} c={'dimmed'}>
-            {hasPrevDeltaTimeStep ? `${adjustedPrevDelta} ${stepSize} / second` : 'None'}
+            {hasPrevDeltaTimeStep
+              ? t('value-unit-per-second', {
+                  value: adjustedPrevDelta,
+                  unit: t(`unit-${stepSize}`)
+                })
+              : t('none')}
           </Text>
         </Stack>
         <Button onClick={togglePause}>
@@ -145,7 +162,12 @@ export function DeltaTimeControls() {
             <FastForwardIcon size={IconSize.md} />
           </Button>
           <Text size={'xs'} c={'dimmed'}>
-            {hasNextDeltaTimeStep ? `${adjustedNextDelta} ${stepSize} / second` : 'None'}
+            {hasNextDeltaTimeStep
+              ? t('value-unit-per-second', {
+                  value: adjustedNextDelta,
+                  unit: t(`unit-${stepSize}`)
+                })
+              : t('none')}
           </Text>
         </Stack>
       </SimpleGrid>

@@ -12,7 +12,7 @@ import {
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { type BooleanComponent, type Toggle, usePropertyStore } from '@/store';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, ToggleActions } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<BooleanComponent, 'id'> = {
@@ -45,7 +45,10 @@ export function BoolModal({
 
   const placeholders = boundProperty
     ? {
-        name: `${formatName(boundProperty.uri)} > ${capitalize(action)}`,
+        name: t('placeholder-name', {
+          name: formatName(boundProperty.uri),
+          action: capitalize(t(`action-${action}`))
+        }),
         description: boundProperty.metaData?.description ?? ''
       }
     : { name: '', description: '' };
@@ -85,15 +88,18 @@ export function BoolModal({
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
         />
       </Stack>
       <Stack gap={'xs'}>
         <InputLabel>{t('action-type')}</InputLabel>
         <Select
           allowDeselect={false}
-          data={['toggle', 'on', 'off']}
-          placeholder={'Select an option'}
+          data={ToggleActions.map((value) => ({
+            value,
+            label: t(`action-${value}`)
+          }))}
+          placeholder={t('select-option')}
           value={action}
           onChange={(value) => value && handleData({ action: value as Toggle })}
         />

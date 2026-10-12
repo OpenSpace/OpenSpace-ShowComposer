@@ -83,7 +83,7 @@ export function TriggerModal({
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
         />
       </Stack>
       <WidgetSettings

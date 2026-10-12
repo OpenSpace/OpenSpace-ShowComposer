@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InputLabel, Stack } from '@mantine/core';
 
 import { ColorPicker } from '@/components/ColorPicker';
@@ -28,6 +29,7 @@ export function RichTextModal({
   onClose,
   onCancel
 }: ComponentModalChildProps<'richtext'>) {
+  const { t } = useTranslation('rich-text-editor');
   const [data, setData] = useState<RichTextComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
@@ -47,7 +49,7 @@ export function RichTextModal({
   return (
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
-        <InputLabel>Background Color</InputLabel>
+        <InputLabel>{t('background-color')}</InputLabel>
         <ColorPicker color={color} setColor={(v) => handleData({ color: v })} />
       </Stack>
       <RichTextEditor content={text} setContent={(v) => handleData({ text: v })} />

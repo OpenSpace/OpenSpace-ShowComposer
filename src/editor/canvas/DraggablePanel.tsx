@@ -1,4 +1,5 @@
 import type { DraggableData, DraggableEvent } from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Box } from '@mantine/core';
 
 import { DimmableBody } from '@/editor/canvas/DimmableBody';
@@ -34,6 +35,7 @@ interface Props {
 }
 
 export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
+  const { t } = useTranslation('draggable-panel');
   const position = useBoundStore((state) => state.positions[component.id]);
   const updatePosition = useBoundStore((state) => state.updatePosition);
 
@@ -62,7 +64,7 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       case 'logpanel':
         return <LogPanel />;
       default:
-        return <Box>Unknown type</Box>;
+        return <Box>{t('unknown-type')}</Box>;
     }
   };
 

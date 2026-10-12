@@ -74,8 +74,8 @@ export function FlyToModal({
 
   const placeholders = target
     ? {
-        name: `Fly To ${formatName(target)}`,
-        description: `Fly to ${formatName(target)}`
+        name: t('placeholder-name', { target: formatName(target) }),
+        description: t('placeholder-description', { target: formatName(target) })
       }
     : { name: '', description: '' };
 
@@ -161,7 +161,7 @@ export function FlyToModal({
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === target) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
           presets={options?.map((v) => v.name) || null}
         />
       </Stack>
@@ -169,7 +169,7 @@ export function FlyToModal({
         <NumberInput
           id={'duration'}
           label={t('flight-duration')}
-          placeholder={'Duration to Flight'}
+          placeholder={t('duration-placeholder')}
           value={intDuration}
           onChange={(value) =>
             handleData({
@@ -192,7 +192,7 @@ export function FlyToModal({
           <NumberInput
             id={'alt'}
             label={t('alt')}
-            placeholder={'Altitude'}
+            placeholder={t('altitude-placeholder')}
             value={alt}
             onChange={(value) =>
               handleData({ alt: typeof value === 'number' ? value : parseFloat(value) })

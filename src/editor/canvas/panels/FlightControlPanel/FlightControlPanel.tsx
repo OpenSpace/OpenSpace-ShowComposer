@@ -195,9 +195,7 @@ export function FlightControlPanel() {
               </ActionIcon>
             </Tooltip>
           </Group>
-          <Information
-            content={'Controls to disable friction for different camera movements'}
-          />
+          <Information content={t('friction-hint')} />
         </Group>
       </Stack>
       <Stack w={'100%'} align={'center'} gap={'xs'} px={'md'}>

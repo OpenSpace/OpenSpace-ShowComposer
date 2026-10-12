@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 const YOUTUBE_PATTERN =
   /(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 const VIMEO_PATTERN =
@@ -10,13 +12,14 @@ interface Props {
 // Renders a YouTube/Vimeo embed for a matching URL, a raw <video> for any other
 // non-empty URL, or nothing when the URL is empty
 export function VideoContent({ url }: Props) {
+  const { t } = useTranslation('video');
   const youtubeMatch = url.match(YOUTUBE_PATTERN);
   const vimeoMatch = url.match(VIMEO_PATTERN);
 
   if (youtubeMatch) {
     return (
       <iframe
-        title={'YouTube video player'}
+        title={t('youtube-player-title')}
         src={`https://www.youtube.com/embed/${youtubeMatch[1]}`}
         frameBorder={'0'}
         allow={
@@ -29,7 +32,7 @@ export function VideoContent({ url }: Props) {
   } else if (vimeoMatch) {
     return (
       <iframe
-        title={'Vimeo video player'}
+        title={t('vimeo-player-title')}
         src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
         frameBorder={'0'}
         allow={'autoplay; fullscreen; picture-in-picture'}

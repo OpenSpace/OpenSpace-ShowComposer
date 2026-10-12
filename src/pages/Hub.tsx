@@ -86,14 +86,13 @@ export function Hub() {
               <Center h={200} p={'md'}>
                 <Stack align={'center'} gap={'sm'} maw={440}>
                   <Text fw={600} size={'lg'}>
-                    Can&apos;t connect to OpenSpace
+                    {t('cannot-connect')}
                   </Text>
                   <Text size={'sm'} c={'dimmed'} ta={'center'}>
-                    Projects are loaded from the OpenSpace backend. Make sure OpenSpace is
-                    running, then try again.
+                    {t('cannot-connect-description')}
                   </Text>
                   <Button variant={'default'} onClick={handleLoadProjects}>
-                    Retry
+                    {t('retry')}
                   </Button>
                 </Stack>
               </Center>
@@ -102,7 +101,7 @@ export function Hub() {
             {status === 'ready' && projects.length === 0 && (
               <Center h={200}>
                 <Text size={'sm'} c={'dimmed'}>
-                  No saved projects found.
+                  {t('no-projects-found')}
                 </Text>
               </Center>
             )}
@@ -132,10 +131,14 @@ export function Hub() {
                     >
                       <Text size={'sm'}>{project.projectName}</Text>
                       <Text size={'xs'} c={'dimmed'}>
-                        Last Modified: {new Date(project.lastModified).toLocaleString()}
+                        {t('last-modified', {
+                          date: new Date(project.lastModified).toLocaleString()
+                        })}
                       </Text>
                       <Text size={'xs'} c={'dimmed'}>
-                        Created: {new Date(project.created).toLocaleString()}
+                        {t('created', {
+                          date: new Date(project.created).toLocaleString()
+                        })}
                       </Text>
                     </Box>
                   </UnstyledButton>

@@ -56,12 +56,12 @@ export function GlobalMenuBar() {
       height: 1080
     },
     {
-      name: 'iPad Landscape',
+      name: t('ipad-landscape'),
       width: 1366,
       height: 1024
     },
     {
-      name: 'iPad Portrait',
+      name: t('ipad-portrait'),
       width: 1024,
       height: 1366
     }
@@ -114,17 +114,19 @@ export function GlobalMenuBar() {
         <Menu trigger={'click-hover'} position={'bottom-start'}>
           <Menu.Target>
             <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
-              File
+              {t('file')}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item onClick={() => setIsNewProjectModalOpen(true)}>New Show</Menu.Item>
-            <Menu.Item onClick={handleSaveConfirm}>Save</Menu.Item>
-            <Menu.Item onClick={handleLoadProjects}>Open</Menu.Item>
-            <Menu.Item onClick={handleLoadStore}>Import</Menu.Item>
-            <Menu.Item onClick={exportProject}>Export</Menu.Item>
+            <Menu.Item onClick={() => setIsNewProjectModalOpen(true)}>
+              {t('new-show')}
+            </Menu.Item>
+            <Menu.Item onClick={handleSaveConfirm}>{t('save')}</Menu.Item>
+            <Menu.Item onClick={handleLoadProjects}>{t('open')}</Menu.Item>
+            <Menu.Item onClick={handleLoadStore}>{t('import')}</Menu.Item>
+            <Menu.Item onClick={exportProject}>{t('export')}</Menu.Item>
             <Menu.Item color={'red'} onClick={handleDeleteAll}>
-              Delete Show
+              {t('delete-show')}
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
@@ -132,7 +134,7 @@ export function GlobalMenuBar() {
         <Menu trigger={'click-hover'} position={'bottom-start'}>
           <Menu.Target>
             <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
-              Settings
+              {t('settings')}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
@@ -144,7 +146,7 @@ export function GlobalMenuBar() {
                 </Text>
               }
             >
-              Presentation Settings
+              {t('presentation-settings')}
             </Menu.Item>
             <Menu.Item
               onClick={() => setIsConnectionSettingsModalOpen(true)}
@@ -154,7 +156,7 @@ export function GlobalMenuBar() {
                 </Text>
               }
             >
-              Workspace Settings
+              {t('workspace-settings')}
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
@@ -162,7 +164,7 @@ export function GlobalMenuBar() {
         <Menu trigger={'click-hover'} position={'bottom-start'}>
           <Menu.Target>
             <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
-              Page
+              {t('page')}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
@@ -172,7 +174,7 @@ export function GlobalMenuBar() {
                 setIsNewPageModalOpen(true);
               }}
             >
-              Add Page
+              {t('add-page')}
             </Menu.Item>
             <Menu.Item
               onClick={() => {
@@ -180,13 +182,15 @@ export function GlobalMenuBar() {
                 setIsNewPageModalOpen(true);
               }}
             >
-              Edit Page
+              {t('edit-page')}
             </Menu.Item>
-            <Menu.Item onClick={() => deletePage(currentPage)}>Delete Page</Menu.Item>
+            <Menu.Item onClick={() => deletePage(currentPage)}>
+              {t('delete-page')}
+            </Menu.Item>
             <Menu.Divider />
             <Menu.Sub>
               <Menu.Sub.Target>
-                <Menu.Sub.Item>Page Presets</Menu.Sub.Item>
+                <Menu.Sub.Item>{t('page-presets')}</Menu.Sub.Item>
               </Menu.Sub.Target>
               <Menu.Sub.Dropdown>
                 {pageSizes.map((page) => (
@@ -241,7 +245,7 @@ export function GlobalMenuBar() {
         <Menu trigger={'click-hover'} position={'bottom-start'}>
           <Menu.Target>
             <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>
-              History
+              {t('history')}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
@@ -254,7 +258,7 @@ export function GlobalMenuBar() {
                 </Text>
               }
             >
-              Undo
+              {t('undo')}
             </Menu.Item>
             <Menu.Item
               onClick={() => redo()}
@@ -265,9 +269,9 @@ export function GlobalMenuBar() {
                 </Text>
               }
             >
-              Redo
+              {t('redo')}
             </Menu.Item>
-            <Menu.Item onClick={() => clear()}>Clear History</Menu.Item>
+            <Menu.Item onClick={() => clear()}>{t('clear-history')}</Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Group>
@@ -313,7 +317,7 @@ export function GlobalMenuBar() {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         onConfirm={() => {}}
-        message={'Project has been saved!'}
+        message={t('project-saved')}
         setOpen={setIsConfirmationModalOpen}
       />
     </>

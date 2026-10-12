@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Select, Tooltip } from '@mantine/core';
 import { RichTextEditor as MantineRichTextEditor } from '@mantine/tiptap';
 import { FontSize, TextStyle } from '@tiptap/extension-text-style';
@@ -6,12 +7,6 @@ import StarterKit from '@tiptap/starter-kit';
 
 const FONT_SIZES = [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72];
 
-const BLOCK_FORMATS = [
-  { value: 'paragraph', label: 'Normal' },
-  { value: 'h1', label: 'Heading 1' },
-  { value: 'h2', label: 'Heading 2' },
-  { value: 'h3', label: 'Heading 3' }
-];
 const HEADING_LEVELS = { h1: 1, h2: 2, h3: 3 } as const;
 type HeadingKey = keyof typeof HEADING_LEVELS;
 
@@ -22,6 +17,13 @@ interface Props {
 
 // See docs here: https://mantine.dev/x/tiptap/ and here https://tiptap.dev/docs/examples/basics/default-text-editor
 export function RichTextEditor({ content, setContent }: Props) {
+  const { t } = useTranslation('rich-text-editor');
+  const blockFormats = [
+    { value: 'paragraph', label: t('normal') },
+    { value: 'h1', label: t('heading-1') },
+    { value: 'h2', label: t('heading-2') },
+    { value: 'h3', label: t('heading-3') }
+  ];
   const editor = useEditor({
     // This is a simple editor; people editing this can only use the toolbar buttons below,
     // not type markdown commands or paste formatted text. So input/paste rules are off, and
@@ -94,8 +96,8 @@ export function RichTextEditor({ content, setContent }: Props) {
         <Select
           size={'xs'}
           w={120}
-          aria-label={'Text format'}
-          data={BLOCK_FORMATS}
+          aria-label={t('text-format')}
+          data={blockFormats}
           value={paragraphType ?? 'paragraph'}
           onChange={handleParagraphTypeChange}
           allowDeselect={false}
@@ -104,8 +106,8 @@ export function RichTextEditor({ content, setContent }: Props) {
         <Select
           size={'xs'}
           w={90}
-          placeholder={'Size'}
-          aria-label={'Font size'}
+          placeholder={t('size')}
+          aria-label={t('font-size')}
           data={FONT_SIZES.map((size) => ({ value: String(size), label: `${size} px` }))}
           value={currentFontSize ? String(currentFontSize) : null}
           onChange={(value) => {
@@ -117,21 +119,21 @@ export function RichTextEditor({ content, setContent }: Props) {
           comboboxProps={{ withinPortal: true }}
         />
         <MantineRichTextEditor.ControlsGroup>
-          <Tooltip label={'Bold'}>
+          <Tooltip label={t('bold')}>
             {/* Override the built in hover popover by setting title to empty string */}
             <MantineRichTextEditor.Bold title={''} />
           </Tooltip>
-          <Tooltip label={'Italic'}>
+          <Tooltip label={t('italic')}>
             {/* Override the built in hover popover by setting title to empty string */}
             <MantineRichTextEditor.Italic title={''} />
           </Tooltip>
-          <Tooltip label={'Underline'}>
+          <Tooltip label={t('underline')}>
             {/* Override the built in hover popover by setting title to empty string */}
             <MantineRichTextEditor.Underline title={''} />
           </Tooltip>
         </MantineRichTextEditor.ControlsGroup>
         <MantineRichTextEditor.ControlsGroup>
-          <Tooltip label={'Clear formatting'}>
+          <Tooltip label={t('clear-formatting')}>
             <MantineRichTextEditor.ClearFormatting title={''} />
           </Tooltip>
         </MantineRichTextEditor.ControlsGroup>

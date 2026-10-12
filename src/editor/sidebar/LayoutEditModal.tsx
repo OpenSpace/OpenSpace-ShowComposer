@@ -81,12 +81,12 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
             </Text>
             <SimpleGrid cols={2} mt={'md'}>
               <TextInput
-                label={'# of Rows'}
+                label={t('rows')}
                 value={rows}
                 onChange={(e) => setRows(e.currentTarget.value)}
               />
               <TextInput
-                label={'# of Columns'}
+                label={t('columns')}
                 value={columns}
                 onChange={(e) => setColumns(e.currentTarget.value)}
               />
@@ -100,10 +100,10 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={onClose}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSave}>
-          Save
+          {t('save')}
         </Button>
       </Group>
     </Modal>

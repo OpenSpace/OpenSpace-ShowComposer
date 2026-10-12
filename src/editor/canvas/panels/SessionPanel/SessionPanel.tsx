@@ -89,7 +89,7 @@ export function SessionPanel() {
             <TextInput
               flex={1}
               value={filenameRecording}
-              placeholder={'Enter recording filename...'}
+              placeholder={t('recording-filename-placeholder')}
               onChange={updateRecordingFilename}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
@@ -134,7 +134,7 @@ export function SessionPanel() {
             <Select
               allowDeselect={false}
               data={files}
-              placeholder={'Select playback file...'}
+              placeholder={t('playback-file-placeholder')}
               value={filenamePlayback || null}
               disabled={files.length === 0}
               onChange={(value) => value && setFilenamePlayback(value)}

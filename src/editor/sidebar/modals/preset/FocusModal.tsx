@@ -44,8 +44,11 @@ export function FocusModal({
 
   const placeholders = property
     ? {
-        name: `Focus on ${property}`,
-        description: `Focus on ${property}. ${anchorMeta?.description}`
+        name: t('placeholder-name', { property }),
+        description: t('placeholder-description', {
+          property,
+          description: anchorMeta?.description ?? ''
+        })
       }
     : { name: '', description: '' };
 
@@ -84,7 +87,7 @@ export function FocusModal({
           selectedOption={
             (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
         />
       </Stack>
       <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />

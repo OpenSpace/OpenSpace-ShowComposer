@@ -53,12 +53,13 @@ export function VirtualizedCombobox({
   options,
   selectedOption,
   selectOption,
-  searchPlaceholder = 'Search items...',
+  searchPlaceholder,
   width = '460px',
   delimiter = '>',
   presets = null
 }: Props) {
   const { t } = useTranslation('virtualized-combobox');
+  const placeholder = searchPlaceholder ?? t('search-items');
   const [search, setSearch] = useState('');
   // The highlighted option is tracked by index so it stays correct even when the top
   // rows are virtualized out of the DOM
@@ -158,7 +159,7 @@ export function VirtualizedCombobox({
           {selectedOption ? (
             <ColoredPath value={selectedOption} delimiter={delimiter} />
           ) : (
-            <Input.Placeholder>{searchPlaceholder}</Input.Placeholder>
+            <Input.Placeholder>{placeholder}</Input.Placeholder>
           )}
         </InputBase>
       </Combobox.Target>
@@ -166,7 +167,7 @@ export function VirtualizedCombobox({
         <Combobox.Search
           value={search}
           onChange={(event) => setSearch(event.currentTarget.value)}
-          placeholder={searchPlaceholder}
+          placeholder={placeholder}
           leftSection={<SearchIcon style={{ marginRight: 8 }} />}
           leftSectionWidth={42}
         />

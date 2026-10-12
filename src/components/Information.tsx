@@ -1,14 +1,16 @@
 import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Popover } from '@mantine/core';
 
 import { InfoIcon } from '@/icons/icons';
 import { IconSize } from '@/types/enums';
 
 interface Props {
-  content: ReactNode | string;
+  content: ReactNode;
 }
 
 export function Information({ content }: Props) {
+  const { t } = useTranslation('information');
   const [opened, setOpened] = useState(false);
 
   if (!content) {
@@ -27,7 +29,7 @@ export function Information({ content }: Props) {
         <ActionIcon
           radius={'xl'}
           size={'xs'}
-          aria-label={'More information'}
+          aria-label={t('more-information')}
           onClick={() => setOpened((open) => !open)}
         >
           <InfoIcon size={IconSize.xs} />

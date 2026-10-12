@@ -64,7 +64,7 @@ export function ActionTriggerModal({
           selectedOption={
             Object.keys(actions).find((key) => actions[key].Identifier === action) || ''
           }
-          searchPlaceholder={'Search the Actions...'}
+          searchPlaceholder={t('search-actions')}
           delimiter={'/'}
         />
       </Stack>

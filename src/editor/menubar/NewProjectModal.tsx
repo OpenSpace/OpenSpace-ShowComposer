@@ -88,7 +88,7 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
     >
       <Text>{t('project-details')}</Text>
       <Text size={'xl'} fw={600} my={'xs'}>
-        Show Settings
+        {t('show-settings')}
       </Text>
       <Stack gap={'xs'}>
         <TextInput
@@ -96,21 +96,21 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           size={'xs'}
           value={projectName}
           onChange={(e) => setProjectName(e.currentTarget.value)}
-          placeholder={'Enter Project Name'}
+          placeholder={t('project-name-placeholder')}
         />
         <Textarea
           label={t('project-description')}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
-          placeholder={'Type your description here.'}
+          placeholder={t('project-description-placeholder')}
         />
         <Toggle
-          label={'Show Pagination'}
+          label={t('show-pagination')}
           value={showPagination}
           setValue={handleShowPagination}
         />
         <Text size={'xl'} fw={600} my={'xs'}>
-          Workspace Settings
+          {t('workspace-settings')}
         </Text>
         <Text size={'sm'} fw={600}>
           {t('connection-settings:openspace-connection')}
@@ -123,14 +123,14 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           size={'xs'}
           value={ip}
           onChange={(e) => setIp(e.currentTarget.value)}
-          placeholder={'Enter IP'}
+          placeholder={t('ip-address-placeholder')}
         />
         <TextInput
           label={t('port')}
           size={'xs'}
           value={port}
           onChange={(e) => setPort(e.currentTarget.value)}
-          placeholder={'Enter Port'}
+          placeholder={t('port-placeholder')}
         />
         <Text size={'sm'} fw={600}>
           {t('default-page-size')}
@@ -146,7 +146,7 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           onChange={(value) =>
             setPageWidth(typeof value === 'number' ? value : parseInt(value))
           }
-          placeholder={'Enter Default Page Width'}
+          placeholder={t('page-width-placeholder')}
         />
         <NumberInput
           label={t('page-height')}
@@ -156,7 +156,7 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           onChange={(value) =>
             setPageHeight(typeof value === 'number' ? value : parseInt(value))
           }
-          placeholder={'Enter Default Page Height'}
+          placeholder={t('page-height-placeholder')}
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>

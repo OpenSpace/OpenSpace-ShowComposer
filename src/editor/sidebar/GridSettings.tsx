@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Group, NumberInput, Stack } from '@mantine/core';
 
 import { useSettingsStore } from '@/store';
 
 export function GridSettings({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('grid-settings');
   const gridSize = useSettingsStore((state) => state.gridSize);
   const setGridSize = useSettingsStore((state) => state.setGridSize);
   const [rows, setRows] = useState(gridSize.rows);
@@ -12,7 +14,7 @@ export function GridSettings({ onClose }: { onClose: () => void }) {
   return (
     <Stack gap={'md'}>
       <NumberInput
-        label={'# of Rows'}
+        label={t('rows')}
         size={'xs'}
         min={1}
         max={10}
@@ -21,7 +23,7 @@ export function GridSettings({ onClose }: { onClose: () => void }) {
         allowDecimal={false}
       />
       <NumberInput
-        label={'# of Columns'}
+        label={t('columns')}
         size={'xs'}
         min={1}
         max={10}
@@ -33,7 +35,7 @@ export function GridSettings({ onClose }: { onClose: () => void }) {
       />
       <Group justify={'space-between'}>
         <Button variant={'default'} onClick={() => onClose()}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button
           variant={'filled'}
@@ -42,7 +44,7 @@ export function GridSettings({ onClose }: { onClose: () => void }) {
             onClose();
           }}
         >
-          Save
+          {t('save')}
         </Button>
       </Group>
     </Stack>

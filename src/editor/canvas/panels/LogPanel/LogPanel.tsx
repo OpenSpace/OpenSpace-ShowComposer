@@ -1,19 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Select, Stack, Table, Text } from '@mantine/core';
 import { LogLevel, type LogMessage } from 'openspace-api-js/types';
 
 import { useSubscribeToErrorLog } from '@/hooks/topicSubscriptions';
-
-const logLevelOptions: { value: LogLevel; label: string }[] = [
-  { value: LogLevel.All, label: 'All Logging' },
-  { value: LogLevel.Trace, label: 'Trace' },
-  { value: LogLevel.Debug, label: 'Debug' },
-  { value: LogLevel.Info, label: 'Info' },
-  { value: LogLevel.Warning, label: 'Warning' },
-  { value: LogLevel.Error, label: 'Error' },
-  { value: LogLevel.Fatal, label: 'Fatal' },
-  { value: LogLevel.NoLogging, label: 'No Logging' }
-];
 
 const logLevelColors: Record<string, string> = {
   Trace: 'gray.5',
@@ -35,8 +25,20 @@ function isLogLevel(value: string): value is LogLevel {
 }
 
 export function LogPanel() {
+  const { t } = useTranslation('log-panel');
   const { errorLog, setLogLevel: updateLogLevel } = useSubscribeToErrorLog();
   const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
+
+  const logLevelOptions: { value: LogLevel; label: string }[] = [
+    { value: LogLevel.All, label: t('all-logging') },
+    { value: LogLevel.Trace, label: t('trace') },
+    { value: LogLevel.Debug, label: t('debug') },
+    { value: LogLevel.Info, label: t('info') },
+    { value: LogLevel.Warning, label: t('warning') },
+    { value: LogLevel.Error, label: t('error') },
+    { value: LogLevel.Fatal, label: t('fatal') },
+    { value: LogLevel.NoLogging, label: t('no-logging') }
+  ];
 
   function handleLogLevelChange(value: string) {
     if (!isLogLevel(value)) {
@@ -56,14 +58,14 @@ export function LogPanel() {
       style={{ zIndex: 9 }}
     >
       <Text px={'md'} fw={500}>
-        Error Logs
+        {t('title')}
       </Text>
 
       <Box px={'md'}>
         <Select
           allowDeselect={false}
           data={logLevelOptions}
-          placeholder={'Select log level'}
+          placeholder={t('select-log-level')}
           value={logLevel}
           disabled={logLevelOptions.length === 0}
           onChange={(value) => value && handleLogLevelChange(value)}
@@ -73,10 +75,10 @@ export function LogPanel() {
       <Table layout={'fixed'} verticalSpacing={2} fz={'sm'}>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th w={100}>Time</Table.Th>
-            <Table.Th w={100}>Level</Table.Th>
-            <Table.Th w={150}>Source</Table.Th>
-            <Table.Th>Message</Table.Th>
+            <Table.Th w={100}>{t('time')}</Table.Th>
+            <Table.Th w={100}>{t('level')}</Table.Th>
+            <Table.Th w={150}>{t('source')}</Table.Th>
+            <Table.Th>{t('message')}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

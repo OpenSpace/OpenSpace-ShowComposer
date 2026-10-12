@@ -40,9 +40,9 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
       opened={isOpen}
       onClose={() => setIsOpen(false)}
       centered
-      title={'Workspace Settings'}
+      title={t('workspace-settings')}
     >
-      <Text>Update your workspace settings here</Text>
+      <Text>{t('update-workspace-settings')}</Text>
       <Stack gap={'xs'}>
         <Text size={'sm'} fw={600}>
           {t('connection-settings:openspace-connection')}
@@ -55,14 +55,14 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
           size={'xs'}
           value={ip}
           onChange={(e) => setIp(e.currentTarget.value)}
-          placeholder={'Enter IP'}
+          placeholder={t('ip-address-placeholder')}
         />
         <TextInput
           label={t('port')}
           size={'xs'}
           value={port}
           onChange={(e) => setPort(e.currentTarget.value)}
-          placeholder={'Enter Port'}
+          placeholder={t('port-placeholder')}
         />
         <Text size={'sm'} fw={600}>
           {t('default-page-size')}
@@ -78,7 +78,7 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
           onChange={(value) =>
             setPageWidth(typeof value === 'number' ? value : parseInt(value))
           }
-          placeholder={'Enter Default Page Width'}
+          placeholder={t('page-width-placeholder')}
         />
         <NumberInput
           label={t('page-height')}
@@ -88,7 +88,7 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
           onChange={(value) =>
             setPageHeight(typeof value === 'number' ? value : parseInt(value))
           }
-          placeholder={'Enter Default Page Height'}
+          placeholder={t('page-height-placeholder')}
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
@@ -96,7 +96,7 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
           {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          Save Settings
+          {t('save-settings')}
         </Button>
       </Group>
     </Modal>

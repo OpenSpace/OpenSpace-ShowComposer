@@ -275,7 +275,7 @@ export function MultiModal({
           <SimpleGrid cols={2}>
             <Select
               allowDeselect={false}
-              placeholder={'Add Existing Component'}
+              placeholder={t('add-existing-component')}
               data={availableOptions.map((component) => ({
                 value: component,
                 label: getComponentById(component)?.gui_name
@@ -286,7 +286,7 @@ export function MultiModal({
             />
             <Select
               allowDeselect={false}
-              placeholder={'Add New Component'}
+              placeholder={t('add-new-component')}
               data={multiOptionData}
               value={null}
               disabled={multiOptionData.length === 0}

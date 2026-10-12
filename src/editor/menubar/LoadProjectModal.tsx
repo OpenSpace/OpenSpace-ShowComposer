@@ -77,10 +77,12 @@ export function LoadProjectModal({
             >
               <Text size={'sm'}>{project.projectName}</Text>
               <Text size={'xs'} c={'dimmed'}>
-                Last Modified: {new Date(project.lastModified).toLocaleString()}
+                {t('last-modified', {
+                  date: new Date(project.lastModified).toLocaleString()
+                })}
               </Text>
               <Text size={'xs'} c={'dimmed'}>
-                Created: {new Date(project.created).toLocaleString()}
+                {t('created', { date: new Date(project.created).toLocaleString() })}
               </Text>
             </Box>
           </UnstyledButton>
@@ -91,7 +93,7 @@ export function LoadProjectModal({
       </Center>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
-          Cancel
+          {t('cancel')}
         </Button>
 
         <Button

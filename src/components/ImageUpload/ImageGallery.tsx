@@ -103,7 +103,7 @@ export function ImageGallery({
             <Card withBorder radius={'md'} padding={0} style={{ overflow: 'hidden' }}>
               <AspectRatio ratio={1}>
                 <Image
-                  alt={'Selected image'}
+                  alt={t('selected-image-alt')}
                   src={selectedImage || initialImage}
                   fit={'cover'}
                 />
@@ -153,7 +153,7 @@ export function ImageGallery({
               style={{ overflow: 'hidden', cursor: 'pointer' }}
             >
               <AspectRatio ratio={1}>
-                <Image alt={'Uploaded image'} src={image} fit={'cover'} />
+                <Image alt={t('uploaded-image-alt')} src={image} fit={'cover'} />
               </AspectRatio>
             </Card>
           ))}

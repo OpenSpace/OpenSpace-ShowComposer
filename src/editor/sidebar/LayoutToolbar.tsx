@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Divider, Group, Popover, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -8,6 +9,7 @@ import { useBoundStore } from '@/store/boundStore';
 import { IconSize } from '@/types/enums';
 
 export function LayoutToolbar() {
+  const { t } = useTranslation('layout-toolbar');
   const gridSize = useSettingsStore((state) => state.gridSize);
 
   const addLayout = useBoundStore((state) => state.addLayout);
@@ -28,7 +30,7 @@ export function LayoutToolbar() {
 
   return (
     <Group gap={'xs'}>
-      <Tooltip label={'Row'}>
+      <Tooltip label={t('row')}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -38,7 +40,7 @@ export function LayoutToolbar() {
         </ActionIcon>
       </Tooltip>
       <Divider orientation={'vertical'} />
-      <Tooltip label={'Column'}>
+      <Tooltip label={t('column')}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -48,7 +50,7 @@ export function LayoutToolbar() {
         </ActionIcon>
       </Tooltip>
       <Divider orientation={'vertical'} />
-      <Tooltip label={'Grid'}>
+      <Tooltip label={t('grid')}>
         <ActionIcon
           variant={'subtle'}
           size={40}
@@ -64,7 +66,7 @@ export function LayoutToolbar() {
         width={320}
       >
         <Popover.Target>
-          <Tooltip label={'Grid Settings'}>
+          <Tooltip label={t('grid-settings')}>
             <ActionIcon variant={'subtle'} size={40} onClick={toggle}>
               <SettingsIcon size={IconSize.md} />
             </ActionIcon>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Group, Stack, TextInput } from '@mantine/core';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@/icons/icons';
@@ -12,29 +13,18 @@ type DateData = {
 
 const dateParts = ['year', 'month', 'day', 'hours', 'minutes', 'seconds'] as const;
 
-const monthAbbreviations = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
 function zeroPad(value: number): string {
   return String(value).padStart(2, '0');
 }
 
-function formatDatePart(part: (typeof dateParts)[number], date: Date): string | number {
+function formatDatePart(
+  part: (typeof dateParts)[number],
+  date: Date,
+  locale: string
+): string | number {
   switch (part) {
     case 'month':
-      return monthAbbreviations[date.getUTCMonth()];
+      return date.toLocaleString(locale, { month: 'short', timeZone: 'UTC' });
     case 'year':
       return date.getUTCFullYear();
     case 'day':
@@ -54,6 +44,9 @@ interface Props {
 }
 
 export function DateTimeStepper({ date, onChange }: Props) {
+  // Using the language from i18n to format the month name
+  const { i18n } = useTranslation('time-date-picker');
+
   if (date === undefined) {
     return null;
   }
@@ -116,7 +109,7 @@ export function DateTimeStepper({ date, onChange }: Props) {
                 fontSize: 14
               }
             }}
-            value={formatDatePart(part, dateObj)}
+            value={formatDatePart(part, dateObj, i18n.language)}
             readOnly
           />
           <ActionIcon

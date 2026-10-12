@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
-import { capitalize } from 'lodash';
 import type { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -13,7 +12,7 @@ import {
   useSaveComponent
 } from '@/editor/sidebar/modals/saveComponent';
 import { type FadeComponent, type Toggle, usePropertyStore } from '@/store';
-import { ComponentBaseColors } from '@/types/components';
+import { ComponentBaseColors, ToggleActions } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<FadeComponent, 'id'> = {
@@ -53,14 +52,20 @@ export function FadeModal({
 
   const { property, intDuration, action } = data;
 
-  const placeholders = property
-    ? {
-        name: `${formatName(
-          property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
-        )} ${capitalize(action)}`,
-        description: `${property.trim()} ${action === 'toggle' ? 'in and out' : action}`
-      }
-    : { name: '', description: '' };
+  function getPlaceholders() {
+    if (!property) {
+      return { name: '', description: '' };
+    }
+    const name = formatName(
+      property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
+    );
+    return {
+      name: t(`placeholder-name-${action}`, { name }),
+      description: t(`placeholder-description-${action}`, { property: property.trim() })
+    };
+  }
+
+  const placeholders = getPlaceholders();
 
   const sortedKeys: Record<string, string> = useMemo(
     () =>
@@ -100,7 +105,7 @@ export function FadeModal({
           selectedOption={
             Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
-          searchPlaceholder={'Search the Scene...'}
+          searchPlaceholder={t('search-scene')}
         />
       </Stack>
       <Group grow align={'flex-end'} wrap={'nowrap'}>
@@ -108,8 +113,11 @@ export function FadeModal({
           <InputLabel>{t('action-type')}</InputLabel>
           <Select
             allowDeselect={false}
-            data={['toggle', 'on', 'off']}
-            placeholder={'Select an option'}
+            data={ToggleActions.map((value) => ({
+              value,
+              label: t(`action-${value}`)
+            }))}
+            placeholder={t('select-option')}
             value={action}
             onChange={(value) => value && handleData({ action: value as Toggle })}
           />
@@ -117,7 +125,7 @@ export function FadeModal({
         <NumberInput
           id={'duration'}
           label={t('fade-duration')}
-          placeholder={'Duration to Fade'}
+          placeholder={t('duration-placeholder')}
           min={0}
           max={20}
           step={0.1}

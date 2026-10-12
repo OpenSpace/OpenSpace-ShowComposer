@@ -55,7 +55,7 @@ export function ImageUpload({ value, onChange }: Props) {
       <Group align={'center'} gap={'sm'} wrap={'nowrap'}>
         <TextInput
           flex={4}
-          placeholder={'Set Image URL'}
+          placeholder={t('set-image-url')}
           value={value}
           onChange={handleURLChange}
         />

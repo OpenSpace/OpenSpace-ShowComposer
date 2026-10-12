@@ -47,7 +47,7 @@ export function SessionPlaybackModal({
   const { file, loop } = data;
 
   const placeholders = file
-    ? { name: `Playback ${file.split('.')[0]}`, description: '' }
+    ? { name: t('placeholder-name', { file: file.split('.')[0] }), description: '' }
     : { name: '', description: '' };
 
   const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
@@ -97,7 +97,7 @@ export function SessionPlaybackModal({
           <Select
             allowDeselect={false}
             data={fileList}
-            placeholder={'Select playback file...'}
+            placeholder={t('select-playback-file')}
             value={file || null}
             disabled={fileList.length === 0}
             onChange={(value) => value && handleData({ file: value })}

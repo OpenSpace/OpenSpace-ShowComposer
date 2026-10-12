@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Tooltip } from '@mantine/core';
 
 import { EditIcon, PresentIcon } from '@/icons/icons';
@@ -10,6 +11,7 @@ function useQuery() {
 }
 
 export function PresentModeToggle() {
+  const { t } = useTranslation('present-mode-toggle');
   const togglePresentMode = useSettingsStore((state) => state.togglePresentMode);
   const setPresentLocked = useSettingsStore((state) => state.setPresentLocked);
   const isPresentMode = useSettingsStore((state) => state.presentMode);
@@ -24,7 +26,7 @@ export function PresentModeToggle() {
     }
   }, [query, isPresentMode, togglePresentMode, setPresentLocked]);
   return isPresentLocked ? null : (
-    <Tooltip label={isPresentMode ? 'Edit Show' : 'Present Show'}>
+    <Tooltip label={isPresentMode ? t('edit-show') : t('present-show')}>
       <ActionIcon
         onClick={togglePresentMode}
         size={28}

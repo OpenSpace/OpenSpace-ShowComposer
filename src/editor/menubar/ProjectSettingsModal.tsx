@@ -54,7 +54,7 @@ export function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
     >
       <Text>{t('project-details')}</Text>
       <Text size={'xl'} fw={600} my={'xs'}>
-        Show Settings
+        {t('show-settings')}
       </Text>
       <Stack gap={'xs'}>
         <TextInput
@@ -62,16 +62,16 @@ export function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
           size={'xs'}
           value={projectName}
           onChange={(e) => setProjectName(e.currentTarget.value)}
-          placeholder={'Enter Project Name'}
+          placeholder={t('project-name-placeholder')}
         />
         <Textarea
           label={t('project-description')}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
-          placeholder={'Type your description here.'}
+          placeholder={t('project-description-placeholder')}
         />
         <Toggle
-          label={'Show Pagination'}
+          label={t('show-pagination')}
           value={showPagination}
           setValue={handleShowPagination}
         />

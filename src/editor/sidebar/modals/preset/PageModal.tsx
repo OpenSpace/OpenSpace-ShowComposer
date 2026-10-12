@@ -40,7 +40,9 @@ export function PageModal({
 
   const placeholders = pageData
     ? {
-        name: `Go to ${pageData.name ? pageData.name : 'Page ' + page}`,
+        name: t('placeholder-name', {
+          page: pageData.name ? pageData.name : t('default-page-name', { number: page })
+        }),
         description: ''
       }
     : { name: '', description: '' };
@@ -62,9 +64,9 @@ export function PageModal({
           allowDeselect={false}
           data={pages.map((v, i) => ({
             value: (i + 1).toString(),
-            label: v.name ? v.name : 'Page ' + (i + 1).toString()
+            label: v.name ? v.name : t('default-page-name', { number: i + 1 })
           }))}
-          placeholder={'Select an option'}
+          placeholder={t('select-option')}
           value={page.toString()}
           disabled={pages.length === 0}
           onChange={(value) => value && handleData({ page: parseInt(value) })}

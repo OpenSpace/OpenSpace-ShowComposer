@@ -36,7 +36,8 @@ interface Props {
 }
 
 export function ImportShowModal({ isOpen, onClose, store }: Props) {
-  const { t } = useTranslation('main');
+  const { t } = useTranslation('import-show-modal');
+  const { t: tMain } = useTranslation('main');
   const [pages, setPages] = useState<SelectedPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
 
@@ -252,8 +253,8 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
   };
 
   return (
-    <Modal opened={isOpen} onClose={onClose} centered size={'xl'} title={'Import Show'}>
-      <Text>Select Pages you want to add to current Show.</Text>
+    <Modal opened={isOpen} onClose={onClose} centered size={'xl'} title={t('title')}>
+      <Text>{t('description')}</Text>
       <Table>
         <Table.Thead>
           <Table.Tr>
@@ -263,8 +264,8 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
                 setValue={handleSelectAll}
               />
             </Table.Th>
-            <Table.Th>Page</Table.Th>
-            <Table.Th>Components</Table.Th>
+            <Table.Th>{t('page')}</Table.Th>
+            <Table.Th>{t('components')}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -301,7 +302,7 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
                           {component && component.gui_name?.length > 0
                             ? component.gui_name
                             : nameKey
-                              ? t(nameKey)
+                              ? tMain(nameKey)
                               : ''}
                           {index <
                           page.components.filter((v) => !store.boundStore.layouts[v])
@@ -325,16 +326,16 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
             await closeWithConfirmation(false);
           }}
         >
-          Cancel
+          {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleImportToNewShow}>
-          Import Pages To New Show
+          {t('import-to-new-show')}
         </Button>
         <Button variant={'filled'} onClick={handleImportToCurrentShow}>
-          Import Pages To Current Show
+          {t('import-to-current-show')}
         </Button>
         <Button variant={'filled'} onClick={handleImport}>
-          Import Full Show
+          {t('import-full-show')}
         </Button>
       </Group>
     </Modal>

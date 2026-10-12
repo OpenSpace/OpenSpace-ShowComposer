@@ -58,10 +58,13 @@ export function SetTimeModal({
 
   const placeholders = timeLabel
     ? {
-        name: `Go to ${timeLabel}`,
+        name: t('placeholder-name', { time: timeLabel }),
         description: interpolate
-          ? `Interpolates Time to ${timeLabel} over ${intDuration} seconds.`
-          : `Sets Time to ${timeLabel}`
+          ? t('placeholder-description-interpolate', {
+              time: timeLabel,
+              duration: intDuration
+            })
+          : t('placeholder-description-set', { time: timeLabel })
       }
     : { name: '', description: '' };
 
@@ -102,7 +105,7 @@ export function SetTimeModal({
           flex={1}
           id={'duration'}
           label={t('fade-duration')}
-          placeholder={'Duration to Fade'}
+          placeholder={t('duration-placeholder')}
           value={intDuration}
           onChange={(value) =>
             handleData({
@@ -111,12 +114,12 @@ export function SetTimeModal({
           }
         />
         <ToggleComponent
-          label={'Interpolate'}
+          label={t('interpolate')}
           value={interpolate}
           setValue={(v) => handleData({ interpolate: v })}
         />
         <ToggleComponent
-          label={'Fade Scene'}
+          label={t('fade-scene')}
           disabled={!interpolate}
           value={fadeScene}
           setValue={(v) => handleData({ fadeScene: v })}

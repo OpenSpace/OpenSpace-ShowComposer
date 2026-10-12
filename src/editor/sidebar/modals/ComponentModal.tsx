@@ -49,7 +49,7 @@ export function ComponentModal({
   };
 
   const nameKey = resolvedType ? componentsData[resolvedType]?.nameKey : undefined;
-  const componentName = nameKey ? t(`main:${nameKey}`) : 'Unknown';
+  const componentName = nameKey ? t(`main:${nameKey}`) : t('unknown');
 
   return (
     <Modal
@@ -61,8 +61,8 @@ export function ComponentModal({
         <Group gap={'xs'}>
           {icon}
           {component
-            ? `Edit ${componentName} Component`
-            : `Create ${componentName} Component`}
+            ? t('edit-component-title', { name: componentName })
+            : t('create-component-title', { name: componentName })}
         </Group>
       }
     >
