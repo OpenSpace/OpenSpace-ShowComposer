@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
+  Checkbox,
   Group,
   InputLabel,
   Modal,
@@ -11,7 +12,6 @@ import {
   TextInput
 } from '@mantine/core';
 
-import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
@@ -95,7 +95,10 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
         )}
         <Group gap={'xs'}>
           <InputLabel htmlFor={'persistent'}>{t('persist-across-pages')}</InputLabel>
-          <Toggle value={persistent} setValue={setPersistent} />
+          <Checkbox
+            checked={persistent}
+            onChange={(event) => setPersistent(event.currentTarget.checked)}
+          />
         </Group>
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>

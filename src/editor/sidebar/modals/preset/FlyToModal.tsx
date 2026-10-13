@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, InputLabel, NumberInput, SimpleGrid, Stack } from '@mantine/core';
+import {
+  Button,
+  Checkbox,
+  Group,
+  InputLabel,
+  NumberInput,
+  SimpleGrid,
+  Stack
+} from '@mantine/core';
 import type { AnyProperty } from 'openspace-api-js/types';
 import { useShallow } from 'zustand/react/shallow';
 
-import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { VirtualizedCombobox } from '@/components/VirtualizedCombobox';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
@@ -180,10 +187,10 @@ export function FlyToModal({
         <Button variant={'filled'} size={'xs'} onClick={setFromOpenspace}>
           {t('set-target-from-openspace')}
         </Button>
-        <ToggleComponent
-          value={geo}
+        <Checkbox
+          checked={geo}
           disabled={!hasGeoOption}
-          setValue={(value) => handleData({ geo: value })}
+          onChange={(event) => handleData({ geo: event.currentTarget.checked })}
           label={t('set-coordinates-altitude')}
         />
       </Group>

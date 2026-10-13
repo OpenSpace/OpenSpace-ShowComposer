@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, Modal, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import {
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  Textarea,
+  TextInput
+} from '@mantine/core';
 
-import { Toggle } from '@/components/Toggle';
 import { useSettingsStore } from '@/store';
 
 interface Props {
@@ -70,10 +78,10 @@ export function ProjectSettingsModal({ isOpen, setIsOpen }: Props) {
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
           placeholder={t('project-description-placeholder')}
         />
-        <Toggle
+        <Checkbox
           label={t('show-pagination')}
-          value={showPagination}
-          setValue={handleShowPagination}
+          checked={showPagination}
+          onChange={(event) => handleShowPagination(event.currentTarget.checked)}
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>

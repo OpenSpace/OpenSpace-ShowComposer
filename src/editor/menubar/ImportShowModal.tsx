@@ -4,7 +4,6 @@ import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { confirmStoreImport } from '@/api/showbuilder';
-import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { componentsData } from '@/editor/componentsData';
 import { type Position, useSettingsStore } from '@/store';
 import { type BoundStoreState, useBoundStore } from '@/store/boundStore';
@@ -259,9 +258,9 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <ToggleComponent
-                value={selectedPages.length === pages.length}
-                setValue={handleSelectAll}
+              <Checkbox
+                checked={selectedPages.length === pages.length}
+                onChange={(event) => handleSelectAll(event.currentTarget.checked)}
               />
             </Table.Th>
             <Table.Th>{t('page')}</Table.Th>

@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, InputLabel, NumberInput, Select, Stack } from '@mantine/core';
+import {
+  Button,
+  Checkbox,
+  Group,
+  InputLabel,
+  NumberInput,
+  Select,
+  Stack
+} from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { DisplayLabel } from '@/components/DisplayLabel';
-import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
@@ -113,10 +120,10 @@ export function SetNavModal({
           </InputLabel>
           <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
         </Stack>
-        <ToggleComponent
+        <Checkbox
           label={t('include-time')}
-          value={setTime}
-          setValue={(v) => handleData({ setTime: v })}
+          checked={setTime}
+          onChange={(event) => handleData({ setTime: event.currentTarget.checked })}
         />
       </Group>
       <Group align={'flex-end'} wrap={'nowrap'}>

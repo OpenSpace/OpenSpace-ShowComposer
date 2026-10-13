@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputLabel, Select, Stack } from '@mantine/core';
+import { Checkbox, InputLabel, Select, Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { PlaybackControls } from '@/components/PlaybackControls';
-import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
@@ -87,10 +86,10 @@ export function SessionPlaybackModal({
     <Stack gap={'md'}>
       <Stack gap={'xs'}>
         <InputLabel>{t('play-session')}</InputLabel>
-        <ToggleComponent
+        <Checkbox
           label={t('loop-playback')}
-          value={loop}
-          setValue={(v) => handleData({ loop: v })}
+          checked={loop}
+          onChange={(event) => handleData({ loop: event.currentTarget.checked })}
         />
         <Stack gap={'xs'}>
           <InputLabel>{t('playback-file')}</InputLabel>

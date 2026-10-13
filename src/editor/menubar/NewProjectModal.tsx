@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
+  Checkbox,
   Group,
   Modal,
   NumberInput,
@@ -11,7 +12,6 @@ import {
   TextInput
 } from '@mantine/core';
 
-import { Toggle } from '@/components/Toggle';
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
@@ -104,10 +104,10 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           onChange={(e) => setProjectDescription(e.currentTarget.value)}
           placeholder={t('project-description-placeholder')}
         />
-        <Toggle
+        <Checkbox
           label={t('show-pagination')}
-          value={showPagination}
-          setValue={handleShowPagination}
+          checked={showPagination}
+          onChange={(event) => handleShowPagination(event.currentTarget.checked)}
         />
         <Text size={'xl'} fw={600} my={'xs'}>
           {t('workspace-settings')}

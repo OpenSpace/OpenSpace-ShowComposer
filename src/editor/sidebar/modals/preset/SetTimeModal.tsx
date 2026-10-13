@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, NumberInput, Stack } from '@mantine/core';
+import { Button, Checkbox, Group, NumberInput, Stack } from '@mantine/core';
 
 import { DateTimeStepper } from '@/components/DateTimeStepper';
-import { Toggle as ToggleComponent } from '@/components/Toggle';
 import { WidgetSettings } from '@/components/WidgetSettings';
 import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
 import {
@@ -113,16 +112,16 @@ export function SetTimeModal({
             })
           }
         />
-        <ToggleComponent
+        <Checkbox
           label={t('interpolate')}
-          value={interpolate}
-          setValue={(v) => handleData({ interpolate: v })}
+          checked={interpolate}
+          onChange={(event) => handleData({ interpolate: event.currentTarget.checked })}
         />
-        <ToggleComponent
+        <Checkbox
           label={t('fade-scene')}
           disabled={!interpolate}
-          value={fadeScene}
-          setValue={(v) => handleData({ fadeScene: v })}
+          checked={fadeScene}
+          onChange={(event) => handleData({ fadeScene: event.currentTarget.checked })}
         />
       </Group>
       <WidgetSettings
