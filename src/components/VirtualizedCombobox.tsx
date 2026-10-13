@@ -6,6 +6,7 @@ import {
   Group,
   Input,
   InputBase,
+  ScrollArea,
   Text,
   useVirtualizedCombobox
 } from '@mantine/core';
@@ -146,15 +147,8 @@ export function VirtualizedCombobox({
           rightSection={<ChevronsUpDownIcon />}
           rightSectionPointerEvents={'none'}
           onClick={() => combobox.toggleDropdown()}
-          style={{ width }}
-          styles={{
-            input: {
-              display: 'flex',
-              alignItems: 'center',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap'
-            }
-          }}
+          w={width}
+          styles={{ input: { overflow: 'hidden' } }}
         >
           {selectedOption ? (
             <ColoredPath value={selectedOption} delimiter={delimiter} />
@@ -175,7 +169,7 @@ export function VirtualizedCombobox({
           {items.length === 0 ? (
             <Combobox.Empty>{t('no-item-found')}</Combobox.Empty>
           ) : (
-            <Box ref={scrollRef} mah={300} style={{ overflowY: 'auto' }}>
+            <ScrollArea.Autosize mah={300} viewportRef={scrollRef}>
               <Box pos={'relative'} h={virtualizer.getTotalSize()}>
                 {virtualizer.getVirtualItems().map((virtualRow) => {
                   const item = items[virtualRow.index];
@@ -188,14 +182,12 @@ export function VirtualizedCombobox({
                       // (data-combobox-selected); `active` marks the chosen value for aria.
                       selected={virtualRow.index === activeIndex}
                       active={selectedOption === item}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: virtualRow.size,
-                        transform: `translateY(${virtualRow.start}px)`
-                      }}
+                      pos={'absolute'}
+                      top={0}
+                      left={0}
+                      w={'100%'}
+                      h={virtualRow.size}
+                      style={{ transform: `translateY(${virtualRow.start}px)` }}
                     >
                       <Group gap={'xs'} wrap={'nowrap'} h={'100%'}>
                         <CheckIcon
@@ -209,7 +201,7 @@ export function VirtualizedCombobox({
                   );
                 })}
               </Box>
-            </Box>
+            </ScrollArea.Autosize>
           )}
         </Combobox.Options>
       </Combobox.Dropdown>
