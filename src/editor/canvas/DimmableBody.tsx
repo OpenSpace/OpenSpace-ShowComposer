@@ -12,25 +12,19 @@ interface Props extends PropsWithChildren {
 export function DimmableBody({ children, inactive }: Props) {
   return (
     <Box
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        zIndex: zIndex.body,
-        opacity: inactive ? 0.25 : 1,
-        transition: 'opacity 300ms'
-      }}
+      pos={'relative'}
+      w={'100%'}
+      h={'100%'}
+      opacity={inactive ? 0.25 : 1}
+      style={{ zIndex: zIndex.body, transition: 'opacity 300ms' }}
     >
       {children}
       {inactive && (
         <Box
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: zIndex.disabledOverlay,
-            borderRadius: 'var(--mantine-radius-md)',
-            cursor: 'not-allowed'
-          }}
+          pos={'absolute'}
+          inset={0}
+          bdrs={'md'}
+          style={{ zIndex: zIndex.disabledOverlay, cursor: 'not-allowed' }}
         />
       )}
     </Box>
