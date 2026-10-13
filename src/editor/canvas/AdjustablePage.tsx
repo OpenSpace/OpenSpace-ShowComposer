@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
-import { ActionIcon, Box, Tooltip } from '@mantine/core';
+import type { Position } from 'react-rnd';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Draggable } from '@/editor/canvas/Draggable';
@@ -41,6 +42,14 @@ export function AdjustablePage() {
     });
   };
 
+  function handleResize(ref: HTMLElement, position: Position) {
+    updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
+    updatePage(page.id, {
+      x: position.x,
+      y: position.y
+    });
+  }
+
   const borderColor = locked
     ? 'color-mix(in srgb, var(--mantine-color-gray-2) 30%, transparent)'
     : 'var(--mantine-color-gray-2)';
@@ -65,20 +74,10 @@ export function AdjustablePage() {
         e.stopPropagation();
       }}
       onDragStop={handleDragStop}
-      onResize={(_e, _direction, ref, _delta, position) => {
-        updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
-        updatePage(page.id, {
-          x: position.x,
-          y: position.y
-        });
-      }}
-      onResizeStop={(_e, _direction, ref, _delta, position) => {
-        updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
-        updatePage(page.id, {
-          x: position.x,
-          y: position.y
-        });
-      }}
+      onResize={(_e, _direction, ref, _delta, position) => handleResize(ref, position)}
+      onResizeStop={(_e, _direction, ref, _delta, position) =>
+        handleResize(ref, position)
+      }
       style={{
         borderRadius: 0,
         zIndex: zIndex.page,
@@ -93,49 +92,38 @@ export function AdjustablePage() {
       }}
     >
       {!isPresentMode && (
-        <Box style={{ position: 'absolute', top: 0, height: 30, width: '100%' }}>
-          {!locked && (
-            <Box style={{ position: 'absolute', right: 56, top: 12 }}>
+        <Group
+          pos={'absolute'}
+          top={0}
+          left={0}
+          w={'100%'}
+          p={'sm'}
+          justify={'space-between'}
+          wrap={'nowrap'}
+        >
+          <DisplayLabel fz={'xs'} c={'gray.2'}>
+            {page.name || t('default-page-name', { number: currentPageIndex + 1 })}
+          </DisplayLabel>
+          <Group
+            gap={'xs'}
+            wrap={'nowrap'}
+            style={{ pointerEvents: 'auto', zIndex: zIndex.pageControl }}
+          >
+            {!locked && (
               <DisplayLabel
-                style={{
-                  fontSize: 'var(--mantine-font-size-xs)',
-                  color: 'var(--mantine-color-gray-2)',
-                  transition: 'opacity 500ms',
-                  opacity: isVisible ? 1 : 0
-                }}
+                fz={'xs'}
+                c={'gray.2'}
+                opacity={isVisible ? 1 : 0}
+                style={{ transition: 'opacity 500ms' }}
               >
                 {pageWidth} x {pageHeight}
               </DisplayLabel>
-            </Box>
-          )}
-          <Box style={{ padding: 12 }}>
-            <DisplayLabel
-              style={{
-                fontSize: 'var(--mantine-font-size-xs)',
-                color: 'var(--mantine-color-gray-2)'
-              }}
-            >
-              {page.name
-                ? page.name
-                : t('default-page-name', { number: currentPageIndex + 1 })}
-            </DisplayLabel>
-          </Box>
-          <Box
-            style={{
-              pointerEvents: 'auto',
-              position: 'absolute',
-              right: 12,
-              top: 12,
-              zIndex: zIndex.pageControl
-            }}
-          >
+            )}
             <Tooltip label={locked ? t('unlock-page') : t('lock-page')}>
               <ActionIcon
                 onClick={() => setLocked(!locked)}
-                style={{
-                  transition: 'opacity 100ms',
-                  opacity: locked ? 0.6 : 1
-                }}
+                opacity={locked ? 0.6 : 1}
+                style={{ transition: 'opacity 100ms' }}
               >
                 {locked ? (
                   <LockIcon size={IconSize.sm} />
@@ -144,8 +132,8 @@ export function AdjustablePage() {
                 )}
               </ActionIcon>
             </Tooltip>
-          </Box>
-        </Box>
+          </Group>
+        </Group>
       )}
     </Draggable>
   );

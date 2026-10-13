@@ -1,52 +1,42 @@
-import type { CSSProperties, ReactNode } from 'react';
-import { Box } from '@mantine/core';
+import type { ReactNode } from 'react';
+import { Flex, type FlexProps } from '@mantine/core';
 
 type DisplayLabelSize = 'sm' | 'md';
 
-const sizeStyles: Record<DisplayLabelSize, CSSProperties> = {
-  sm: {
-    fontSize: 'var(--mantine-font-size-xs)',
-    padding: '4px var(--mantine-spacing-xs)'
-  },
-  md: {
-    fontSize: 'var(--mantine-font-size-sm)',
-    padding: '8px var(--mantine-spacing-md)'
-  }
+const sizeProps: Record<DisplayLabelSize, FlexProps> = {
+  sm: { fz: 'xs', py: '4px', px: 'sm' },
+  md: { fz: 'sm', py: '8px', px: 'md' }
 };
 
-interface Props {
+interface Props extends FlexProps {
   children: ReactNode;
   showBorder?: boolean;
   size?: DisplayLabelSize;
-  style?: CSSProperties;
 }
 
 export function DisplayLabel({
   children,
   showBorder = false,
   size = 'md',
-  style
+  ...props
 }: Props) {
   return (
-    <Box
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'var(--mantine-spacing-xs)',
-        whiteSpace: 'nowrap',
-        borderRadius: 'var(--mantine-radius-md)',
-        backgroundColor: 'var(--mantine-color-body)',
-        color: 'var(--mantine-color-white)',
-        fontWeight: 500,
-        maxWidth: '100%',
-        maxHeight: '100%',
-        border: showBorder ? '1px solid var(--mantine-color-default-border)' : undefined,
-        ...sizeStyles[size],
-        ...style
-      }}
+    <Flex
+      display={'inline-flex'}
+      align={'center'}
+      justify={'center'}
+      gap={'xs'}
+      bdrs={'md'}
+      bg={'var(--mantine-color-body)'}
+      c={'white'}
+      fw={500}
+      maw={'100%'}
+      mah={'100%'}
+      bd={showBorder ? '1px solid var(--mantine-color-default-border)' : undefined}
+      {...sizeProps[size]}
+      {...props}
     >
       {children}
-    </Box>
+    </Flex>
   );
 }
