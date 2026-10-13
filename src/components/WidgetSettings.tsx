@@ -69,7 +69,7 @@ export function WidgetSettings({ data, handleData, placeholder }: Props) {
         id={'description'}
         label={t('gui-description')}
         value={data.gui_description ?? ''}
-        onChange={(e) => handleData({ gui_description: e.currentTarget.value })}
+        onChange={(event) => handleData({ gui_description: event.currentTarget.value })}
         placeholder={placeholder.description || t('description-placeholder')}
       />
     </>
