@@ -57,7 +57,7 @@ export function SetNavModal({
   const componentTime = data.time || time;
   const { intDuration, mode, setTime } = data;
 
-  const placeholders = navigationState?.Anchor
+  const placeholder = navigationState?.Anchor
     ? {
         name: t(`placeholder-name-${mode}`, { anchor: navigationState.Anchor }),
         description: ''
@@ -92,7 +92,7 @@ export function SetNavModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -161,11 +161,7 @@ export function SetNavModal({
           />
         </Stack>
       </Group>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

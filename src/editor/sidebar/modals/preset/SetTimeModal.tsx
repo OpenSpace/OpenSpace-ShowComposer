@@ -55,7 +55,7 @@ export function SetTimeModal({
     timeLabel = time;
   }
 
-  const placeholders = timeLabel
+  const placeholder = timeLabel
     ? {
         name: t('placeholder-name', { time: timeLabel }),
         description: interpolate
@@ -72,7 +72,7 @@ export function SetTimeModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -124,11 +124,7 @@ export function SetTimeModal({
           onChange={(event) => handleData({ fadeScene: event.currentTarget.checked })}
         />
       </Group>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

@@ -46,7 +46,7 @@ export function NumberModal({
   const { property, min, max, step, exponent } = data;
 
   const boundProperty = properties[property];
-  const placeholders = boundProperty
+  const placeholder = boundProperty
     ? {
         name: formatName(boundProperty.uri),
         description: boundProperty.metaData?.description ?? ''
@@ -94,7 +94,7 @@ export function NumberModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -151,11 +151,7 @@ export function NumberModal({
           }
         />
       </SimpleGrid>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

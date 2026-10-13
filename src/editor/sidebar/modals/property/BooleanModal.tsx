@@ -43,7 +43,7 @@ export function BoolModal({
   const { property, action } = data;
   const boundProperty = properties[property];
 
-  const placeholders = boundProperty
+  const placeholder = boundProperty
     ? {
         name: t('placeholder-name', {
           name: formatName(boundProperty.uri),
@@ -74,7 +74,7 @@ export function BoolModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -104,7 +104,7 @@ export function BoolModal({
           onChange={(value) => value && handleData({ action: value as Toggle })}
         />
       </Stack>
-      <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

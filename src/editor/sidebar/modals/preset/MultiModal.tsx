@@ -63,7 +63,7 @@ export function MultiModal({
     () => component ?? { ...DEFAULTS, components: [], id: componentId ?? '' }
   );
   const saveComponent = useSaveComponent();
-  const placeholders = { name: '', description: '' };
+  const placeholder = { name: '', description: '' };
   const [items, setItems] = useState<MultiType[]>(() =>
     data.components
       ? data.components.map((v) => ({
@@ -259,7 +259,7 @@ export function MultiModal({
           removeComponent(id);
         }
       });
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -413,11 +413,7 @@ export function MultiModal({
       </Tabs.Panel>
       <Tabs.Panel value={'visual'}>
         <Stack gap={'md'}>
-          <WidgetSettings
-            data={data}
-            handleData={handleData}
-            placeholders={placeholders}
-          />
+          <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
         </Stack>
       </Tabs.Panel>
       </Tabs>

@@ -52,7 +52,7 @@ export function FadeModal({
 
   const { property, intDuration, action } = data;
 
-  function getPlaceholders() {
+  function getPlaceholder() {
     if (!property) {
       return { name: '', description: '' };
     }
@@ -65,7 +65,7 @@ export function FadeModal({
     };
   }
 
-  const placeholders = getPlaceholders();
+  const placeholder = getPlaceholder();
 
   const sortedKeys: Record<string, string> = useMemo(
     () =>
@@ -91,7 +91,7 @@ export function FadeModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -137,11 +137,7 @@ export function FadeModal({
           }
         />
       </Group>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

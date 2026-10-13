@@ -41,7 +41,7 @@ export function ActionTriggerModal({
     ? Object.values(actions).find((a) => a.Identifier === action)
     : undefined;
 
-  const placeholders = actionEntry
+  const placeholder = actionEntry
     ? { name: actionEntry.Name, description: actionEntry.Documentation }
     : { name: '', description: '' };
 
@@ -50,7 +50,7 @@ export function ActionTriggerModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -68,11 +68,7 @@ export function ActionTriggerModal({
           delimiter={'/'}
         />
       </Stack>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

@@ -45,7 +45,7 @@ export function SessionPlaybackModal({
 
   const { file, loop } = data;
 
-  const placeholders = file
+  const placeholder = file
     ? { name: t('placeholder-name', { file: file.split('.')[0] }), description: '' }
     : { name: '', description: '' };
 
@@ -78,7 +78,7 @@ export function SessionPlaybackModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -109,11 +109,7 @@ export function SessionPlaybackModal({
           />
         </Stack>
       </Stack>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

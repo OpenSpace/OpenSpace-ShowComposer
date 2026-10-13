@@ -5,7 +5,7 @@ import { ColorPicker } from '@/components/ColorPicker';
 import { Image } from '@/components/Image';
 import { ImageUpload } from '@/components/ImageUpload/ImageUpload';
 
-export interface Placeholders {
+export interface Placeholder {
   name: string;
   description: string;
 }
@@ -20,10 +20,10 @@ type WidgetSettingsData = {
 interface Props {
   data: WidgetSettingsData;
   handleData: (patch: WidgetSettingsData) => void;
-  placeholders: Placeholders;
+  placeholder: Placeholder;
 }
 
-export function WidgetSettings({ data, handleData, placeholders }: Props) {
+export function WidgetSettings({ data, handleData, placeholder }: Props) {
   const { t } = useTranslation('widget-settings');
   const backgroundImage = data.backgroundImage ?? '';
 
@@ -32,7 +32,7 @@ export function WidgetSettings({ data, handleData, placeholders }: Props) {
       <TextInput
         id={'guiname'}
         label={t('component-name')}
-        placeholder={placeholders.name || t('name-placeholder')}
+        placeholder={placeholder.name || t('name-placeholder')}
         value={data.gui_name ?? ''}
         onChange={(event) => handleData({ gui_name: event.currentTarget.value })}
       />
@@ -70,7 +70,7 @@ export function WidgetSettings({ data, handleData, placeholders }: Props) {
         label={t('gui-description')}
         value={data.gui_description ?? ''}
         onChange={(e) => handleData({ gui_description: e.currentTarget.value })}
-        placeholder={placeholders.description || t('description-placeholder')}
+        placeholder={placeholder.description || t('description-placeholder')}
       />
     </>
   );

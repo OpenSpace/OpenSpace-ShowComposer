@@ -35,14 +35,14 @@ export function ScriptModal({
   const saveComponent = useSaveComponent();
 
   const { script } = data;
-  const placeholders = { name: '', description: '' };
+  const placeholder = { name: '', description: '' };
 
   function handleData(patch: Partial<ScriptComponent>) {
     setData((prev) => ({ ...prev, ...patch }));
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -66,7 +66,7 @@ export function ScriptModal({
           />
         </Box>
       </Stack>
-      <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

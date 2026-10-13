@@ -41,7 +41,7 @@ export function TriggerModal({
   const { property } = data;
   const boundProperty = properties[property];
 
-  const placeholders = boundProperty
+  const placeholder = boundProperty
     ? {
         name: formatName(boundProperty.uri),
         description: boundProperty.metaData?.description ?? ''
@@ -69,7 +69,7 @@ export function TriggerModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -86,11 +86,7 @@ export function TriggerModal({
           searchPlaceholder={t('search-scene')}
         />
       </Stack>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

@@ -1,4 +1,4 @@
-import type { Placeholders } from '@/components/WidgetSettings';
+import type { Placeholder } from '@/components/WidgetSettings';
 import { useBoundStore } from '@/store/boundStore';
 import type { Component, ComponentFor, ComponentType } from '@/types/components';
 
@@ -17,16 +17,16 @@ export function useSaveComponent() {
 
   return function saveComponent<K extends ComponentType>(
     data: ComponentFor[K],
-    placeholders?: Placeholders
+    placeholder?: Placeholder
   ) {
     if (!data.id) {
       return;
     }
-    const final: ComponentFor[K] = placeholders
+    const final: ComponentFor[K] = placeholder
       ? {
           ...data,
-          gui_name: data.gui_name || placeholders.name,
-          gui_description: data.gui_description || placeholders.description
+          gui_name: data.gui_name || placeholder.name,
+          gui_description: data.gui_description || placeholder.description
         }
       : data;
     // Update the component if it already exists, else add a new one

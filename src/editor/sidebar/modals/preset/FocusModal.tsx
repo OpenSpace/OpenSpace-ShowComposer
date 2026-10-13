@@ -42,7 +42,7 @@ export function FocusModal({
   const { property } = data;
   const anchorMeta = properties[NavigationAnchorKey]?.metaData;
 
-  const placeholders = property
+  const placeholder = property
     ? {
         name: t('placeholder-name', { property }),
         description: t('placeholder-description', {
@@ -73,7 +73,7 @@ export function FocusModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -90,7 +90,7 @@ export function FocusModal({
           searchPlaceholder={t('search-scene')}
         />
       </Stack>
-      <WidgetSettings data={data} handleData={handleData} placeholders={placeholders} />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

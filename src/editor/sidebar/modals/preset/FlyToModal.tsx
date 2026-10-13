@@ -79,7 +79,7 @@ export function FlyToModal({
   const intDuration = data.intDuration ?? 4;
   const target = data.target ?? '';
 
-  const placeholders = target
+  const placeholder = target
     ? {
         name: t('placeholder-name', { target: formatName(target) }),
         description: t('placeholder-description', { target: formatName(target) })
@@ -154,7 +154,7 @@ export function FlyToModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -225,11 +225,7 @@ export function FlyToModal({
           />
         </SimpleGrid>
       )}
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );

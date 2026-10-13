@@ -38,7 +38,7 @@ export function PageModal({
   const { page } = data;
   const pageData = pages[page - 1];
 
-  const placeholders = pageData
+  const placeholder = pageData
     ? {
         name: t('placeholder-name', {
           page: pageData.name ? pageData.name : t('default-page-name', { number: page })
@@ -52,7 +52,7 @@ export function PageModal({
   }
 
   function save() {
-    saveComponent(data, placeholders);
+    saveComponent(data, placeholder);
     onClose();
   }
 
@@ -72,11 +72,7 @@ export function PageModal({
           onChange={(value) => value && handleData({ page: parseInt(value) })}
         />
       </Stack>
-      <WidgetSettings
-        data={data}
-        handleData={handleData}
-        placeholders={placeholders}
-      />
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
       <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
     </Stack>
   );
