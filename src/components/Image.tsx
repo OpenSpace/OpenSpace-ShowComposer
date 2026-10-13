@@ -24,7 +24,7 @@ export function Image({ src, alt, className, fit, radius, ...props }: Props) {
     setImageError(false);
   }, [src]);
 
-  if (imageError) {
+  if (imageError || !src) {
     return (
       <Center
         className={className}
