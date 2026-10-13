@@ -69,8 +69,9 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       !StatusPosition ||
       !RecordPosition ||
       !LogPosition
-    )
+    ) {
       createStaticPanels();
+    }
   }, [components]);
 
   function minimize(position: Position | null) {
@@ -78,10 +79,6 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
       minimized: !position?.minimized
     });
   }
-
-  const handleCopyComponent = (id: string) => {
-    copyComponent(id);
-  };
 
   function handleDeleteComponent(id: string) {
     const componentToDelete = getComponentById(id);
@@ -130,7 +127,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
                       layoutId={layoutId}
                       onEdit={() => onEditComponent(childId)}
                       onDelete={() => handleDeleteComponent(childId)}
-                      onCopy={() => handleCopyComponent(childId)}
+                      onCopy={() => copyComponent(childId)}
                     >
                       {renderComponentWidget(component)}
                     </DraggableComponent>
@@ -142,17 +139,20 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
 
           {Object.keys(components).map((componentId) => {
             const component = components[componentId];
-            // Skip if component is in a layout
-            if (
-              !component ||
-              Object.values(layouts).some((layout) =>
-                layout.children.includes(componentId)
-              ) ||
-              (component.parentPage && component.parentPage != currentPage)
-            ) {
+            if (!component) {
               return null;
             }
-            //skip it it belongs to a page that is not current page
+            // Components inside a layout are rendered by the layout
+            const isInLayout = Object.values(layouts).some((layout) =>
+              layout.children.includes(componentId)
+            );
+            // No parentPage means the component is shown on every page
+            const isOnOtherPage =
+              !!component.parentPage && component.parentPage !== currentPage;
+
+            if (isInLayout || isOnOtherPage) {
+              return null;
+            }
 
             return (
               <DraggableComponent
@@ -160,7 +160,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
                 component={component}
                 onEdit={() => onEditComponent(componentId)}
                 onDelete={() => handleDeleteComponent(componentId)}
-                onCopy={() => handleCopyComponent(componentId)}
+                onCopy={() => copyComponent(componentId)}
               >
                 {renderComponentWidget(component)}
               </DraggableComponent>
