@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { ActionTriggerWidget } from '@/editor/canvas/widgets/preset/ActionTriggerWidget';
 import { FadeWidget } from '@/editor/canvas/widgets/preset/FadeWidget';
 import { FlyToWidget } from '@/editor/canvas/widgets/preset/FlyToWidget';
@@ -61,10 +63,10 @@ type ComponentDescriptor<K extends ComponentType> = {
   type: K;
   nameKey: MainKey; // i18next key in the `main` namespace
   group: 'preset' | 'property' | 'static';
-  renderIcon: (size?: IconSize) => JSX.Element;
+  renderIcon: (size?: IconSize) => ReactNode;
   isMultiOption: boolean;
-  renderWidget: (c: ComponentFor[K]) => JSX.Element;
-  renderModal?: (props: ComponentModalChildProps<K>) => JSX.Element;
+  renderWidget: (c: ComponentFor[K]) => ReactNode;
+  renderModal?: (props: ComponentModalChildProps<K>) => ReactNode;
 };
 
 export const componentsData: { [K in ComponentType]?: ComponentDescriptor<K> } = {
@@ -227,9 +229,9 @@ export const componentPalette = Object.values(componentsData).filter(
   (d) => d !== undefined
 );
 
-export function renderComponentWidget(component: Component): JSX.Element | null {
+export function renderComponentWidget(component: Component): ReactNode {
   const render = componentsData[component.type]?.renderWidget as
-    | ((c: Component) => JSX.Element)
+    | ((c: Component) => ReactNode)
     | undefined;
   return render ? render(component) : null;
 }
@@ -237,12 +239,12 @@ export function renderComponentWidget(component: Component): JSX.Element | null 
 export function renderComponentModal(
   type: ComponentType | '',
   props: ComponentModalChildProps
-): JSX.Element | null {
+): ReactNode {
   if (!type) {
     return null;
   }
   const render = componentsData[type]?.renderModal as
-    | ((props: ComponentModalChildProps) => JSX.Element)
+    | ((props: ComponentModalChildProps) => ReactNode)
     | undefined;
   return render ? render(props) : null;
 }

@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import { ActionIcon, Tooltip } from '@mantine/core';
 
 type Props = {
   tooltipText: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   selected: boolean;
   onClick: () => void;
 };

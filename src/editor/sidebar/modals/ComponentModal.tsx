@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Group, Modal, Text } from '@mantine/core';
 
@@ -12,7 +13,7 @@ interface Props {
   componentId?: Component['id'] | null;
   type: ComponentType | '';
   initialData?: Partial<Component>;
-  icon?: JSX.Element;
+  icon?: ReactNode;
 }
 
 export function ComponentModal({
