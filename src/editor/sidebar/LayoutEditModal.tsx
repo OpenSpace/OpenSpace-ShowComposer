@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   Group,
-  InputLabel,
   Modal,
   SimpleGrid,
   Stack,
@@ -93,13 +92,12 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
             </SimpleGrid>
           </>
         )}
-        <Group gap={'xs'}>
-          <InputLabel htmlFor={'persistent'}>{t('persist-across-pages')}</InputLabel>
-          <Checkbox
-            checked={persistent}
-            onChange={(event) => setPersistent(event.currentTarget.checked)}
-          />
-        </Group>
+        <Checkbox
+          label={t('persist-across-pages')}
+          labelPosition={'left'}
+          checked={persistent}
+          onChange={(event) => setPersistent(event.currentTarget.checked)}
+        />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={onClose}>
