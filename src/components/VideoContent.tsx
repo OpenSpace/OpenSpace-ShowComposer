@@ -27,7 +27,7 @@ export function VideoContent({ url }: Props) {
         }
         allowFullScreen
         style={{ height: '100%', width: '100%' }}
-      ></iframe>
+      />
     );
   } else if (vimeoMatch) {
     return (
@@ -38,7 +38,7 @@ export function VideoContent({ url }: Props) {
         allow={'autoplay; fullscreen; picture-in-picture'}
         allowFullScreen
         style={{ height: '100%', width: '100%' }}
-      ></iframe>
+      />
     );
   } else if (url) {
     return <video src={url} controls style={{ height: '100%', width: '100%' }} />;
