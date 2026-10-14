@@ -71,17 +71,17 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
     return null;
   }
 
-  const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
+  function handleDragStop(_e: DraggableEvent, d: DraggableData) {
     handleLayoutDrop(id, d.x, d.y);
-  };
+  }
 
-  const handlePin = () => {
+  function handlePin() {
     updateLayout(id, {
       persistent: !layout.persistent
     });
-  };
+  }
 
-  const handleResize = (
+  function handleResize(
     _e: DraggableEvent,
     _direction:
       | 'top'
@@ -95,7 +95,7 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
     ref: HTMLElement,
     _delta: { width: number; height: number },
     position: { x: number; y: number }
-  ) => {
+  ) {
     let newWidth = roundToNearest(parseInt(ref.style.width), 25);
     let newHeight = roundToNearest(parseInt(ref.style.height), 25);
     let { childWidth } = layout;
@@ -127,7 +127,7 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
       x: roundToNearest(position.x, 25),
       y: roundToNearest(position.y, 25)
     });
-  };
+  }
 
   return (
     <Draggable
@@ -142,17 +142,13 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
       rightSection={
         <>
           {layout.persistent ? (
-            <PinIcon
-              size={IconSize.sm}
-              onClick={handlePin}
-              style={{ cursor: 'pointer', color: 'var(--mantine-color-white)' }}
-            />
+            <ActionIcon variant={'transparent'} color={'white'} onClick={handlePin}>
+              <PinIcon size={IconSize.sm} />
+            </ActionIcon>
           ) : (
-            <PinOffIcon
-              size={IconSize.sm}
-              onClick={handlePin}
-              style={{ cursor: 'pointer', color: 'var(--mantine-color-dimmed)' }}
-            />
+            <ActionIcon variant={'transparent'} color={'dimmed'} onClick={handlePin}>
+              <PinOffIcon size={IconSize.sm} />
+            </ActionIcon>
           )}
           <Menu position={'bottom-end'} zIndex={zIndex.menu}>
             <Menu.Target>
@@ -201,20 +197,18 @@ export function LayoutContainer({ layout, children, handleOpenEditModal }: Props
       )}
       {!isPresentMode &&
         isGrid &&
-        layout.children.map((_childId, index) => {
-          return (
-            <Placeholder
-              type={type}
-              hidden={_childId != null}
-              index={index}
-              childWidth={childWidth}
-              childHeight={childHeight}
-              padding={padding}
-              columns={columns}
-              key={index}
-            />
-          );
-        })}
+        layout.children.map((_childId, index) => (
+          <Placeholder
+            type={type}
+            hidden={_childId != null}
+            index={index}
+            childWidth={childWidth}
+            childHeight={childHeight}
+            padding={padding}
+            columns={columns}
+            key={index}
+          />
+        ))}
     </Draggable>
   );
 }
