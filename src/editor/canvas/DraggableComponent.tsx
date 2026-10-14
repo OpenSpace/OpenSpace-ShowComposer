@@ -17,6 +17,7 @@ interface Props {
   component: Component;
   children: ReactNode;
   layoutId?: string;
+  translucent?: boolean;
   onEdit: () => void;
   onCopy?: () => void;
   onDelete: () => void;
@@ -26,6 +27,7 @@ export function DraggableComponent({
   component,
   children,
   layoutId,
+  translucent = false,
   onEdit,
   onCopy = () => {},
   onDelete
@@ -164,7 +166,7 @@ export function DraggableComponent({
           pointerEvents: 'auto',
           zIndex: isHighlighted ? zIndex.widgetRaised : undefined,
           transition: !isDragging && layoutId ? 'transform 0.3s ease-in-out' : 'none',
-          ...(component.type === 'title'
+          ...(translucent
             ? { background: 'rgba(255, 255, 255, 0.2)', boxShadow: 'none' }
             : {})
         }}

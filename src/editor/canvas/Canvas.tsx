@@ -125,6 +125,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
                       key={childId}
                       component={component}
                       layoutId={layoutId}
+                      translucent={component.type === 'title'}
                       onEdit={() => onEditComponent(childId)}
                       onDelete={() => handleDeleteComponent(childId)}
                       onCopy={() => copyComponent(childId)}
@@ -158,6 +159,7 @@ export function Canvas({ onEditComponent, onEditLayout }: Props) {
               <DraggableComponent
                 key={componentId}
                 component={component}
+                translucent={component.type === 'title'}
                 onEdit={() => onEditComponent(componentId)}
                 onDelete={() => handleDeleteComponent(componentId)}
                 onCopy={() => copyComponent(componentId)}
