@@ -76,78 +76,64 @@ export function SessionPanel() {
 
   return (
     <Stack m={'xs'} gap={'xs'}>
-      <Stack gap={'xs'}>
-        <InputLabel>{t('record-session')}</InputLabel>
-        <Checkbox
-          label={t('text-file-format')}
-          checked={useTextFormat}
-          onChange={(event) => setUseTextFormat(event.currentTarget.checked)}
+      <InputLabel>{t('record-session')}</InputLabel>
+      <Checkbox
+        label={t('text-file-format')}
+        checked={useTextFormat}
+        onChange={(event) => setUseTextFormat(event.currentTarget.checked)}
+      />
+      <InputLabel>{t('name-of-recording')}</InputLabel>
+      <Group gap={'xs'} wrap={'nowrap'} align={'center'}>
+        <TextInput
+          flex={1}
+          value={filenameRecording}
+          placeholder={t('recording-filename-placeholder')}
+          onChange={updateRecordingFilename}
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
         />
-        <Stack gap={'xs'} w={'100%'}>
-          <InputLabel>{t('name-of-recording')}</InputLabel>
-          <Group w={'100%'} gap={'xs'} wrap={'nowrap'} align={'center'}>
-            <TextInput
-              flex={1}
-              value={filenameRecording}
-              placeholder={t('recording-filename-placeholder')}
-              onChange={updateRecordingFilename}
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => setIsInputFocused(false)}
-            />
-            <Button
-              disabled={
-                (state === RecordingState.Idle && nameIsTaken) || !filenameRecording
-              }
-              leftSection={<CircleIcon size={IconSize.xs} fill={'red'} color={'red'} />}
-              flex={'0 0 auto'}
-              onClick={toggleRecording}
-            >
-              {t('record')}
-            </Button>
-          </Group>
-          {nameIsTaken && isInputFocused && (
-            <Text c={'red.5'} size={'sm'}>
-              {t('name-is-already-taken')}
-            </Text>
-          )}
-        </Stack>
-      </Stack>
+        <Button
+          disabled={(state === RecordingState.Idle && nameIsTaken) || !filenameRecording}
+          leftSection={<CircleIcon size={IconSize.xs} fill={'red'} color={'red'} />}
+          flex={'0 0 auto'}
+          onClick={toggleRecording}
+        >
+          {t('record')}
+        </Button>
+      </Group>
+      {nameIsTaken && isInputFocused && (
+        <Text c={'red.5'} size={'sm'}>
+          {t('name-is-already-taken')}
+        </Text>
+      )}
       <Divider />
 
-      <Stack gap={'xs'}>
-        <InputLabel>{t('play-session')}</InputLabel>
-        <Stack gap={'xs'}>
-          <Checkbox
-            label={t('loop-playback')}
-            checked={loopPlayback}
-            onChange={(event) => onLoopPlaybackChange(event.currentTarget.checked)}
-          />
-          <Checkbox
-            label={t('output-frames')}
-            checked={shouldOutputFrames}
-            onChange={(event) => onShouldUpdateFramesChange(event.currentTarget.checked)}
-          />
-        </Stack>
-        <Stack gap={'xs'}>
-          <InputLabel>{t('playback-file')}</InputLabel>
-          <Stack w={'100%'} gap={'xs'}>
-            <Select
-              allowDeselect={false}
-              data={files}
-              placeholder={t('playback-file-placeholder')}
-              value={filenamePlayback || null}
-              disabled={files.length === 0}
-              onChange={(value) => value && setFilenamePlayback(value)}
-            />
-            <PlaybackSwitch
-              shouldOutputFrames={shouldOutputFrames}
-              loopPlayback={loopPlayback}
-              filenamePlayback={filenamePlayback}
-              toggleRecording={toggleRecording}
-            />
-          </Stack>
-        </Stack>
-      </Stack>
+      <InputLabel>{t('play-session')}</InputLabel>
+      <Checkbox
+        label={t('loop-playback')}
+        checked={loopPlayback}
+        onChange={(event) => onLoopPlaybackChange(event.currentTarget.checked)}
+      />
+      <Checkbox
+        label={t('output-frames')}
+        checked={shouldOutputFrames}
+        onChange={(event) => onShouldUpdateFramesChange(event.currentTarget.checked)}
+      />
+      <InputLabel>{t('playback-file')}</InputLabel>
+      <Select
+        allowDeselect={false}
+        data={files}
+        placeholder={t('playback-file-placeholder')}
+        value={filenamePlayback || null}
+        disabled={files.length === 0}
+        onChange={(value) => value && setFilenamePlayback(value)}
+      />
+      <PlaybackSwitch
+        shouldOutputFrames={shouldOutputFrames}
+        loopPlayback={loopPlayback}
+        filenamePlayback={filenamePlayback}
+        toggleRecording={toggleRecording}
+      />
     </Stack>
   );
 }
