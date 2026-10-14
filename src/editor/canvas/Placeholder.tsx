@@ -1,7 +1,17 @@
-import { Box } from '@mantine/core';
+import { Center } from '@mantine/core';
 
 import { PlusIcon } from '@/icons/icons';
 import type { LayoutType } from '@/types/components';
+
+interface Props {
+  childWidth: number;
+  childHeight: number;
+  type: LayoutType;
+  padding: number;
+  index?: number;
+  hidden?: boolean;
+  columns?: number;
+}
 
 export function Placeholder({
   childWidth,
@@ -11,15 +21,7 @@ export function Placeholder({
   hidden = false,
   columns = 1,
   index = 0
-}: {
-  childWidth: number;
-  childHeight: number;
-  type: LayoutType;
-  padding: number;
-  index?: number;
-  hidden?: boolean;
-  columns?: number;
-}) {
+}: Props) {
   // Determine dimensions based on type
   let top, left, right, bottom;
   if (type === 'row') {
@@ -36,14 +38,12 @@ export function Placeholder({
   }
 
   return (
-    <Box
+    <Center
+      bdrs={'md'}
+      bd={'1px dashed dimmed'}
+      c={'dimmed'}
       style={{
         position: 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 'var(--mantine-radius-md)',
-        border: '1px dashed var(--mantine-color-dimmed)',
         height: `${childHeight}px`,
         width: `${childWidth}px`,
         top: top,
@@ -58,10 +58,9 @@ export function Placeholder({
           width: '100%',
           height: '100%',
           maxWidth: 64,
-          maxHeight: 64,
-          color: 'var(--mantine-color-dimmed)'
+          maxHeight: 64
         }}
       />
-    </Box>
+    </Center>
   );
 }
