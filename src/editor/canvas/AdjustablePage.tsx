@@ -120,11 +120,7 @@ export function AdjustablePage() {
               </DisplayLabel>
             )}
             <Tooltip label={locked ? t('unlock-page') : t('lock-page')}>
-              <ActionIcon
-                onClick={() => setLocked(!locked)}
-                opacity={locked ? 0.6 : 1}
-                style={{ transition: 'opacity 100ms' }}
-              >
+              <ActionIcon onClick={() => setLocked(!locked)} opacity={locked ? 0.6 : 1}>
                 {locked ? (
                   <LockIcon size={IconSize.sm} />
                 ) : (

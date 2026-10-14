@@ -17,6 +17,7 @@ export function PresentModeToggle() {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const isPresentLocked = useSettingsStore((state) => state.presentLocked);
   const query = useQuery();
+
   useEffect(() => {
     if (query.has('show')) {
       setPresentLocked(true);
@@ -25,16 +26,16 @@ export function PresentModeToggle() {
       }
     }
   }, [query, isPresentMode, togglePresentMode, setPresentLocked]);
-  return isPresentLocked ? null : (
+
+  if (isPresentLocked) return null;
+
+  return (
     <Tooltip label={isPresentMode ? t('edit-show') : t('present-show')}>
       <ActionIcon
         onClick={togglePresentMode}
-        size={28}
-        style={{
-          zIndex: 50,
-          transition: 'opacity 100ms',
-          opacity: isPresentMode ? 0.6 : 1
-        }}
+        size={'md'}
+        opacity={isPresentMode ? 0.6 : 1}
+        style={{ zIndex: 50 }}
       >
         {isPresentMode ? (
           <EditIcon strokeWidth={1.5} size={IconSize.md} />
