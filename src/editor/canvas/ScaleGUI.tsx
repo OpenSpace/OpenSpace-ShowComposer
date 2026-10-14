@@ -10,15 +10,14 @@ export function ScaleGUI() {
   const { t } = useTranslation('scale-gui');
   const scale = useSettingsStore((state) => state.pageScale);
   const setScale = useSettingsStore((state) => state.setScale);
-  const zoomIn = () => {
-    setScale((prevScale) => Math.min(2.0, Math.max(0.5, prevScale + 0.01)));
-  };
-  const zoomOut = () => {
-    setScale((prevScale) => Math.min(2.0, Math.max(0.5, prevScale - 0.01)));
-  };
+
+  function adjustScale(amount: number) {
+    setScale((prevScale) => Math.min(2.0, Math.max(0.5, prevScale + amount)));
+  }
+
   return (
     <Stack w={64} align={'center'} justify={'center'} gap={'xs'}>
-      <HoldButton onClick={zoomIn}>
+      <HoldButton onClick={() => adjustScale(0.01)}>
         <ZoomInIcon size={IconSize.sm} />
       </HoldButton>
       <NumberInput
@@ -30,7 +29,7 @@ export function ScaleGUI() {
         suffix={`${t('percent')}`}
         styles={{ input: { textAlign: 'center' } }}
       />
-      <HoldButton onClick={zoomOut}>
+      <HoldButton onClick={() => adjustScale(-0.01)}>
         <ZoomOutIcon size={IconSize.sm} />
       </HoldButton>
     </Stack>
