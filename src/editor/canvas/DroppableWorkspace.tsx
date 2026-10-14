@@ -164,7 +164,7 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 8
+          gap: 'var(--mantine-spacing-xs)'
         }}
       >
         {!isPresentMode && <ScaleGUI />}

@@ -44,14 +44,14 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
 
   if (!position || !component) return null;
 
-  const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
+  function handleDragStop(_e: DraggableEvent, d: DraggableData) {
     updatePosition(component.id, {
       x: roundToNearest(d.x, 25),
       y: roundToNearest(d.y, 25)
     });
-  };
+  }
 
-  const inner = () => {
+  function renderContent() {
     switch (component?.type) {
       case 'timepanel':
         return <TimeDatePicker />;
@@ -66,13 +66,13 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       default:
         return <Box>{t('unknown-type')}</Box>;
     }
-  };
+  }
 
-  const minimize = () => {
+  function minimize() {
     updatePosition(component.id, {
       minimized: !position.minimized
     });
-  };
+  }
 
   return (
     <Draggable
@@ -101,7 +101,9 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       }}
     >
       <DimmableBody inactive={!isConnected}>
-        <Box style={{ marginTop: 4, padding: 12 }}>{inner()}</Box>
+        <Box mt={'xxs'} p={'sm'}>
+          {renderContent()}
+        </Box>
       </DimmableBody>
     </Draggable>
   );

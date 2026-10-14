@@ -88,7 +88,7 @@ export function Draggable({
                 zIndex: zIndex.handleSection,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8
+                gap: 'var(--mantine-spacing-xxs)'
               }}
             >
               {leftSection}
@@ -114,7 +114,7 @@ export function Draggable({
                 zIndex: zIndex.handleSection,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8
+                gap: 'var(--mantine-spacing-xxs)'
               }}
             >
               {rightSection}

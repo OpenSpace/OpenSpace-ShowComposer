@@ -87,7 +87,7 @@ export function MultiWidget({ component }: Props) {
         <Stack gap={'xs'}>
           <Text>{component.gui_name}</Text>
           {currentItems.length > 0 && (
-            <Stack gap={4}>
+            <Stack gap={'xxs'}>
               <InputLabel>{t('current-items')}</InputLabel>
               {currentItems.map((v) => (
                 <InputLabel key={v}>{v}</InputLabel>

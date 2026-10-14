@@ -110,7 +110,7 @@ export function GlobalMenuBar() {
 
   return (
     <>
-      <Group gap={4} p={8}>
+      <Group gap={'xxs'} p={'xxs'}>
         <Menu trigger={'click-hover'} position={'bottom-start'}>
           <Menu.Target>
             <Button variant={'subtle'} color={'gray'} size={'compact-sm'}>

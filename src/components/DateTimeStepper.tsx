@@ -88,7 +88,7 @@ export function DateTimeStepper({ date, onChange }: Props) {
   return (
     <Group justify={'center'} gap={0}>
       {dateParts.map((part) => (
-        <Stack key={part} align={'center'} gap={4} px={4}>
+        <Stack key={part} align={'center'} gap={'xxs'} px={'xxs'}>
           <ActionIcon
             variant={'subtle'}
             color={'white'}

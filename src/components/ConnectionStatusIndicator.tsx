@@ -15,21 +15,21 @@ export function ConnectionStatusIndicator() {
     switch (connectionStatus) {
       case ConnectionStatus.Connected:
         return (
-          <Group gap={4} wrap={'nowrap'}>
+          <Group gap={'xxs'} wrap={'nowrap'}>
             <CircleCheckIcon size={size} color={'green'} />
             <InputLabel size={'xs'}>{t('connected')}</InputLabel>
           </Group>
         );
       case ConnectionStatus.Connecting:
         return (
-          <Group gap={4} wrap={'nowrap'} className={classes.pulse}>
+          <Group gap={'xxs'} wrap={'nowrap'} className={classes.pulse}>
             <RadioIcon size={size} color={'orange'} />
             <InputLabel size={'xs'}>{t('connecting')}</InputLabel>
           </Group>
         );
       case ConnectionStatus.Disconnected:
         return (
-          <Group gap={4} wrap={'nowrap'}>
+          <Group gap={'xxs'} wrap={'nowrap'}>
             <CircleXIcon size={size} color={'red'} />
             <InputLabel size={'xs'}>{t('disconnected')}</InputLabel>
           </Group>

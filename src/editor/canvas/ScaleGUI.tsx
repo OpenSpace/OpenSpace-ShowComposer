@@ -17,7 +17,7 @@ export function ScaleGUI() {
     setScale((prevScale) => Math.min(2.0, Math.max(0.5, prevScale - 0.01)));
   };
   return (
-    <Stack w={64} align={'center'} justify={'center'} gap={8}>
+    <Stack w={64} align={'center'} justify={'center'} gap={'xs'}>
       <HoldButton onClick={zoomIn}>
         <ZoomInIcon size={IconSize.sm} />
       </HoldButton>

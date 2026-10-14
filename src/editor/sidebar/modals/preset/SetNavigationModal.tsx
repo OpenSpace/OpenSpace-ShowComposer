@@ -103,7 +103,7 @@ export function SetNavModal({
       </Button>
       <Stack gap={'xs'}>
         <InputLabel>
-          <Group gap={4} wrap={'nowrap'}>
+          <Group gap={'xxs'} wrap={'nowrap'}>
             <AnchorIcon size={IconSize.xs} />
             {t('navigation-state-anchor')}
           </Group>
@@ -113,7 +113,7 @@ export function SetNavModal({
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <Stack gap={'xs'} style={{ opacity: setTime ? 1 : 0.5 }}>
           <InputLabel>
-            <Group gap={4} wrap={'nowrap'}>
+            <Group gap={'xxs'} wrap={'nowrap'}>
               <ClockIcon size={IconSize.xs} />
               {t('navigation-state-time')}
             </Group>

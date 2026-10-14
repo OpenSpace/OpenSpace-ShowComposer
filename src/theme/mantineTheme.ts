@@ -10,6 +10,7 @@ import {
   Modal,
   NumberInput,
   RangeSlider,
+  rem,
   Slider,
   Tabs,
   ThemeIcon,
@@ -46,6 +47,10 @@ const variantColorResolver: VariantColorsResolver = (input) => {
  */
 export const theme = createTheme({
   cursorType: 'pointer',
+  // Adds `xxs` below Mantine's default spacing scale (xs is 10px)
+  spacing: {
+    xxs: rem(4)
+  },
   components: {
     ActionIcon: ActionIcon.extend({
       defaultProps: {
