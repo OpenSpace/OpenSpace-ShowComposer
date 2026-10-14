@@ -26,25 +26,25 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const innerContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleWheel = (event: React.WheelEvent) => {
+  function handleWheel(event: React.WheelEvent) {
     const scaleAmount = event.deltaY > 0 ? 0.95 : 1.05;
     setScale((prevScale) => {
       const newScale = prevScale * scaleAmount;
       return Math.min(2.0, Math.max(0.75, newScale));
     });
-  };
+  }
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Shift') {
         setIsShiftPressed(true);
       }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
+    }
+    function handleKeyUp(e: KeyboardEvent) {
       if (e.key === 'Shift') {
         setIsShiftPressed(false);
       }
-    };
+    }
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     return () => {
@@ -53,11 +53,11 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const handleMouseDown = (event: React.MouseEvent) => {
+  function handleMouseDown(event: React.MouseEvent) {
     const startX = event.pageX - translateX * scale;
     const startY = event.pageY - translateY * scale;
 
-    const handleMouseMove = (moveEvent: MouseEvent) => {
+    function handleMouseMove(moveEvent: MouseEvent) {
       const containerRect = workspaceRef.current?.getBoundingClientRect();
       const divRect = innerContainerRef.current?.getBoundingClientRect();
       let newTranslateX = (moveEvent.pageX - startX) / scale;
@@ -77,52 +77,58 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
         setTranslateX(newTranslateX);
         setTranslateY(newTranslateY);
       }
-    };
+    }
 
-    const handleMouseUp = () => {
+    function handleMouseUp() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-    };
+    }
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  };
+  }
+
+  // Edit mode shows the dotted background, and the page can be zoomed and panned.
+  // Present mode keeps an identity transform, so the content always has its own
+  // stacking context in both modes.
+  // TODO: @ylvse 2026-10-12: investigate if the identity transform can be dropped
+  const viewStyle = isPresentMode
+    ? {
+        transform: 'scale(1.0) translate(0px,0px)',
+        transformOrigin: 'center'
+      }
+    : {
+        backgroundPosition: '-12.5px -12.5px',
+        backgroundSize: '25px 25px',
+        backgroundImage: 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)',
+        transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
+        transformOrigin: 'top left'
+      };
 
   return (
     <>
       <Box
         ref={workspaceRef}
+        pos={'relative'}
+        w={'100%'}
+        h={'100%'}
+        bdrs={isPresentMode ? 0 : 'lg'}
+        bd={'1px solid dark.4'}
+        bg={'dark.6'}
+        c={'dimmed'}
         style={{
-          position: 'relative',
-          height: '100%',
-          width: '100%',
-          borderRadius: isPresentMode ? 0 : 'var(--mantine-radius-lg)',
-          border: '1px solid var(--mantine-color-dark-4)',
-          backgroundColor: 'var(--mantine-color-dark-6)',
-          color: 'var(--mantine-color-dimmed)',
           overflow: 'hidden',
           transition: 'transform 0.2s'
         }}
       >
-        {!isPresentMode && (
-          <Badge
-            variant={'default'}
-            style={{
-              position: 'absolute',
-              left: 12,
-              top: 12,
-              letterSpacing: '0.025em',
-              backgroundColor: 'var(--mantine-color-dark-5)'
-            }}
-          >
-            {t('edit-mode')}
-          </Badge>
-        )}
-
-        {isPresentMode && (
-          <Box style={{ position: 'absolute', left: 12, top: 12 }}>
+        {isPresentMode ? (
+          <Box pos={'absolute'} p={'xs'}>
             <ConnectionStatusIndicator />
           </Box>
+        ) : (
+          <Badge variant={'default'} m={'xs'} bg={'dark.5'}>
+            {t('edit-mode')}
+          </Badge>
         )}
         {!isPresentMode && <SelectionTool />}
 
@@ -130,43 +136,24 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
           ref={innerContainerRef}
           onWheel={handleWheel}
           onMouseDown={isShiftPressed ? handleMouseDown : undefined}
+          pos={'absolute'}
+          top={isPresentMode ? -pageY : 0}
+          left={isPresentMode ? -pageX : 0}
+          w={isPresentMode ? pageWidth + pageX : '4000px'}
+          h={isPresentMode ? pageHeight + pageY : '4000px'}
+          mih={isPresentMode ? undefined : '100%'}
           style={{
-            position: 'absolute',
-            top: isPresentMode ? -pageY : 0,
-            left: isPresentMode ? -pageX : 0,
-            width: isPresentMode ? pageWidth + pageX : '4000px',
-            height: isPresentMode ? pageHeight + pageY : '4000px',
-            minHeight: isPresentMode ? '' : '100%',
             overflow: 'hidden',
-            backgroundPosition: '-12.5px -12.5px',
-            backgroundSize: '25px 25px',
-            backgroundImage: !isPresentMode
-              ? 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)'
-              : undefined,
             pointerEvents: isShiftPressed ? 'all' : 'none',
-            transformOrigin: isPresentMode ? 'center' : 'top left',
-            transform: isPresentMode
-              ? `scale(1.0) translate(0px,0px)`
-              : `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
-            cursor: isShiftPressed ? 'grab' : 'default'
+            cursor: isShiftPressed ? 'grab' : 'default',
+            ...viewStyle
           }}
         >
           <AdjustablePage />
           {children}
         </Box>
       </Box>
-      <Box
-        style={{
-          position: 'absolute',
-          right: 20,
-          top: 28,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--mantine-spacing-xs)'
-        }}
-      >
+      <Box pos={'absolute'} right={20} top={28}>
         {!isPresentMode && <ScaleGUI />}
       </Box>
     </>
