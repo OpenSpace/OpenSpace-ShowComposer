@@ -1,6 +1,5 @@
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import { useSubscribeToProperty } from '@/hooks/properties';
 import { NavigationAnchorKey } from '@/store/apiStore';
@@ -19,12 +18,7 @@ export function FocusWidget({ component }: Props) {
       backgroundColor={component.color}
       onClick={componentActions.setfocus(component)}
     >
-      {component.gui_name || component.gui_description ? (
-        <DisplayLabel>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </DisplayLabel>
-      ) : null}
+      <WidgetLabel name={component.gui_name} description={component.gui_description} />
     </ComponentContainer>
   );
 }

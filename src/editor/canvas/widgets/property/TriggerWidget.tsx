@@ -1,6 +1,5 @@
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import type { TriggerComponent } from '@/store';
 
@@ -15,10 +14,7 @@ export function TriggerWidget({ component }: Props) {
       backgroundColor={component.color}
       onClick={componentActions.trigger(component)}
     >
-      <DisplayLabel>
-        {component.gui_name}
-        <Information content={component.gui_description} />
-      </DisplayLabel>
+      <WidgetLabel name={component.gui_name} description={component.gui_description} />
     </ComponentContainer>
   );
 }

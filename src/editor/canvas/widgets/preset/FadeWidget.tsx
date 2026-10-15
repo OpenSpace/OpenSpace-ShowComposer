@@ -1,7 +1,6 @@
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
 import { StatusBarControlled } from '@/components/StatusBarControlled';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import type { FadeComponent } from '@/store';
@@ -40,13 +39,8 @@ export function FadeWidget({ component }: Props) {
       }}
       onClick={componentActions.fade(component)}
     >
-      {fadeValue !== undefined ? <StatusBarControlled progress={fadeValue} /> : null}
-      {component.gui_name || component.gui_description ? (
-        <DisplayLabel>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </DisplayLabel>
-      ) : null}
+      {fadeValue !== undefined && <StatusBarControlled progress={fadeValue} />}
+      <WidgetLabel name={component.gui_name} description={component.gui_description} />
     </ComponentContainer>
   );
 }

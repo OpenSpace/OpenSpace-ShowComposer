@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputLabel, Stack, Text } from '@mantine/core';
+import { InputLabel, Stack } from '@mantine/core';
 
 import { ComponentContainer } from '@/components/ComponentContainer';
 import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
 import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { runComponentAction } from '@/editor/componentActions';
 import { useBoundStore } from '@/store/boundStore';
 import type { MultiComponent, MultiOption } from '@/types/components';
@@ -14,25 +14,26 @@ interface Props {
   component: MultiComponent;
 }
 
+// TODO @ylvse 2026-10-13: this widget is very messy and needs to be refactored. That is however
+// a bigger change as the whole store architecture needs to be changed as well.
 export function MultiWidget({ component }: Props) {
   const { t } = useTranslation('multi');
   const getComponentById = useBoundStore((state) => state.getComponentById);
-  const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
   function triggerAnimation() {
     statusBarRef.current?.triggerAnimation();
-  };
+  }
 
   const totalDelay = useMemo(() => {
     return component.components[component.components.length - 1]?.endTime || 0;
   }, [component.components]);
-  
+
   const [currentItems, setCurrentItems] = useState<string[]>([]);
   const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const triggerComponents = useCallback(() => {
     component.components.forEach((item, index) => {
-      const triggerComponent = () => {
+      function triggerComponent() {
         const tempComponent = getComponentById(item.component) as MultiOption | undefined;
         if (tempComponent) {
           setCurrentItems((items) => [...items, tempComponent.gui_name || '']);
@@ -56,7 +57,7 @@ export function MultiWidget({ component }: Props) {
           }, item.endTime * 1000);
           timeoutIds.current.push(finalDelayTimeoutId);
         }
-      };
+      }
       const totalOffsetTimeoutId = setTimeout(triggerComponent, item.startTime * 1000);
       timeoutIds.current.push(totalOffsetTimeoutId);
     });
@@ -78,25 +79,20 @@ export function MultiWidget({ component }: Props) {
         triggerAnimation();
       }}
     >
-      <StatusBar
-        ref={statusBarRef}
-        duration={totalDelay}
-        fadeOutDuration={fadeOutDuration}
-      />
-      <DisplayLabel>
-        <Stack gap={'xs'}>
-          <Text>{component.gui_name}</Text>
-          {currentItems.length > 0 && (
+      <StatusBar ref={statusBarRef} duration={totalDelay} />
+      <Stack align={'center'} gap={'xs'}>
+        <WidgetLabel name={component.gui_name} description={component.gui_description} />
+        {currentItems.length > 0 && (
+          <DisplayLabel>
             <Stack gap={'xxs'}>
               <InputLabel>{t('current-items')}</InputLabel>
               {currentItems.map((v) => (
                 <InputLabel key={v}>{v}</InputLabel>
               ))}
             </Stack>
-          )}
-          <Information content={component?.gui_description} />
-        </Stack>
-      </DisplayLabel>
+          </DisplayLabel>
+        )}
+      </Stack>
     </ComponentContainer>
   );
 }

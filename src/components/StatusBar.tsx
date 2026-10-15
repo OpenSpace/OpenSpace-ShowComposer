@@ -7,15 +7,16 @@ export interface StatusBarRef {
 
 interface Props {
   duration: number;
-  fadeOutDuration: number;
 }
 
+// How long the bar takes to fade out (in ms) once it has filled up
+const FADE_OUT_DURATION = 400;
+
 export const StatusBar = forwardRef<StatusBarRef, Props>(
-  ({ duration: incDuration, fadeOutDuration: incFadeDuration }, ref) => {
+  ({ duration: incDuration }, ref) => {
     const [isAnimatingWidth, setIsAnimatingWidth] = useState(false);
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [duration, setDuration] = useState(incDuration);
-    const [fadeOutDuration] = useState(incFadeDuration);
     const triggerAnimation = () => {
       // Reset to 0 first, then flip to animating on the next frame so the fill
       // transitions 0 -> 100 over `duration` (rather than snapping if it was mid-run).
@@ -45,14 +46,14 @@ export const StatusBar = forwardRef<StatusBarRef, Props>(
         const fadeOutTimeout = setTimeout(() => {
           setIsAnimatingWidth(false);
           setIsFadingOut(false);
-        }, widthAnimationDuration + fadeOutDuration);
+        }, widthAnimationDuration + FADE_OUT_DURATION);
 
         return () => {
           clearTimeout(widthAnimationTimeout);
           clearTimeout(fadeOutTimeout);
         };
       }
-    }, [isAnimatingWidth, duration, fadeOutDuration]);
+    }, [isAnimatingWidth, duration]);
 
     return (
       <Flex
@@ -69,7 +70,7 @@ export const StatusBar = forwardRef<StatusBarRef, Props>(
           opacity: isAnimatingWidth && !isFadingOut ? 1 : 0,
           transitionProperty: 'opacity',
           transitionTimingFunction: 'linear',
-          transitionDuration: isFadingOut ? `${fadeOutDuration}ms` : '0ms'
+          transitionDuration: isFadingOut ? `${FADE_OUT_DURATION}ms` : '0ms'
         }}
       >
         <Progress

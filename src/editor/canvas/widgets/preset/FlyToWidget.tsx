@@ -1,9 +1,8 @@
 import { useRef } from 'react';
 
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
 import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import type { FlyToComponent } from '@/types/components';
 
@@ -12,11 +11,7 @@ interface Props {
 }
 
 export function FlyToWidget({ component }: Props) {
-  const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  function triggerAnimation() {
-    statusBarRef.current?.triggerAnimation();
-  };
 
   return (
     <ComponentContainer
@@ -24,22 +19,13 @@ export function FlyToWidget({ component }: Props) {
       backgroundColor={component.color}
       onClick={() => {
         componentActions.flyto(component)();
-        triggerAnimation();
+        statusBarRef.current?.triggerAnimation();
       }}
     >
-      {component?.intDuration && (
-        <StatusBar
-          ref={statusBarRef}
-          duration={component?.intDuration}
-          fadeOutDuration={fadeOutDuration}
-        />
-      )}
-      {component.gui_name || component.gui_description ? (
-        <DisplayLabel>
-          {component.gui_name}
-          <Information content={component.gui_description} />
-        </DisplayLabel>
+      {component.intDuration ? (
+        <StatusBar ref={statusBarRef} duration={component.intDuration} />
       ) : null}
+      <WidgetLabel name={component.gui_name} description={component.gui_description} />
     </ComponentContainer>
   );
 }

@@ -3,9 +3,8 @@ import { Stack } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
 import { PlaybackControls } from '@/components/PlaybackControls';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
 import type { SessionPlaybackComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
@@ -49,12 +48,7 @@ export function SessionPlaybackWidget({ component }: Props) {
       backgroundColor={component.color}
     >
       <Stack align={'center'} gap={'xs'}>
-        {gui_name || gui_description ? (
-          <DisplayLabel>
-            {gui_name}
-            <Information content={gui_description} />
-          </DisplayLabel>
-        ) : null}
+        <WidgetLabel name={gui_name} description={gui_description} />
         <PlaybackControls
           recordingState={recordingState}
           file={file}

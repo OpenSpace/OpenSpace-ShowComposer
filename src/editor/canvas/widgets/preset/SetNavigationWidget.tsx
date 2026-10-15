@@ -1,9 +1,8 @@
 import { useRef } from 'react';
 
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { DisplayLabel } from '@/components/DisplayLabel';
-import { Information } from '@/components/Information';
 import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import type { SetNavComponent } from '@/types/components';
 
@@ -14,11 +13,7 @@ interface Props {
 export function SetNavigationWidget({ component }: Props) {
   const { gui_description, gui_name, backgroundImage, color } = component;
 
-  const fadeOutDuration = 400; // 1 second fade out
   const statusBarRef = useRef<StatusBarRef>(null);
-  function triggerAnimation() {
-    statusBarRef.current?.triggerAnimation();
-  };
 
   return (
     <ComponentContainer
@@ -26,22 +21,13 @@ export function SetNavigationWidget({ component }: Props) {
       backgroundColor={color}
       onClick={() => {
         componentActions.setnavstate(component)();
-        triggerAnimation();
+        statusBarRef.current?.triggerAnimation();
       }}
     >
       {component.intDuration > 0 && (
-        <StatusBar
-          ref={statusBarRef}
-          duration={component?.intDuration}
-          fadeOutDuration={fadeOutDuration}
-        />
+        <StatusBar ref={statusBarRef} duration={component.intDuration} />
       )}
-      {gui_name || gui_description ? (
-        <DisplayLabel>
-          {gui_name}
-          <Information content={gui_description} />
-        </DisplayLabel>
-      ) : null}
+      <WidgetLabel name={gui_name} description={gui_description} />
     </ComponentContainer>
   );
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Group, InputLabel, NumberInput, Slider, Stack } from '@mantine/core';
+import { NumberInput, Slider, Stack } from '@mantine/core';
 
 import { ComponentContainer } from '@/components/ComponentContainer';
-import { Information } from '@/components/Information';
+import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import { useProperty } from '@/hooks/properties';
 import type { NumberComponent } from '@/store';
@@ -41,10 +41,7 @@ export function NumberWidget({ component }: Props) {
       backgroundColor={component.color}
     >
       <Stack w={'85%'} gap={'md'} py={'md'}>
-        <Group gap={'xs'} wrap={'nowrap'}>
-          <InputLabel>{component.gui_name}</InputLabel>
-          <Information content={component.gui_description} />
-        </Group>
+        <WidgetLabel name={component.gui_name} description={component.gui_description} />
 
         <Slider
           value={toPosition(
