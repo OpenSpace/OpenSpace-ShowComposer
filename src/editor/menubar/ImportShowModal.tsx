@@ -37,26 +37,26 @@ interface Props {
 export function ImportShowModal({ isOpen, onClose, store }: Props) {
   const { t } = useTranslation('import-show-modal');
   const { t: tMain } = useTranslation('main');
-  const [pages, setPages] = useState<SelectedPage[]>([]);
-  const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
-
-  const closeWithConfirmation = async (confirm: boolean) => {
-    try {
-      await confirmStoreImport(confirm, store._tempImportId);
-      onClose();
-    } catch (error) {
-      console.error('Error confirming show import:', error);
-    }
-  };
-
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
+  const initialState = useSettingsStore((state) => ({
+    ip: state.ip || '',
+    port: state.port || '',
+    pageHeight: state.pageHeight || 1920,
+    pageWidth: state.pageWidth || 1080,
+    projectName: '',
+    projectDescription: ''
+  }));
+
+  const [pages, setPages] = useState<SelectedPage[]>([]);
+  const [selectedPages, setSelectedPages] = useState<SelectedPage[]>([]);
+
   useEffect(() => {
     if (store && store.boundStore) {
       const parsedPages = store.boundStore.pages.map((page: Page, index: number) => {
         return {
-          name: page.name ? page.name : `${index + 1}`,
+          name: page.name || `${index + 1}`,
           components: page.components,
           id: page.id
         };
@@ -65,7 +65,16 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
     }
   }, [store]);
 
-  const handleSelectAll = (isChecked: boolean) => {
+  async function closeWithConfirmation(confirm: boolean) {
+    try {
+      await confirmStoreImport(confirm, store._tempImportId);
+      onClose();
+    } catch (error) {
+      console.error('Error confirming show import:', error);
+    }
+  }
+
+  function handleSelectAll(isChecked: boolean) {
     const newSelectedPages: SelectedPage[] = [];
     if (isChecked) {
       pages.forEach((page, index) => {
@@ -77,9 +86,9 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
       });
     }
     setSelectedPages(newSelectedPages);
-  };
+  }
 
-  const handlePageSelect = (page: SelectedPage) => {
+  function handlePageSelect(page: SelectedPage) {
     let newSelectedPages = [...selectedPages];
     if (newSelectedPages.find((p) => p.id === page.id)) {
       newSelectedPages = newSelectedPages.filter((p) => p.id !== page.id);
@@ -87,17 +96,17 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
       newSelectedPages.push(page);
     }
     setSelectedPages(newSelectedPages);
-  };
+  }
 
-  const handleImport = async () => {
+  async function handleImport() {
     // Logic to import selected pages/components
     useBoundStore.setState(store.boundStore);
     useSettingsStore.setState(store.settingsStore);
     await closeWithConfirmation(true);
     // onClose();
-  };
+  }
 
-  const handleImportToCurrentShow = async () => {
+  async function handleImportToCurrentShow() {
     const selectedComponents = new Set<ComponentBase>();
     const selectedPositions = new Set<Position>();
     const selectedLayouts = new Set<LayoutBase>();
@@ -146,9 +155,9 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
     });
 
     // Function to replace old IDs with new IDs based on the idMap
-    const replaceIdsInString = (
+    function replaceIdsInString(
       items: ComponentBase[] | Position[] | LayoutBase[] | Page[]
-    ) => {
+    ) {
       const jsonString = JSON.stringify(items);
       let updatedString = jsonString;
 
@@ -160,7 +169,7 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
       });
 
       return JSON.parse(updatedString); // Parse the updated string back to an object/array
-    };
+    }
 
     // Replace IDs in the arrays before adding to the store
     const updatedFullPages = replaceIdsInString(Array.from(selectedFullPages));
@@ -173,18 +182,9 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
     addPositions(updatedPositions);
     addLayouts(updatedLayouts);
     await closeWithConfirmation(true);
-  };
+  }
 
-  const initialState = useSettingsStore((state) => ({
-    ip: state.ip || '',
-    port: state.port || '',
-    pageHeight: state.pageHeight || 1920,
-    pageWidth: state.pageWidth || 1080,
-    projectName: '',
-    projectDescription: ''
-  }));
-
-  const handleImportToNewShow = async () => {
+  async function handleImportToNewShow() {
     const selectedComponents = new Set<ComponentBase>();
     const selectedPositions = new Set<Position>();
     const selectedLayouts = new Set<LayoutBase>();
@@ -249,7 +249,7 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
 
     await closeWithConfirmation(true);
     // onClose();
-  };
+  }
 
   return (
     <Modal opened={isOpen} onClose={onClose} centered size={'xl'} title={t('title')}>
@@ -321,9 +321,7 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
       <Group justify={'flex-end'} mt={'md'}>
         <Button
           variant={'default'}
-          onClick={async () => {
-            await closeWithConfirmation(false);
-          }}
+          onClick={async () => await closeWithConfirmation(false)}
         >
           {t('cancel')}
         </Button>
