@@ -5,10 +5,10 @@ import { StatusBar, type StatusBarRef } from '@/components/StatusBar';
 import { WidgetLabel } from '@/components/WidgetLabel';
 import { componentActions } from '@/editor/componentActions';
 import { useSubscribeToTime } from '@/hooks/topicSubscriptions';
-import type { SetTimeComponent as SetTimeType } from '@/store';
+import type { SetTimeComponent } from '@/store';
 
 interface Props {
-  component: SetTimeType;
+  component: SetTimeComponent;
 }
 
 export function SetTimeWidget({ component }: Props) {
@@ -16,20 +16,17 @@ export function SetTimeWidget({ component }: Props) {
   useSubscribeToTime();
 
   const statusBarRef = useRef<StatusBarRef>(null);
-  function triggerAnimation() {
-    statusBarRef.current?.triggerAnimation();
-  };
-  
+
   return (
     <ComponentContainer
       backgroundImage={component.backgroundImage}
       backgroundColor={component.color}
       onClick={() => {
         componentActions.settime(component)();
-        triggerAnimation();
+        statusBarRef.current?.triggerAnimation();
       }}
     >
-      {component.interpolate && component.intDuration && (
+      {component.interpolate && component.intDuration > 0 && (
         <StatusBar ref={statusBarRef} duration={component.intDuration} />
       )}
       <WidgetLabel name={component.gui_name} description={component.gui_description} />

@@ -22,9 +22,9 @@ export function FlyToWidget({ component }: Props) {
         statusBarRef.current?.triggerAnimation();
       }}
     >
-      {component.intDuration ? (
+      {component.intDuration !== undefined && component.intDuration > 0 && (
         <StatusBar ref={statusBarRef} duration={component.intDuration} />
-      ) : null}
+      )}
       <WidgetLabel name={component.gui_name} description={component.gui_description} />
     </ComponentContainer>
   );
