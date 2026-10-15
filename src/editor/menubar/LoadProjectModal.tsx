@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Box,
   Button,
+  Card,
   Center,
   Group,
   Modal,
@@ -29,13 +29,10 @@ export function LoadProjectModal({
 }: Props) {
   const { t } = useTranslation('load-project-modal');
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(projects.length / itemsPerPage);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  function goToPage(pageNumber: number) {
-    setCurrentPage(pageNumber);
-  }
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(projects.length / itemsPerPage);
 
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -60,15 +57,12 @@ export function LoadProjectModal({
             w={'100%'}
             onClick={() => setSelectedProject(project)}
           >
-            <Box
+            <Card
+              p={'xs'}
+              withBorder
+              bg={'transparent'}
+              // An outline, unlike a border, does not change the size of the card
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                padding: 'var(--mantine-spacing-xs)',
-                borderRadius: 'var(--mantine-radius-md)',
-                border: '1px solid var(--mantine-color-default-border)',
-                textAlign: 'left',
                 outline:
                   selectedProject?.filePath === project.filePath
                     ? '2px solid var(--mantine-color-blue-5)'
@@ -84,12 +78,16 @@ export function LoadProjectModal({
               <Text size={'xs'} c={'dimmed'}>
                 {t('created', { date: new Date(project.created).toLocaleString() })}
               </Text>
-            </Box>
+            </Card>
           </UnstyledButton>
         ))}
       </Stack>
       <Center pos={'relative'} h={96}>
-        <Pagination currentIndex={currentPage} length={totalPages} setIndex={goToPage} />
+        <Pagination
+          currentIndex={currentPage}
+          length={totalPages}
+          setIndex={setCurrentPage}
+        />
       </Center>
       <Group justify={'flex-end'} mt={'md'}>
         <Button variant={'default'} onClick={() => setIsOpen(false)}>
