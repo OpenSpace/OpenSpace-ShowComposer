@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Checkbox, Group, Modal, Table, Text } from '@mantine/core';
+import { Button, Checkbox, Group, Table, Text } from '@mantine/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { confirmStoreImport } from '@/api/showbuilder';
@@ -24,17 +24,18 @@ type SelectedPage = {
   components: string[];
 };
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  store: {
-    boundStore: BoundStoreState;
-    settingsStore: SettingsStoreState;
-    _tempImportId: string;
-  }; // Replace with the appropriate type for your store
+export interface LoadedStore {
+  boundStore: BoundStoreState;
+  settingsStore: SettingsStoreState;
+  _tempImportId: string;
 }
 
-export function ImportShowModal({ isOpen, onClose, store }: Props) {
+interface Props {
+  store: LoadedStore;
+  onClose: () => void;
+}
+
+export function ImportShowModal({ store, onClose }: Props) {
   const { t } = useTranslation('import-show-modal');
   const { t: tMain } = useTranslation('main');
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();
@@ -252,7 +253,7 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
   }
 
   return (
-    <Modal opened={isOpen} onClose={onClose} centered size={'xl'} title={t('title')}>
+    <>
       <Text>{t('description')}</Text>
       <Table>
         <Table.Thead>
@@ -335,6 +336,6 @@ export function ImportShowModal({ isOpen, onClose, store }: Props) {
           {t('import-full-show')}
         </Button>
       </Group>
-    </Modal>
+    </>
   );
 }

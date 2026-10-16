@@ -16,16 +16,17 @@ export function App() {
       defaultColorScheme={'dark'}
       cssVariablesResolver={cssVariablesResolver}
     >
-      <ModalsProvider>
-        <LuaApiProvider>
-          <Router basename={basePath}>
+      <LuaApiProvider>
+        <Router basename={basePath}>
+          {/* Inside the providers above, so that the content of the modals gets them too */}
+          <ModalsProvider modalProps={{ centered: true }}>
             <Routes>
               <Route index element={<Editor />} />
               <Route path={'/hub'} element={<Hub />} />
             </Routes>
-          </Router>
-        </LuaApiProvider>
-      </ModalsProvider>
+          </ModalsProvider>
+        </Router>
+      </LuaApiProvider>
     </MantineProvider>
   );
 }

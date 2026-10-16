@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, Modal, NumberInput, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Group, NumberInput, Stack, Text, TextInput } from '@mantine/core';
 
 import { useSettingsStore } from '@/store';
 
 interface Props {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  onClose: () => void;
 }
 
-export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
+export function WorkspaceSettingsModal({ onClose }: Props) {
   const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
@@ -25,23 +24,18 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
   const [pageWidth, setPageWidth] = useState(initialState.pageWidth);
   const [pageHeight, setPageHeight] = useState(initialState.pageHeight);
 
-  const handleSubmit = () => {
+  function handleSubmit() {
     setProjectSettings({
       ip,
       port,
       pageWidth,
       pageHeight
     });
-    setIsOpen(false);
-  };
+    onClose();
+  }
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={() => setIsOpen(false)}
-      centered
-      title={t('workspace-settings')}
-    >
+    <>
       <Text>{t('update-workspace-settings')}</Text>
       <Stack gap={'xs'}>
         <Text size={'sm'} fw={600}>
@@ -92,13 +86,13 @@ export function WorkspaceSettingsModal({ isOpen, setIsOpen }: Props) {
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
-        <Button variant={'default'} onClick={() => setIsOpen(false)}>
+        <Button variant={'default'} onClick={onClose}>
           {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
           {t('save-settings')}
         </Button>
       </Group>
-    </Modal>
+    </>
   );
 }

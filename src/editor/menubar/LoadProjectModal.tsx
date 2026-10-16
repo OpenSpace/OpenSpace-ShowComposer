@@ -1,32 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Card,
-  Center,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  UnstyledButton
-} from '@mantine/core';
+import { Button, Card, Center, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 
 import type { Project } from '@/api/showbuilder';
 import { Pagination } from '@/components/Pagination';
 
 interface Props {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  handleLoadProject: (project: Project) => void;
   projects: Project[];
+  onLoadProject: (project: Project) => void;
+  onClose: () => void;
 }
 
-export function LoadProjectModal({
-  isOpen,
-  setIsOpen,
-  handleLoadProject,
-  projects
-}: Props) {
+export function LoadProjectModal({ projects, onLoadProject, onClose }: Props) {
   const { t } = useTranslation('load-project-modal');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -43,12 +28,7 @@ export function LoadProjectModal({
     .slice(startIndex, endIndex);
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={() => setIsOpen(false)}
-      centered
-      title={t('load-project')}
-    >
+    <>
       <Text>{t('load-project-description')}</Text>
       <Stack gap={'xs'}>
         {projectsToDisplay.map((project) => (
@@ -90,7 +70,7 @@ export function LoadProjectModal({
         />
       </Center>
       <Group justify={'flex-end'} mt={'md'}>
-        <Button variant={'default'} onClick={() => setIsOpen(false)}>
+        <Button variant={'default'} onClick={onClose}>
           {t('cancel')}
         </Button>
 
@@ -99,14 +79,13 @@ export function LoadProjectModal({
           disabled={!selectedProject}
           onClick={() => {
             if (selectedProject) {
-              handleLoadProject(selectedProject);
-              setIsOpen(false);
+              onLoadProject(selectedProject);
             }
           }}
         >
           {t('add-project')}
         </Button>
       </Group>
-    </Modal>
+    </>
   );
 }

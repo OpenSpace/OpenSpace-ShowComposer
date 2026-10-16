@@ -1,27 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
   Checkbox,
   Group,
-  Modal,
   NumberInput,
   Stack,
   Text,
   Textarea,
-  TextInput
+  TextInput,
+  Title
 } from '@mantine/core';
 
 import { useOpenSpaceApiStore, useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 
 interface Props {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  handleLoadProjects: () => void | null;
+  onClose: () => void;
+  onLoadProjects: () => void;
 }
 
-export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props) {
+export function NewProjectModal({ onClose, onLoadProjects }: Props) {
   const { t } = useTranslation(['new-project-modal', 'connection-settings']);
   const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
 
@@ -34,18 +33,6 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
     projectDescription: '',
     showPagination: state.showPagination || true
   }));
-
-  useEffect(() => {
-    if (isOpen) {
-      setProjectName(initialState.projectName);
-      setProjectDescription(initialState.projectDescription);
-      setIp(initialState.ip);
-      setPort(initialState.port);
-      setPageWidth(initialState.pageWidth);
-      setPageHeight(initialState.pageHeight);
-      setShowPagination(initialState.showPagination);
-    }
-  }, [isOpen]);
 
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
@@ -60,11 +47,8 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
   const [showPagination, setShowPagination] = useState<boolean>(
     initialState.showPagination
   );
-  const handleShowPagination = (value: boolean) => {
-    setShowPagination(value);
-  };
 
-  const handleSubmit = () => {
+  function handleSubmit() {
     setProjectSettings({
       projectName,
       projectDescription,
@@ -76,24 +60,18 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
     });
     removeAllComponents();
     forceRefresh();
-    setIsOpen(false);
-  };
+    onClose();
+  }
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={() => setIsOpen(false)}
-      centered
-      title={t('new-project')}
-    >
+    <>
       <Text>{t('project-details')}</Text>
-      <Text size={'xl'} fw={600} my={'xs'}>
+      <Title order={2} my={'xs'}>
         {t('show-settings')}
-      </Text>
+      </Title>
       <Stack gap={'xs'}>
         <TextInput
           label={t('project-name')}
-          size={'xs'}
           value={projectName}
           onChange={(e) => setProjectName(e.currentTarget.value)}
           placeholder={t('project-name-placeholder')}
@@ -107,14 +85,12 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
         <Checkbox
           label={t('show-pagination')}
           checked={showPagination}
-          onChange={(event) => handleShowPagination(event.currentTarget.checked)}
+          onChange={(event) => setShowPagination(event.currentTarget.checked)}
         />
-        <Text size={'xl'} fw={600} my={'xs'}>
+        <Title order={2} my={'xs'}>
           {t('workspace-settings')}
-        </Text>
-        <Text size={'sm'} fw={600}>
-          {t('connection-settings:openspace-connection')}
-        </Text>
+        </Title>
+        <Title order={3}>{t('connection-settings:openspace-connection')}</Title>
         <Text size={'sm'} c={'dimmed'}>
           {t('connection-settings:address-copy')}
         </Text>
@@ -132,9 +108,7 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
           onChange={(e) => setPort(e.currentTarget.value)}
           placeholder={t('port-placeholder')}
         />
-        <Text size={'sm'} fw={600}>
-          {t('default-page-size')}
-        </Text>
+        <Title order={3}>{t('default-page-size')}</Title>
         <Text size={'sm'} c={'dimmed'}>
           {t('default-page-size-copy')}
         </Text>
@@ -160,18 +134,16 @@ export function NewProjectModal({ isOpen, setIsOpen, handleLoadProjects }: Props
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>
-        <Button variant={'default'} onClick={() => setIsOpen(false)}>
+        <Button variant={'default'} onClick={onClose}>
           {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
           {t('create-project')}
         </Button>
-        {handleLoadProjects && (
-          <Button variant={'filled'} onClick={handleLoadProjects}>
-            {t('load-project')}
-          </Button>
-        )}
+        <Button variant={'filled'} onClick={onLoadProjects}>
+          {t('load-project')}
+        </Button>
       </Group>
-    </Modal>
+    </>
   );
 }
