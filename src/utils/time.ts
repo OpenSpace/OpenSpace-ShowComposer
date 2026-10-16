@@ -115,10 +115,11 @@ export async function jumpToTime(
     // console.log(timeDiffSeconds);
     const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
     if (fadeScene && diffBiggerThanADay && interpolate) {
+      // The blackout factor is 0 when the scene is visible and 1 when it is black
       const promise = new Promise((resolve) => {
         luaApi?.setPropertyValueSingle(
-          'RenderEngine.BlackoutFactor',
-          0,
+          'RenderEngine.GlobalBlackout.Factor',
+          1,
           fadeTime / 2.0,
           'QuadraticEaseOut'
         );
@@ -128,8 +129,8 @@ export async function jumpToTime(
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
       luaApi?.setPropertyValueSingle(
-        'RenderEngine.BlackoutFactor',
-        1,
+        'RenderEngine.GlobalBlackout.Factor',
+        0,
         fadeTime / 2.0,
         'QuadraticEaseIn'
       );
