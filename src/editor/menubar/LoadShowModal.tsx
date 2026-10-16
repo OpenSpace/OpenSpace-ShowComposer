@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Card, Center, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 
-import type { Project } from '@/api/showbuilder';
+import type { Show } from '@/api/showbuilder';
 import { Pagination } from '@/components/Pagination';
 
 interface Props {
-  projects: Project[];
-  onLoadProject: (project: Project) => void;
+  shows: Show[];
+  onLoadShow: (show: Show) => void;
   onClose: () => void;
 }
 
-export function LoadProjectModal({ projects, onLoadProject, onClose }: Props) {
-  const { t } = useTranslation('load-project-modal');
+export function LoadShowModal({ shows, onLoadShow, onClose }: Props) {
+  const { t } = useTranslation('load-show-modal');
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedShow, setSelectedShow] = useState<Show | null>(null);
 
   const itemsPerPage = 4;
-  const totalPages = Math.ceil(projects.length / itemsPerPage);
+  const totalPages = Math.ceil(shows.length / itemsPerPage);
 
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const projectsToDisplay = projects
+  const showsToDisplay = shows
     .sort(
       (a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()
     )
@@ -29,13 +29,13 @@ export function LoadProjectModal({ projects, onLoadProject, onClose }: Props) {
 
   return (
     <>
-      <Text>{t('load-project-description')}</Text>
+      <Text>{t('load-show-description')}</Text>
       <Stack gap={'xs'}>
-        {projectsToDisplay.map((project) => (
+        {showsToDisplay.map((show) => (
           <UnstyledButton
-            key={project.filePath}
+            key={show.filePath}
             w={'100%'}
-            onClick={() => setSelectedProject(project)}
+            onClick={() => setSelectedShow(show)}
           >
             <Card
               p={'xs'}
@@ -44,19 +44,19 @@ export function LoadProjectModal({ projects, onLoadProject, onClose }: Props) {
               // An outline, unlike a border, does not change the size of the card
               style={{
                 outline:
-                  selectedProject?.filePath === project.filePath
+                  selectedShow?.filePath === show.filePath
                     ? '2px solid var(--mantine-color-blue-5)'
                     : undefined
               }}
             >
-              <Text size={'sm'}>{project.projectName}</Text>
+              <Text size={'sm'}>{show.projectName}</Text>
               <Text size={'xs'} c={'dimmed'}>
                 {t('last-modified', {
-                  date: new Date(project.lastModified).toLocaleString()
+                  date: new Date(show.lastModified).toLocaleString()
                 })}
               </Text>
               <Text size={'xs'} c={'dimmed'}>
-                {t('created', { date: new Date(project.created).toLocaleString() })}
+                {t('created', { date: new Date(show.created).toLocaleString() })}
               </Text>
             </Card>
           </UnstyledButton>
@@ -76,14 +76,14 @@ export function LoadProjectModal({ projects, onLoadProject, onClose }: Props) {
 
         <Button
           variant={'filled'}
-          disabled={!selectedProject}
+          disabled={!selectedShow}
           onClick={() => {
-            if (selectedProject) {
-              onLoadProject(selectedProject);
+            if (selectedShow) {
+              onLoadShow(selectedShow);
             }
           }}
         >
-          {t('add-project')}
+          {t('add-show')}
         </Button>
       </Group>
     </>

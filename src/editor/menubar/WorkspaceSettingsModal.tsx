@@ -9,8 +9,8 @@ interface Props {
 }
 
 export function WorkspaceSettingsModal({ onClose }: Props) {
-  const { t } = useTranslation(['new-project-modal', 'connection-settings']);
-  const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
+  const { t } = useTranslation(['new-show-modal', 'connection-settings']);
+  const setShowSettings = useSettingsStore((state) => state.setShowSettings);
 
   const initialState = useSettingsStore((state) => ({
     ip: state.ip || '',
@@ -25,7 +25,7 @@ export function WorkspaceSettingsModal({ onClose }: Props) {
   const [pageHeight, setPageHeight] = useState(initialState.pageHeight);
 
   function handleSubmit() {
-    setProjectSettings({
+    setShowSettings({
       ip,
       port,
       pageWidth,

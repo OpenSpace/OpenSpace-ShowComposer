@@ -39,7 +39,7 @@ export function ImportShowModal({ store, onClose }: Props) {
   const { t } = useTranslation('import-show-modal');
   const { t: tMain } = useTranslation('main');
   const { addPages, addComponents, addPositions, addLayouts } = useBoundStore();
-  const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
+  const setShowSettings = useSettingsStore((state) => state.setShowSettings);
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
   const initialState = useSettingsStore((state) => ({
     ip: state.ip || '',
@@ -241,12 +241,12 @@ export function ImportShowModal({ store, onClose }: Props) {
     addPositions(Array.from(selectedPositions));
     addLayouts(Array.from(selectedLayouts)); // Assuming you have a method to add layouts
 
-    setProjectSettings({
+    setShowSettings({
       ...initialState,
       projectName: '',
       projectDescription: ''
     });
-    //open new project settings
+    //open new show settings
 
     await closeWithConfirmation(true);
     // onClose();

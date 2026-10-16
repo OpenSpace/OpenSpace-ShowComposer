@@ -1,14 +1,14 @@
 import { modals } from '@mantine/modals';
 import i18n from 'i18next';
 
-import type { Project } from '@/api/showbuilder';
+import type { Show } from '@/api/showbuilder';
 import { ConfirmationModal } from '@/editor/menubar/ConfirmationModal';
 import { EditPageModal } from '@/editor/menubar/EditPageModal';
 import { ImportShowModal, type LoadedStore } from '@/editor/menubar/ImportShowModal';
-import { LoadProjectModal } from '@/editor/menubar/LoadProjectModal';
+import { LoadShowModal } from '@/editor/menubar/LoadShowModal';
 import { NewPageModal } from '@/editor/menubar/NewPageModal';
-import { NewProjectModal } from '@/editor/menubar/NewProjectModal';
-import { ProjectSettingsModal } from '@/editor/menubar/ProjectSettingsModal';
+import { NewShowModal } from '@/editor/menubar/NewShowModal';
+import { ShowSettingsModal } from '@/editor/menubar/ShowSettingsModal';
 import { WorkspaceSettingsModal } from '@/editor/menubar/WorkspaceSettingsModal';
 
 export function openConfirmationModal(message: string) {
@@ -17,29 +17,27 @@ export function openConfirmationModal(message: string) {
   });
 }
 
-export function openProjectSettingsModal() {
+export function openShowSettingsModal() {
   const id = modals.open({
-    title: i18n.t('new-project-modal:update-project-header'),
+    title: i18n.t('new-show-modal:update-show-header'),
     size: 'xl',
-    children: <ProjectSettingsModal onClose={() => modals.close(id)} />
+    children: <ShowSettingsModal onClose={() => modals.close(id)} />
   });
 }
 
 export function openWorkspaceSettingsModal() {
   const id = modals.open({
-    title: i18n.t('new-project-modal:workspace-settings'),
+    title: i18n.t('new-show-modal:workspace-settings'),
     size: 'xl',
     children: <WorkspaceSettingsModal onClose={() => modals.close(id)} />
   });
 }
 
-export function openNewProjectModal(onLoadProjects: () => void) {
+export function openNewShowModal(onLoadShows: () => void) {
   const id = modals.open({
-    title: i18n.t('new-project-modal:new-project'),
+    title: i18n.t('new-show-modal:new-show'),
     size: 'xl',
-    children: (
-      <NewProjectModal onClose={() => modals.close(id)} onLoadProjects={onLoadProjects} />
-    )
+    children: <NewShowModal onClose={() => modals.close(id)} onLoadShows={onLoadShows} />
   });
 }
 
@@ -60,18 +58,15 @@ export function openEditPageModal() {
 }
 
 // Loading a show closes all open modals, also the one this was opened from
-export function openLoadProjectModal(
-  projects: Project[],
-  onLoadProject: (project: Project) => void
-) {
+export function openLoadShowModal(shows: Show[], onLoadShow: (show: Show) => void) {
   const id = modals.open({
-    title: i18n.t('load-project-modal:load-project'),
+    title: i18n.t('load-show-modal:load-show'),
     size: 'xl',
     children: (
-      <LoadProjectModal
-        projects={projects}
-        onLoadProject={(project) => {
-          onLoadProject(project);
+      <LoadShowModal
+        shows={shows}
+        onLoadShow={(show) => {
+          onLoadShow(show);
           modals.closeAll();
         }}
         onClose={() => modals.close(id)}

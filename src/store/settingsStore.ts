@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-interface ProjectSettings {
+interface ShowSettings {
   projectName: string;
   projectDescription: string;
   ip: string;
@@ -34,7 +34,7 @@ export interface SettingsStoreState {
   setScale: (scaleFunc: (prevScale: number) => number) => void;
   updatePageSize(width: number, height: number): void;
   setConnectionSettings: (url: string, port: string) => void; // Action to update URL and Port
-  setProjectSettings: (settings: Partial<ProjectSettings>) => void;
+  setShowSettings: (settings: Partial<ShowSettings>) => void;
 }
 
 export const useSettingsStore = create<SettingsStoreState>()(
@@ -107,13 +107,13 @@ export const useSettingsStore = create<SettingsStoreState>()(
           gridSize: { rows: 3, columns: 3 },
           setGridSize: (size: { rows: number; columns: number }) =>
             set(() => ({ gridSize: size }), false, 'settings/setGridSize'),
-          setProjectSettings: (settings: Partial<ProjectSettings>) =>
+          setShowSettings: (settings: Partial<ShowSettings>) =>
             set(
               () => ({
                 ...settings
               }),
               false,
-              'settings/setProjectSettings'
+              'settings/setShowSettings'
             )
         };
       }),

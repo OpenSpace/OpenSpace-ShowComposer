@@ -12,7 +12,7 @@
     "more-information": "More information"
   },
   "main": {
-    "project-name": "Current Show:  ",
+    "show-name": "Current Show:  ",
     "interface-name": "OpenSpace Showcomposer",
     "static-components": "Static Components",
     "preset-components": "Preset Components",
@@ -78,7 +78,7 @@
   },
   "delete-confirmation-modal": {
     "delete-all-components": "Delete all components",
-    "delete-all-components-message": "This action cannot be undone. This will permanently delete the components from the project.",
+    "delete-all-components-message": "This action cannot be undone. This will permanently delete the components from the show.",
     "delete-component-message": "Are you sure you want to delete the component?",
     "delete-named-component-message": "Are you sure you want to delete the component {{name}}?",
     "confirmation-text": "Are you absolutely sure?",
@@ -123,7 +123,7 @@
     "export": "Export",
     "delete-show": "Delete Show",
     "settings": "Settings",
-    "presentation-settings": "Presentation Settings",
+    "show-settings": "Show Settings",
     "workspace-settings": "Workspace Settings",
     "page": "Page",
     "edit-page": "Edit Page",
@@ -134,7 +134,7 @@
     "undo": "Undo",
     "redo": "Redo",
     "clear-history": "Clear History",
-    "project-saved": "Project has been saved!"
+    "show-saved": "Show has been saved!"
   },
   "present-mode-toggle": {
     "outline": "outline",
@@ -426,13 +426,13 @@
   "sheet": {
     "close": "Close"
   },
-  "new-project-modal": {
-    "new-project": "Create a New Show",
-    "update-project-header": "Update Show",
-    "project-details": "Some Preliminary Settings for your new show.",
-    "project-name": "Show Name",
-    "project-name-copy": "Enter the name of the show you want to create.",
-    "project-description": "Show Description",
+  "new-show-modal": {
+    "new-show": "Create a New Show",
+    "update-show-header": "Update Show",
+    "show-details": "Some Preliminary Settings for your new show.",
+    "show-name": "Show Name",
+    "show-name-copy": "Enter the name of the show you want to create.",
+    "show-description": "Show Description",
     "ip-address": "IP Address",
     "port": "Port",
     "cancel": "Cancel",
@@ -440,17 +440,17 @@
     "default-page-size-copy": "The default page size for the presented show.",
     "page-width": "Page Width",
     "page-height": "Page Height",
-    "create-project": "Create Show",
-    "update-project": "Update Show",
+    "create-show": "Create Show",
+    "update-show": "Update Show",
     "default-screen-space-position": "Default Screen Space Position",
-    "load-project": "Load Show",
+    "load-show": "Load Show",
     "show-settings": "Show Settings",
     "workspace-settings": "Workspace Settings",
     "update-workspace-settings": "Update your workspace settings here",
     "save-settings": "Save Settings",
     "show-pagination": "Show Pagination",
-    "project-name-placeholder": "Enter Project Name",
-    "project-description-placeholder": "Type your description here.",
+    "show-name-placeholder": "Enter Show Name",
+    "show-description-placeholder": "Type your description here.",
     "ip-address-placeholder": "Enter IP",
     "port-placeholder": "Enter Port",
     "page-width-placeholder": "Enter Default Page Width",
@@ -488,18 +488,18 @@
     "cancel": "Cancel",
     "save": "Save"
   },
-  "load-project-modal": {
-    "load-project": "Open Show",
-    "load-project-description": "Choose a show to open.",
+  "load-show-modal": {
+    "load-show": "Open Show",
+    "load-show-description": "Choose a show to open.",
     "last-modified": "Last Modified: {{date}}",
     "created": "Created: {{date}}",
     "cannot-connect": "Can't connect to OpenSpace",
-    "cannot-connect-description": "Projects are loaded from the OpenSpace backend. Make sure OpenSpace is running, then try again.",
+    "cannot-connect-description": "Shows are loaded from the OpenSpace backend. Make sure OpenSpace is running, then try again.",
     "retry": "Retry",
-    "no-projects-found": "No saved projects found.",
+    "no-shows-found": "No saved shows found.",
     "cancel": "Cancel",
-    "add-project": "Open Show",
-    "edit-project": "Edit Show"
+    "add-show": "Open Show",
+    "edit-show": "Edit Show"
   },
   "confirmation-modal": {
     "ok": "OK"

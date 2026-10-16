@@ -2,21 +2,21 @@ import { useTranslation } from 'react-i18next';
 import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
-import { loadProject, loadProjects, type Project } from '@/api/showbuilder';
+import { loadShow, loadShows, type Show } from '@/api/showbuilder';
 import type { LoadedStore } from '@/editor/menubar/ImportShowModal';
 import {
   openConfirmationModal,
   openEditPageModal,
   openImportShowModal,
-  openLoadProjectModal,
+  openLoadShowModal,
   openNewPageModal,
-  openNewProjectModal,
-  openProjectSettingsModal,
+  openNewShowModal,
+  openShowSettingsModal,
   openWorkspaceSettingsModal
 } from '@/editor/menubar/menubarModals';
 import { useBoundStore, useBoundStoreTemporal } from '@/store/boundStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { exportProject, loadStoreToServer, saveProject } from '@/utils/saveProject';
+import { exportShow, loadStoreToServer, saveShow } from '@/utils/saveShow';
 
 export function GlobalMenuBar() {
   const { t } = useTranslation('page-button-menu');
@@ -57,22 +57,22 @@ export function GlobalMenuBar() {
     }
   }
 
-  async function handleLoadProject(project: Project) {
+  async function handleLoadShow(show: Show) {
     try {
-      const store = await loadProject(project.filePath);
+      const store = await loadShow(show.filePath);
       useBoundStore.setState(store.boundStore);
       useSettingsStore.setState(store.settingsStore);
     } catch (error) {
-      console.error('Error loading project:', error);
+      console.error('Error loading show:', error);
     }
   }
 
-  async function handleLoadProjects() {
+  async function handleLoadShows() {
     try {
-      const projects = await loadProjects();
-      openLoadProjectModal(projects, handleLoadProject);
+      const shows = await loadShows();
+      openLoadShowModal(shows, handleLoadShow);
     } catch (error) {
-      console.error('Error loading projects:', error);
+      console.error('Error loading shows:', error);
     }
   }
 
@@ -84,19 +84,19 @@ export function GlobalMenuBar() {
       labels: { confirm: tDelete('delete'), cancel: tDelete('cancel') },
       onConfirm: () => {
         removeAllComponents();
-        openNewProjectModal(handleLoadProjects);
+        openNewShowModal(handleLoadShows);
       }
     });
   }
 
   async function handleSaveConfirm() {
     try {
-      const saved = await saveProject();
+      const saved = await saveShow();
       if (saved) {
-        openConfirmationModal(t('project-saved'));
+        openConfirmationModal(t('show-saved'));
       }
     } catch (error) {
-      console.error('Error saving project:', error);
+      console.error('Error saving show:', error);
     }
   }
 
@@ -109,13 +109,13 @@ export function GlobalMenuBar() {
           </Button>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item onClick={() => openNewProjectModal(handleLoadProjects)}>
+          <Menu.Item onClick={() => openNewShowModal(handleLoadShows)}>
             {t('new-show')}
           </Menu.Item>
           <Menu.Item onClick={handleSaveConfirm}>{t('save')}</Menu.Item>
-          <Menu.Item onClick={handleLoadProjects}>{t('open')}</Menu.Item>
+          <Menu.Item onClick={handleLoadShows}>{t('open')}</Menu.Item>
           <Menu.Item onClick={handleLoadStore}>{t('import')}</Menu.Item>
-          <Menu.Item onClick={exportProject}>{t('export')}</Menu.Item>
+          <Menu.Item onClick={exportShow}>{t('export')}</Menu.Item>
           <Menu.Item color={'red'} onClick={handleDeleteAll}>
             {t('delete-show')}
           </Menu.Item>
@@ -130,14 +130,14 @@ export function GlobalMenuBar() {
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item
-            onClick={openProjectSettingsModal}
+            onClick={openShowSettingsModal}
             rightSection={
               <Text size={'xs'} c={'dimmed'}>
                 ⌘Z
               </Text>
             }
           >
-            {t('presentation-settings')}
+            {t('show-settings')}
           </Menu.Item>
           <Menu.Item
             onClick={openWorkspaceSettingsModal}

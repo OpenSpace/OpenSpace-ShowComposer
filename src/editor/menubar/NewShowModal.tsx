@@ -17,29 +17,27 @@ import { useBoundStore } from '@/store/boundStore';
 
 interface Props {
   onClose: () => void;
-  onLoadProjects: () => void;
+  onLoadShows: () => void;
 }
 
-export function NewProjectModal({ onClose, onLoadProjects }: Props) {
-  const { t } = useTranslation(['new-project-modal', 'connection-settings']);
-  const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
+export function NewShowModal({ onClose, onLoadShows }: Props) {
+  const { t } = useTranslation(['new-show-modal', 'connection-settings']);
+  const setShowSettings = useSettingsStore((state) => state.setShowSettings);
 
   const initialState = useSettingsStore((state) => ({
     ip: state.ip || '',
     port: state.port || '',
     pageHeight: state.pageHeight || 1920,
     pageWidth: state.pageWidth || 1080,
-    projectName: '',
-    projectDescription: '',
+    showName: '',
+    showDescription: '',
     showPagination: state.showPagination || true
   }));
 
   const forceRefresh = useOpenSpaceApiStore((state) => state.forceRefresh);
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
-  const [projectName, setProjectName] = useState(initialState.projectName);
-  const [projectDescription, setProjectDescription] = useState(
-    initialState.projectDescription
-  );
+  const [showName, setShowName] = useState(initialState.showName);
+  const [showDescription, setShowDescription] = useState(initialState.showDescription);
   const [ip, setIp] = useState(initialState.ip);
   const [port, setPort] = useState(initialState.port);
   const [pageWidth, setPageWidth] = useState(initialState.pageWidth);
@@ -49,9 +47,9 @@ export function NewProjectModal({ onClose, onLoadProjects }: Props) {
   );
 
   function handleSubmit() {
-    setProjectSettings({
-      projectName,
-      projectDescription,
+    setShowSettings({
+      projectName: showName,
+      projectDescription: showDescription,
       ip,
       port,
       pageWidth,
@@ -65,22 +63,22 @@ export function NewProjectModal({ onClose, onLoadProjects }: Props) {
 
   return (
     <>
-      <Text>{t('project-details')}</Text>
+      <Text>{t('show-details')}</Text>
       <Title order={2} my={'xs'}>
         {t('show-settings')}
       </Title>
       <Stack gap={'xs'}>
         <TextInput
-          label={t('project-name')}
-          value={projectName}
-          onChange={(e) => setProjectName(e.currentTarget.value)}
-          placeholder={t('project-name-placeholder')}
+          label={t('show-name')}
+          value={showName}
+          onChange={(e) => setShowName(e.currentTarget.value)}
+          placeholder={t('show-name-placeholder')}
         />
         <Textarea
-          label={t('project-description')}
-          value={projectDescription}
-          onChange={(e) => setProjectDescription(e.currentTarget.value)}
-          placeholder={t('project-description-placeholder')}
+          label={t('show-description')}
+          value={showDescription}
+          onChange={(e) => setShowDescription(e.currentTarget.value)}
+          placeholder={t('show-description-placeholder')}
         />
         <Checkbox
           label={t('show-pagination')}
@@ -138,10 +136,10 @@ export function NewProjectModal({ onClose, onLoadProjects }: Props) {
           {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          {t('create-project')}
+          {t('create-show')}
         </Button>
-        <Button variant={'filled'} onClick={onLoadProjects}>
-          {t('load-project')}
+        <Button variant={'filled'} onClick={onLoadShows}>
+          {t('load-show')}
         </Button>
       </Group>
     </>

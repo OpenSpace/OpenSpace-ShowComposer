@@ -2,7 +2,7 @@
 
 ## Overview
 
-A visual drag-and-drop interface for creating and managing shows in OpenSpace. This application allows users to create, edit, and playback multi-page presentations with various interactive components that control and interact with the OpenSpace app.
+A visual drag-and-drop interface for creating and managing shows in OpenSpace. This application allows users to create, edit, and playback multi-page shows with various interactive components that control and interact with the OpenSpace app.
 
 ## Stack
 
@@ -32,7 +32,7 @@ npm install
 
 ## Development Setup
 
-The project saving/loading and image upload features are served by the OpenSpace WebGui
+The show saving/loading and image upload features are served by the OpenSpace WebGui
 backend, which OpenSpace runs while it is up. There is no separate dev backend to start:
 
 1. Have OpenSpace running (it serves the backend on `http://localhost:4680` by default).
@@ -56,7 +56,7 @@ upload work exactly as they do in production.
   (Or, for a persistent override, put `SHOWCOMPOSER_BACKEND=http://localhost:4681` in a
   gitignored `.env.local` file - you'd need to create it.)
 - If OpenSpace is not running, the app still loads but the backend-dependent features
-  (project save/load, image upload) will fail until it is.
+  (show save/load, image upload) will fail until it is.
 
 ## Production Setup
 
@@ -79,18 +79,18 @@ In production, the application expects:
      - Port: Configurable via settings
 
 2. API Endpoints:
-   - Project Management:
-     - `POST /api/projects/save` - Save project data
-     - `POST /api/projects/load` - Load project data
-     - `GET /api/projects` - List available projects
-     - `POST /api/projects/confirm-import` - Confirm project import
+   - Show Management:
+     - `POST /api/projects/save` - Save show data
+     - `POST /api/projects/load` - Load show data
+     - `GET /api/projects` - List available shows
+     - `POST /api/projects/confirm-import` - Confirm show import
 
    - Image Management:
      - `GET /api/images` - Fetch gallery images
      - `POST /api/upload` - Upload new images
 
-   - Project Export:
-     - `POST /api/package` - Export project as ZIP file
+   - Show Export:
+     - `POST /api/package` - Export show as ZIP file
 
 ## Backend integration
 
@@ -150,7 +150,7 @@ These components control specific OpenSpace properties:
 - Multi-page show organization
 - Page navigation
 - Present mode for show playback
-- Project saving and loading
+- Show saving and loading
 - Image gallery management
 
 ## OpenSpace Integration
@@ -167,7 +167,7 @@ The application integrates with [openspace-api-js](https://github.com/OpenSpace/
 
 The application uses a store-based architecture with Zustand:
 - `useSettingsStore` - Manages application settings
-- `useBoundStore` - Manages project-specific data and components
+- `useBoundStore` - Manages show-specific data and components
 - `useOpenSpaceApiStore` - Manages OpenSpace api integration
 
 ### Key Components

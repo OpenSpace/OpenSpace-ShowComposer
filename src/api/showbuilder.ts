@@ -28,7 +28,7 @@ function resourceUrl(serverPath: string): string {
   return `${basePath.replace(/\/$/, '')}${serverPath}`;
 }
 
-export interface Project {
+export interface Show {
   projectName: string;
   filePath: string;
   lastModified: string;
@@ -37,14 +37,14 @@ export interface Project {
 
 // The data properties of a store's state: the keys whose values aren't functions. These are
 // what survive JSON serialization - the store's action functions can't be serialized, so
-// they're excluded when a project is saved.
+// they're excluded when a show is saved.
 type SerializableState<T> = {
   [K in keyof T as T[K] extends (...args: never[]) => unknown ? never : K]: T[K];
 };
 
-// Saved project consists of the bound store (pages, layouts, positions, components) and the settings
+// Saved show consists of the bound store (pages, layouts, positions, components) and the settings
 // store (present mode, page size, etc).
-export interface SavedProject {
+export interface SavedShow {
   boundStore: Partial<SerializableState<BoundStoreState>>;
   settingsStore: Partial<SerializableState<SettingsStoreState>>;
 }
@@ -56,13 +56,13 @@ export interface ImportConfirmationResult {
 }
 
 /**
- * Saves a project on the backend.
+ * Saves a show on the backend.
  *
  * @param store - The serializable current state of the store to save.
  * @returns Resolves to `true` when the save succeeds.
  * @throws If the backend responds with a non-OK status.
  */
-export async function saveProjectStore(store: SavedProject): Promise<boolean> {
+export async function saveShowStore(store: SavedShow): Promise<boolean> {
   const response = await fetch(backendUrl('api/projects/save'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -70,20 +70,20 @@ export async function saveProjectStore(store: SavedProject): Promise<boolean> {
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || 'Failed to save project');
+    throw new Error(errorData.error || 'Failed to save show');
   }
   return true;
 }
 
 /**
- * Uploads a project archive - either a `.zip`, or a `.json` plus its image files - and
+ * Uploads a show archive - either a `.zip`, or a `.json` plus its image files - and
  * returns the store the backend extracts from it.
  *
  * @param formData - Form data containing the archive (and any images).
- * @returns Resolves to the parsed project store.
+ * @returns Resolves to the parsed show store.
  * @throws If the backend responds with a non-OK status.
  */
-export async function loadProjectArchive(formData: FormData): Promise<unknown> {
+export async function loadShowArchive(formData: FormData): Promise<unknown> {
   const response = await fetch(backendUrl('api/projects/load'), {
     method: 'POST',
     body: formData
@@ -95,7 +95,7 @@ export async function loadProjectArchive(formData: FormData): Promise<unknown> {
 }
 
 /**
- * Confirms or cancels a staged project import.
+ * Confirms or cancels a staged show import.
  *
  * @param confirm - `true` to confirm the import, `false` to cancel it.
  * @param tempId - The temporary id of the staged import.
@@ -118,13 +118,13 @@ export async function confirmStoreImport(
 }
 
 /**
- * Packages a project's current store state into an export blob.
+ * Packages a show's current store state into an export blob.
  *
  * @param store - The store to export.
  * @returns The store as a zipped `Blob`.
  * @throws If the backend responds with a non-OK status.
  */
-export async function packageProject(store: SavedProject): Promise<Blob> {
+export async function packageShow(store: SavedShow): Promise<Blob> {
   const response = await fetch(backendUrl('api/package'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -137,30 +137,30 @@ export async function packageProject(store: SavedProject): Promise<Blob> {
 }
 
 /**
- * Lists the projects saved on the backend.
+ * Lists the shows saved on the backend.
  *
- * @returns An array of saved projects.
+ * @returns An array of saved shows.
  * @throws If the backend responds with a non-OK status.
  */
-export async function loadProjects(): Promise<Project[]> {
+export async function loadShows(): Promise<Show[]> {
   const response = await fetch(backendUrl('api/projects'));
   if (!response.ok) {
-    throw new Error('Failed to load projects');
+    throw new Error('Failed to load shows');
   }
   return response.json();
 }
 
 /**
- * Loads a single saved project by its file path.
+ * Loads a single saved show by its file path.
  *
- * @param filePath - The project's path, as provided by {@link loadProjects}.
- * @returns The loaded project's current state.
+ * @param filePath - The show's path, as provided by {@link loadShows}.
+ * @returns The loaded show's current state.
  * @throws If the backend responds with a non-OK status.
  */
-export async function loadProject(filePath: string): Promise<SavedProject> {
+export async function loadShow(filePath: string): Promise<SavedShow> {
   const response = await fetch(backendUrl(filePath));
   if (!response.ok) {
-    throw new Error('Failed to load project');
+    throw new Error('Failed to load show');
   }
   return response.json();
 }

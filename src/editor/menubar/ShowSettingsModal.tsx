@@ -8,27 +8,25 @@ interface Props {
   onClose: () => void;
 }
 
-export function ProjectSettingsModal({ onClose }: Props) {
-  const { t } = useTranslation('new-project-modal');
-  const setProjectSettings = useSettingsStore((state) => state.setProjectSettings);
+export function ShowSettingsModal({ onClose }: Props) {
+  const { t } = useTranslation('new-show-modal');
+  const setShowSettings = useSettingsStore((state) => state.setShowSettings);
   const initialState = useSettingsStore((state) => ({
-    projectName: state.projectName || '',
-    projectDescription: state.projectDescription || '',
+    showName: state.projectName || '',
+    showDescription: state.projectDescription || '',
     showPagination: state.showPagination || true
   }));
 
-  const [projectName, setProjectName] = useState(initialState.projectName);
-  const [projectDescription, setProjectDescription] = useState(
-    initialState.projectDescription
-  );
+  const [showName, setShowName] = useState(initialState.showName);
+  const [showDescription, setShowDescription] = useState(initialState.showDescription);
   const [showPagination, setShowPagination] = useState<boolean>(
     initialState.showPagination
   );
 
   function handleSubmit() {
-    setProjectSettings({
-      projectName,
-      projectDescription,
+    setShowSettings({
+      projectName: showName,
+      projectDescription: showDescription,
       showPagination
     });
     onClose();
@@ -36,23 +34,23 @@ export function ProjectSettingsModal({ onClose }: Props) {
 
   return (
     <>
-      <Text>{t('project-details')}</Text>
+      <Text>{t('show-details')}</Text>
       <Text size={'xl'} fw={600} my={'xs'}>
         {t('show-settings')}
       </Text>
       <Stack gap={'xs'}>
         <TextInput
-          label={t('project-name')}
+          label={t('show-name')}
           size={'xs'}
-          value={projectName}
-          onChange={(e) => setProjectName(e.currentTarget.value)}
-          placeholder={t('project-name-placeholder')}
+          value={showName}
+          onChange={(e) => setShowName(e.currentTarget.value)}
+          placeholder={t('show-name-placeholder')}
         />
         <Textarea
-          label={t('project-description')}
-          value={projectDescription}
-          onChange={(e) => setProjectDescription(e.currentTarget.value)}
-          placeholder={t('project-description-placeholder')}
+          label={t('show-description')}
+          value={showDescription}
+          onChange={(e) => setShowDescription(e.currentTarget.value)}
+          placeholder={t('show-description-placeholder')}
         />
         <Checkbox
           label={t('show-pagination')}
@@ -65,7 +63,7 @@ export function ProjectSettingsModal({ onClose }: Props) {
           {t('cancel')}
         </Button>
         <Button variant={'filled'} onClick={handleSubmit}>
-          {t('update-project')}
+          {t('update-show')}
         </Button>
       </Group>
     </>

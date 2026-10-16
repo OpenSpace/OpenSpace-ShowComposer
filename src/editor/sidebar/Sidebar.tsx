@@ -27,7 +27,7 @@ interface Props {
 
 export function Sidebar({ onAddComponent }: Props) {
   const { t } = useTranslation('main');
-  const projectName = useSettingsStore((state) => state.projectName);
+  const showName = useSettingsStore((state) => state.projectName);
   const staticComponentTypes = componentPalette.filter((d) => d.group === 'static');
   const presetComponentTypes = componentPalette.filter((d) => d.group === 'preset');
   const propertyComponentTypes = componentPalette.filter((d) => d.group === 'property');
@@ -56,10 +56,10 @@ export function Sidebar({ onAddComponent }: Props) {
           <ConnectionStatusIndicator />
           <Group gap={'xs'} wrap={'nowrap'}>
             <Text size={'xs'} fw={700}>
-              {t('project-name')}
+              {t('show-name')}
             </Text>
             <Text size={'sm'} c={'dimmed'}>
-              {projectName}
+              {showName}
             </Text>
           </Group>
           <Divider />

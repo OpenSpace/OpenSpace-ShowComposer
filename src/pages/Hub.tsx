@@ -13,7 +13,7 @@ import {
   UnstyledButton
 } from '@mantine/core';
 
-import { loadProject, loadProjects, type Project } from '@/api/showbuilder';
+import { loadShow, loadShows, type Show } from '@/api/showbuilder';
 import { useSettingsStore } from '@/store';
 import { useBoundStore } from '@/store/boundStore';
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -21,32 +21,32 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 type LoadStatus = 'loading' | 'error' | 'ready';
 
 export function Hub() {
-  const { t } = useTranslation('load-project-modal');
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const { t } = useTranslation('load-show-modal');
+  const [shows, setShows] = useState<Show[]>([]);
+  const [selectedShow, setSelectedShow] = useState<Show | null>(null);
   const [status, setStatus] = useState<LoadStatus>('loading');
 
   const navigate = useNavigate();
 
-  async function handleLoadProjects() {
+  async function handleLoadShows() {
     setStatus('loading');
     try {
-      const projects = await loadProjects();
-      setProjects(projects);
+      const shows = await loadShows();
+      setShows(shows);
       setStatus('ready');
     } catch (error) {
-      console.error('Error loading projects:', error);
+      console.error('Error loading shows:', error);
       setStatus('error');
     }
   }
 
   useEffect(() => {
-    handleLoadProjects();
+    handleLoadShows();
   }, []);
 
-  async function handleLoadProject(project: Project, editMode: boolean) {
+  async function handleLoadShow(show: Show, editMode: boolean) {
     try {
-      const store = await loadProject(project.filePath);
+      const store = await loadShow(show.filePath);
       const settingsStore = {
         ...store.settingsStore,
         presentMode: editMode,
@@ -56,7 +56,7 @@ export function Hub() {
       useSettingsStore.setState(settingsStore);
       navigate('/');
     } catch (error) {
-      console.error('Error loading project:', error);
+      console.error('Error loading show:', error);
       setStatus('error');
     }
   }
@@ -91,28 +91,28 @@ export function Hub() {
                   <Text size={'sm'} c={'dimmed'} ta={'center'}>
                     {t('cannot-connect-description')}
                   </Text>
-                  <Button variant={'default'} onClick={handleLoadProjects}>
+                  <Button variant={'default'} onClick={handleLoadShows}>
                     {t('retry')}
                   </Button>
                 </Stack>
               </Center>
             )}
 
-            {status === 'ready' && projects.length === 0 && (
+            {status === 'ready' && shows.length === 0 && (
               <Center h={200}>
                 <Text size={'sm'} c={'dimmed'}>
-                  {t('no-projects-found')}
+                  {t('no-shows-found')}
                 </Text>
               </Center>
             )}
 
-            {status === 'ready' && projects.length > 0 && (
+            {status === 'ready' && shows.length > 0 && (
               <Stack gap={'xs'} p={'xs'}>
-                {projects.map((project) => (
+                {shows.map((show) => (
                   <UnstyledButton
-                    key={project.filePath}
+                    key={show.filePath}
                     w={'100%'}
-                    onClick={() => setSelectedProject(project)}
+                    onClick={() => setSelectedShow(show)}
                   >
                     <Box
                       style={{
@@ -124,20 +124,20 @@ export function Hub() {
                         border: '1px solid var(--mantine-color-dark-4)',
                         textAlign: 'left',
                         outline:
-                          selectedProject?.filePath === project.filePath
+                          selectedShow?.filePath === show.filePath
                             ? '2px solid var(--mantine-color-blue-5)'
                             : undefined
                       }}
                     >
-                      <Text size={'sm'}>{project.projectName}</Text>
+                      <Text size={'sm'}>{show.projectName}</Text>
                       <Text size={'xs'} c={'dimmed'}>
                         {t('last-modified', {
-                          date: new Date(project.lastModified).toLocaleString()
+                          date: new Date(show.lastModified).toLocaleString()
                         })}
                       </Text>
                       <Text size={'xs'} c={'dimmed'}>
                         {t('created', {
-                          date: new Date(project.created).toLocaleString()
+                          date: new Date(show.created).toLocaleString()
                         })}
                       </Text>
                     </Box>
@@ -147,28 +147,28 @@ export function Hub() {
             )}
           </ScrollArea>
 
-          {status === 'ready' && projects.length > 0 && (
+          {status === 'ready' && shows.length > 0 && (
             <Group w={'100%'} justify={'center'} gap={'xs'}>
               <Button
-                disabled={!selectedProject}
+                disabled={!selectedShow}
                 onClick={() => {
-                  if (selectedProject) {
-                    handleLoadProject(selectedProject, false);
+                  if (selectedShow) {
+                    handleLoadShow(selectedShow, false);
                   }
                 }}
               >
-                {t('edit-project')}
+                {t('edit-show')}
               </Button>
               <Button
                 variant={'filled'}
-                disabled={!selectedProject}
+                disabled={!selectedShow}
                 onClick={() => {
-                  if (selectedProject) {
-                    handleLoadProject(selectedProject, true);
+                  if (selectedShow) {
+                    handleLoadShow(selectedShow, true);
                   }
                 }}
               >
-                {t('add-project')}
+                {t('add-show')}
               </Button>
             </Group>
           )}
