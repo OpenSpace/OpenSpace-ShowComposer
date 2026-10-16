@@ -29,7 +29,6 @@ export function LoadShowModal({ shows, onLoadShow, onClose }: Props) {
 
   return (
     <>
-      <Text>{t('load-show-description')}</Text>
       <Stack gap={'xs'}>
         {showsToDisplay.map((show) => (
           <UnstyledButton

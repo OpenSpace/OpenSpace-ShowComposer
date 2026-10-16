@@ -14,7 +14,6 @@ export function NewPageModal({ onClose }: Props) {
 
   return (
     <PageForm
-      description={t('create-page-description')}
       submitLabel={t('create-page')}
       initialName={''}
       initialColor={ComponentBaseColors.page}

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, InputLabel, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Group, InputLabel, Stack, TextInput } from '@mantine/core';
 
 import { ColorPicker } from '@/components/ColorPicker';
 
 interface Props {
-  description: string;
   submitLabel: string;
   initialName: string;
   initialColor: string;
@@ -15,7 +14,6 @@ interface Props {
 
 // The form shared by the modals for creating and editing a page
 export function PageForm({
-  description,
   submitLabel,
   initialName,
   initialColor,
@@ -33,7 +31,6 @@ export function PageForm({
 
   return (
     <>
-      <Text pb={'md'}>{description}</Text>
       <Stack gap={'md'}>
         <TextInput
           label={t('page-name')}

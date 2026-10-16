@@ -17,7 +17,6 @@ export function EditPageModal({ onClose }: Props) {
 
   return (
     <PageForm
-      description={t('update-page-description')}
       submitLabel={t('update-page')}
       initialName={currentPage?.name || ''}
       initialColor={currentPage?.color || ComponentBaseColors.page}

@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Checkbox, Group, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { Button, Group, Stack } from '@mantine/core';
 
+import {
+  ShowSettingsFields,
+  type ShowSettingsValues
+} from '@/editor/menubar/ShowSettingsFields';
 import { useSettingsStore } from '@/store';
 
 interface Props {
@@ -14,48 +18,31 @@ export function ShowSettingsModal({ onClose }: Props) {
   const initialState = useSettingsStore((state) => ({
     showName: state.projectName || '',
     showDescription: state.projectDescription || '',
-    showPagination: state.showPagination || true
+    showPagination: state.showPagination || true,
+    pageHeight: state.pageHeight || 1920,
+    pageWidth: state.pageWidth || 1080
   }));
 
-  const [showName, setShowName] = useState(initialState.showName);
-  const [showDescription, setShowDescription] = useState(initialState.showDescription);
-  const [showPagination, setShowPagination] = useState<boolean>(
-    initialState.showPagination
-  );
+  const [showSettings, setShowSettingsValues] =
+    useState<ShowSettingsValues>(initialState);
 
   function handleSubmit() {
     setShowSettings({
-      projectName: showName,
-      projectDescription: showDescription,
-      showPagination
+      projectName: showSettings.showName,
+      projectDescription: showSettings.showDescription,
+      showPagination: showSettings.showPagination,
+      pageWidth: showSettings.pageWidth,
+      pageHeight: showSettings.pageHeight
     });
     onClose();
   }
 
   return (
     <>
-      <Text>{t('show-details')}</Text>
-      <Text size={'xl'} fw={600} my={'xs'}>
-        {t('show-settings')}
-      </Text>
       <Stack gap={'xs'}>
-        <TextInput
-          label={t('show-name')}
-          size={'xs'}
-          value={showName}
-          onChange={(e) => setShowName(e.currentTarget.value)}
-          placeholder={t('show-name-placeholder')}
-        />
-        <Textarea
-          label={t('show-description')}
-          value={showDescription}
-          onChange={(e) => setShowDescription(e.currentTarget.value)}
-          placeholder={t('show-description-placeholder')}
-        />
-        <Checkbox
-          label={t('show-pagination')}
-          checked={showPagination}
-          onChange={(event) => setShowPagination(event.currentTarget.checked)}
+        <ShowSettingsFields
+          values={showSettings}
+          onChange={(values) => setShowSettingsValues((prev) => ({ ...prev, ...values }))}
         />
       </Stack>
       <Group justify={'flex-end'} mt={'md'}>

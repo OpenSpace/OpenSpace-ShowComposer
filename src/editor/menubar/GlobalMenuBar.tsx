@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, Group, Menu, NumberInput, Stack, Text } from '@mantine/core';
+import { Button, Group, Menu, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
 import { loadShow, loadShows, type Show } from '@/api/showbuilder';
@@ -26,27 +26,7 @@ export function GlobalMenuBar() {
   );
   const deletePage = useBoundStore((state) => state.deletePage);
   const currentPage = useBoundStore((state) => state.currentPage);
-  const { pageWidth, pageHeight } = useSettingsStore((state) => state);
-  const updatePageSize = useSettingsStore((state) => state.updatePageSize);
   const removeAllComponents = useBoundStore((state) => state.removeAllComponents);
-
-  const pageSizes = [
-    {
-      name: '1080',
-      width: 1920,
-      height: 1080
-    },
-    {
-      name: t('ipad-landscape'),
-      width: 1366,
-      height: 1024
-    },
-    {
-      name: t('ipad-portrait'),
-      width: 1024,
-      height: 1366
-    }
-  ];
 
   async function handleLoadStore() {
     try {
@@ -164,58 +144,6 @@ export function GlobalMenuBar() {
           <Menu.Item onClick={() => deletePage(currentPage)}>
             {t('delete-page')}
           </Menu.Item>
-          <Menu.Divider />
-          <Menu.Sub>
-            <Menu.Sub.Target>
-              <Menu.Sub.Item>{t('page-presets')}</Menu.Sub.Item>
-            </Menu.Sub.Target>
-            <Menu.Sub.Dropdown>
-              {pageSizes.map((page) => (
-                <Menu.Item
-                  key={page.name}
-                  onClick={() => updatePageSize(page.width, page.height)}
-                >
-                  {page.name}
-                </Menu.Item>
-              ))}
-            </Menu.Sub.Dropdown>
-          </Menu.Sub>
-          <Stack
-            gap={'xs'}
-            p={'xs'}
-            // Stop propagation from arrow inputs into the number inputs as
-            // the menu steals focus (still let Escape bubble up to close the menu).
-            onKeyDown={(event) => {
-              if (event.key !== 'Escape') {
-                event.stopPropagation();
-              }
-            }}
-          >
-            <NumberInput
-              label={t('width')}
-              size={'xs'}
-              allowDecimal={false}
-              value={pageWidth}
-              onChange={(value) =>
-                updatePageSize(
-                  typeof value === 'number' ? value : parseInt(value),
-                  pageHeight
-                )
-              }
-            />
-            <NumberInput
-              label={t('height')}
-              size={'xs'}
-              allowDecimal={false}
-              value={pageHeight}
-              onChange={(value) =>
-                updatePageSize(
-                  pageWidth,
-                  typeof value === 'number' ? value : parseInt(value)
-                )
-              }
-            />
-          </Stack>
         </Menu.Dropdown>
       </Menu>
 
