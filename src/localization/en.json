@@ -79,6 +79,7 @@
   "delete-confirmation-modal": {
     "delete-all-components": "Delete all components",
     "delete-all-components-message": "This action cannot be undone. This will permanently delete the components from the show.",
+    "delete-page-message": "This action cannot be undone. This will permanently delete the page and its components.",
     "delete-component-message": "Are you sure you want to delete the component?",
     "delete-named-component-message": "Are you sure you want to delete the component {{name}}?",
     "confirmation-text": "Are you absolutely sure?",

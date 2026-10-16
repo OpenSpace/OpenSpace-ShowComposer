@@ -69,6 +69,16 @@ export function GlobalMenuBar() {
     });
   }
 
+  function handleDeletePage() {
+    modals.openConfirmModal({
+      title: tDelete('confirmation-text'),
+      centered: true,
+      children: <Text>{tDelete('delete-page-message')}</Text>,
+      labels: { confirm: tDelete('delete'), cancel: tDelete('cancel') },
+      onConfirm: () => deletePage(currentPage)
+    });
+  }
+
   async function handleSaveConfirm() {
     try {
       const saved = await saveShow();
@@ -141,7 +151,7 @@ export function GlobalMenuBar() {
         <Menu.Dropdown>
           <Menu.Item onClick={openNewPageModal}>{t('add-page')}</Menu.Item>
           <Menu.Item onClick={openEditPageModal}>{t('edit-page')}</Menu.Item>
-          <Menu.Item onClick={() => deletePage(currentPage)}>
+          <Menu.Item color={'red'} onClick={handleDeletePage}>
             {t('delete-page')}
           </Menu.Item>
         </Menu.Dropdown>
