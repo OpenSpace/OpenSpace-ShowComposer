@@ -37,14 +37,14 @@ export function Sidebar({ onAddComponent }: Props) {
       <Stack
         h={'100%'}
         gap={0}
+        bdrs={'lg'}
+        bd={'1px solid var(--mantine-color-default-border)'}
         style={{
-          overflow: 'hidden',
-          border: '1px solid var(--mantine-color-default-border)',
-          borderRadius: 'var(--mantine-radius-lg)'
+          overflow: 'hidden'
         }}
       >
         <Group gap={'xs'} py={'xs'} px={'sm'} wrap={'nowrap'}>
-          <img src={favicon} width={20} alt={''} />
+          <img src={favicon} width={20} alt={'OpenSpace Logo'} />
           <Text size={'xs'} fw={700}>
             {t('interface-name')}
           </Text>
@@ -52,7 +52,7 @@ export function Sidebar({ onAddComponent }: Props) {
         <Divider />
         <GlobalMenuBar />
         <Divider />
-        <Stack gap={'xs'} px={'md'} py={'xs'}>
+        <Stack gap={'xxs'} p={'xs'} py={'xs'}>
           <ConnectionStatusIndicator />
           <Group gap={'xs'} wrap={'nowrap'}>
             <Text size={'xs'} fw={700}>
@@ -62,25 +62,24 @@ export function Sidebar({ onAddComponent }: Props) {
               {showName}
             </Text>
           </Group>
-          <Divider />
+        </Stack>
+        <Divider />
+        <Stack p={'xs'}>
           <Undo />
-          <Divider />
         </Stack>
-
-        <Stack gap={'xs'} p={'xs'}>
-          <Text size={'xs'} fw={700} ml={'xs'}>
-            {t('layout')}
-          </Text>
-          <LayoutToolbar />
-          <Divider />
-        </Stack>
+        <Divider />
         <ScrollArea
           type={'always'}
           flex={1}
           mih={0}
           style={{ containerType: 'inline-size', containerName: 'palette' }}
         >
-          <Stack gap={'md'} p={'md'}>
+          <Stack gap={'xs'} p={'xs'} py={'xs'}>
+            <Text size={'xs'} fw={700}>
+              {t('layout')}
+            </Text>
+            <LayoutToolbar />
+            <Divider />
             <Text size={'xs'} fw={700}>
               {t('static-components')}
             </Text>
@@ -137,7 +136,7 @@ export function Sidebar({ onAddComponent }: Props) {
           </Stack>
         </ScrollArea>
         <Divider />
-        <Box p={'md'}>
+        <Box p={'sm'}>
           <NavigationInfo />
         </Box>
       </Stack>

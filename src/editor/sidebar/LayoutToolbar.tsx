@@ -33,7 +33,7 @@ export function LayoutToolbar() {
       <Tooltip label={t('row')}>
         <ActionIcon
           variant={'subtle'}
-          size={40}
+          size={IconSize.xl}
           onClick={() => handleLayoutCreate('row')}
         >
           <RowIcon size={IconSize.md} />
@@ -43,7 +43,7 @@ export function LayoutToolbar() {
       <Tooltip label={t('column')}>
         <ActionIcon
           variant={'subtle'}
-          size={40}
+          size={IconSize.xl}
           onClick={() => handleLayoutCreate('column')}
         >
           <ColumnIcon size={IconSize.md} />
@@ -53,7 +53,7 @@ export function LayoutToolbar() {
       <Tooltip label={t('grid')}>
         <ActionIcon
           variant={'subtle'}
-          size={40}
+          size={IconSize.xl}
           onClick={() => handleLayoutCreate('grid')}
         >
           <LayoutGridIcon size={IconSize.md} />
@@ -67,7 +67,7 @@ export function LayoutToolbar() {
       >
         <Popover.Target>
           <Tooltip label={t('grid-settings')}>
-            <ActionIcon variant={'subtle'} size={40} onClick={toggle}>
+            <ActionIcon variant={'subtle'} size={IconSize.xl} onClick={toggle}>
               <SettingsIcon size={IconSize.md} />
             </ActionIcon>
           </Tooltip>

@@ -19,7 +19,7 @@ export function Undo() {
         variant={'filled'}
         onClick={() => undo()}
         disabled={!pastStates.length}
-        size={'lg'}
+        size={'md'}
       >
         <UndoIcon size={IconSize.sm} />
       </ActionIcon>
@@ -27,11 +27,11 @@ export function Undo() {
         variant={'filled'}
         onClick={() => redo()}
         disabled={!futureStates.length}
-        size={'lg'}
+        size={'md'}
       >
         <RedoIcon size={IconSize.sm} />
       </ActionIcon>
-      <Button size={'sm'} variant={'subtle'} onClick={() => clear()}>
+      <Button size={'xs'} variant={'subtle'} onClick={() => clear()}>
         {t('clear')}
       </Button>
     </Group>
