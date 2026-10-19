@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Group, InputLabel, SimpleGrid, Stack } from '@mantine/core';
+import { Box, Group, InputLabel, SimpleGrid, Stack, Text } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { useProperty } from '@/hooks/properties';
@@ -38,55 +38,67 @@ export function NavigationInfo({ className }: Props) {
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               <ClockIcon size={IconSize.xs} />
-              {t('current-time')}
+              <Text inherit>{t('current-time')}</Text>
             </Group>
           </InputLabel>
-          <DisplayLabel showBorder>{timeLabel || '-'}</DisplayLabel>
+          <DisplayLabel showBorder>
+            <Text inherit>{timeLabel || '-'}</Text>
+          </DisplayLabel>
         </Stack>
         <Stack gap={'xs'}>
           <InputLabel>
             <Group gap={'xs'} wrap={'nowrap'}>
               <TelescopeIcon size={IconSize.xs} />
-              {t('current-focus')}
+              <Text inherit>{t('current-focus')}</Text>
             </Group>
           </InputLabel>
-          <DisplayLabel showBorder>{currentAnchor || '-'}</DisplayLabel>
+          <DisplayLabel showBorder>
+            <Text inherit>{currentAnchor || '-'}</Text>
+          </DisplayLabel>
         </Stack>
         <SimpleGrid cols={3} spacing={'xs'} mt={'xs'}>
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <GlobeIcon size={IconSize.xs} />
-                {t('lat')}
+                <Text inherit>{t('lat')}</Text>
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
-              {camera?.latitude != null ? Math.round(camera.latitude * 100) / 100 : '-'}
-              {t('degrees')}
+              <Text inherit>
+                {camera?.latitude != null ? Math.round(camera.latitude * 100) / 100 : '-'}
+                {t('degrees')}
+              </Text>
             </DisplayLabel>
           </Stack>
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <GlobeIcon size={IconSize.xs} />
-                {t('long')}
+                <Text inherit>{t('long')}</Text>
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
-              {camera?.longitude != null ? Math.round(camera.longitude * 100) / 100 : '-'}
-              {t('degrees')}
+              <Text inherit>
+                {camera?.longitude != null
+                  ? Math.round(camera.longitude * 100) / 100
+                  : '-'}
+                {t('degrees')}
+              </Text>
             </DisplayLabel>
           </Stack>
           <Stack gap={'xs'}>
             <InputLabel>
               <Group gap={'xs'} wrap={'nowrap'}>
                 <ArrowUpFromDotIcon size={IconSize.xs} />
-                {t('alt')}
+                <Text inherit>{t('alt')}</Text>
               </Group>
             </InputLabel>
             <DisplayLabel showBorder size={'sm'}>
-              {camera?.altitude != null ? Math.round(camera.altitude) : '-'}{' '}
-              {camera?.altitudeUnit || ''}
+              <Text inherit>
+                {camera?.altitude != null ? Math.round(camera.altitude) : '-'}{' '}
+                {camera?.altitudeUnit || ''}
+              </Text>
             </DisplayLabel>
           </Stack>
         </SimpleGrid>

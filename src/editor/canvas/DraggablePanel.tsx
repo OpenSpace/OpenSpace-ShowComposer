@@ -1,6 +1,6 @@
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
-import { ActionIcon, Box } from '@mantine/core';
+import { ActionIcon, Box, Text } from '@mantine/core';
 
 import { DimmableBody } from '@/editor/canvas/DimmableBody';
 import { Draggable } from '@/editor/canvas/Draggable';
@@ -64,7 +64,7 @@ export function DraggablePanel({ component, originX = 0, originY = 0 }: Props) {
       case 'logpanel':
         return <LogPanel />;
       default:
-        return <Box>{t('unknown-type')}</Box>;
+        return <Text>{t('unknown-type')}</Text>;
     }
   }
 

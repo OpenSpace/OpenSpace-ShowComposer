@@ -7,7 +7,8 @@ import {
   InputLabel,
   NumberInput,
   Select,
-  Stack
+  Stack,
+  Text
 } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
@@ -105,20 +106,24 @@ export function SetNavModal({
         <InputLabel>
           <Group gap={'xxs'} wrap={'nowrap'}>
             <AnchorIcon size={IconSize.xs} />
-            {t('navigation-state-anchor')}
+            <Text inherit>{t('navigation-state-anchor')}</Text>
           </Group>
         </InputLabel>
-        <DisplayLabel showBorder>{navigationState?.Anchor}</DisplayLabel>
+        <DisplayLabel showBorder>
+          <Text inherit>{navigationState?.Anchor}</Text>
+        </DisplayLabel>
       </Stack>
       <Group grow align={'flex-end'} wrap={'nowrap'}>
         <Stack gap={'xs'} style={{ opacity: setTime ? 1 : 0.5 }}>
           <InputLabel>
             <Group gap={'xxs'} wrap={'nowrap'}>
               <ClockIcon size={IconSize.xs} />
-              {t('navigation-state-time')}
+              <Text inherit>{t('navigation-state-time')}</Text>
             </Group>
           </InputLabel>
-          <DisplayLabel showBorder>{timeLabel as string}</DisplayLabel>
+          <DisplayLabel showBorder>
+            <Text inherit>{timeLabel as string}</Text>
+          </DisplayLabel>
         </Stack>
         <Checkbox
           label={t('include-time')}

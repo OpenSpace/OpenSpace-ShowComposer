@@ -61,9 +61,11 @@ export function ComponentModal({
       title={
         <Group gap={'xs'}>
           {icon}
-          {component
-            ? t('edit-component-title', { name: componentName })
-            : t('create-component-title', { name: componentName })}
+          <Text inherit>
+            {component
+              ? t('edit-component-title', { name: componentName })
+              : t('create-component-title', { name: componentName })}
+          </Text>
         </Group>
       }
     >

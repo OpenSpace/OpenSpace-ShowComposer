@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, InputLabel, SimpleGrid, Stack } from '@mantine/core';
+import { Box, Button, InputLabel, SimpleGrid, Stack, Text } from '@mantine/core';
 
 import { useOpenSpaceApi } from '@/api/hooks';
 import { DateTimeStepper } from '@/components/DateTimeStepper';
@@ -111,7 +111,7 @@ export function TimeDatePicker() {
         bd={'1px solid var(--mantine-color-default-border)'}
         bdrs={'md'}
       >
-        {timeLabel}
+        <Text inherit>{timeLabel}</Text>
       </Box>
     </Stack>
   );

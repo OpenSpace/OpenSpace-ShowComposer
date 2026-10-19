@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import type { Position } from 'react-rnd';
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Draggable } from '@/editor/canvas/Draggable';
@@ -102,7 +102,9 @@ export function AdjustablePage() {
           wrap={'nowrap'}
         >
           <DisplayLabel fz={'xs'} c={'gray.2'}>
-            {page.name || t('default-page-name', { number: currentPageIndex + 1 })}
+            <Text inherit>
+              {page.name || t('default-page-name', { number: currentPageIndex + 1 })}
+            </Text>
           </DisplayLabel>
           <Group
             gap={'xs'}
@@ -116,7 +118,9 @@ export function AdjustablePage() {
                 opacity={isVisible ? 1 : 0}
                 style={{ transition: 'opacity 500ms' }}
               >
-                {pageWidth} x {pageHeight}
+                <Text inherit>
+                  {pageWidth} x {pageHeight}
+                </Text>
               </DisplayLabel>
             )}
             <Tooltip label={locked ? t('unlock-page') : t('lock-page')}>
