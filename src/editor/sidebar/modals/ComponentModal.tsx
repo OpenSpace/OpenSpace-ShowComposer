@@ -26,6 +26,7 @@ export function ComponentModal({
   icon
 }: Props) {
   const { t } = useTranslation(['component-modal', 'main']);
+
   const components = useBoundStore((state) => state.components);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const removeComponent = useBoundStore((state) => state.removeComponent);
@@ -33,7 +34,10 @@ export function ComponentModal({
   const component = componentId ? components[componentId] : null;
   const resolvedType = component ? component.type : type;
 
-  const handleCancel = () => {
+  const nameKey = resolvedType ? componentsData[resolvedType]?.nameKey : undefined;
+  const componentName = nameKey ? t(`main:${nameKey}`) : t('unknown');
+
+  function handleCancel() {
     if (resolvedType === 'multi') {
       Object.entries(components)
         .filter(([, c]) => c.isMulti !== 'false' && c.isMulti !== 'true')
@@ -47,10 +51,7 @@ export function ComponentModal({
     }
     onClose();
     onCancel?.();
-  };
-
-  const nameKey = resolvedType ? componentsData[resolvedType]?.nameKey : undefined;
-  const componentName = nameKey ? t(`main:${nameKey}`) : t('unknown');
+  }
 
   return (
     <Modal

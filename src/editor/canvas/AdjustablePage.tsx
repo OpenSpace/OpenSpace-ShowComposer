@@ -15,6 +15,7 @@ import { IconSize } from '@/types/enums';
 
 export function AdjustablePage() {
   const { t } = useTranslation('adjustable-page');
+
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const updatePageSize = useSettingsStore((state) => state.updatePageSize);
 
@@ -26,6 +27,10 @@ export function AdjustablePage() {
   const [locked, setLocked] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
 
+  const borderColor = locked
+    ? 'color-mix(in srgb, var(--mantine-color-gray-2) 30%, transparent)'
+    : 'var(--mantine-color-gray-2)';
+
   useEffect(() => {
     // Show the label when pageWidth or pageHeight changes
     setIsVisible(true);
@@ -35,12 +40,12 @@ export function AdjustablePage() {
     return () => clearTimeout(timeout);
   }, [pageWidth, pageHeight, locked]);
 
-  const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
+  function handleDragStop(_e: DraggableEvent, d: DraggableData) {
     updatePage(page.id, {
       x: d.x,
       y: d.y
     });
-  };
+  }
 
   function handleResize(ref: HTMLElement, position: Position) {
     updatePageSize(parseInt(ref.style.width), parseInt(ref.style.height));
@@ -49,10 +54,6 @@ export function AdjustablePage() {
       y: position.y
     });
   }
-
-  const borderColor = locked
-    ? 'color-mix(in srgb, var(--mantine-color-gray-2) 30%, transparent)'
-    : 'var(--mantine-color-gray-2)';
 
   return (
     <Draggable

@@ -60,15 +60,19 @@ export function VirtualizedCombobox({
   presets = null
 }: Props) {
   const { t } = useTranslation('virtualized-combobox');
-  const placeholder = searchPlaceholder ?? t('search-items');
+
   const [search, setSearch] = useState('');
   // The highlighted option is tracked by index so it stays correct even when the top
   // rows are virtualized out of the DOM
   const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const optionIdBase = useId();
-  const fuse = useMemo(() => new Fuse(options, { threshold: 0.5 }), [options]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const optionIdBase = useId();
+
+  const placeholder = searchPlaceholder ?? t('search-items');
+
+  const fuse = useMemo(() => new Fuse(options, { threshold: 0.5 }), [options]);
   // Empty search shows the presets (if any) or the full list; a query runs it through Fuse
   const items: string[] = useMemo(() => {
     if (search.trim() !== '') {
@@ -102,7 +106,6 @@ export function VirtualizedCombobox({
       setSearch('');
     }
   });
-
   // Tanstacks virtualizer hook
   const virtualizer = useVirtualizer({
     count: items.length,
@@ -114,13 +117,13 @@ export function VirtualizedCombobox({
   // When the query changes or the dropdown opens, jump back to the top and highlight the best
   // match (index 0) so Enter submits it. `virtualizer` is a stable instance from useVirtualizer.
   const { dropdownOpened } = combobox;
+
   useEffect(() => {
     if (dropdownOpened) {
       setActiveIndex(0);
       virtualizer.scrollToIndex(0);
     }
   }, [search, dropdownOpened, virtualizer]);
-
   // Keep the keyboard-highlighted option in view. Fires only when the highlighted index
   // changes (arrow keys / the reset above), never on mouse-wheel scroll, so it does not fight
   // manual scrolling. scrollToIndex does nothing when the option is already visible

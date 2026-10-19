@@ -16,7 +16,7 @@ export function LayoutToolbar() {
   const currentPage = useBoundStore((state) => state.currentPage);
   const [opened, { toggle, open, close }] = useDisclosure(false);
 
-  const handleLayoutCreate = (type: LayoutType) => {
+  function handleLayoutCreate(type: LayoutType) {
     return addLayout({
       type,
       rows: type === 'grid' ? gridSize.rows : 1,
@@ -26,7 +26,7 @@ export function LayoutToolbar() {
       persistent: false,
       parentPage: currentPage
     });
-  };
+  }
 
   return (
     <Group gap={'xs'}>

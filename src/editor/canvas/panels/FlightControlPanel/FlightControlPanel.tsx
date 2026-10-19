@@ -58,6 +58,11 @@ function InfoBox() {
 
 export function FlightControlPanel() {
   const { t } = useTranslation('flight-control-panel');
+
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const mouseIsDown = useRef(false);
+
   const [rotationFriction = false, setRotationFriction] = useProperty(
     'BoolProperty',
     'NavigationHandler.OrbitalNavigator.Friction.RotationalFriction'
@@ -72,19 +77,13 @@ export function FlightControlPanel() {
   );
   const sendFlightControlInput = useFlightController();
 
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const mouseIsDown = useRef(false);
-
   function touchDown(event: React.TouchEvent) {
     touchStartX.current = event.touches[0].clientX;
     touchStartY.current = event.touches[0].clientY;
   }
-
   function mouseDown() {
     mouseIsDown.current = true;
   }
-
   function touchMove(event: React.TouchEvent) {
     const touchX = event.touches[0].clientX;
     const touchY = event.touches[0].clientY;
@@ -111,7 +110,6 @@ export function FlightControlPanel() {
       sendFlightControlInput(input);
     }
   }
-
   function mouseMove(event: React.MouseEvent) {
     event.preventDefault();
     if (!mouseIsDown.current) {
@@ -135,12 +133,10 @@ export function FlightControlPanel() {
     }
     sendFlightControlInput(input);
   }
-
   function touchUp() {
     touchStartX.current = 0;
     sendFlightControlInput(IDLE_INPUT_STATE_COMMAND);
   }
-
   function mouseUp() {
     if (!mouseIsDown.current) {
       return;

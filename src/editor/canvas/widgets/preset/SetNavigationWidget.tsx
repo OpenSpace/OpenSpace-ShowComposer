@@ -11,9 +11,9 @@ interface Props {
 }
 
 export function SetNavigationWidget({ component }: Props) {
-  const { gui_description, gui_name, backgroundImage, color } = component;
-
   const statusBarRef = useRef<StatusBarRef>(null);
+
+  const { gui_description, gui_name, backgroundImage, color } = component;
 
   return (
     <ComponentContainer

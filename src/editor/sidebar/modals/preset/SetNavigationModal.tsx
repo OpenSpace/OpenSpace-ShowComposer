@@ -47,9 +47,11 @@ export function SetNavModal({
   onCancel
 }: ComponentModalChildProps<'setnavstate'>) {
   const { t } = useTranslation('set-navigation');
+
   const [data, setData] = useState<SetNavComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
   const luaApi = useOpenSpaceApi();
   const { timeCapped: time } = useSubscribeToTime();
@@ -64,12 +66,6 @@ export function SetNavModal({
         description: ''
       }
     : { name: '', description: '' };
-
-  const getNavigationState = async () => {
-    if (!luaApi) return;
-    const navState = (await luaApi.navigation.getNavigationState()) as NavigationState;
-    handleData({ navigationState: navState, time });
-  };
 
   useEffect(() => {
     if (!data.navigationState) {
@@ -87,6 +83,12 @@ export function SetNavModal({
     }
     return componentTime;
   }, [componentTime, time]);
+
+  async function getNavigationState() {
+    if (!luaApi) return;
+    const navState = (await luaApi.navigation.getNavigationState()) as NavigationState;
+    handleData({ navigationState: navState, time });
+  }
 
   function handleData(patch: Partial<SetNavComponent>) {
     setData((prev) => ({ ...prev, ...patch }));

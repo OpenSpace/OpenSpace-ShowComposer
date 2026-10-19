@@ -26,9 +26,12 @@ import {
 
 export function DeltaTimeControls() {
   const { t } = useTranslation('time-date-picker');
+
   const [stepSize, setStepSize] = useState<StepUnit>('seconds');
   const [paused, setPaused] = useState(false);
   const [localDelta, setLocalDelta] = useState<number | string>(0);
+
+  const isEditingDelta = useRef(false);
 
   const luaApi = useOpenSpaceApi();
 
@@ -40,8 +43,6 @@ export function DeltaTimeControls() {
     nextStep: nextDeltaTimeStep,
     prevStep: prevDeltaTimeStep
   } = useSubscribeToTime(1000);
-
-  const isEditingDelta = useRef(false);
 
   const unitPerSecond = t('unit-per-second', { unit: t(`unit-${stepSize}`) });
 

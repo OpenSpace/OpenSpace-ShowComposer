@@ -29,11 +29,14 @@ export function PageModal({
   onCancel
 }: ComponentModalChildProps<'page'>) {
   const { t } = useTranslation('page');
+
+  const pages = useBoundStore((state) => state.pages);
+
   const [data, setData] = useState<PageComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const pages = useBoundStore((state) => state.pages);
 
   const { page } = data;
   const pageData = pages[page - 1];

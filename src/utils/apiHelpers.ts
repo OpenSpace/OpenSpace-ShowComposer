@@ -19,7 +19,7 @@ export const InterestingTag = '';
 //   uri: string;
 // }
 
-export const flattenPropertyTree = (propertyOwner: PropertyOwner) => {
+export function flattenPropertyTree(propertyOwner: PropertyOwner) {
   let propertyOwners: PropertyOwnerRedux[] = [];
   let properties: AnyProperty[] = [];
 
@@ -48,7 +48,7 @@ export const flattenPropertyTree = (propertyOwner: PropertyOwner) => {
   });
 
   return { propertyOwners, properties };
-};
+}
 
 //regex for finding something in this format "Scene.<SceneName>.Fade" exactly, nothing trailing Fade
 // const regex = /Scene\.(.*?)\.Fade/;
@@ -83,10 +83,10 @@ const RegexLibrary = {
 
 type PropertyType = keyof typeof RegexLibrary;
 
-export const getRenderables: (
+export function getRenderables(
   properties: AnyProperty[],
   propertyType: PropertyType
-) => Record<string, AnyProperty> = (properties, propertyType) => {
+): Record<string, AnyProperty> {
   const { regex } = RegexLibrary[propertyType];
   const values = Object.values(properties);
   const renderables: Record<string, AnyProperty> = values
@@ -107,7 +107,7 @@ export const getRenderables: (
     }, {});
 
   return renderables;
-};
+}
 
 type ActionType = 'Bool' | 'Number' | 'Trigger';
 
@@ -117,10 +117,10 @@ const actionTypes = {
   Trigger: 'TriggerProperty'
 } as const;
 
-export const getActionSceneNodes = (
+export function getActionSceneNodes(
   properties: AnyProperty[],
   type: ActionType
-): Record<string, AnyProperty> => {
+): Record<string, AnyProperty> {
   const { regex } = RegexLibrary['SettingsProperty'];
   console.log('ACTION TYPE', type);
   console.log('ACTION TYPES', actionTypes[type]);
@@ -142,7 +142,7 @@ export const getActionSceneNodes = (
         return acc;
       }, {})
   );
-};
+}
 
 // functio
 

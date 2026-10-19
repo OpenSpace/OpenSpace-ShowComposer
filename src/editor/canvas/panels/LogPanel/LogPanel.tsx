@@ -26,8 +26,10 @@ function isLogLevel(value: string): value is LogLevel {
 
 export function LogPanel() {
   const { t } = useTranslation('log-panel');
-  const { errorLog, setLogLevel: updateLogLevel } = useSubscribeToErrorLog();
+
   const [logLevel, setLogLevel] = useState<LogLevel>(LogLevel.All);
+
+  const { errorLog, setLogLevel: updateLogLevel } = useSubscribeToErrorLog();
 
   const logLevelOptions: { value: LogLevel; label: string }[] = [
     { value: LogLevel.All, label: t('all-logging') },

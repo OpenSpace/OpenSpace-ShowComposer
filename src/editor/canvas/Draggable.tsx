@@ -37,8 +37,10 @@ export function Draggable({
 }: Props) {
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const pageScale = useSettingsStore((state) => state.pageScaleThrottled);
-  const isDragDisabled = disableDragging ?? isPresentMode;
+
   const [isDragging, setIsDragging] = useState(false);
+
+  const isDragDisabled = disableDragging ?? isPresentMode;
 
   return (
     <Rnd

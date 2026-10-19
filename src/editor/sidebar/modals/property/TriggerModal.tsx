@@ -32,11 +32,14 @@ export function TriggerModal({
   onCancel
 }: ComponentModalChildProps<'trigger'>) {
   const { t } = useTranslation('trigger');
+
+  const properties = usePropertyStore(useShallow((state) => state.properties));
+
   const [data, setData] = useState<TriggerComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const properties = usePropertyStore(useShallow((state) => state.properties));
 
   const { property } = data;
   const boundProperty = properties[property];

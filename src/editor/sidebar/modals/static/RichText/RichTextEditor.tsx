@@ -18,12 +18,7 @@ interface Props {
 // See docs here: https://mantine.dev/x/tiptap/ and here https://tiptap.dev/docs/examples/basics/default-text-editor
 export function RichTextEditor({ content, setContent }: Props) {
   const { t } = useTranslation('rich-text-editor');
-  const blockFormats = [
-    { value: 'paragraph', label: t('normal') },
-    { value: 'h1', label: t('heading-1') },
-    { value: 'h2', label: t('heading-2') },
-    { value: 'h3', label: t('heading-3') }
-  ];
+
   const editor = useEditor({
     // This is a simple editor; people editing this can only use the toolbar buttons below,
     // not type markdown commands or paste formatted text. So input/paste rules are off, and
@@ -74,6 +69,13 @@ export function RichTextEditor({ content, setContent }: Props) {
       return size ? parseInt(size, 10) : null;
     }
   });
+
+  const blockFormats = [
+    { value: 'paragraph', label: t('normal') },
+    { value: 'h1', label: t('heading-1') },
+    { value: 'h2', label: t('heading-2') },
+    { value: 'h3', label: t('heading-3') }
+  ];
 
   function handleParagraphTypeChange(value: string | null) {
     if (!value || !editor) {

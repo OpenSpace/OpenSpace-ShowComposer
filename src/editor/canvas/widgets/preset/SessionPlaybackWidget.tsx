@@ -15,9 +15,11 @@ interface Props {
 }
 
 export function SessionPlaybackWidget({ component }: Props) {
+  const luaApi = useOpenSpaceApi();
+
   const { file, loop, gui_name, gui_description } = component;
   const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
-  const luaApi = useOpenSpaceApi();
+
   const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
 
   function startPlayback() {

@@ -37,11 +37,14 @@ export function NumberModal({
   onCancel
 }: ComponentModalChildProps<'number'>) {
   const { t } = useTranslation('number');
+
+  const properties = usePropertyStore(useShallow((state) => state.properties));
+
   const [data, setData] = useState<NumberComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const properties = usePropertyStore(useShallow((state) => state.properties));
 
   const { property, min, max, step, exponent } = data;
 
@@ -52,24 +55,6 @@ export function NumberModal({
         description: boundProperty.metaData?.description ?? ''
       }
     : { name: '', description: '' };
-
-  const selectProperty = (uri: string) => {
-    const propertyData = usePropertyStore.getState().properties[uri];
-    const additionalData = (
-      propertyData?.metaData as { additionalData?: AdditionalDataNumber } | undefined
-    )?.additionalData;
-    if (additionalData) {
-      handleData({
-        property: uri,
-        min: additionalData.min,
-        max: additionalData.max,
-        step: additionalData.step,
-        exponent: additionalData.exponent
-      });
-    } else {
-      handleData({ property: uri });
-    }
-  };
 
   const sortedKeys: Record<string, string> = Object.keys(properties)
     .filter(
@@ -88,6 +73,24 @@ export function NumberModal({
       acc[newValue] = key;
       return acc;
     }, {});
+
+  function selectProperty(uri: string) {
+    const propertyData = usePropertyStore.getState().properties[uri];
+    const additionalData = (
+      propertyData?.metaData as { additionalData?: AdditionalDataNumber } | undefined
+    )?.additionalData;
+    if (additionalData) {
+      handleData({
+        property: uri,
+        min: additionalData.min,
+        max: additionalData.max,
+        step: additionalData.step,
+        exponent: additionalData.exponent
+      });
+    } else {
+      handleData({ property: uri });
+    }
+  }
 
   function handleData(patch: Partial<NumberComponent>) {
     setData((prev) => ({ ...prev, ...patch }));

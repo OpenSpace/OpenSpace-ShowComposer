@@ -22,6 +22,7 @@ interface Props {
 
 export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
   const { t } = useTranslation('layout-edit-modal');
+
   const gridSettings = useSettingsStore((state) => state.gridSize);
   const gridSize = useBoundStore((state) => ({
     columns: layoutId
@@ -33,13 +34,15 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
   }));
 
   const layout = useBoundStore((state) => state.layouts[layoutId || '']);
-  const layoutType = layout?.type;
 
   const updateLayout = useBoundStore((state) => state.updateLayout);
   const setGridSize = useSettingsStore((state) => state.setGridSize);
+
   const [rows, setRows] = useState(gridSize.rows.toString());
   const [columns, setColumns] = useState(gridSize.columns.toString());
   const [persistent, setPersistent] = useState(layout?.persistent || false);
+
+  const layoutType = layout?.type;
 
   useEffect(() => {
     if (isOpen) {
@@ -47,7 +50,7 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
     }
   }, [isOpen, layout]);
 
-  const handleSave = () => {
+  function handleSave() {
     if (!layoutId) return;
     setGridSize({
       rows: parseInt(rows),
@@ -59,7 +62,7 @@ export function LayoutEditModal({ isOpen, onClose, layoutId }: Props) {
       persistent
     });
     onClose();
-  };
+  }
 
   return (
     <Modal

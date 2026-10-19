@@ -18,6 +18,11 @@ import { IconSize } from '@/types/enums';
 const SIDEBAR_WIDTH = 320;
 
 export function Editor() {
+  const isPresentMode = useSettingsStore((state) => state.presentMode);
+  const addPage = useBoundStore((state) => state.addPage);
+  const currentPage = useBoundStore((state) => state.currentPage);
+  const pagesLength = useBoundStore((state) => state.pages?.length);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -26,11 +31,6 @@ export function Editor() {
   const [currentComponentType, setCurrentComponentType] = useState<ComponentType | ''>(
     ''
   );
-
-  const isPresentMode = useSettingsStore((state) => state.presentMode);
-  const addPage = useBoundStore((state) => state.addPage);
-  const currentPage = useBoundStore((state) => state.currentPage);
-  const pagesLength = useBoundStore((state) => state.pages?.length);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -45,27 +45,24 @@ export function Editor() {
     setSidebarOpen(!isPresentMode);
   }, [isPresentMode]);
 
-  const handleAddComponent = (type: ComponentType) => {
+  function handleAddComponent(type: ComponentType) {
     const newId = uuidv4();
     setCurrentComponentType(type);
     setCurrentComponentId(newId);
     setIsModalOpen(true);
-  };
-
-  const handleEditComponent = (id: string) => {
+  }
+  function handleEditComponent(id: string) {
     setCurrentComponentId(id);
     setIsModalOpen(true);
-  };
-
-  const handleEditLayout = (id: string) => {
+  }
+  function handleEditLayout(id: string) {
     setCurrentLayoutId(id);
     setShowEditModal(true);
-  };
-
-  const handleModalClose = () => {
+  }
+  function handleModalClose() {
     setIsModalOpen(false);
     setCurrentComponentId(null);
-  };
+  }
 
   return (
     <ThemeProvider defaultTheme={'dark'} storageKey={'vite-ui-theme'}>

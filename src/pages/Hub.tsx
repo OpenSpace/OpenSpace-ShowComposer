@@ -22,11 +22,16 @@ type LoadStatus = 'loading' | 'error' | 'ready';
 
 export function Hub() {
   const { t } = useTranslation('load-show-modal');
+
   const [shows, setShows] = useState<Show[]>([]);
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
   const [status, setStatus] = useState<LoadStatus>('loading');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    handleLoadShows();
+  }, []);
 
   async function handleLoadShows() {
     setStatus('loading');
@@ -39,10 +44,6 @@ export function Hub() {
       setStatus('error');
     }
   }
-
-  useEffect(() => {
-    handleLoadShows();
-  }, []);
 
   async function handleLoadShow(show: Show, editMode: boolean) {
     try {

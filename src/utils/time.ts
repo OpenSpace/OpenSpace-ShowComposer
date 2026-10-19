@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
-export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
+export function dateStringWithTimeZone(date: string, zone = 'Z') {
   // Ensure we don't have white spaces
   const whitespaceRemoved = date.replace(/\s/g, '');
   let result;
@@ -28,7 +28,7 @@ export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   }
 
   return !result.includes('Z') ? `${result}${zone}` : result;
-};
+}
 // new Date();
 interface TimeState {
   //   newTime?: string;
@@ -50,7 +50,7 @@ interface TimeState {
 export function isDate(date: Date | string): date is Date {
   return date instanceof Date;
 }
-export const updateTime = (newTimeState: TimeState) => {
+export function updateTime(newTimeState: TimeState) {
   //   const { newTime } = newTimeState;
   const { time: newTime } = newTimeState;
   // console.log(newTimeState);
@@ -87,7 +87,7 @@ export const updateTime = (newTimeState: TimeState) => {
   }
   // debounce(() => console.log(newState), 1000);
   return newState;
-};
+}
 
 export async function jumpToTime(
   newTime: Date,

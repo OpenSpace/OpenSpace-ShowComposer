@@ -28,13 +28,17 @@ export function TitleModal({
   onCancel
 }: ComponentModalChildProps<'title'>) {
   const { t } = useTranslation('title');
-  const [data, setData] = useState<TitleComponent>(
-    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
-  );
-  const saveComponent = useSaveComponent();
+
   const currentPageTitle = useBoundStore(
     (state) => state.getPageById(state.currentPage).name ?? ''
   );
+
+  const [data, setData] = useState<TitleComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+
+  const saveComponent = useSaveComponent();
+
   const { text } = data;
 
   function handleData(patch: Partial<TitleComponent>) {

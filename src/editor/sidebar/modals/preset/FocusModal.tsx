@@ -33,11 +33,14 @@ export function FocusModal({
   onCancel
 }: ComponentModalChildProps<'setfocus'>) {
   const { t } = useTranslation('focus');
+
+  const properties = usePropertyStore(useShallow((state) => state.properties));
+
   const [data, setData] = useState<SetFocusComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const properties = usePropertyStore(useShallow((state) => state.properties));
 
   const { property } = data;
   const anchorMeta = properties[NavigationAnchorKey]?.metaData;

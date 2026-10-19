@@ -12,10 +12,10 @@ interface Props {
 }
 
 export function SetTimeWidget({ component }: Props) {
+  const statusBarRef = useRef<StatusBarRef>(null);
+
   // Keep the time topic subscribed so jumpToTime has a current time to interpolate from.
   useSubscribeToTime();
-
-  const statusBarRef = useRef<StatusBarRef>(null);
 
   return (
     <ComponentContainer

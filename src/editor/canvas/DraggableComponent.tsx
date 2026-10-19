@@ -51,7 +51,7 @@ export function DraggableComponent({
     return null;
   }
 
-  const handleDeleteClick = () => {
+  function handleDeleteClick() {
     modals.openConfirmModal({
       title: tDelete('confirmation-text'),
       centered: true,
@@ -65,9 +65,9 @@ export function DraggableComponent({
       labels: { confirm: tDelete('delete'), cancel: tDelete('cancel') },
       onConfirm: onDelete
     });
-  };
+  }
 
-  const handleDragStop = (_e: DraggableEvent, d: DraggableData) => {
+  function handleDragStop(_e: DraggableEvent, d: DraggableData) {
     let newDropPos = { x: d.x, y: d.y };
     if (layoutId) {
       const parentPos = useBoundStore.getState().positions[layoutId];
@@ -80,7 +80,7 @@ export function DraggableComponent({
     updatePosition(component.id, {
       isDragging: false
     });
-  };
+  }
 
   // Components that belong to a multi (during edit or saved) should not render on the canvas
   if (component.isMulti !== 'false') {
@@ -89,14 +89,14 @@ export function DraggableComponent({
 
   const isHighlighted = (isDragging || isSelected) && !isPresentMode;
 
-  const getComponentPosition = () => {
+  function getComponentPosition() {
     return (
       tempPosition || {
         x: position.x,
         y: position.y
       }
     );
-  };
+  }
 
   return (
     <>

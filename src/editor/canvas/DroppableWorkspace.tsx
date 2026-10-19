@@ -11,6 +11,7 @@ import { useBoundStore } from '@/store/boundStore';
 
 export function DroppableWorkspace({ children }: { children: ReactNode }) {
   const { t } = useTranslation('droppable-workspace');
+
   const isPresentMode = useSettingsStore((state) => state.presentMode);
   const { pageWidth, pageHeight } = useSettingsStore((state) => state);
   const scale = useSettingsStore((state) => state.pageScale);
@@ -26,13 +27,22 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const innerContainerRef = useRef<HTMLDivElement>(null);
 
-  function handleWheel(event: React.WheelEvent) {
-    const scaleAmount = event.deltaY > 0 ? 0.95 : 1.05;
-    setScale((prevScale) => {
-      const newScale = prevScale * scaleAmount;
-      return Math.min(2.0, Math.max(0.75, newScale));
-    });
-  }
+  // Edit mode shows the dotted background, and the page can be zoomed and panned.
+  // Present mode keeps an identity transform, so the content always has its own
+  // stacking context in both modes.
+  // TODO: @ylvse 2026-10-12: investigate if the identity transform can be dropped
+  const viewStyle = isPresentMode
+    ? {
+        transform: 'scale(1.0) translate(0px,0px)',
+        transformOrigin: 'center'
+      }
+    : {
+        backgroundPosition: '-12.5px -12.5px',
+        backgroundSize: '25px 25px',
+        backgroundImage: 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)',
+        transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
+        transformOrigin: 'top left'
+      };
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -52,6 +62,14 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
       document.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
+
+  function handleWheel(event: React.WheelEvent) {
+    const scaleAmount = event.deltaY > 0 ? 0.95 : 1.05;
+    setScale((prevScale) => {
+      const newScale = prevScale * scaleAmount;
+      return Math.min(2.0, Math.max(0.75, newScale));
+    });
+  }
 
   function handleMouseDown(event: React.MouseEvent) {
     const startX = event.pageX - translateX * scale;
@@ -87,23 +105,6 @@ export function DroppableWorkspace({ children }: { children: ReactNode }) {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   }
-
-  // Edit mode shows the dotted background, and the page can be zoomed and panned.
-  // Present mode keeps an identity transform, so the content always has its own
-  // stacking context in both modes.
-  // TODO: @ylvse 2026-10-12: investigate if the identity transform can be dropped
-  const viewStyle = isPresentMode
-    ? {
-        transform: 'scale(1.0) translate(0px,0px)',
-        transformOrigin: 'center'
-      }
-    : {
-        backgroundPosition: '-12.5px -12.5px',
-        backgroundSize: '25px 25px',
-        backgroundImage: 'radial-gradient(circle, #f1f5f940 1px, #02061740 1px)',
-        transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
-        transformOrigin: 'top left'
-      };
 
   return (
     <>

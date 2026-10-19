@@ -4,10 +4,6 @@ import { Box } from '@mantine/core';
 import { useBoundStore } from '@/store/boundStore';
 
 export function SelectionTool() {
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
   const currentPage = useBoundStore((state) => state.currentPage);
 
   const getPageById = useBoundStore((state) => state.getPageById);
@@ -15,7 +11,13 @@ export function SelectionTool() {
   const selectComponent = useBoundStore((state) => state.selectComponent);
   const clearSelection = useBoundStore((state) => state.clearSelection);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [rect, setRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  function handleMouseDown(e: React.MouseEvent) {
     clearSelection();
     setIsSelecting(true);
     const containerRect = containerRef.current!.getBoundingClientRect();
@@ -23,9 +25,8 @@ export function SelectionTool() {
     const offsetY = e.clientY - containerRect.top;
     setStartPos({ x: offsetX, y: offsetY });
     setRect({ x: offsetX, y: offsetY, width: 0, height: 0 });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
+  }
+  function handleMouseMove(e: React.MouseEvent) {
     if (!isSelecting) return;
     const containerRect = containerRef.current!.getBoundingClientRect();
     const offsetX = e.clientX - containerRect.left;
@@ -38,9 +39,8 @@ export function SelectionTool() {
       height: Math.abs(startPos.y - offsetY)
     };
     setRect(newRect);
-  };
-
-  const handleMouseUp = () => {
+  }
+  function handleMouseUp() {
     setIsSelecting(false);
     getPageById(currentPage).components.forEach((c) => {
       // Ensure the component has valid position data
@@ -64,7 +64,7 @@ export function SelectionTool() {
         selectComponent(c);
       }
     });
-  };
+  }
 
   return (
     <Box

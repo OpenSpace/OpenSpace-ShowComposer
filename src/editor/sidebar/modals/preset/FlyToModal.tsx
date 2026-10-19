@@ -49,13 +49,7 @@ export function FlyToModal({
   onCancel
 }: ComponentModalChildProps<'flyto'>) {
   const { t } = useTranslation('fly-to');
-  const [data, setData] = useState<FlyToComponent>(
-    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
-  );
-  const saveComponent = useSaveComponent();
-  const camera = useSubscribeToCamera(500);
-  const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
-  const profile = useSubscribeToProfile();
+
   const setFavorites = usePropertyStore((state) => state.setFavorites);
   const favorites = usePropertyStore((state) => state.favorites);
   const properties = usePropertyStore(
@@ -72,6 +66,17 @@ export function FlyToModal({
     )
   );
 
+  const [data, setData] = useState<FlyToComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+
+  const [options, setOptions] = useState<Option[]>();
+
+  const saveComponent = useSaveComponent();
+  const camera = useSubscribeToCamera(500);
+  const [currentAnchor] = useProperty('StringProperty', NavigationAnchorKey);
+  const profile = useSubscribeToProfile();
+
   const geo = data.geo ?? false;
   const long = data.long ?? 0;
   const lat = data.lat ?? 0;
@@ -85,8 +90,6 @@ export function FlyToModal({
         description: t('placeholder-description', { target: formatName(target) })
       }
     : { name: '', description: '' };
-
-  const [options, setOptions] = useState<Option[]>();
 
   useEffect(() => {
     setFavorites(profile.markNodes);
@@ -117,21 +120,6 @@ export function FlyToModal({
     }
   }, [hasGeoOption, geo]);
 
-  const setFromOpenspace = () => {
-    const shouldGeo = options?.find((option) => option.name === currentAnchor)?.shouldGeo;
-    if (shouldGeo) {
-      handleData({
-        target: String(currentAnchor),
-        lat: camera.latitude || 0,
-        long: camera.longitude || 0,
-        alt: Math.round(camera.altitudeMeters || 0),
-        geo: true
-      });
-    } else {
-      handleData({ target: String(currentAnchor) });
-    }
-  };
-
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
@@ -150,6 +138,21 @@ export function FlyToModal({
         }, {}),
     [properties]
   );
+
+  function setFromOpenspace() {
+    const shouldGeo = options?.find((option) => option.name === currentAnchor)?.shouldGeo;
+    if (shouldGeo) {
+      handleData({
+        target: String(currentAnchor),
+        lat: camera.latitude || 0,
+        long: camera.longitude || 0,
+        alt: Math.round(camera.altitudeMeters || 0),
+        geo: true
+      });
+    } else {
+      handleData({ target: String(currentAnchor) });
+    }
+  }
 
   function handleData(patch: Partial<FlyToComponent>) {
     setData((prev) => ({ ...prev, ...patch }));

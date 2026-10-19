@@ -59,20 +59,7 @@ export function MultiModal({
   onCancel
 }: ComponentModalChildProps<'multi'>) {
   const { t } = useTranslation(['multi', 'main']);
-  const [data, setData] = useState<MultiComponent>(
-    () => component ?? { ...DEFAULTS, components: [], id: componentId ?? '' }
-  );
-  const saveComponent = useSaveComponent();
-  const placeholder = { name: '', description: '' };
-  const [items, setItems] = useState<MultiType[]>(() =>
-    data.components
-      ? data.components.map((v) => ({
-          ...v,
-          id: v.component
-        }))
-      : []
-  );
-  const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
+
   const components = useBoundStore((state) => state.components);
   const updateComponent = useBoundStore((state) => state.updateComponent);
   const getComponentById = useBoundStore((state) => state.getComponentById);
@@ -86,10 +73,19 @@ export function MultiModal({
       return componentsData[component.type]?.isMultiOption ?? false;
     })
   );
-  // The component types that can be added to a Multi, to be used as Select options
-  const multiOptionData = componentPalette
-    .filter((data) => data.isMultiOption)
-    .map((data) => ({ value: data.type, label: t(`main:${data.nameKey}`) }));
+
+  const [data, setData] = useState<MultiComponent>(
+    () => component ?? { ...DEFAULTS, components: [], id: componentId ?? '' }
+  );
+  const [items, setItems] = useState<MultiType[]>(() =>
+    data.components
+      ? data.components.map((v) => ({
+          ...v,
+          id: v.component
+        }))
+      : []
+  );
+  const [availableOptions, setAvailableOptions] = useState<Component['id'][]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentComponentId, setCurrentComponentId] = useState('');
@@ -101,7 +97,37 @@ export function MultiModal({
     isMulti: 'pendingSave'
   });
 
-  const handleAddComponent = (type: ComponentType) => {
+  const saveComponent = useSaveComponent();
+
+  const placeholder = { name: '', description: '' };
+  // The component types that can be added to a Multi, to be used as Select options
+  const multiOptionData = componentPalette
+    .filter((data) => data.isMultiOption)
+    .map((data) => ({ value: data.type, label: t(`main:${data.nameKey}`) }));
+
+  useEffect(() => {
+    const newItems = Array.from(items);
+    recalculateOffsets(newItems);
+    setItems(newItems);
+  }, [items]);
+
+  useEffect(() => {
+    setAvailableOptions(
+      multiOptions.filter((component) => !items.some((item) => item.id === component))
+    );
+    handleData({
+      components: items.map((v) => ({
+        component: v.component,
+        startTime: v.startTime,
+        endTime: v.endTime,
+        buffer: v.buffer,
+        chained: v.chained
+      }))
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  function handleAddComponent(type: ComponentType) {
     const newId = uuidv4();
     setInitialData({
       isMulti: 'pendingSave'
@@ -113,7 +139,7 @@ export function MultiModal({
     setCancelCallback(() => () => {
       setItems(items.filter((item) => item.id !== newId));
     });
-  };
+  }
 
   function sortAdjacentUnchainedItems(tempItems: MultiType[]) {
     // Identify and sort unchained items that are adjacent to other unchained items
@@ -190,38 +216,14 @@ export function MultiModal({
       return originalOrder.indexOf(a.id) - originalOrder.indexOf(b.id);
     });
   }
-
-  useEffect(() => {
-    const newItems = Array.from(items);
-    recalculateOffsets(newItems);
-    setItems(newItems);
-  }, [items]);
-
-  useEffect(() => {
-    setAvailableOptions(
-      multiOptions.filter((component) => !items.some((item) => item.id === component))
-    );
-    handleData({
-      components: items.map((v) => ({
-        component: v.component,
-        startTime: v.startTime,
-        endTime: v.endTime,
-        buffer: v.buffer,
-        chained: v.chained
-      }))
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items]);
-
-  const onDragEnd = (result: DropResult) => {
+  function onDragEnd(result: DropResult) {
     if (!result.destination) return;
     const newList = Array.from(items);
     const [reorderedItem] = newList.splice(result.source.index, 1);
     newList.splice(result.destination.index, 0, reorderedItem);
     setItems(newList);
-  };
-
-  const addItem = (component: MultiOption['id']) => {
+  }
+  function addItem(component: MultiOption['id']) {
     const newComponent = copyComponent(component, true);
 
     if (!newComponent) return;
@@ -237,13 +239,12 @@ export function MultiModal({
     updateComponent(newComponent, {
       isMulti: 'pendingSave'
     });
-  };
-
-  const removeItem = (id: string) => {
+  }
+  function removeItem(id: string) {
     const newList = items.filter((item) => item.id !== id);
     setItems(newList);
     removeComponent(id);
-  };
+  }
 
   function handleData(patch: Partial<MultiComponent>) {
     setData((prev) => ({ ...prev, ...patch }));

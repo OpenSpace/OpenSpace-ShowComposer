@@ -22,6 +22,7 @@ import { PlaybackSwitch } from './PlaybackSwitch';
 
 export function SessionPanel() {
   const { t } = useTranslation('session-panel');
+
   const [useTextFormat, setUseTextFormat] = useState(false);
   const [filenameRecording, setFilenameRecording] = useState('');
   const [filenamePlayback, setFilenamePlayback] = useState<string>('');
@@ -30,12 +31,11 @@ export function SessionPanel() {
   const [isInputFocused, setIsInputFocused] = useState(false); // State to track input focus
 
   const { state, files = [] } = useSubscribeToSessionRecording();
+  const luaApi = useOpenSpaceApi();
 
   const nameIsTaken = useMemo(() => {
     return files.map((v: string) => v.split('.')[0]).includes(filenameRecording);
   }, [files, filenameRecording]);
-
-  const luaApi = useOpenSpaceApi();
 
   function onLoopPlaybackChange(newLoopPlayback: boolean) {
     if (newLoopPlayback) {
@@ -45,7 +45,6 @@ export function SessionPanel() {
       setLoopPlayback(newLoopPlayback);
     }
   }
-
   function onShouldUpdateFramesChange(newValue: boolean) {
     if (newValue) {
       setLoopPlayback(false);
@@ -54,15 +53,12 @@ export function SessionPanel() {
       setShouldOutputFrames(newValue);
     }
   }
-
   function updateRecordingFilename(evt: React.ChangeEvent<HTMLInputElement>) {
     setFilenameRecording(evt.currentTarget.value);
   }
-
   function startRecording() {
     luaApi?.sessionRecording.startRecording();
   }
-
   function toggleRecording() {
     if (state === RecordingState.Idle) {
       startRecording();

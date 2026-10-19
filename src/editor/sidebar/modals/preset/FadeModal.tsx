@@ -35,10 +35,7 @@ export function FadeModal({
   onCancel
 }: ComponentModalChildProps<'fade'>) {
   const { t } = useTranslation('fade');
-  const [data, setData] = useState<FadeComponent>(
-    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
-  );
-  const saveComponent = useSaveComponent();
+
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
@@ -50,20 +47,13 @@ export function FadeModal({
     )
   );
 
-  const { property, intDuration, action } = data;
+  const [data, setData] = useState<FadeComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
 
-  function getPlaceholder() {
-    if (!property) {
-      return { name: '', description: '' };
-    }
-    const name = formatName(
-      property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
-    );
-    return {
-      name: t(`placeholder-name-${action}`, { name }),
-      description: t(`placeholder-description-${action}`, { property: property.trim() })
-    };
-  }
+  const saveComponent = useSaveComponent();
+
+  const { property, intDuration, action } = data;
 
   const placeholder = getPlaceholder();
 
@@ -85,6 +75,19 @@ export function FadeModal({
         }, {}),
     [properties]
   );
+
+  function getPlaceholder() {
+    if (!property) {
+      return { name: '', description: '' };
+    }
+    const name = formatName(
+      property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
+    );
+    return {
+      name: t(`placeholder-name-${action}`, { name }),
+      description: t(`placeholder-description-${action}`, { property: property.trim() })
+    };
+  }
 
   function handleData(patch: Partial<FadeComponent>) {
     setData((prev) => ({ ...prev, ...patch }));

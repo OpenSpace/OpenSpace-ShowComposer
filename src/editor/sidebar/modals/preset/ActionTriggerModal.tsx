@@ -30,11 +30,14 @@ export function ActionTriggerModal({
   onCancel
 }: ComponentModalChildProps<'action'>) {
   const { t } = useTranslation('action-trigger');
+
+  const actions = usePropertyStore((state) => state.actions);
+
   const [data, setData] = useState<ActionTriggerComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const actions = usePropertyStore((state) => state.actions);
 
   const { action } = data;
   const actionEntry = action

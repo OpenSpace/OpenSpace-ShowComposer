@@ -34,11 +34,14 @@ export function BoolModal({
   onCancel
 }: ComponentModalChildProps<'boolean'>) {
   const { t } = useTranslation('boolean');
+
+  const properties = usePropertyStore(useShallow((state) => state.properties));
+
   const [data, setData] = useState<BooleanComponent>(
     () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
   );
+
   const saveComponent = useSaveComponent();
-  const properties = usePropertyStore(useShallow((state) => state.properties));
 
   const { property, action } = data;
   const boundProperty = properties[property];

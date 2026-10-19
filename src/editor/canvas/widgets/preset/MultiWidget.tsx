@@ -18,18 +18,24 @@ interface Props {
 // a bigger change as the whole store architecture needs to be changed as well.
 export function MultiWidget({ component }: Props) {
   const { t } = useTranslation('multi');
+
   const getComponentById = useBoundStore((state) => state.getComponentById);
+
+  const [currentItems, setCurrentItems] = useState<string[]>([]);
+
   const statusBarRef = useRef<StatusBarRef>(null);
-  function triggerAnimation() {
-    statusBarRef.current?.triggerAnimation();
-  }
+  const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach(clearTimeout);
+      timeoutIds.current = [];
+    };
+  }, []);
 
   const totalDelay = useMemo(() => {
     return component.components[component.components.length - 1]?.endTime || 0;
   }, [component.components]);
-
-  const [currentItems, setCurrentItems] = useState<string[]>([]);
-  const timeoutIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const triggerComponents = useCallback(() => {
     component.components.forEach((item, index) => {
@@ -63,12 +69,9 @@ export function MultiWidget({ component }: Props) {
     });
   }, [component.components]);
 
-  useEffect(() => {
-    return () => {
-      timeoutIds.current.forEach(clearTimeout);
-      timeoutIds.current = [];
-    };
-  }, []);
+  function triggerAnimation() {
+    statusBarRef.current?.triggerAnimation();
+  }
 
   return (
     <ComponentContainer

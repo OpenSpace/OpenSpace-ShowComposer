@@ -15,10 +15,12 @@ interface Props {
 
 export function ImageUpload({ value, onChange }: Props) {
   const { t } = useTranslation('image-upload');
+
   const [image, setImage] = useState<string>(value || '');
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+
   const [galleryOpened, { open: openGallery, close: closeGallery }] =
     useDisclosure(false);
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   // Fetch every time the gallery opens so it stays up to date with the server
   useEffect(() => {
@@ -41,7 +43,6 @@ export function ImageUpload({ value, onChange }: Props) {
     setImage(imagePath);
     closeGallery();
   }
-
   function handleURLChange(event: ChangeEvent<HTMLInputElement>) {
     onChange(event.currentTarget.value);
     setImage(event.currentTarget.value);

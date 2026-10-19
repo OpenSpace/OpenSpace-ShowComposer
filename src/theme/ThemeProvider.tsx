@@ -30,6 +30,14 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
 
+  const value = {
+    theme,
+    setTheme: (theme: Theme) => {
+      localStorage.setItem(storageKey, theme);
+      setTheme(theme);
+    }
+  };
+
   useEffect(() => {
     const root = window.document.documentElement;
 
@@ -47,14 +55,6 @@ export function ThemeProvider({
     root.classList.add(theme);
   }, [theme]);
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
-    }
-  };
-
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
       {children}
@@ -62,11 +62,11 @@ export function ThemeProvider({
   );
 }
 
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeProviderContext);
 
   if (context === undefined)
     throw new Error('useTheme must be used within a ThemeProvider');
 
   return context;
-};
+}
