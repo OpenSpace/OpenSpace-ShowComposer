@@ -103,7 +103,9 @@ export function FlyToModal({
 
   const hasGeoOption: boolean = useMemo(
     () =>
-      (options && target && options.find((option) => option.name === target)?.shouldGeo) ||
+      (options &&
+        target &&
+        options.find((option) => option.name === target)?.shouldGeo) ||
       false,
     [target, options]
   );
@@ -184,7 +186,12 @@ export function FlyToModal({
             })
           }
         />
-        <Button variant={'filled'} size={'xs'} onClick={setFromOpenspace}>
+        <Button
+          variant={'filled'}
+          size={'sm'}
+          styles={{ label: { whiteSpace: 'normal' } }}
+          onClick={setFromOpenspace}
+        >
           {t('set-target-from-openspace')}
         </Button>
         <Checkbox
