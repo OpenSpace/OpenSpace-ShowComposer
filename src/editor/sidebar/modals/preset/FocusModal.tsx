@@ -85,7 +85,7 @@ export function FocusModal({
           options={Object.keys(sortedKeys)}
           selectOption={(v: string) => handleData({ property: sortedKeys[v] })}
           selectedOption={
-            (Object.keys(sortedKeys).find((key) => key === property) as string) || ''
+            Object.keys(sortedKeys).find((key) => sortedKeys[key] === property) || ''
           }
           searchPlaceholder={t('search-scene')}
         />
