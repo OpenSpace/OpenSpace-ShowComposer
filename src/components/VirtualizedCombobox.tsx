@@ -55,7 +55,7 @@ export function VirtualizedCombobox({
   selectedOption,
   selectOption,
   searchPlaceholder,
-  width = '460px',
+  width = '100%',
   delimiter = '>',
   presets = null
 }: Props) {

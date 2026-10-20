@@ -140,26 +140,21 @@ export const useOpenSpaceApiStore = create<OpenSpaceApiState>()((set, get) => ({
         initData[EnginePropertyVisibilityKey as string] = Visibility as AnyProperty;
         usePropertyStore.getState().setProperties(initData);
 
-        // Filter the properties based on the visibility
-        const filteredProperties = properties.filter((p: AnyProperty) =>
-          isPropertyVisible(p, Visibility?.value as number)
-        );
-        // Get the renderables
         const fadeables: Record<string, AnyProperty> = getRenderables(
-          filteredProperties,
-          'Opacity'
+          properties,
+          'Fadable'
         );
         usePropertyStore.getState().setProperties(fadeables);
 
         const boolProps: Record<string, AnyProperty> = getActionSceneNodes(
-          filteredProperties,
+          properties,
           'Bool'
         );
         usePropertyStore.getState().setProperties(boolProps);
-        const triggerProps = getActionSceneNodes(filteredProperties, 'Trigger');
+        const triggerProps = getActionSceneNodes(properties, 'Trigger');
 
         usePropertyStore.getState().setProperties(triggerProps);
-        const numberProps = getActionSceneNodes(filteredProperties, 'Number');
+        const numberProps = getActionSceneNodes(properties, 'Number');
         usePropertyStore.getState().setProperties(numberProps);
       } catch (e) {
         console.error('OpenSpace library could not be loaded:', e);

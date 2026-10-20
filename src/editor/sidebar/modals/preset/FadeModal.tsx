@@ -39,7 +39,7 @@ export function FadeModal({
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
-        .filter((a) => a.endsWith('.Opacity'))
+        .filter((uri) => uri.endsWith('.Fade'))
         .reduce((acc: Record<string, AnyProperty>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
@@ -69,8 +69,9 @@ export function FadeModal({
           return a.localeCompare(b);
         })
         .reduce((acc: Record<string, string>, key) => {
-          const newValue = formatName(key);
-          acc[newValue] = key;
+          const target = key.replace('.Fade', '');
+          const newValue = formatName(target);
+          acc[newValue] = target;
           return acc;
         }, {}),
     [properties]
@@ -81,7 +82,7 @@ export function FadeModal({
       return { name: '', description: '' };
     }
     const name = formatName(
-      property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
+      property.replace(/Scene.|ScreenSpace.|.Renderable|.Fade/g, '').replace(/\./g, ' > ')
     );
     return {
       name: t(`placeholder-name-${action}`, { name }),

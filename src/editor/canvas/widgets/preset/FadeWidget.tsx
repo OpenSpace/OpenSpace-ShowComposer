@@ -11,9 +11,7 @@ interface Props {
 }
 
 export function FadeWidget({ component }: Props) {
-  const fadeUri = component?.property?.replace('.Opacity', '.Fade') ?? '';
-  const [fadeValue] = useProperty('FloatProperty', fadeUri);
-
+  const [fadeValue] = useProperty('FloatProperty', `${component?.property ?? ''}.Fade`);
   // Reflect the value of fade on the card outline: faded in (green),
   // faded out (red), transitioning/disconnected (grey)
   const outlineStyle = useOutlineStyle(fadeValue, (value) =>
