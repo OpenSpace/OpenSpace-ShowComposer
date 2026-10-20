@@ -16,9 +16,9 @@ import { getFadeTargetIdentifier } from '@/utils/fadeHelpers';
  */
 
 /**
- * Fade a renderable's opacity in, out, or toggle it, over a duration.
+ * Fade a renderable's visibility in, out, or toggle it, over a duration.
  *
- * @param property - The `.Opacity` property URI of the renderable. The `.Opacity` suffix is
+ * @param property - The `.Fade` property URI of the renderable. The `.Fade` suffix is
  * stripped before the fade functions are called.
  * @param intDuration - The fade duration in seconds.
  * @param action - Whether to fade `on`, `off`, or `toggle` the current fade state.

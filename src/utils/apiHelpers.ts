@@ -67,10 +67,7 @@ const RegexLibrary = {
     regex: /^Scene\.(.*?)/
   },
   Fadable: {
-    regex: /^(Scene\..*\.Opacity|ScreenSpace\..*\.Fade)$/
-  },
-  Opacity: {
-    regex: /Scene\.(.*?)\.Opacity/
+    regex: /^(Scene\..*\.Fade|ScreenSpace\..*\.Fade)$/
   },
   TriggerProperty: {
     regex: /Scene\.(.*?)\.Renderable.Color/
@@ -174,7 +171,6 @@ export function formatName(name: string) {
     .replace(/^Scene\./, '')
     .replace(/^ScreenSpace\./, '')
     .replace(/^ScreenSpaceRenderables\./, '')
-    .replace(/\.Renderable|\.Opacity/g, '')
     .replace(/.Fade/g, '')
     .replace(/\./g, ' > ')
     .replace(/(?<=[a-z])([A-Z])/g, ' $1')

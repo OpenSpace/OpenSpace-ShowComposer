@@ -40,11 +40,7 @@ export function FadeModal({
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
-        .filter(
-          (uri) =>
-            uri.endsWith('.Opacity') ||
-            (uri.startsWith('ScreenSpace.') && uri.endsWith('.Fade'))
-        )
+        .filter((uri) => uri.endsWith('.Fade'))
         .reduce((acc: Record<string, AnyProperty>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
@@ -87,7 +83,7 @@ export function FadeModal({
       return { name: '', description: '' };
     }
     const name = formatName(
-      property.replace(/Scene.|.Renderable|.Opacity/g, '').replace(/\./g, ' > ')
+      property.replace(/Scene.|.Renderable|.Fade/g, '').replace(/\./g, ' > ')
     );
     return {
       name: t(`placeholder-name-${action}`, { name }),
