@@ -2,6 +2,7 @@ import { Text } from '@mantine/core';
 
 import { DisplayLabel } from '@/components/DisplayLabel';
 import { Information } from '@/components/Information';
+import { zIndex } from '@/editor/canvas/zIndex';
 
 interface Props {
   name: string;
@@ -18,7 +19,7 @@ export function WidgetLabel({ name, description }: Props) {
   }
 
   return (
-    <DisplayLabel mx={'auto'}>
+    <DisplayLabel mx={'auto'} pos={'relative'} style={{ zIndex: zIndex.widgetLabel }}>
       <Text inherit>{name}</Text>
       <Information content={description} />
     </DisplayLabel>

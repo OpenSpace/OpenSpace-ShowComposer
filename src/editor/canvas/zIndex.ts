@@ -3,6 +3,7 @@ export const zIndex = {
   // Layers inside a single canvas widget
   body: 0,
   handleSection: 1, // left/right sections in the drag strip, above the body
+  widgetLabel: 2, // widget name label, above the absolutely positioned status bar
   disabledOverlay: 50, // overlay shown while disconnected
   dragHandle: 99, // the drag-handle strip at the top
 
