@@ -8,7 +8,6 @@ import { usePropertyStore } from '@/store/propertyStore';
 import type { FlyToComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { type NavigationState, RecordingsFolderKey } from '@/types/types';
-import { getFadeTargetIdentifier } from '@/utils/fadeHelpers';
 
 /**
  * TODO @ylvse (2026-09-23) - When moving to RTK this file will become actions. Therefore, the lua api access is kept here,
@@ -39,13 +38,13 @@ export async function triggerFade(
 
   switch (action) {
     case 'on':
-      luaApi.fadeIn(getFadeTargetIdentifier(property), intDuration);
+      luaApi.fadeIn(property, intDuration);
       break;
     case 'off':
-      luaApi.fadeOut(getFadeTargetIdentifier(property), intDuration);
+      luaApi.fadeOut(property, intDuration);
       break;
     case 'toggle':
-      luaApi.toggleFade(getFadeTargetIdentifier(property), intDuration);
+      luaApi.toggleFade(property, intDuration);
       break;
     default:
       break;

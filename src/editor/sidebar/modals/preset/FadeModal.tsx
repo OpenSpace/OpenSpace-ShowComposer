@@ -14,7 +14,6 @@ import {
 import { type FadeComponent, type Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors, ToggleActions } from '@/types/components';
 import { formatName } from '@/utils/apiHelpers';
-import { getFadeTargetIdentifier } from '@/utils/fadeHelpers';
 
 const DEFAULTS: Omit<FadeComponent, 'id'> = {
   type: 'fade',
@@ -70,7 +69,7 @@ export function FadeModal({
           return a.localeCompare(b);
         })
         .reduce((acc: Record<string, string>, key) => {
-          const target = getFadeTargetIdentifier(key);
+          const target = key.replace('.Fade', '');
           const newValue = formatName(target);
           acc[newValue] = target;
           return acc;
@@ -83,7 +82,7 @@ export function FadeModal({
       return { name: '', description: '' };
     }
     const name = formatName(
-      property.replace(/Scene.|.Renderable|.Fade/g, '').replace(/\./g, ' > ')
+      property.replace(/Scene.|ScreenSpace.|.Renderable|.Fade/g, '').replace(/\./g, ' > ')
     );
     return {
       name: t(`placeholder-name-${action}`, { name }),
