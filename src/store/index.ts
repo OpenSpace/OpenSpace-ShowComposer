@@ -21,7 +21,7 @@ export type {
   TriggerComponent,
   VideoComponent
 } from '../types/components';
-export { ConnectionState, useOpenSpaceApiStore } from './apiStore';
+export { useOpenSpaceApiStore } from './apiStore';
 export type { Position } from './positionSlice';
 export { selectFilteredProperties, usePropertyStore } from './propertyStore';
 export { useSettingsStore } from './settingsStore';

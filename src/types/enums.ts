@@ -2,11 +2,11 @@
 // causes issues with fast refresh: https://nextjs.org/docs/architecture/fast-refresh
 
 export enum IconSize {
-  xs = 16,
-  sm = 20,
-  md = 26,
-  lg = 32,
-  xl = 42
+  xs = 14,
+  sm = 16,
+  md = 20,
+  lg = 24,
+  xl = 32
 }
 
 export enum NavigationType {

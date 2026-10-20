@@ -34,6 +34,13 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-explicit-any': 'error', // Disallow usage of any
+      // Type-only imports must use the `type` keyword. All-type imports become
+      // `import type { X }`, mixed imports become `import { type X, y }`
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' }
+      ],
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       'no-duplicate-imports': 'error', // Imports should be on one line
       'no-console': 'warn',
       'prefer-destructuring': ['error', { object: true, array: true }],

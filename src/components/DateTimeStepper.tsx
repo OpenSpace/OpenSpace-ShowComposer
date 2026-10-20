@@ -1,0 +1,127 @@
+import { useTranslation } from 'react-i18next';
+import { ActionIcon, Group, Stack, TextInput } from '@mantine/core';
+
+import { ChevronDownIcon, ChevronUpIcon } from '@/icons/icons';
+import { IconSize } from '@/types/enums';
+
+type DateData = {
+  time: Date;
+  interpolate: boolean;
+  delta: number;
+  relative: boolean;
+};
+
+const dateParts = ['year', 'month', 'day', 'hours', 'minutes', 'seconds'] as const;
+
+function zeroPad(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
+function formatDatePart(
+  part: (typeof dateParts)[number],
+  date: Date,
+  locale: string
+): string | number {
+  switch (part) {
+    case 'month':
+      return date.toLocaleString(locale, { month: 'short', timeZone: 'UTC' });
+    case 'year':
+      return date.getUTCFullYear();
+    case 'day':
+      return zeroPad(date.getUTCDate());
+    case 'hours':
+      return zeroPad(date.getUTCHours());
+    case 'minutes':
+      return zeroPad(date.getUTCMinutes());
+    default:
+      return zeroPad(date.getUTCSeconds());
+  }
+}
+
+interface Props {
+  date: Date | string;
+  onChange: (data: DateData) => void;
+}
+
+export function DateTimeStepper({ date, onChange }: Props) {
+  // Using the language from i18n to format the month name
+  const { i18n } = useTranslation('time-date-picker');
+
+  if (date === undefined) {
+    return null;
+  }
+
+  const dateObj = new Date(date);
+
+  function adjustDatePart(part: (typeof dateParts)[number], delta: number) {
+    const newDate = new Date(date);
+    switch (part) {
+      case 'year':
+        newDate.setFullYear(newDate.getFullYear() + delta);
+        break;
+      case 'month':
+        newDate.setMonth(newDate.getMonth() + delta);
+        break;
+      case 'day':
+        newDate.setDate(newDate.getDate() + delta);
+        break;
+      case 'hours':
+        newDate.setHours(newDate.getHours() + delta);
+        break;
+      case 'minutes':
+        newDate.setMinutes(newDate.getMinutes() + delta);
+        break;
+      case 'seconds':
+        newDate.setSeconds(newDate.getSeconds() + delta);
+        break;
+      default:
+        return;
+    }
+    onChange({
+      time: newDate,
+      interpolate: true,
+      delta: (newDate.getTime() - new Date(date).getTime()) / 1000,
+      relative: true
+    });
+  }
+
+  return (
+    <Group justify={'center'} gap={0}>
+      {dateParts.map((part) => (
+        <Stack key={part} align={'center'} gap={'xxs'} px={'xxs'}>
+          <ActionIcon
+            variant={'subtle'}
+            color={'white'}
+            size={'xs'}
+            onClick={() => adjustDatePart(part, 1)}
+          >
+            <ChevronUpIcon size={IconSize.md} />
+          </ActionIcon>
+          <TextInput
+            w={40}
+            variant={'unstyled'}
+            styles={{
+              input: {
+                height: 20,
+                minHeight: 20,
+                padding: 0,
+                textAlign: 'center',
+                fontSize: 14
+              }
+            }}
+            value={formatDatePart(part, dateObj, i18n.language)}
+            readOnly
+          />
+          <ActionIcon
+            variant={'subtle'}
+            color={'white'}
+            size={'xs'}
+            onClick={() => adjustDatePart(part, -1)}
+          >
+            <ChevronDownIcon size={IconSize.md} />
+          </ActionIcon>
+        </Stack>
+      ))}
+    </Group>
+  );
+}

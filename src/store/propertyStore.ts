@@ -1,12 +1,17 @@
 import { throttle } from 'lodash';
-import { Topic } from 'openspace-api-js/topics';
-import { AnyProperty, LogMessage, TopicId, TopicPayload } from 'openspace-api-js/types';
+import type { Topic } from 'openspace-api-js/topics';
+import type {
+  AnyProperty,
+  LogMessage,
+  TopicId,
+  TopicPayload
+} from 'openspace-api-js/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { RecordingState } from '@/types/enums';
-import {
+import type {
   Action,
   CameraState,
   OpenSpaceTimeState,
@@ -23,11 +28,6 @@ type Subscription = {
   subscription: Topic<TopicId>;
 };
 
-export enum ConnectionState {
-  UNCONNECTED = 'UNCONNECTED',
-  CONNECTED = 'CONNECTED',
-  CONNECTING = 'CONNECTING'
-}
 //need to work this out
 interface State {
   propertySubscriptions: Record<string, Subscription>; // this should store a string which is propertyURI and value which is object containt count,subscritions and state
@@ -167,7 +167,6 @@ export const usePropertyStore = create<State>()(
               };
               const throttledHandleUpdates = throttle(setProperty, throttleAmt);
               (async () => {
-                // @ts-ignore eslint-disable-next-line no-restricted-syntax
                 for await (const data of subscription) {
                   // throttledHandleUpdates(
                   throttledHandleUpdates(name, restrictNumbersToDecimalPlaces(data, 4));
@@ -344,11 +343,11 @@ export const usePropertyStore = create<State>()(
   )
 );
 
-export const selectFilteredProperties = (state: State) => {
+export function selectFilteredProperties(state: State) {
   console.log(state);
   return Object.keys(state.properties).filter((a) => a.includes('.Renderable'));
   // .reduce((acc: Record<string, any>, key: string) => {
   //   acc[key] = state.properties[key];
   //   return acc;
   // }, {});
-};
+}

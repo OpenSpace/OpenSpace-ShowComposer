@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  ComponentBase,
+  type ComponentBase,
   ComponentBaseColors,
-  ImmerStateCreator
+  type ImmerStateCreator
 } from '../types/components';
 
-import { ComponentSlice } from './componentSlice';
-import { LayoutSlice } from './layoutSlice';
-import { PositionSlice } from './positionSlice';
+import type { ComponentSlice } from './componentSlice';
+import type { LayoutSlice } from './layoutSlice';
+import type { PositionSlice } from './positionSlice';
 
 export type Page = {
   components: Array<ComponentBase['id']>;

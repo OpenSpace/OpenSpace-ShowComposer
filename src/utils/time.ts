@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 
 import { useOpenSpaceApiStore, usePropertyStore } from '@/store';
 // Using this hack to parse times https://scholarslab.lib.virginia.edu/blog/parsing-bc-dates-with-javascript/
-export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
+export function dateStringWithTimeZone(date: string, zone = 'Z') {
   // Ensure we don't have white spaces
   const whitespaceRemoved = date.replace(/\s/g, '');
   let result;
@@ -28,7 +28,7 @@ export const dateStringWithTimeZone = (date: string, zone = 'Z') => {
   }
 
   return !result.includes('Z') ? `${result}${zone}` : result;
-};
+}
 // new Date();
 interface TimeState {
   //   newTime?: string;
@@ -47,10 +47,10 @@ interface TimeState {
   hasNextDeltaTimeStep?: boolean;
   hasPrevDeltaTimeStep?: boolean;
 }
-function isDate(date: Date | string): date is Date {
+export function isDate(date: Date | string): date is Date {
   return date instanceof Date;
 }
-const updateTime = (newTimeState: TimeState) => {
+export function updateTime(newTimeState: TimeState) {
   //   const { newTime } = newTimeState;
   const { time: newTime } = newTimeState;
   // console.log(newTimeState);
@@ -64,7 +64,7 @@ const updateTime = (newTimeState: TimeState) => {
     } else {
       const ztime = new Date(dateStringWithTimeZone(newTime));
 
-      if (!isNaN(ztime as any)) {
+      if (!isNaN(ztime.getTime())) {
         newState.time = ztime;
       } else {
         newState.time = newTime;
@@ -87,9 +87,9 @@ const updateTime = (newTimeState: TimeState) => {
   }
   // debounce(() => console.log(newState), 1000);
   return newState;
-};
+}
 
-async function jumpToTime(
+export async function jumpToTime(
   newTime: Date,
   interpolate: boolean,
   fadeTime: number,
@@ -115,10 +115,11 @@ async function jumpToTime(
     // console.log(timeDiffSeconds);
     const diffBiggerThanADay = timeDiffSeconds > 86400; // No of seconds in a day
     if (fadeScene && diffBiggerThanADay && interpolate) {
+      // The blackout factor is 0 when the scene is visible and 1 when it is black
       const promise = new Promise((resolve) => {
         luaApi?.setPropertyValueSingle(
-          'RenderEngine.BlackoutFactor',
-          0,
+          'RenderEngine.GlobalBlackout.Factor',
+          1,
           fadeTime / 2.0,
           'QuadraticEaseOut'
         );
@@ -128,8 +129,8 @@ async function jumpToTime(
       const fixedTimeString = newTime.toJSON().replace('Z', '');
       luaApi?.time.setTime(fixedTimeString);
       luaApi?.setPropertyValueSingle(
-        'RenderEngine.BlackoutFactor',
-        1,
+        'RenderEngine.GlobalBlackout.Factor',
+        0,
         fadeTime / 2.0,
         'QuadraticEaseIn'
       );
@@ -144,7 +145,7 @@ async function jumpToTime(
 }
 
 // how do
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
   const pad = (n: number) => (n < 10 ? '0' + n : n);
 
   const day = pad(date.getUTCDate());
@@ -157,5 +158,3 @@ function formatDate(date: Date) {
 
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
-
-export { formatDate, isDate, jumpToTime, updateTime };

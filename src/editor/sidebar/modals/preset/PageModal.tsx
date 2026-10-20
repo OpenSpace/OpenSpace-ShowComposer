@@ -1,0 +1,82 @@
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { InputLabel, Select, Stack } from '@mantine/core';
+
+import { WidgetSettings } from '@/components/WidgetSettings';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  type ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
+import { useBoundStore } from '@/store/boundStore';
+import { ComponentBaseColors, type PageComponent } from '@/types/components';
+
+const DEFAULTS: Omit<PageComponent, 'id'> = {
+  type: 'page',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  page: 1,
+  backgroundImage: '',
+  color: ComponentBaseColors.page
+};
+
+export function PageModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'page'>) {
+  const { t } = useTranslation('page');
+
+  const pages = useBoundStore((state) => state.pages);
+
+  const [data, setData] = useState<PageComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+
+  const saveComponent = useSaveComponent();
+
+  const { page } = data;
+  const pageData = pages[page - 1];
+
+  const placeholder = pageData
+    ? {
+        name: t('placeholder-name', {
+          page: pageData.name ? pageData.name : t('default-page-name', { number: page })
+        }),
+        description: ''
+      }
+    : { name: '', description: '' };
+
+  function handleData(patch: Partial<PageComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data, placeholder);
+    onClose();
+  }
+
+  return (
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{t('page-number')}</InputLabel>
+        <Select
+          allowDeselect={false}
+          data={pages.map((v, i) => ({
+            value: (i + 1).toString(),
+            label: v.name ? v.name : t('default-page-name', { number: i + 1 })
+          }))}
+          placeholder={t('select-option')}
+          value={page.toString()}
+          disabled={pages.length === 0}
+          onChange={(value) => value && handleData({ page: parseInt(value) })}
+        />
+      </Stack>
+      <WidgetSettings data={data} handleData={handleData} placeholder={placeholder} />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
+    </Stack>
+  );
+}

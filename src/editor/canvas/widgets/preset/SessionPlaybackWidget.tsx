@@ -1,0 +1,63 @@
+import { useMemo } from 'react';
+import { Stack } from '@mantine/core';
+
+import { useOpenSpaceApi } from '@/api/hooks';
+import { ComponentContainer } from '@/components/ComponentContainer';
+import { PlaybackControls } from '@/components/PlaybackControls';
+import { WidgetLabel } from '@/components/WidgetLabel';
+import { useSubscribeToSessionRecording } from '@/hooks/topicSubscriptions';
+import type { SessionPlaybackComponent } from '@/types/components';
+import { RecordingState } from '@/types/enums';
+import { RecordingsFolderKey } from '@/types/types';
+
+interface Props {
+  component: SessionPlaybackComponent;
+}
+
+export function SessionPlaybackWidget({ component }: Props) {
+  const luaApi = useOpenSpaceApi();
+
+  const { file, loop, gui_name, gui_description } = component;
+  const recordingState = useSubscribeToSessionRecording().state || RecordingState.Idle;
+
+  const isIdle = useMemo(() => recordingState === RecordingState.Idle, [recordingState]);
+
+  function startPlayback() {
+    luaApi?.absPath(`${RecordingsFolderKey}${file}`).then((value) => {
+      luaApi?.sessionRecording.startPlayback(value, loop);
+    });
+  }
+
+  function stopPlayback() {
+    luaApi?.sessionRecording.stopPlayback();
+  }
+
+  function togglePlayback() {
+    if (isIdle) {
+      startPlayback();
+    } else {
+      stopPlayback();
+    }
+  }
+
+  function togglePlaybackPaused() {
+    luaApi?.sessionRecording.togglePlaybackPause();
+  }
+
+  return (
+    <ComponentContainer
+      backgroundImage={component.backgroundImage}
+      backgroundColor={component.color}
+    >
+      <Stack align={'center'} gap={'xs'}>
+        <WidgetLabel name={gui_name} description={gui_description} />
+        <PlaybackControls
+          recordingState={recordingState}
+          file={file}
+          onTogglePlayback={togglePlayback}
+          onTogglePlaybackPaused={togglePlaybackPaused}
+        />
+      </Stack>
+    </ComponentContainer>
+  );
+}

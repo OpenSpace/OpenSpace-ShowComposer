@@ -1,10 +1,10 @@
 import { debounce } from 'lodash';
 
-import { ImmerStateCreator } from '../types/components';
+import type { ImmerStateCreator } from '../types/components';
 
-import { ComponentSlice } from './componentSlice';
-import { LayoutSlice } from './layoutSlice';
-import { PageSlice } from './pageSlice';
+import type { ComponentSlice } from './componentSlice';
+import type { LayoutSlice } from './layoutSlice';
+import type { PageSlice } from './pageSlice';
 
 export interface Position {
   id: string;

@@ -8,12 +8,12 @@ import {
 } from '@/utils/layoutCalculations';
 import { roundToNearest } from '@/utils/math';
 
-import { ImmerStateCreator, LayoutBase } from '../types/components';
+import type { ImmerStateCreator, LayoutBase } from '../types/components';
 
-import { ComponentSlice, isComponentOverlappingPage } from './componentSlice';
+import { type ComponentSlice, isComponentOverlappingPage } from './componentSlice';
 // import { StateCreator } from 'zustand';
-import { PageSlice } from './pageSlice';
-import { PositionSlice } from './positionSlice';
+import type { PageSlice } from './pageSlice';
+import type { PositionSlice } from './positionSlice';
 import { useSettingsStore } from './settingsStore';
 
 export type LayoutType = 'row' | 'column' | 'grid';

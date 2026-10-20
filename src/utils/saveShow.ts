@@ -1,0 +1,177 @@
+import { loadShowArchive, packageShow, saveShowStore } from '@/api/showbuilder';
+import { useSettingsStore } from '@/store';
+import { useBoundStore } from '@/store/boundStore';
+
+// Show save/load/export operations that involve app state (the Zustand stores) or the
+// browser (file-picker dialogs, downloads). The functions that communicate with the backend live in the
+// showbuilder file (@/api/showbuilder).
+
+/**
+ * Saves the current state of the stores as a show on the backend.
+ *
+ * @returns `true` when the save succeeds.
+ * @throws If the backend save fails.
+ */
+export async function saveShow() {
+  const settingsStore = useSettingsStore.getState();
+  const boundStore = useBoundStore.getState();
+  return await saveShowStore({ boundStore, settingsStore });
+}
+
+/**
+ * Opens a file dialog for a local `.json` show file and parses it. No backend involved.
+ *
+ * @returns A promise that resolves with the parsed show store, or rejects if no file is
+ * chosen, or the file isn't valid JSON.
+ */
+export async function loadStore() {
+  return new Promise((resolve, reject) => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          if (e.target?.result) {
+            try {
+              const store = JSON.parse(e.target.result as string);
+              resolve(store);
+            } catch (error: unknown) {
+              reject(
+                new Error(
+                  'Failed to parse JSON: ' +
+                    (error instanceof Error ? error.message : String(error))
+                )
+              );
+            }
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        reject(new Error('No file selected'));
+      }
+    };
+    fileInput.click();
+  });
+}
+
+/**
+ * Opens file dialogs to pick a `.json` show file plus its image files, then uploads them
+ * to the backend.
+ *
+ * @returns A promise that resolves with the parsed show store, or rejects if no file is
+ * chosen, or the upload fails.
+ */
+export async function loadStoreImageSeperately() {
+  return new Promise((resolve, reject) => {
+    const jsonInput = document.createElement('input');
+    jsonInput.type = 'file';
+    jsonInput.accept = '.json'; // Accept JSON files
+
+    const imageInput = document.createElement('input');
+    imageInput.type = 'file';
+    imageInput.accept = 'image/*'; // Accept image files
+    imageInput.multiple = true; // Allow multiple image uploads
+
+    jsonInput.onchange = async (e) => {
+      const jsonFile = (e.target as HTMLInputElement).files?.[0];
+      if (jsonFile) {
+        const formData = new FormData();
+        formData.append('projectFile', jsonFile); // Append the JSON file
+
+        // Handle image uploads
+        const imageFiles = imageInput.files;
+        if (imageFiles) {
+          for (let i = 0; i < imageFiles.length; i++) {
+            formData.append('images', imageFiles[i]); // Append each image file
+          }
+        }
+
+        try {
+          const store = await loadShowArchive(formData);
+          resolve(store);
+        } catch (error: unknown) {
+          reject(
+            new Error(
+              'Error loading show: ' +
+                (error instanceof Error ? error.message : String(error))
+            )
+          );
+        }
+      } else {
+        reject(new Error('No JSON file selected'));
+      }
+    };
+
+    // Trigger the JSON file input
+    jsonInput.click();
+
+    // Trigger the image file input after the JSON file is selected
+    jsonInput.onchange = () => {
+      imageInput.click();
+    };
+  });
+}
+
+/**
+ * Opens a file dialog to pick a `.zip` show and uploads it to the backend.
+ *
+ * @returns A promise that resolves with the parsed show store, or rejects if no file is
+ * chosen or the upload fails.
+ */
+export async function loadStoreToServer() {
+  return new Promise((resolve, reject) => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.zip'; // Accept ZIP files
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file); // Append the ZIP file
+
+        try {
+          const store = await loadShowArchive(formData);
+          resolve(store);
+        } catch (error: unknown) {
+          reject(
+            new Error(
+              'Error loading show: ' +
+                (error instanceof Error ? error.message : String(error))
+            )
+          );
+        }
+      } else {
+        reject(new Error('No file selected'));
+      }
+    };
+    fileInput.click();
+  });
+}
+
+/**
+ * Packages the current show and triggers a browser download of the resulting `.zip`.
+ */
+export function exportShow() {
+  const settingsStore = useSettingsStore.getState();
+  const boundStore = useBoundStore.getState();
+  packageShow({ boundStore, settingsStore })
+    .then((blob) => {
+      // Create download link. Technically the URL should be revoked after the download is complete.
+      // This however can create bugs where the download doesnt work depending on how long the download takes
+      // and how fast the URL is revoked. So rather than guess a delay, the URL is intentionally never revoked
+      // - it's a one-off, user-triggered download, so the Blob just stays alive until the tab reloads/closes.
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${settingsStore.projectName.replace(/ /g, '_')}-${Date.now()}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    })
+    .catch((error) => {
+      console.error('Error exporting show:', error);
+    });
+}

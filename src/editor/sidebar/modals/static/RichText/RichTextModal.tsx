@@ -1,0 +1,59 @@
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { InputLabel, Stack } from '@mantine/core';
+
+import { ColorPicker } from '@/components/ColorPicker';
+import { ModalFooter } from '@/editor/sidebar/modals/ModalFooter';
+import {
+  type ComponentModalChildProps,
+  useSaveComponent
+} from '@/editor/sidebar/modals/saveComponent';
+import type { RichTextComponent } from '@/store';
+import { ComponentBaseColors } from '@/types/components';
+
+import { RichTextEditor } from './RichTextEditor';
+
+const DEFAULTS: Omit<RichTextComponent, 'id'> = {
+  type: 'richtext',
+  isMulti: 'false',
+  gui_name: '',
+  gui_description: '',
+  text: '',
+  color: ComponentBaseColors.richtext
+};
+
+export function RichTextModal({
+  component,
+  componentId,
+  initialData,
+  onClose,
+  onCancel
+}: ComponentModalChildProps<'richtext'>) {
+  const { t } = useTranslation('rich-text-editor');
+  const [data, setData] = useState<RichTextComponent>(
+    () => component ?? { ...DEFAULTS, ...initialData, id: componentId ?? '' }
+  );
+  const saveComponent = useSaveComponent();
+  const { text } = data;
+  const color = data.color ?? ComponentBaseColors.richtext;
+
+  function handleData(patch: Partial<RichTextComponent>) {
+    setData((prev) => ({ ...prev, ...patch }));
+  }
+
+  function save() {
+    saveComponent(data);
+    onClose();
+  }
+
+  return (
+    <Stack gap={'md'}>
+      <Stack gap={'xs'}>
+        <InputLabel>{t('background-color')}</InputLabel>
+        <ColorPicker color={color} setColor={(v) => handleData({ color: v })} />
+      </Stack>
+      <RichTextEditor content={text} setContent={(v) => handleData({ text: v })} />
+      <ModalFooter isEdit={!!component} onSave={save} onCancel={onCancel} />
+    </Stack>
+  );
+}

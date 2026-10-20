@@ -1,29 +1,32 @@
-// App.jsx
-// import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 
-import basePath from './utils/basePath';
-import Editor from './Editor';
-import { Hub } from './Hub';
-function App() {
+import { Editor } from '@/pages/Editor';
+import { Hub } from '@/pages/Hub';
+import { cssVariablesResolver, theme } from '@/theme/mantineTheme';
+
+import { LuaApiProvider } from './api/LuaApiProvider';
+import { basePath } from './utils/basePath';
+
+export function App() {
   return (
-    <Router basename={basePath}>
-      {/* <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/hub">Hub</Link>
-          </li>
-        </ul>
-      </nav> */}
-      <Routes>
-        <Route path={'/'} element={<Editor />} />
-        <Route path={'/hub'} element={<Hub />} />
-      </Routes>
-    </Router>
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme={'dark'}
+      cssVariablesResolver={cssVariablesResolver}
+    >
+      <LuaApiProvider>
+        <Router basename={basePath}>
+          {/* Inside the providers above, so that the content of the modals gets them too */}
+          <ModalsProvider modalProps={{ centered: true }}>
+            <Routes>
+              <Route index element={<Editor />} />
+              <Route path={'/hub'} element={<Hub />} />
+            </Routes>
+          </ModalsProvider>
+        </Router>
+      </LuaApiProvider>
+    </MantineProvider>
   );
 }
-
-export default App;
