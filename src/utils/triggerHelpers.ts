@@ -15,9 +15,9 @@ import { type NavigationState, RecordingsFolderKey } from '@/types/types';
  */
 
 /**
- * Fade a renderable's opacity in, out, or toggle it, over a duration.
+ * Fade a renderable's visibility in, out, or toggle it, over a duration.
  *
- * @param property - The `.Opacity` property URI of the renderable. The `.Opacity` suffix is
+ * @param property - The `.Fade` property URI of the renderable. The `.Fade` suffix is
  * stripped before the fade functions are called.
  * @param intDuration - The fade duration in seconds.
  * @param action - Whether to fade `on`, `off`, or `toggle` the current fade state.
@@ -38,13 +38,13 @@ export async function triggerFade(
 
   switch (action) {
     case 'on':
-      luaApi.fadeIn(property.replace('.Opacity', ''), intDuration);
+      luaApi.fadeIn(property, intDuration);
       break;
     case 'off':
-      luaApi.fadeOut(property.replace('.Opacity', ''), intDuration);
+      luaApi.fadeOut(property, intDuration);
       break;
     case 'toggle':
-      luaApi.toggleFade(property.replace('.Opacity', ''), intDuration);
+      luaApi.toggleFade(property, intDuration);
       break;
     default:
       break;
