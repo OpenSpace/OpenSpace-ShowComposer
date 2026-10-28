@@ -60,7 +60,11 @@ export function FadeModal({
   const sortedKeys: Record<string, string> = useMemo(
     () =>
       Object.keys(properties)
-        .sort((a, b) => a.localeCompare(b))
+        .sort((a, b) =>
+          formatName(a.replace('.Fade', '')).localeCompare(
+            formatName(b.replace('.Fade', ''))
+          )
+        )
         .reduce((acc: Record<string, string>, key) => {
           const target = key.replace('.Fade', '');
           const newValue = formatName(target);
