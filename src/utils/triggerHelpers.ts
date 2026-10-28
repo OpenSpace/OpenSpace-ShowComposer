@@ -36,6 +36,12 @@ export async function triggerFade(
     return;
   }
 
+  //Account for old buttons that used Opacity instead of Fade
+  if (property.endsWith('.Opacity')) {
+    property = property.replace(/\.Opacity$/, '');
+  }
+  //end Account for old buttons (versions < 0.22.1)
+
   switch (action) {
     case 'on':
       luaApi.fadeIn(property, intDuration);
