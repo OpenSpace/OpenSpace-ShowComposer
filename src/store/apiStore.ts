@@ -13,8 +13,7 @@ import { ConnectionStatus } from '@/types/enums';
 import {
   flattenPropertyTree,
   getActionSceneNodes,
-  getRenderables,
-  isPropertyVisible
+  getRenderables
 } from '@/utils/apiHelpers';
 
 import { usePropertyStore } from './propertyStore';
