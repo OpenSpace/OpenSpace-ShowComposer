@@ -241,5 +241,5 @@ export function triggerAction(identifier: string) {
  * @param script - The Lua source to execute.
  */
 export function sendLuaScript(script: string) {
-  useOpenSpaceApiStore.getState().apiInstance?.executeLuaScript(script, false, false);
+  useOpenSpaceApiStore.getState().apiInstance?.executeLuaScript(script, false, true);
 }
