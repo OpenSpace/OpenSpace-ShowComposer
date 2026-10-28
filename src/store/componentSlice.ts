@@ -67,39 +67,42 @@ export const createComponentSlice: ImmerStateCreator<
   logpanel: null,
   addComponent: (component) => {
     // console.log('component in addComponent', component);
+    const width = 300;
+    const height = 175;
+    const { pageWidth, pageHeight } = useSettingsStore.getState();
+    const currentPage =
+      get().pages.length > 0 ? get().getPageById(get().currentPage) : null;
+    const x = currentPage?.x ?? 0;
+    const y = currentPage?.y ?? 0;
 
     set((state) => {
       // console.log('component in addComponent', component);
       state.components[component.id] = { ...component };
 
-      if (state.pages.length === 0) {
-        // get().addPage();
-      } else {
-        const currentPage = get().getPageById(state.currentPage);
-        if (
-          isComponentOverlappingPage(
-            { x: 0, y: 0, width: 300, height: 175 },
-            currentPage,
-            useSettingsStore.getState().pageWidth,
-            useSettingsStore.getState().pageHeight
-          )
-        ) {
-          get().addComponentToPageById(component.id, currentPage.id);
-          get().updateComponent(component.id, {
-            parentPage: currentPage.id
-          });
-        }
+      if (
+        currentPage &&
+        isComponentOverlappingPage(
+          { x, y, width, height },
+          currentPage,
+          pageWidth,
+          pageHeight
+        )
+      ) {
+        get().addComponentToPageById(component.id, currentPage.id);
+        get().updateComponent(component.id, {
+          parentPage: currentPage.id
+        });
       }
 
       // console.log('positions', get().positions);
     });
     get().addPosition(component.id, {
-      x: 0,
-      y: 0,
+      x,
+      y,
       minWidth: 50,
       minHeight: 50,
-      width: 300,
-      height: 175
+      width,
+      height
     });
   },
   addComponents: (components: Component[]) => {
