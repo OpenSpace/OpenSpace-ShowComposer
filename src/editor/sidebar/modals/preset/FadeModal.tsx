@@ -13,7 +13,7 @@ import {
 } from '@/editor/sidebar/modals/saveComponent';
 import { type FadeComponent, type Toggle, usePropertyStore } from '@/store';
 import { ComponentBaseColors, ToggleActions } from '@/types/components';
-import { formatName } from '@/utils/apiHelpers';
+import { FadeStoredPropertySuffix, fadeTarget, formatName } from '@/utils/apiHelpers';
 
 const DEFAULTS: Omit<FadeComponent, 'id'> = {
   type: 'fade',
@@ -39,7 +39,7 @@ export function FadeModal({
   const properties = usePropertyStore(
     useShallow((state) =>
       Object.keys(state.properties)
-        .filter((uri) => uri.endsWith('.Fade'))
+        .filter((uri) => uri.endsWith(FadeStoredPropertySuffix))
         .reduce((acc: Record<string, AnyProperty>, key: string) => {
           acc[key] = state.properties[key];
           return acc;
@@ -61,14 +61,11 @@ export function FadeModal({
     () =>
       Object.keys(properties)
         .sort((a, b) =>
-          formatName(a.replace('.Fade', '')).localeCompare(
-            formatName(b.replace('.Fade', ''))
-          )
+          formatName(fadeTarget(a)).localeCompare(formatName(fadeTarget(b)))
         )
         .reduce((acc: Record<string, string>, key) => {
-          const target = key.replace('.Fade', '');
-          const newValue = formatName(target);
-          acc[newValue] = target;
+          const newValue = formatName(fadeTarget(key));
+          acc[newValue] = key;
           return acc;
         }, {}),
     [properties]
@@ -79,7 +76,9 @@ export function FadeModal({
       return { name: '', description: '' };
     }
     const name = formatName(
-      property.replace(/Scene.|ScreenSpace.|.Renderable|.Fade/g, '').replace(/\./g, ' > ')
+      fadeTarget(property)
+        .replace(/Scene.|ScreenSpace.|.Renderable/g, '')
+        .replace(/\./g, ' > ')
     );
     return {
       name: t(`placeholder-name-${action}`, { name }),

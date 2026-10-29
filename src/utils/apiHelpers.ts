@@ -171,10 +171,30 @@ export function formatName(name: string) {
     .replace(/^Scene\./, '')
     .replace(/^ScreenSpace\./, '')
     .replace(/^ScreenSpaceRenderables\./, '')
-    .replace(/.Fade/g, '')
     .replace(/\./g, ' > ')
     .replace(/(?<=[a-z])([A-Z])/g, ' $1')
     .trim();
+}
+
+/**
+ * The suffix of the property stored on a fade component.
+ *
+ * TODO @ylvse (2026-10-29) - Fade components store their property with an `.Opacity`
+ * suffix, even though the fade is driven by `.Fade`. Until the next version, we keep this.
+ * When we rewrite the store we need to consider if we can to break backward compatibility
+ * with existing shows and handle the migration accordingly.
+ */
+export const FadeStoredPropertySuffix = '.Opacity';
+
+/**
+ * Get the fade target (the URI without `.Opacity`) from the property stored
+ * on a fade component.
+ */
+export function fadeTarget(storedProperty: string | undefined) {
+  const property = storedProperty ?? '';
+  return property.endsWith(FadeStoredPropertySuffix)
+    ? property.slice(0, -FadeStoredPropertySuffix.length)
+    : property;
 }
 
 // Returns whether a property should be visible in the gui
