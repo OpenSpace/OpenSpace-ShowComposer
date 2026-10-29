@@ -5,13 +5,17 @@ import { componentActions } from '@/editor/componentActions';
 import { useOutlineStyle } from '@/hooks/outlineStyle';
 import { useProperty } from '@/hooks/properties';
 import type { FadeComponent } from '@/store';
+import { fadeTarget } from '@/utils/apiHelpers';
 
 interface Props {
   component: FadeComponent;
 }
 
 export function FadeWidget({ component }: Props) {
-  const [fadeValue] = useProperty('FloatProperty', `${component?.property ?? ''}.Fade`);
+  const [fadeValue] = useProperty(
+    'FloatProperty',
+    `${fadeTarget(component?.property)}.Fade`
+  );
   // Reflect the value of fade on the card outline: faded in (green),
   // faded out (red), transitioning/disconnected (grey)
   const outlineStyle = useOutlineStyle(fadeValue, (value) =>

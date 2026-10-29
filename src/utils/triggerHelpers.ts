@@ -8,6 +8,7 @@ import { usePropertyStore } from '@/store/propertyStore';
 import type { FlyToComponent } from '@/types/components';
 import { RecordingState } from '@/types/enums';
 import { type NavigationState, RecordingsFolderKey } from '@/types/types';
+import { fadeTarget } from '@/utils/apiHelpers';
 
 /**
  * TODO @ylvse (2026-09-23) - When moving to RTK this file will become actions. Therefore, the lua api access is kept here,
@@ -17,8 +18,7 @@ import { type NavigationState, RecordingsFolderKey } from '@/types/types';
 /**
  * Fade a renderable's visibility in, out, or toggle it, over a duration.
  *
- * @param property - The `.Fade` property URI of the renderable. The `.Fade` suffix is
- * stripped before the fade functions are called.
+ * @param property - The property URI stored in the fade component.
  * @param intDuration - The fade duration in seconds.
  * @param action - Whether to fade `on`, `off`, or `toggle` the current fade state.
  */
@@ -36,15 +36,17 @@ export async function triggerFade(
     return;
   }
 
+  const target = fadeTarget(property);
+
   switch (action) {
     case 'on':
-      luaApi.fadeIn(property, intDuration);
+      luaApi.fadeIn(target, intDuration);
       break;
     case 'off':
-      luaApi.fadeOut(property, intDuration);
+      luaApi.fadeOut(target, intDuration);
       break;
     case 'toggle':
-      luaApi.toggleFade(property, intDuration);
+      luaApi.toggleFade(target, intDuration);
       break;
     default:
       break;
